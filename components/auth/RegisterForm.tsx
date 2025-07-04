@@ -1,14 +1,17 @@
 'use client';
-import { startTransition, useActionState } from 'react';
+import { startTransition, useActionState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'react-toastify';
 import { registerAction } from '@/actions';
 import { ErrorMessage } from '../ui/ErrorMessage';
-import { SuccessMessage } from '../ui/SuccessMessage';
 import { RegisterSchema } from '@/src/schemas';
+import { Loader } from '../ui/Loader';
 
 export const RegisterForm: React.FC = () => {
-  
+  const router = useRouter();
+
   const [state, dispatch, pending] = useActionState(registerAction, {
     errors: [],
     success: '',
@@ -27,6 +30,19 @@ export const RegisterForm: React.FC = () => {
       passwordConfirmation: '',
     },
   });
+  useEffect(() => {
+    if (state.errors) {
+      state.errors.forEach((err) => {
+        toast.error(err);
+      });
+    }
+  }, [state.errors]);
+
+  useEffect(() => {
+    if (state.success) {
+      router.push('/auth/login');
+    }
+  }, [state.success, router]);
 
   const onRegister = handleSubmit((formData) => {
     startTransition(() => dispatch(formData));
@@ -34,12 +50,6 @@ export const RegisterForm: React.FC = () => {
 
   return (
     <form className="mt-14 space-y-5" onSubmit={onRegister}>
-      {state.errors.map((err, index) => (
-        <ErrorMessage key={index}>{err}</ErrorMessage>
-      ))}
-
-      {state.success && <SuccessMessage>{state.success}</SuccessMessage>}
-
       <div className="flex flex-col gap-2">
         <label className="font-bold text-2xl" htmlFor="email">
           Email
@@ -103,7 +113,7 @@ export const RegisterForm: React.FC = () => {
       </div>
 
       {pending ? (
-        <p>Cargando</p>
+        <Loader className="text-center" />
       ) : (
         <input
           type="submit"

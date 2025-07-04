@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { authenticate } from '@/actions';
 import { LoginSchema } from '@/src/schemas';
 import { ErrorMessage } from '../ui/ErrorMessage';
+import { Loader } from '../ui/Loader';
 
 export const LoginForm: React.FC = () => {
   const [state, dispatch, pending] = useActionState(authenticate, {
@@ -68,7 +69,7 @@ export const LoginForm: React.FC = () => {
         )}
       </div>
       {pending ? (
-        <p>Cargando</p>
+        <Loader className="text-center" />
       ) : (
         <input
           type="submit"

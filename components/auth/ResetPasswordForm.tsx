@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { resetPassword } from '@/actions';
 import { ResetPasswordSchema } from '@/src/schemas';
-
+import { Loader } from '../ui/Loader';
 
 type ResetPasswordFormProps = {
   token: string;
@@ -44,10 +44,8 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
   useEffect(() => {
     if (state.success) {
-      toast.success(state.success, {
-        onClose: () => router.push('/auth/login'),
-        onClick: () => router.push('/auth/login'),
-      });
+      router.push('/auth/login');
+      toast.success(state.success);
     }
   }, [state.success, router]);
 
@@ -88,7 +86,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
       </div>
 
       {pending ? (
-        <p>Cargando</p>
+        <Loader className="text-center" />
       ) : (
         <input
           type="submit"

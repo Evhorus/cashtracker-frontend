@@ -29,11 +29,8 @@ export const ConfirmAccountForm: React.FC = () => {
 
   useEffect(() => {
     if (state.success) {
-      toast.success(state.success, {
-        onClose: () => {
-          router.push('/auth/login');
-        },
-      });
+      router.push('/auth/login');
+      toast.success(state.success);
     }
   }, [state.success, router]);
 

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { forgotPassword } from '@/actions';
 import { ForgotPasswordSchema } from '@/src/schemas';
+import { Loader } from '../ui/Loader';
 
 export const ForgotPasswordForm: React.FC = () => {
   const [state, dispatch, pending] = useActionState(forgotPassword, {
@@ -63,7 +64,7 @@ export const ForgotPasswordForm: React.FC = () => {
       </div>
 
       {pending ? (
-        <p>Cargando</p>
+        <Loader className="text-center" />
       ) : (
         <input
           type="submit"
