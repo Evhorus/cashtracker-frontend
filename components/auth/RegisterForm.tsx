@@ -1,5 +1,5 @@
 'use client';
-import { startTransition, useActionState, useEffect } from 'react';
+import { startTransition, useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,13 +10,13 @@ import { RegisterSchema } from '@/src/schemas';
 import { Loader } from '../ui/Loader';
 
 export const RegisterForm: React.FC = () => {
-  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  const [state, dispatch, pending] = useActionState(registerAction, {
+  const [state, dispatch, isPending] = useActionState(registerAction, {
     errors: [],
     success: '',
   });
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -40,7 +40,12 @@ export const RegisterForm: React.FC = () => {
 
   useEffect(() => {
     if (state.success) {
-      router.push('/auth/login');
+      setIsRedirecting(true);
+      toast.success(state.success, {
+        onClose: () => {
+          router.push('/auth/login');
+        },
+      });
     }
   }, [state.success, router]);
 
@@ -112,7 +117,7 @@ export const RegisterForm: React.FC = () => {
         )}
       </div>
 
-      {pending ? (
+      {isPending || isRedirecting ? (
         <Loader className="text-center" />
       ) : (
         <input

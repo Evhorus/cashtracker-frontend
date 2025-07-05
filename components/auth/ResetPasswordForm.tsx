@@ -1,5 +1,5 @@
 'use client';
-import { startTransition, useActionState, useEffect } from 'react';
+import { startTransition, useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
@@ -16,12 +16,12 @@ type ResetPasswordFormProps = {
 export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
   token,
 }) => {
-  const router = useRouter();
-  const [state, dispatch, pending] = useActionState(resetPassword, {
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [state, dispatch, isPending] = useActionState(resetPassword, {
     errors: [],
     success: '',
   });
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -44,8 +44,12 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
   useEffect(() => {
     if (state.success) {
-      router.push('/auth/login');
-      toast.success(state.success);
+      setIsRedirecting(true);
+      toast.success(state.success, {
+        onClose: () => {
+          router.push('/auth/login');
+        },
+      });
     }
   }, [state.success, router]);
 
@@ -85,7 +89,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
         )}
       </div>
 
-      {pending ? (
+      {isPending || isRedirecting ? (
         <Loader className="text-center" />
       ) : (
         <input

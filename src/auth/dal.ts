@@ -1,8 +1,8 @@
 import 'server-only';
 import { cache } from 'react';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { User, UserSchema } from '../schemas';
+import { getTokenFromCookies } from './token';
 
 type verifySession = {
   user: User;
@@ -10,7 +10,7 @@ type verifySession = {
 };
 
 export const verifySession = cache(async () => {
-  const token = (await cookies()).get('CASHTRACKER_TOKEN')?.value;
+  const token =  await getTokenFromCookies();
 
   if (!token) {
     redirect('/auth/login');

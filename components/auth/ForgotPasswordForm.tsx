@@ -9,7 +9,8 @@ import { ForgotPasswordSchema } from '@/src/schemas';
 import { Loader } from '../ui/Loader';
 
 export const ForgotPasswordForm: React.FC = () => {
-  const [state, dispatch, pending] = useActionState(forgotPassword, {
+  
+  const [state, dispatch, isPending] = useActionState(forgotPassword, {
     errors: [],
     success: '',
   });
@@ -63,7 +64,7 @@ export const ForgotPasswordForm: React.FC = () => {
         )}
       </div>
 
-      {pending ? (
+      {isPending ? (
         <Loader className="text-center" />
       ) : (
         <input

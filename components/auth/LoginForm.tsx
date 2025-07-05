@@ -9,7 +9,8 @@ import { ErrorMessage } from '../ui/ErrorMessage';
 import { Loader } from '../ui/Loader';
 
 export const LoginForm: React.FC = () => {
-  const [state, dispatch, pending] = useActionState(authenticate, {
+
+  const [state, dispatch, isPending] = useActionState(authenticate, {
     errors: [],
     success: '',
   });
@@ -68,7 +69,7 @@ export const LoginForm: React.FC = () => {
           <ErrorMessage>{errors.password.message}</ErrorMessage>
         )}
       </div>
-      {pending ? (
+      {isPending ? (
         <Loader className="text-center" />
       ) : (
         <input
