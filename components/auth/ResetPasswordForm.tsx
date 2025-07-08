@@ -1,13 +1,13 @@
 'use client';
-import { startTransition, useActionState, useEffect, useState } from 'react';
+import { startTransition, useActionState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { resetPassword } from '@/actions';
-import { ResetPasswordSchema } from '@/src/schemas';
-import { Loader } from '../ui/Loader';
+import { ResetPasswordFormSchema } from '@/src/schemas';
+import { LoadingButton } from '../ui/LoadingButton';
 
 type ResetPasswordFormProps = {
   token: string;
@@ -16,7 +16,6 @@ type ResetPasswordFormProps = {
 export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
   token,
 }) => {
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const [state, dispatch, isPending] = useActionState(resetPassword, {
     errors: [],
     success: '',
@@ -27,7 +26,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(ResetPasswordSchema),
+    resolver: zodResolver(ResetPasswordFormSchema),
     defaultValues: {
       password: '',
       passwordConfirmation: '',
@@ -44,12 +43,8 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
 
   useEffect(() => {
     if (state.success) {
-      setIsRedirecting(true);
-      toast.success(state.success, {
-        onClose: () => {
-          router.push('/auth/login');
-        },
-      });
+      toast.success(state.success);
+      router.push('/auth/login');
     }
   }, [state.success, router]);
 
@@ -61,11 +56,11 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
   return (
     <form onSubmit={onResetPassword} className=" mt-14 space-y-5" noValidate>
       <div className="flex flex-col gap-5">
-        <label className="font-bold text-2xl">Password</label>
+        <label className="font-bold text-2xl">Contraseña</label>
 
         <input
           type="password"
-          placeholder="Password de Registro"
+          placeholder="Contraseña de Registro"
           className="w-full border border-gray-300 p-3 rounded-lg"
           {...register('password')}
         />
@@ -75,12 +70,12 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
       </div>
 
       <div className="flex flex-col gap-5">
-        <label className="font-bold text-2xl">Repetir Password</label>
+        <label className="font-bold text-2xl">Repetir Contraseña</label>
 
         <input
           id="password_confirmation"
           type="password"
-          placeholder="Repite Password de Registro"
+          placeholder="Repite Contraseña de Registro"
           className="w-full border border-gray-300 p-3 rounded-lg"
           {...register('passwordConfirmation')}
         />
@@ -89,15 +84,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
         )}
       </div>
 
-      {isPending || isRedirecting ? (
-        <Loader className="text-center" />
-      ) : (
-        <input
-          type="submit"
-          value="Guardar Password"
-          className="bg-purple-950 hover:bg-purple-800 w-full p-3 rounded-lg text-white font-black  text-xl cursor-pointer block"
-        />
-      )}
+      <LoadingButton isLoading={isPending}>Guardar Contraseña</LoadingButton>
     </form>
   );
 };

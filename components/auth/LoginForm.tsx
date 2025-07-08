@@ -4,12 +4,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
 import { authenticate } from '@/actions';
-import { LoginSchema } from '@/src/schemas';
+import { LoginFormSchema } from '@/src/schemas';
 import { ErrorMessage } from '../ui/ErrorMessage';
-import { Loader } from '../ui/Loader';
+import { LoadingButton } from '../ui/LoadingButton';
 
 export const LoginForm: React.FC = () => {
-
   const [state, dispatch, isPending] = useActionState(authenticate, {
     errors: [],
     success: '',
@@ -20,7 +19,7 @@ export const LoginForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -40,7 +39,7 @@ export const LoginForm: React.FC = () => {
   });
 
   return (
-    <form onSubmit={onLogin} className="mt-14 space-y-5" noValidate>
+    <form onSubmit={onLogin} className="mt-14 space-y-4" noValidate>
       <div className="flex flex-col gap-2">
         <label className="font-bold text-2xl">Email</label>
 
@@ -57,11 +56,11 @@ export const LoginForm: React.FC = () => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="font-bold text-2xl">Password</label>
+        <label className="font-bold text-2xl">Contraseña</label>
 
         <input
           type="password"
-          placeholder="Password de Registro"
+          placeholder="Contraseña de Registro"
           className="w-full border border-gray-300 p-3 rounded-lg"
           {...register('password')}
         />
@@ -69,15 +68,7 @@ export const LoginForm: React.FC = () => {
           <ErrorMessage>{errors.password.message}</ErrorMessage>
         )}
       </div>
-      {isPending ? (
-        <Loader className="text-center" />
-      ) : (
-        <input
-          type="submit"
-          value="Iniciar Sesión"
-          className="bg-purple-950 hover:bg-purple-800 w-full p-3 rounded-lg text-white font-black  text-xl cursor-pointer"
-        />
-      )}
+      <LoadingButton isLoading={isPending}>Iniciar Sesión</LoadingButton>
     </form>
   );
 };

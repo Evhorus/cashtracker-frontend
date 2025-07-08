@@ -17,6 +17,7 @@ export const generateMetadata = async ({
     description: `CashTracker - ${budget.name}`,
   };
 };
+
 export default async function EditBudgetPage({ params }: EditBudgetPageProps) {
   const { id } = await params;
 

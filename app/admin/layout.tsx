@@ -1,14 +1,19 @@
 import Link from 'next/link';
-import { ToastContainer } from 'react-toastify';
-import { AdminMenu, Logo } from '@/components';
+import { AdminMenu, Logo, ToastNotification } from '@/components';
 import { verifySession } from '@/src/auth/dal';
+import { redirect } from 'next/navigation';
 
 export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user } = await verifySession();
+  const { isAuth, user } = await verifySession();
+
+  if (!isAuth) {
+    redirect('/');
+  }
+
   return (
     <>
       <header className="bg-purple-950 py-5">
@@ -18,14 +23,14 @@ export default async function AdminLayout({
               <Logo />
             </Link>
           </div>
-          <AdminMenu user={user} />
+          {user && <AdminMenu user={user} />}
         </div>
       </header>
       <section className="max-w-5xl mx-auto mt-20 p-3 py-10">
         {children}
       </section>
-      <ToastContainer />
-
+      {/* <ToastContainer /> */}
+      <ToastNotification />
       <footer className="py-5">
         <p className="text-center">
           Todos los Derechos Reservados {new Date().getFullYear()}

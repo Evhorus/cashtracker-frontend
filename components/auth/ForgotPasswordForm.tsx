@@ -5,11 +5,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { forgotPassword } from '@/actions';
-import { ForgotPasswordSchema } from '@/src/schemas';
-import { Loader } from '../ui/Loader';
+import { ForgotPasswordFormSchema } from '@/src/schemas';
+import { LoadingButton } from '../ui/LoadingButton';
+import { SuccessMessageCard } from './AccountCreatedCard';
 
 export const ForgotPasswordForm: React.FC = () => {
-  
   const [state, dispatch, isPending] = useActionState(forgotPassword, {
     errors: [],
     success: '',
@@ -19,7 +19,7 @@ export const ForgotPasswordForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(ForgotPasswordSchema),
+    resolver: zodResolver(ForgotPasswordFormSchema),
     defaultValues: {
       email: '',
     },
@@ -44,35 +44,52 @@ export const ForgotPasswordForm: React.FC = () => {
   });
 
   return (
-    <form onSubmit={onForgotPassword} className=" mt-14 space-y-5" noValidate>
-      {state.errors.map((err, index) => (
-        <ErrorMessage key={index}>{err}</ErrorMessage>
-      ))}
-      <div className="flex flex-col gap-2 mb-10">
-        <label className="font-bold text-2xl" htmlFor="email">
-          Email
-        </label>
-
-        <input
-          type="email"
-          placeholder="Email de Registro"
-          className="w-full border border-gray-300 p-3 rounded-lg"
-          {...register('email')}
+    <>
+      {state.success ? (
+        <SuccessMessageCard
+          title="¡Revisa tu correo!"
+          message={
+            <>
+              Te hemos enviado un enlace para restablecer tu contraseña.
+              <br />
+              Por favor, revisa tu email y sigue las instrucciones para crear
+              una nueva contraseña.
+            </>
+          }
+          linkHref="/auth/login"
+          linkText="Volver a Iniciar Sesión"
         />
-        {errors && errors.email && (
-          <ErrorMessage>{errors.email.message}</ErrorMessage>
-        )}
-      </div>
-
-      {isPending ? (
-        <Loader className="text-center" />
       ) : (
-        <input
-          type="submit"
-          value="Enviar Instrucciones"
-          className="bg-purple-950 hover:bg-purple-800 w-full p-3 rounded-lg text-white font-black  text-xl cursor-pointer "
-        />
+        <form
+          onSubmit={onForgotPassword}
+          className=" mt-14 space-y-5"
+          noValidate
+        >
+          {state.errors.map((err, index) => (
+            <ErrorMessage key={index}>{err}</ErrorMessage>
+          ))}
+
+          <div className="flex flex-col gap-2 mb-10">
+            <label className="font-bold text-2xl" htmlFor="email">
+              Email
+            </label>
+
+            <input
+              type="email"
+              placeholder="Email de Registro"
+              className="w-full border border-gray-300 p-3 rounded-lg"
+              {...register('email')}
+            />
+            {errors && errors.email && (
+              <ErrorMessage>{errors.email.message}</ErrorMessage>
+            )}
+          </div>
+
+          <LoadingButton isLoading={isPending}>
+            Enviar Instrucciones
+          </LoadingButton>
+        </form>
       )}
-    </form>
+    </>
   );
 };

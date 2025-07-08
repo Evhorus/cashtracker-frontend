@@ -5,34 +5,46 @@ import { User, UserSchema } from '../schemas';
 import { getTokenFromCookies } from './token';
 
 type verifySession = {
-  user: User;
+  user: User | null;
   isAuth: boolean;
 };
 
-export const verifySession = cache(async () => {
-  const token =  await getTokenFromCookies();
-
-  if (!token) {
-    redirect('/auth/login');
-  }
-
+export const getSessionData = cache(async (token: string) => {
   const url = `${process.env.API_URL}/auth/user`;
+
   const req = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  const session = await req.json();
+  return req.json();
+});
 
-  const result = UserSchema.safeParse(session);
+export const verifySession = async () => {
+  const token = await getTokenFromCookies();
 
-  if (!result.success) {
-    redirect('/auth/login');
+  if (!token) {
+    return {
+      user: null,
+      isAuth: false,
+    };
   }
 
-  return {
-    user: result.data,
-    isAuth: true,
-  };
-});
+  try {
+    const session = await getSessionData(token);
+    const result = UserSchema.safeParse(session);
+
+    if (!result.success) {
+      redirect('/');
+    }
+
+    return {
+      user: result.data,
+      isAuth: true,
+    };
+  } catch (error) {
+    console.log(error);
+    redirect('/');
+  }
+};
