@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { forgotPassword } from '@/actions';
 import { ForgotPasswordFormSchema } from '@/src/schemas';
-import { LoadingButton } from '../ui/LoadingButton';
+import { Button } from '../ui/Button';
 import { SuccessMessageCard } from './AccountCreatedCard';
 
 export const ForgotPasswordForm: React.FC = () => {
@@ -85,9 +85,7 @@ export const ForgotPasswordForm: React.FC = () => {
             )}
           </div>
 
-          <LoadingButton isLoading={isPending}>
-            Enviar Instrucciones
-          </LoadingButton>
+          <Button isLoading={isPending} className="w-full">Enviar Instrucciones</Button>
         </form>
       )}
     </>

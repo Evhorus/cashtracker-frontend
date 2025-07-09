@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PasswordValidationSchema } from '@/src/schemas';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { toast } from 'react-toastify';
+import { Button } from '../ui/Button';
 
 export const ConfirmPasswordForm: React.FC = () => {
   const pathname = usePathname();
@@ -15,7 +16,7 @@ export const ConfirmPasswordForm: React.FC = () => {
   const searchParams = useSearchParams();
   const budgetId = +searchParams.get('deleteBudgetId')!;
 
-  const [state, dispatch] = useActionState(deleteBudget, {
+  const [state, dispatch, isPending] = useActionState(deleteBudget, {
     errors: [],
     success: '',
   });
@@ -61,25 +62,25 @@ export const ConfirmPasswordForm: React.FC = () => {
 
   return (
     <>
-      <DialogTitle as="h3" className="font-black text-4xl text-purple-950 my-5">
+      <DialogTitle as="h3" className="font-black text-4xl text-purple-950">
         Eliminar Presupuesto
       </DialogTitle>
       <p className="text-xl font-bold">
-        Ingresa tu Password para {''}
+        Ingresa tu Contraseña para {''}
         <span className="text-amber-500">eliminar el presupuesto {''}</span>
       </p>
       <p className="text-gray-600 text-sm">
         (Un presupuesto eliminado y sus gastos no se pueden recuperar)
       </p>
-      <form className=" mt-14 space-y-5" onSubmit={onDeleteBudget} noValidate>
-        <div className="flex flex-col gap-5">
+      <form className=" mt-10 space-y-5" onSubmit={onDeleteBudget} noValidate>
+        <div className="flex flex-col gap-4">
           <label className="font-bold text-2xl" htmlFor="password">
-            Ingresa tu Password para eliminar
+            Ingresa tu Contraseña para eliminar
           </label>
           <input
             id="password"
             type="password"
-            placeholder="Password"
+            placeholder="Contraseña"
             className="w-full border border-gray-300 p-3 rounded-lg"
             {...register('password')}
           />
@@ -87,18 +88,13 @@ export const ConfirmPasswordForm: React.FC = () => {
         {errors && errors.password && (
           <ErrorMessage>{errors.password.message}</ErrorMessage>
         )}
-        <div className="grid grid-cols-2 gap-5">
-          <input
-            type="submit"
-            value="Eliminar Presupuesto"
-            className="bg-purple-950 hover:bg-purple-800 w-full p-3 rounded-lg text-white font-black cursor-pointer transition-colors"
-          />
-          <button
-            className="bg-amber-500 hover:bg-amber-600 w-full p-3 rounded-lg text-white font-black cursor-pointer transition-colors"
-            onClick={closeModal}
-          >
+        <div className="grid sm:grid-cols-2 gap-2">
+          <Button type="submit" isLoading={isPending}>
+            Eliminar Presupuesto
+          </Button>
+          <Button type="button" variant="secondary" onClick={closeModal}>
             Cancelar
-          </button>
+          </Button>
         </div>
       </form>
     </>

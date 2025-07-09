@@ -12,7 +12,7 @@ export default async function EditProfilePage() {
         Aquí puedes cambiar los datos de tu {''}
         <span className="text-amber-500">perfil</span>
       </p>
-      <ProfileForm user={user} />
+      {user && <ProfileForm user={user} />}
     </>
   );
 }

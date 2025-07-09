@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { Loader } from '../ui/Loader';
 import { updateUser } from '@/actions';
-import { LoadingButton } from '../ui/LoadingButton';
+import { Button } from '../ui/Button';
 
 type ProfileFormProps = {
   user: User;
@@ -87,7 +87,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
             )}
           </div>
 
-          <LoadingButton isLoading={isPending}>Guardar Cambios</LoadingButton>
+          <Button isLoading={isPending}>Guardar Cambios</Button>
         </form>
       )}
     </>

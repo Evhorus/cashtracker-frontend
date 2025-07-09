@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { resetPassword } from '@/actions';
 import { ResetPasswordFormSchema } from '@/src/schemas';
-import { LoadingButton } from '../ui/LoadingButton';
+import { Button } from '../ui/Button';
 
 type ResetPasswordFormProps = {
   token: string;
@@ -84,7 +84,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({
         )}
       </div>
 
-      <LoadingButton isLoading={isPending}>Guardar Contraseña</LoadingButton>
+      <Button isLoading={isPending} className="w-full">Guardar Contraseña</Button>
     </form>
   );
 };

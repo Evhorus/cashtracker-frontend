@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { authenticate } from '@/actions';
 import { LoginFormSchema } from '@/src/schemas';
 import { ErrorMessage } from '../ui/ErrorMessage';
-import { LoadingButton } from '../ui/LoadingButton';
+import { Button } from '../ui/Button';
 
 export const LoginForm: React.FC = () => {
   const [state, dispatch, isPending] = useActionState(authenticate, {
@@ -68,7 +68,9 @@ export const LoginForm: React.FC = () => {
           <ErrorMessage>{errors.password.message}</ErrorMessage>
         )}
       </div>
-      <LoadingButton isLoading={isPending}>Iniciar Sesión</LoadingButton>
+      <Button isLoading={isPending} className="w-full">
+        Iniciar Sesión
+      </Button>
     </form>
   );
 };

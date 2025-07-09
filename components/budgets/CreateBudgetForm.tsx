@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
-import { Loader } from '../ui/Loader';
 import { createBudget } from '@/actions';
 import { BudgetFormSchema } from '@/src/schemas';
 import { BudgetForm } from './BudgetForm';
+import { Button } from '../ui/Button';
 
 export const CreateBudgetForm: React.FC = () => {
   const [state, dispatch, isPending] = useActionState(createBudget, {
@@ -50,15 +50,10 @@ export const CreateBudgetForm: React.FC = () => {
   return (
     <form onSubmit={onCreateBudget} className="mt-10 space-y-3" noValidate>
       <BudgetForm register={register} errors={errors} />
-      {isPending ? (
-        <Loader className="text-center" />
-      ) : (
-        <input
-          type="submit"
-          className="bg-amber-500 w-full p-3 text-white uppercase font-bold hover:bg-amber-600 cursor-pointer transition-colors"
-          value="Crear Presupuesto"
-        />
-      )}
+
+      <Button isLoading={isPending} variant="secondary" className="w-full">
+        Crear Presupuesto
+      </Button>
     </form>
   );
 };

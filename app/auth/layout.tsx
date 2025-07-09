@@ -25,7 +25,7 @@ export default async function AuthLayout({
           </div>
         </div>
 
-        <div className="p-10 lg:py-28 overflow-y-auto">
+        <div className="p-4 sm:p-10 lg:py-28 overflow-y-auto">
           <div className="max-w-3xl mx-auto">{children}</div>
         </div>
       </div>

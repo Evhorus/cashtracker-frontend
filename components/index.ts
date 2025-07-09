@@ -26,7 +26,7 @@ export * from './ui/SuccessMessage';
 export * from './ui/Loader';
 export * from './ui/Amount';
 export * from './ui/ToastNotification';
-export * from './ui/LoadingButton';
+export * from './ui/Button';
 //PROFILE
 export * from './profile/ProfileTabs';
 export * from './profile/ChangePasswordForm';

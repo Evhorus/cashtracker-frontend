@@ -10,30 +10,31 @@ type BudgetFormProps = {
 export const BudgetForm: React.FC<BudgetFormProps> = ({ register, errors }) => {
   return (
     <>
-      <div className="space-y-3">
+      <div className="mb-5">
         <label htmlFor="name" className="text-sm uppercase font-bold">
-          Nombre Presupuesto
+          Nombre del Presupuesto
         </label>
         <input
           id="name"
-          className="w-full p-3  border border-gray-100 bg-slate-100"
+          className="w-full p-3  border border-gray-100  bg-white"
           type="text"
-          placeholder="Nombre del Presupuesto"
+          placeholder="Nombre del Gasto"
           {...register('name')}
         />
         {errors && errors.name && (
           <ErrorMessage>{errors.name.message}</ErrorMessage>
         )}
       </div>
-      <div className="space-y-3">
+
+      <div className="mb-5">
         <label htmlFor="amount" className="text-sm uppercase font-bold">
-          Cantidad Presupuesto
+          Cantidad del Presupuesto
         </label>
         <input
-          type="number"
           id="amount"
-          className="w-full p-3  border border-gray-100 bg-slate-100"
-          placeholder="Cantidad Presupuesto"
+          className="w-full p-3  border border-gray-100 bg-white"
+          type="number"
+          placeholder="Cantidad Gasto"
           {...register('amount')}
         />
         {errors && errors.amount && (

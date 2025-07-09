@@ -39,7 +39,7 @@ export const BudgetMenu: React.FC<BudgetMenuProps> = ({ budgetId }) => {
             <MenuItem>
               <Link
                 href={`/admin/budgets/${budgetId}`}
-                className="block px-3 py-1 text-sm leading-6 text-gray-900"
+                className="block px-3 py-1 text-sm leading-6 text-gray-900 text-center hover:bg-gray-100"
               >
                 Ver Presupuesto
               </Link>
@@ -47,7 +47,7 @@ export const BudgetMenu: React.FC<BudgetMenuProps> = ({ budgetId }) => {
             <MenuItem>
               <Link
                 href={`/admin/budgets/${budgetId}/edit`}
-                className="block px-3 py-1 text-sm leading-6 text-gray-900"
+                className="block px-3 py-1 text-sm leading-6 text-gray-900 text-center hover:bg-gray-100 "
               >
                 Editar Presupuesto
               </Link>
@@ -56,7 +56,7 @@ export const BudgetMenu: React.FC<BudgetMenuProps> = ({ budgetId }) => {
             <MenuItem>
               <button
                 type="button"
-                className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer"
+                className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer hover:bg-gray-100 w-full"
                 onClick={() => router.push(`?deleteBudgetId=${budgetId}`)}
               >
                 Eliminar Presupuesto

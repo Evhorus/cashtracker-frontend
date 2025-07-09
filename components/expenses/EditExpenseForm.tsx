@@ -9,6 +9,7 @@ import { Expense, ExpenseFormSchema } from '@/src/schemas';
 import { editExpense } from '@/actions';
 import { toast } from 'react-toastify';
 import { Loader } from '../ui/Loader';
+import { Button } from '../ui/Button';
 
 type EditExpenseForm = {
   closeModal: () => void;
@@ -31,7 +32,7 @@ export const EditExpenseForm: React.FC<EditExpenseForm> = ({ closeModal }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isReady },
   } = useForm({
     resolver: zodResolver(ExpenseFormSchema),
     values: {
@@ -84,19 +85,18 @@ export const EditExpenseForm: React.FC<EditExpenseForm> = ({ closeModal }) => {
       </p>
       <form
         onSubmit={onEditExpense}
-        className="bg-gray-100 shadow-lg rounded-lg p-10 mt-10 border"
+        className="bg-gray-100 shadow-lg rounded-lg p-10 mt-10 border border-gray-300"
         noValidate
       >
-        <ExpenseForm register={register} errors={errors} />
-        {isPending ? (
+        {!isReady ? (
           <Loader className="text-center" />
         ) : (
-          <input
-            type="submit"
-            className="bg-amber-500 w-full p-3 text-white uppercase font-bold hover:bg-amber-600 cursor-pointer transition-colors"
-            value="Guardar Cambios"
-          />
+          <ExpenseForm register={register} errors={errors} />
         )}
+
+        <Button isLoading={isPending} variant="secondary" className="w-full">
+          Guardar Cambios
+        </Button>
       </form>
     </>
   );

@@ -8,7 +8,7 @@ import { DialogTitle } from '@headlessui/react';
 import { ExpenseForm } from './ExpenseForm';
 import { ExpenseFormSchema } from '@/src/schemas';
 import { createExpense } from '@/actions';
-import { Loader } from '../ui/Loader';
+import { Button } from '../ui/Button';
 
 type AddExpenseFormProps = {
   closeModal: () => void;
@@ -69,21 +69,20 @@ export const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
         <span className="text-amber-500">gasto</span>
       </p>
       <form
-        className="bg-gray-100 shadow-lg rounded-lg p-10 mt-10 border"
+        className="bg-gray-100 shadow-lg rounded-lg p-8 mt-8 border border-gray-200"
         onSubmit={onAddExpense}
         noValidate
       >
         <ExpenseForm register={register} errors={errors} />
 
-        {isPending ? (
-          <Loader />
-        ) : (
-          <input
-            type="submit"
-            className="bg-amber-500 w-full p-3 text-white uppercase font-bold hover:bg-amber-600 cursor-pointer transition-colors"
-            value="Registrar Gasto"
-          />
-        )}
+        <Button
+          isLoading={isPending}
+          className="w-full"
+          size="large"
+          variant="secondary"
+        >
+          Registrar Gasto
+        </Button>
       </form>
     </>
   );

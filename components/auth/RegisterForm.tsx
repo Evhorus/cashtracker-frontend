@@ -8,7 +8,7 @@ import { registerAction } from '@/actions';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { RegisterFormSchema } from '@/src/schemas';
 import { SuccessMessageCard } from './AccountCreatedCard';
-import { LoadingButton } from '../ui/LoadingButton';
+import { Button } from '../ui/Button';
 
 export const RegisterForm: React.FC = () => {
   const [state, dispatch, isPending] = useActionState(registerAction, {
@@ -129,7 +129,7 @@ export const RegisterForm: React.FC = () => {
             )}
           </div>
 
-          <LoadingButton isLoading={isPending}>Registrarme</LoadingButton>
+          <Button isLoading={isPending} className="w-full">Registrarme</Button>
         </form>
       )}
     </>

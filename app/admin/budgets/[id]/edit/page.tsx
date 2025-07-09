@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { EditBudgetForm } from '@/components';
+import { Button, EditBudgetForm } from '@/components';
 import { getBudgetById } from '@/src/services/budgets';
 
 type EditBudgetPageProps = {
@@ -35,11 +35,8 @@ export default async function EditBudgetPage({ params }: EditBudgetPageProps) {
             <span className="text-amber-500">presupuesto</span>
           </p>
         </div>
-        <Link
-          href={'/admin'}
-          className="bg-amber-500 p-2 rounded-lg text-white font-bold w-full md:w-auto text-center"
-        >
-          Volver
+        <Link href={'/admin'}>
+          <Button variant="secondary">Volver</Button>
         </Link>
       </div>
       <div className="p-10 mt-10  shadow-lg border ">

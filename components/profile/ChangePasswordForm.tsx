@@ -6,7 +6,7 @@ import { UpdatePasswordFormSchema } from '@/src/schemas';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { updatePassword } from '@/actions';
 import { toast } from 'react-toastify';
-import { LoadingButton } from '../ui/LoadingButton';
+import { Button } from '../ui/Button';
 
 type ChangePasswordFormProps = {
   register: string;
@@ -102,7 +102,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = () => {
             <ErrorMessage>{errors.passwordConfirmation.message}</ErrorMessage>
           )}
         </div>
-        <LoadingButton isLoading={isPending}>Cambiar Contraseña</LoadingButton>
+        <Button isLoading={isPending}>Cambiar Contraseña</Button>
       </form>
     </>
   );

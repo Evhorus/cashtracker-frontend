@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getTokenFromCookies } from '@/src/auth/token';
 import { BudgetsAPIResponseSchema } from '@/src/schemas';
 import { formatCurrency, formatDate } from '@/src/utils';
-import { BudgetMenu, DeleteBudgetModal } from '@/components';
+import { BudgetMenu, Button, DeleteBudgetModal } from '@/components';
 
 export const metadata: Metadata = {
   title: 'CashTracker - Panel de administración',
@@ -50,41 +50,37 @@ export default async function AdminPage() {
             <span className="text-amber-500">presupuestos</span>
           </p>
         </div>
-        <Link
-          href={'/admin/budgets/new'}
-          className="bg-amber-500 p-2 rounded-lg text-white font-bold w-full md:w-auto text-center"
-        >
-          Crear Presupuesto
+
+        <Link href={'/admin/budgets/new'}>
+          <Button variant="secondary">Crear Presupuesto </Button>
         </Link>
       </div>
       {budgets?.length ? (
         <>
           <ul
             role="list"
-            className="divide-y divide-gray-300 border shadow-lg mt-10 "
+            className="grid gap-6 divide-y divide-gray-300 border border-gray-300 shadow-lg mt-4"
           >
             {budgets.map((budget) => (
               <li key={budget.id} className="flex justify-between gap-x-6 p-5 ">
-                <div className="flex min-w-0 gap-x-4">
-                  <div className="min-w-0 flex-auto space-y-2">
-                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                      <Link
-                        href={`/admin/budgets/${budget.id}`}
-                        className="hover:underline text-2xl font-bold"
-                      >
-                        {budget.name}
-                      </Link>
-                    </p>
-                    <p className="text-xl font-bold text-amber-500">
-                      {formatCurrency(+budget.amount)}
-                    </p>
-                    <p className="text-gray-500  text-sm">
-                      Última actualización: {''}
-                      <span className="font-bold">
-                        {formatDate(budget.updatedAt)}
-                      </span>
-                    </p>
-                  </div>
+                <div className="flex-1 space-y-2">
+                  <p className="text-sm font-semibold leading-6 text-gray-900">
+                    <Link
+                      href={`/admin/budgets/${budget.id}`}
+                      className="hover:underline text-2xl font-bold"
+                    >
+                      {budget.name}
+                    </Link>
+                  </p>
+                  <p className="text-xl font-bold text-amber-500">
+                    {formatCurrency(+budget.amount)}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Última actualización: {''}
+                    <span className="font-bold">
+                      {formatDate(budget.updatedAt)}
+                    </span>
+                  </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-x-6">
                   <BudgetMenu budgetId={budget.id} />

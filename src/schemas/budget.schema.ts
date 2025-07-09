@@ -29,7 +29,7 @@ export type BudgetFormInputs = z.infer<typeof BudgetFormSchema>;
 
 // Password validation
 export const PasswordValidationSchema = z.object({
-  password: z.string().min(1, { message: 'Password no valido' }),
+  password: z.string().min(1, { message: 'Contraseña no válida' }),
 });
 
 export type PasswordValidationFormInputs = z.infer<

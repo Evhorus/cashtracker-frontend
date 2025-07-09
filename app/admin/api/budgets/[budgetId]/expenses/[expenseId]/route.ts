@@ -1,5 +1,6 @@
 import { verifySession } from '@/src/auth/dal';
 import { getTokenFromCookies } from '@/src/auth/token';
+import { redirect } from 'next/navigation';
 
 type Params = {
   budgetId: string;
@@ -10,7 +11,12 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<Params> },
 ) {
-  await verifySession();
+  const { isAuth } = await verifySession();
+
+  if (!isAuth) {
+    redirect('/');
+  }
+
   const { budgetId, expenseId } = await params;
 
   const token = await getTokenFromCookies();

@@ -38,7 +38,7 @@ export const ExpenseMenu: React.FC<ExpenseMenuProps> = ({ expenseId }) => {
             <MenuItem>
               <button
                 type="button"
-                className="block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer"
+                className="block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer w-full hover:bg-gray-100"
                 onClick={() =>
                   router.push(
                     pathname + `?showModal=true&editExpenseId=${expenseId}`,
@@ -52,10 +52,12 @@ export const ExpenseMenu: React.FC<ExpenseMenuProps> = ({ expenseId }) => {
             <MenuItem>
               <button
                 type="button"
-                className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer"
-                onClick={() => router.push(
+                className="block px-3 py-1 text-sm leading-6 text-red-500 cursor-pointer w-full hover:bg-gray-100"
+                onClick={() =>
+                  router.push(
                     pathname + `?showModal=true&deleteExpenseId=${expenseId}`,
-                  )}
+                  )
+                }
               >
                 Eliminar Gasto
               </button>
