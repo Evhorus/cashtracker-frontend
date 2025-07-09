@@ -5,6 +5,7 @@ import {
   SuccessResponseSchema,
 } from '@/src/schemas';
 import { getTokenFromCookies } from '@/src/auth/token';
+import { revalidateTag } from 'next/cache';
 
 type CreateBudgetActionState = {
   errors: string[];
@@ -42,6 +43,7 @@ export const createBudget = async (
     }
 
     const success = SuccessResponseSchema.parse(json);
+    revalidateTag('all-budgets');
     return {
       errors: [],
       success,
