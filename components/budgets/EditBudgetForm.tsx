@@ -61,17 +61,18 @@ export const EditBudgetForm: React.FC<EditBudgetFormProps> = ({ budget }) => {
       {!isReady ? (
         <Loader className="text-center" />
       ) : (
-        <BudgetForm register={register} errors={errors} />
+        <>
+          <BudgetForm register={register} errors={errors} />
+          <Button
+            isLoading={isPending}
+            variant="secondary"
+            size="large"
+            className="w-full"
+          >
+            Guardar cambios
+          </Button>
+        </>
       )}
-
-      <Button
-        isLoading={isPending}
-        variant="secondary"
-        size="large"
-        className="w-full"
-      >
-        Guardar cambios
-      </Button>
     </form>
   );
 };

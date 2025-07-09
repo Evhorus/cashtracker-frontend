@@ -88,15 +88,20 @@ export const EditExpenseForm: React.FC<EditExpenseForm> = ({ closeModal }) => {
         className="bg-gray-100 shadow-lg rounded-lg p-10 mt-10 border border-gray-300"
         noValidate
       >
-        {!isReady ? (
+        {!isReady || !expense ? (
           <Loader className="text-center" />
         ) : (
-          <ExpenseForm register={register} errors={errors} />
+          <>
+            <ExpenseForm register={register} errors={errors} />
+            <Button
+              isLoading={isPending}
+              variant="secondary"
+              className="w-full"
+            >
+              Guardar Cambios
+            </Button>
+          </>
         )}
-
-        <Button isLoading={isPending} variant="secondary" className="w-full">
-          Guardar Cambios
-        </Button>
       </form>
     </>
   );
