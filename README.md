@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CashTracker - Frontend
 
-## Getting Started
+**CashTracker** is a modern web application for managing personal or business budgets. The frontend is built with Next.js 15 and leverages a clean, responsive UI to help users create, track, and analyze their budgets and expenses.
 
-First, run the development server:
+> **Note:**  
+> This project was developed based on the course [Full Stack Node.js React TS NestJS Next.js Creando Proyectos](https://www.udemy.com/course/curso-full-stack-nodejs-react-typescript-nestjs-nextjs/) by Juan Pablo De la Torre Valdez on Udemy, which covers building real-world full stack applications using Node.js, React, TypeScript, NestJS, and Next.js
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Budget Management:** Create, edit, and delete budgets.
+- **Expense Tracking:** Add, view, and manage expenses for each budget.
+- **Visual Analytics:** Progress bars and summary cards for quick insights.
+- **Responsive Design:** Fully responsive for mobile and desktop.
+- **Form Validation:** Robust validation using Zod.
+- **Notifications:** Real-time feedback with react-toastify.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Technology                 | Purpose                      |
+| -------------------------- | ---------------------------- |
+| Next.js 15                 | React framework (App Router) |
+| Tailwind CSS               | Utility-first styling        |
+| Zod                        | Schema validation            |
+| react-circular-progressbar | Progress visualization       |
+| react-toastify             | Toast notifications          |
 
-## Learn More
+## ⚡ Getting Started
 
-To learn more about Next.js, take a look at the following resources:
+Follow these steps to run the project locally:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Clone the repository**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Install dependencies**
 
-## Deploy on Vercel
+3. **Configure environment variables**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Create a `.env.local` file at the root of the project with the following content:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run the development server**
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+## 📝 Scripts
+
+| Command         | Description              |
+| --------------- | ------------------------ |
+| `npm run dev`   | Start development server |
+| `npm run build` | Build for production     |
+| `npm start`     | Start production server  |
+
+## 📦 Environment Variables
+
+| Variable          | Description                |
+| ----------------- | -------------------------- |
+| `API_URL`         | Backend API base URL       |
+| `NEXT_PUBLIC_URL` | Frontend base URL (public) |
+
+## 📣 Notes
+
+- Make sure the backend API is running at the URL specified in `API_URL`.
+- For best results, use Node.js 18+ and npm 9+.
+- Customize the design and logic as needed for your use case.
+
+## 🤝 Contributing
+
+Feel free to open issues or submit pull requests to improve the project!
+
+## 🖼️ License
+
+This project is open source and available under the [MIT License](LICENSE).
