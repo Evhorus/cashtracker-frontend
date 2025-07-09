@@ -7,6 +7,7 @@ import { ErrorMessage } from '../ui/ErrorMessage';
 import { updatePassword } from '@/actions';
 import { toast } from 'react-toastify';
 import { Button } from '../ui/Button';
+import { useRouter } from 'next/navigation';
 
 type ChangePasswordFormProps = {
   register: string;
@@ -14,6 +15,7 @@ type ChangePasswordFormProps = {
 };
 
 export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = () => {
+  const router = useRouter();
   const [state, dispatch, isPending] = useActionState(updatePassword, {
     errors: [],
     success: '',
@@ -22,7 +24,6 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(UpdatePasswordFormSchema),
@@ -44,7 +45,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = () => {
   useEffect(() => {
     if (state.success) {
       toast.success(state.success);
-      reset();
+      router.push('/admin');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.success]);

@@ -8,12 +8,14 @@ import { ErrorMessage } from '../ui/ErrorMessage';
 import { Loader } from '../ui/Loader';
 import { updateUser } from '@/actions';
 import { Button } from '../ui/Button';
+import { useRouter } from 'next/navigation';
 
 type ProfileFormProps = {
   user: User;
 };
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
+  const router = useRouter();
   const [state, dispatch, isPending] = useActionState(updateUser, {
     errors: [],
     success: '',
@@ -41,10 +43,9 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
   useEffect(() => {
     if (state.success) {
       toast.success(state.success);
-
-      console.log('lanzar');
+      router.push('/admin');
     }
-  }, [state]);
+  }, [state, router]);
 
   const onUpdateProfile = handleSubmit((data) => {
     startTransition(() => dispatch(data));

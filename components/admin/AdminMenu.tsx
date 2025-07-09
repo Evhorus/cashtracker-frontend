@@ -36,15 +36,15 @@ export const AdminMenu: React.FC<AdminMenuProps> = ({ user }) => {
             <p className="text-center">Hola: {user.name}</p>
             <Link
               href="/admin/profile/settings"
-              className="block p-2 hover:text-purple-950"
+              className="block p-2 hover:text-purple-950 hover:bg-gray-100"
             >
               Mi Perfil
             </Link>
-            <Link href="/admin" className="block p-2 hover:text-purple-950">
+            <Link href="/admin" className="block p-2 hover:text-purple-950  hover:bg-gray-100">
               Mis Presupuestos
             </Link>
             <button
-              className="block p-2 hover:text-purple-950 cursor-pointer"
+              className="block p-2 hover:text-purple-950 cursor-pointer hover:bg-gray-100 w-full text-left"
               type="button"
               onClick={async () => {
                 await logout();
