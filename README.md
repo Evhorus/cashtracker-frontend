@@ -30,11 +30,20 @@ Follow these steps to run the project locally:
 
 1. **Clone the repository**
 
+    `git clone https://github.com/Evhorus/cashtracker-frontend`
+
 2. **Install dependencies**
+
+   `npm i`
 
 3. **Configure environment variables**
 
-Create a `.env.local` file at the root of the project with the following content:
+Create a `.env` file at the root with environment variables:
+
+| Variable          | Description                |
+| ----------------- | -------------------------- |
+| `API_URL`         | Backend API base URL       |
+| `NEXT_PUBLIC_URL` | Frontend base URL (public) |
 
 4. **Run the development server**
 
@@ -48,12 +57,6 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Build for production     |
 | `npm start`     | Start production server  |
 
-## 📦 Environment Variables
-
-| Variable          | Description                |
-| ----------------- | -------------------------- |
-| `API_URL`         | Backend API base URL       |
-| `NEXT_PUBLIC_URL` | Frontend base URL (public) |
 
 ## 📣 Notes
 
