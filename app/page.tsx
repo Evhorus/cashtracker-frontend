@@ -2,7 +2,7 @@ import { Header } from '@/components';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-amber-100 to-white">
+    <div className="min-h-screen">
       <Header />
       <main className="max-w-2xl mx-auto  p-0 sm:p-8">
         <div className="bg-white/90 rounded-3xl shadow-2xl px-6 py-10 flex flex-col items-center gap-6">
