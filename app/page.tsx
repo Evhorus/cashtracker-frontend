@@ -1,75 +1,82 @@
-import Link from 'next/link';
 import { Header } from '@/components';
 
 export default function Home() {
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-amber-100 to-white">
       <Header />
+      <main className="max-w-2xl mx-auto  p-0 sm:p-8">
+        <div className="bg-white/90 rounded-3xl shadow-2xl px-6 py-10 flex flex-col items-center gap-6">
+          <h1 className="font-black text-5xl md:text-6xl text-purple-900 text-center drop-shadow-lg">
+            CashTracker
+          </h1>
+          <p className="text-xl md:text-2xl font-semibold text-gray-700 text-center">
+            Domina tus{' '}
+            <span className="text-amber-500 font-black">finanzas</span> con estilo
+            y facilidad
+          </p>
+          <p className="text-base md:text-lg text-gray-500 text-center max-w-xl">
+            Simplifica la gestión de tus ingresos y egresos en un solo lugar, de
+            manera intuitiva y eficiente. Toma el control total de tus finanzas
+            personales o empresariales con nuestra plataforma fácil de usar.
+          </p>
 
-      <main className=" max-w-3xl mx-auto p-5 space-y-5 mt-20">
-        <h1 className="font-black text-4xl lg:text-6xl text-purple-950">
-          Administrador de Gastos
-        </h1>
-        <p className="text-3xl font-bold">
-          controla tus <span className="text-amber-500">finanzas</span>
-        </p>
-        <p className="text-lg">
-          Domina tus finanzas con nuestro Administrador de Gastos. Simplifica la
-          gestión de tus ingresos y egresos en un solo lugar, de manera
-          intuitiva y eficiente. Toma el control total de tus finanzas
-          personales o empresariales con nuestra plataforma fácil de usar.
-        </p>
+          <h2 className="font-black text-3xl text-purple-800 mt-4 mb-2 text-center">
+            Ventajas de CashTracker
+          </h2>
 
-        <h2 className="font-black text-4xl text-purple-950 ">
-          Ventajas de CashTrackr
-        </h2>
-
-        <ol className="grid grid-cols-1 gap-5 items-start">
-          <li className="p-5 shadow-lg text-lg">
-            <span className="text-purple-950 font-black">
-              Organización sin Esfuerzo:{' '}
-            </span>
-            Clasifica y visualiza tus gastos de forma clara y ordenada, sin
-            complicaciones con nuestro panel amigable y fácil de usar.
-          </li>
-          <li className="p-5 shadow-lg text-lg">
-            <span className="text-purple-950 font-black">
-              Presupuestación Inteligente:{' '}
-            </span>
-            Establece objetivos financieros realistas y sigue tu progreso con
-            nuestras herramientas de presupuestación inteligente.
-          </li>
-          <li className="p-5 shadow-lg text-lg">
-            <span className="text-purple-950 font-black">
-              Acceso en cualquier lugar:{' '}
-            </span>
-            Nuestra plataforma está disponible para que puedas gestionar tus
-            finanzas desde donde te encuentres.
-          </li>
-          <li className="p-5 shadow-lg text-lg">
-            <span className="text-purple-950 font-black">
-              Seguridad Garantizada:{' '}
-            </span>
-            Protegemos tus datos con los más altos estándares de seguridad, para
-            que puedas utilizar nuestra plataforma con total tranquilidad.
-          </li>
-        </ol>
+          <ol className="grid grid-cols-1 gap-4 w-full">
+            <li className="flex items-start gap-3 p-4 rounded-xl bg-purple-50 shadow-md">
+              <span className="text-2xl">🗂️</span>
+              <div>
+                <span className="text-purple-900 font-bold">
+                  Organización sin Esfuerzo:{' '}
+                </span>
+                <span className="text-gray-700">
+                  Clasifica y visualiza tus gastos de forma clara y ordenada, sin
+                  complicaciones con nuestro panel amigable y fácil de usar.
+                </span>
+              </div>
+            </li>
+            <li className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 shadow-md">
+              <span className="text-2xl">🎯</span>
+              <div>
+                <span className="text-amber-600 font-bold">
+                  Presupuestación Inteligente:{' '}
+                </span>
+                <span className="text-gray-700">
+                  Establece objetivos financieros realistas y sigue tu progreso
+                  con nuestras herramientas de presupuestación inteligente.
+                </span>
+              </div>
+            </li>
+            <li className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 shadow-md">
+              <span className="text-2xl">🌍</span>
+              <div>
+                <span className="text-blue-700 font-bold">
+                  Acceso en cualquier lugar:{' '}
+                </span>
+                <span className="text-gray-700">
+                  Gestiona tus finanzas desde donde te encuentres, en cualquier
+                  dispositivo.
+                </span>
+              </div>
+            </li>
+            <li className="flex items-start gap-3 p-4 rounded-xl bg-green-50 shadow-md">
+              <span className="text-2xl">🔒</span>
+              <div>
+                <span className="text-green-700 font-bold">
+                  Seguridad Garantizada:{' '}
+                </span>
+                <span className="text-gray-700">
+                  Protegemos tus datos con los más altos estándares de seguridad,
+                  para que puedas utilizar nuestra plataforma con total
+                  tranquilidad.
+                </span>
+              </div>
+            </li>
+          </ol>
+        </div>
       </main>
-
-      <nav className="flex flex-col lg:flex-row lg:justify-between gap-5 mt-10 pb-20 max-w-3xl mx-auto ">
-        <Link
-          href="/auth/register"
-          className="text-gray-500 text-sm uppercase text-center"
-        >
-          ¿No tienes cuenta? Crea una
-        </Link>
-        <Link
-          href="/auth/login"
-          className="text-gray-500 text-sm uppercase text-center"
-        >
-          ¿Ya tienes cuenta? Iniciar Sesión
-        </Link>
-      </nav>
-    </>
+    </div>
   );
 }
