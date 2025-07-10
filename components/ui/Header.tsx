@@ -8,7 +8,7 @@ export const Header: React.FC = async () => {
   const { isAuth } = await verifySession();
 
   return (
-    <header className=" bg-purple-950 p-4">
+    <header className=" bg-purple-950 p-4 rounded-b-3xl sm:rounded-none">
       <div className="max-w-3xl mx-auto flex flex-col lg:flex-row items-center">
         <div className="w-96 lg:w-[500px]">
           <Logo />

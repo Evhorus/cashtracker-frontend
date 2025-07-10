@@ -4,15 +4,15 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="max-w-2xl mx-auto  p-0 sm:p-8">
-        <div className="bg-white/90 rounded-3xl shadow-2xl px-6 py-10 flex flex-col items-center gap-6">
+      <main className="max-w-2xl mx-auto my-2 p-0 sm:p-4">
+        <div className="rounded-3xl shadow-2xl px-6 py-10 flex flex-col items-center gap-6">
           <h1 className="font-black text-5xl md:text-6xl text-purple-900 text-center drop-shadow-lg">
             CashTracker
           </h1>
           <p className="text-xl md:text-2xl font-semibold text-gray-700 text-center">
             Domina tus{' '}
-            <span className="text-amber-500 font-black">finanzas</span> con estilo
-            y facilidad
+            <span className="text-amber-500 font-black">finanzas</span> con
+            estilo y facilidad
           </p>
           <p className="text-base md:text-lg text-gray-500 text-center max-w-xl">
             Simplifica la gestión de tus ingresos y egresos en un solo lugar, de
@@ -32,8 +32,8 @@ export default function Home() {
                   Organización sin Esfuerzo:{' '}
                 </span>
                 <span className="text-gray-700">
-                  Clasifica y visualiza tus gastos de forma clara y ordenada, sin
-                  complicaciones con nuestro panel amigable y fácil de usar.
+                  Clasifica y visualiza tus gastos de forma clara y ordenada,
+                  sin complicaciones con nuestro panel amigable y fácil de usar.
                 </span>
               </div>
             </li>
@@ -68,9 +68,9 @@ export default function Home() {
                   Seguridad Garantizada:{' '}
                 </span>
                 <span className="text-gray-700">
-                  Protegemos tus datos con los más altos estándares de seguridad,
-                  para que puedas utilizar nuestra plataforma con total
-                  tranquilidad.
+                  Protegemos tus datos con los más altos estándares de
+                  seguridad, para que puedas utilizar nuestra plataforma con
+                  total tranquilidad.
                 </span>
               </div>
             </li>
