@@ -2,5 +2,5 @@
 import { ToastContainer } from 'react-toastify';
 
 export const ToastNotification: React.FC = () => {
-  return <ToastContainer  />;
+  return <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />;
 };

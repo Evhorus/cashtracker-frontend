@@ -22,7 +22,7 @@ export const Header: React.FC = async () => {
                 href="/admin"
                 className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-4 py-2 rounded-lg transition-all duration-200 uppercase text-sm text-center shadow-lg hover:shadow-xl"
               >
-                Ir a Admin
+                Mi panel
               </Link>
               <button
                 className="text-white/80 hover:text-white text-sm cursor-pointer"

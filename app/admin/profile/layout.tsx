@@ -1,5 +1,4 @@
-import { ProfileTabs, ToastNotification } from '@/components';
-
+import { ProfileTabs } from '@/components';
 
 export default async function ProfileLayout({
   children,
@@ -10,7 +9,6 @@ export default async function ProfileLayout({
     <>
       <ProfileTabs />
       {children}
-      <ToastNotification />
     </>
   );
 }

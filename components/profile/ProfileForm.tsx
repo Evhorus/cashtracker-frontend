@@ -38,14 +38,14 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
         toast.error(err);
       });
     }
-  }, [state]);
+  }, [state.errors]);
 
   useEffect(() => {
     if (state.success) {
       toast.success(state.success);
       router.push('/admin');
     }
-  }, [state, router]);
+  }, [state.success, router]);
 
   const onUpdateProfile = handleSubmit((data) => {
     startTransition(() => dispatch(data));
