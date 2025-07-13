@@ -4,15 +4,11 @@ import { DialogTitle } from '@headlessui/react';
 import { startTransition, useActionState, useEffect } from 'react';
 import { deleteExpense } from '@/actions';
 import { toast } from 'react-toastify';
-import { Loader } from '../ui/Loader';
+import { Loader } from '../../../ui/Loader';
+import { useModal } from '@/src/hooks/use-modal';
 
-type DeleteExpenseFormProps = {
-  closeModal: () => void;
-};
-
-export const DeleteExpenseForm: React.FC<DeleteExpenseFormProps> = ({
-  closeModal,
-}) => {
+export const DeleteExpenseForm: React.FC = () => {
+  const { closeModal } = useModal();
   const { id: budgetId } = useParams();
   const searchParams = useSearchParams();
   const expenseId = searchParams.get('deleteExpenseId')!;

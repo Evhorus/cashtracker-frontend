@@ -5,18 +5,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
 import { useParams } from 'next/navigation';
 import { DialogTitle } from '@headlessui/react';
-import { ExpenseForm } from './ExpenseForm';
+import { useModal } from '@/src/hooks/use-modal';
 import { ExpenseFormSchema } from '@/src/schemas';
 import { createExpense } from '@/actions';
-import { Button } from '../ui/Button';
 
-type AddExpenseFormProps = {
-  closeModal: () => void;
-};
+import { ExpenseForm } from '../../ExpenseForm';
+import { Button } from '../../../ui/Button';
 
-export const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
-  closeModal,
-}) => {
+export const AddExpenseForm: React.FC = () => {
+  const { closeModal } = useModal();
   const { id } = useParams<{ id: string }>();
   const [state, dispatch, isPending] = useActionState(createExpense, {
     errors: [],

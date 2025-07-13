@@ -1,22 +1,19 @@
 'use client';
-import { startTransition, useActionState, useEffect, useState } from 'react';
+import { startTransition, useActionState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { DialogTitle } from '@headlessui/react';
-import { ExpenseForm } from './ExpenseForm';
+import { ExpenseForm } from '../../ExpenseForm';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Expense, ExpenseFormSchema } from '@/src/schemas';
+import { ExpenseFormSchema } from '@/src/schemas';
 import { editExpense } from '@/actions';
 import { toast } from 'react-toastify';
-import { Loader } from '../ui/Loader';
-import { Button } from '../ui/Button';
+import { Loader } from '../../../ui/Loader';
+import { Button } from '../../../ui/Button';
+import { useModal } from '@/src/hooks/use-modal';
 
-type EditExpenseForm = {
-  closeModal: () => void;
-};
-
-export const EditExpenseForm: React.FC<EditExpenseForm> = ({ closeModal }) => {
-  const [expense, setExpense] = useState<Expense>();
+export const EditExpenseForm: React.FC = () => {
+  const { expense, closeModal } = useModal();
 
   const { id: budgetId } = useParams<{ id: string }>();
 
@@ -40,13 +37,6 @@ export const EditExpenseForm: React.FC<EditExpenseForm> = ({ closeModal }) => {
       amount: (expense && +expense?.amount) || 0,
     },
   });
-
-  useEffect(() => {
-    const url = `${process.env.NEXT_PUBLIC_URL}/admin/api/budgets/${budgetId}/expenses/${expenseId}`;
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => setExpense(data));
-  }, [budgetId, expenseId]);
 
   useEffect(() => {
     if (state.errors) {

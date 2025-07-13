@@ -7,9 +7,9 @@ import {
   Transition,
   TransitionChild,
 } from '@headlessui/react';
-import { AddExpenseForm } from './AddExpenseForm';
-import { DeleteExpenseForm } from './DeleteExpenseForm';
-import { EditExpenseForm } from './EditExpenseForm';
+import { AddExpenseForm } from './modal/forms/AddExpenseForm';
+import { DeleteExpenseForm } from './modal/forms/DeleteExpenseForm';
+import { EditExpenseForm } from './modal/forms/EditExpenseForm';
 
 const componentsMap = {
   AddExpense: AddExpenseForm,

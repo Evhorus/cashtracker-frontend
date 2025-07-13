@@ -16,7 +16,7 @@ export * from './budgets/ProgressBar';
 
 // EXPENSES
 export * from './expenses/AddExpenseButton';
-export * from './expenses/ModalContainer';
+export * from './expenses/modal/Modal';
 export * from './expenses/ExpenseMenu';
 // UI
 export * from './ui/Header';

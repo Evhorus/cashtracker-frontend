@@ -2,15 +2,18 @@ import {
   AddExpenseButton,
   Amount,
   ExpenseMenu,
-  ModalContainer,
+  Modal,
   ProgressBar,
 } from '@/components';
+import { ModalContent } from '@/components/expenses/modal/ModalContent';
 import { getBudgetById } from '@/src/services/budgets';
+import { getExpenseById } from '@/src/services/expenses';
 import { formatCurrency, formatDate } from '@/src/utils';
 import { Metadata } from 'next';
 
 type BudgetDetailsPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ showModal: boolean; editExpenseId: string }>;
 };
 
 export const generateMetadata = async ({
@@ -26,8 +29,17 @@ export const generateMetadata = async ({
 
 export default async function BudgetDetailsPage({
   params,
+  searchParams,
 }: BudgetDetailsPageProps) {
   const { id } = await params;
+
+  let expense = null;
+
+  const { editExpenseId, showModal } = await searchParams;
+
+  if (editExpenseId && showModal) {
+    expense = await getExpenseById(id, editExpenseId);
+  }
 
   const budget = await getBudgetById(id);
 
@@ -112,7 +124,9 @@ export default async function BudgetDetailsPage({
         </>
       )}
 
-      <ModalContainer />
+      <Modal expense={expense}>
+        <ModalContent />
+      </Modal>
     </>
   );
 }
