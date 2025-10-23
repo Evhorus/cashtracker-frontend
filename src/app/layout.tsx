@@ -1,5 +1,8 @@
-import { geistMono, geistSans } from '@/fonts/fonts';
+import { ClerkProvider } from '@clerk/nextjs';
+import { geistMono, geistSans } from '@/shared/fonts/fonts';
 import './globals.css';
+import { Toaster } from '@/shared/components/ui/sonner';
+import { esMX } from '@clerk/localizations';
 
 export default function RootLayout({
   children,
@@ -7,12 +10,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider localization={esMX}>
+      <html lang="es">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {children}
+          <Toaster />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
