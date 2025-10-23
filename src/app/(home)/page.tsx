@@ -40,11 +40,11 @@ export default async function Home() {
               </Button>
             </Link>
 
-            <Link href="/demo">
+            {/* <Link href="/demo">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 Ver Demo
               </Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
