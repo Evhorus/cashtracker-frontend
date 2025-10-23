@@ -11,11 +11,12 @@ type DeleteBudgetActionState = {
 
 export const deleteBudgetAction = async (
   prevState: DeleteBudgetActionState,
-  id: string
+  budgetId: string
 ): Promise<DeleteBudgetActionState> => {
   const { getToken } = await auth();
   const token = await getToken();
-  const URL = `${process.env.API_URL}/budgets/${id}`;
+
+  const URL = `${process.env.API_URL}/budgets/${budgetId}`;
   try {
     const req = await fetch(URL, {
       method: 'DELETE',

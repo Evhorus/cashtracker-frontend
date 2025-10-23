@@ -8,16 +8,14 @@ import {
   UserButton,
   useUser,
 } from '@clerk/nextjs';
+import { Logo } from './Logo';
 
 export const CustomHeader = () => {
   const { isLoaded, user } = useUser();
   return (
     <header className="border-b border-border/40 bg-background/95 backdrop-blur sticky top-0 z-50 ">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Wallet className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">CashTracker</h1>
-        </div>
+        <Logo />
         {!isLoaded ? (
           <Loader2 className="animate-spin" />
         ) : !user ? (

@@ -49,7 +49,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
     <Dialog open={isOpen} onOpenChange={() => toggleDialog('create')}>
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
-          <Plus className="h-5 w-5" />
+          <Plus />
           Agregar Gasto
         </Button>
       </DialogTrigger>

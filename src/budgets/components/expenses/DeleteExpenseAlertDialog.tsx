@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from '@/shared/components/ui/alert-dialog';
 import { Button } from '@/shared/components/ui/button';
+import { cn } from '@/shared/lib/utils';
 import { Loader2, Trash2 } from 'lucide-react';
 import { startTransition, useActionState, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -19,11 +20,13 @@ import { toast } from 'sonner';
 interface DeleteExpenseAlertDialogProps {
   budgetId: string;
   expenseId: string;
+  className?: string;
 }
 
 export const DeleteExpenseAlertDialog = ({
   budgetId,
   expenseId,
+  className = '',
 }: DeleteExpenseAlertDialogProps) => {
   const [state, dispatch, isPending] = useActionState(deleteExpenseAction, {
     errors: [],
@@ -51,8 +54,8 @@ export const DeleteExpenseAlertDialog = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Trash2 className="h-4 w-4" />
+        <Button className={cn(className)} variant="outline" size="icon">
+          <Trash2 className="text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

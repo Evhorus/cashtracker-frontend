@@ -24,37 +24,37 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
           No hay gastos registrados
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {expenses.map((expense) => (
             <div
               key={expense.id}
-              className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
+              className="relative flex items-start gap-3 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer"
+              onClick={() => router.push(`${budgetId}/expenses/${expense.id}`)}
             >
-              <div
-                className="flex-1 min-w-0"
-                onClick={() =>
-                  router.push(`${budgetId}/expenses/${expense.id}`)
-                }
-              >
-                <div className="flex items-center gap-2">
-                  <h4 className="font-semibold truncate">{expense.name}</h4>
-                  {/* {expense.category && (
-                    <span className="text-xs bg-primary-light text-primary px-2 py-1 rounded-full">
-                      {expense.category}
-                    </span>
-                  )} */}
-                </div>
-                <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
+              {/* Contenido principal */}
+              <div className="flex-1 min-w-0">
+                {/* Título con line-clamp */}
+                <h4 className="font-semibold text-base line-clamp-2 pr-8 sm:pr-0">
+                  {expense.name}
+                </h4>
+
+                {/* Fecha y precio */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <span className="flex items-center gap-1 text-sm text-muted-foreground">
                     <Calendar className="h-3 w-3" />
                     {formatDate(expense.date)}
                   </span>
+                  <span className="font-bold text-lg">
+                    {formatCurrency(+expense.amount)}
+                  </span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="font-bold text-lg">
-                  {formatCurrency(+expense.amount)}
-                </span>
+
+              {/* Botón eliminar */}
+              <div
+                className="absolute bottom-4 right-4  sm:right-2 sm:top-0 sm:bottom-0 sm:self-center"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <DeleteExpenseAlertDialog
                   budgetId={budgetId}
                   expenseId={expense.id}
