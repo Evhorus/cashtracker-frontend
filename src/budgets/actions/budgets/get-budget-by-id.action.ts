@@ -1,26 +1,30 @@
 'use server';
 import { BudgetResponse } from '@/budgets/types/budget-response';
-import { getTokenFromCookies } from '@/shared/lib/get-token-from-cookies';
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
 const URL = `${process.env.API_URL}/budgets`;
 
 export const getBudgetByIdAction = async (id: string) => {
-  const TOKEN = await getTokenFromCookies();
+  const { getToken } = await auth();
+  const token = await getToken();
+
   try {
     const req = await fetch(`${URL}/${id}`, {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       next: {
         tags: ['budget'],
       },
     });
 
-    const json = await req.json();
-
     if (!req.ok) {
-      throw new Error('Failed to fetch budgets');
+      redirect('/dashboard');
     }
+
+    const json = await req.json();
 
     const budget: BudgetResponse = json;
 

@@ -1,15 +1,18 @@
 'use server';
 import { BudgetsResponse } from '@/budgets/types/budget-response';
-import { getTokenFromCookies } from '@/shared/lib/get-token-from-cookies';
+import { auth } from '@clerk/nextjs/server';
 
 const URL = `${process.env.API_URL}/budgets`;
 
 export const getBudgetsAction = async () => {
-  const TOKEN = await getTokenFromCookies();
+  const { getToken } = await auth();
+  const token = await getToken();
+
   try {
     const req = await fetch(URL, {
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       next: {
         tags: ['all-budgets'],
