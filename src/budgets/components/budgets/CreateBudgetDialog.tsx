@@ -11,21 +11,25 @@ import {
   DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { Budget } from '../../types';
-import { useDialog } from '../../hooks/useDialog';
+import { useDialogStore } from '../../store/dialog.store';
 import { useActionWithToast } from '../../hooks/useActionWithToast';
 import { BudgetForm } from './BudgetForm';
 import { BudgetFormValues } from '../../schemas/budget.schema';
 
 import { createUpdateBudgetAction } from '@/budgets/actions/budgets/create-update-budget.action';
 
-const budget = {
+const budgetData = {
   name: '',
   amount: '',
   description: '',
 } as unknown as Budget;
 
 export const CreateBudgetDialog = () => {
-  const { isOpen, toggleDialog } = useDialog('budget');
+  const budgetDialogState = useDialogStore((state) => state.budget);
+  const toggleDialog = useDialogStore((state) => state.toggleDialog);
+  const closeDialog = useDialogStore((state) => state.closeDialog);
+
+  const isOpen = budgetDialogState === 'create';
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateBudgetAction,
@@ -36,7 +40,7 @@ export const CreateBudgetDialog = () => {
   );
 
   useActionWithToast(state, {
-    onSuccess: () => toggleDialog(),
+    onSuccess: () => closeDialog('budget'),
   });
 
   const handleCreate = async (budgetFormValues: BudgetFormValues) => {
@@ -44,7 +48,7 @@ export const CreateBudgetDialog = () => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => toggleDialog('create')}>
+    <Dialog open={isOpen} onOpenChange={() => toggleDialog('budget', 'create')}>
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
           <Plus className="h-5 w-5" />
@@ -59,10 +63,10 @@ export const CreateBudgetDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <BudgetForm
-          budget={budget}
+          budget={budgetData}
           isLoading={isPending}
           onSubmit={handleCreate}
-          onCloseDialog={toggleDialog}
+          onCloseDialog={() => closeDialog('budget')}
         />
       </DialogContent>
     </Dialog>

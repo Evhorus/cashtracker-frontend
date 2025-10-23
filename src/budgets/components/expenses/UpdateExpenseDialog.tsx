@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { Button } from '@/shared/components/ui/button';
-import { useDialog } from '@/budgets/hooks/useDialog';
+import { useDialogStore } from '@/budgets/store/dialog.store';
 import { useActionWithToast } from '@/budgets/hooks/useActionWithToast';
 import { ExpenseForm } from './ExpenseForm';
 import { Expense } from '@/budgets/types';
@@ -25,7 +25,11 @@ export const UpdateExpenseDialog = ({
   budgetId,
   expense,
 }: UpdateExpenseDialogProps) => {
-  const { isOpen, toggleDialog } = useDialog('expense');
+  const expenseDialogState = useDialogStore((state) => state.expense);
+  const toggleDialog = useDialogStore((state) => state.toggleDialog);
+  const closeDialog = useDialogStore((state) => state.closeDialog);
+
+  const isOpen = expenseDialogState === 'edit';
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateExpenseAction,
@@ -36,7 +40,7 @@ export const UpdateExpenseDialog = ({
   );
 
   useActionWithToast(state, {
-    onSuccess: () => toggleDialog(),
+    onSuccess: () => closeDialog('expense'),
   });
 
   const handleCreate = async (expenseFormValues: ExpenseFormValues) => {
@@ -46,7 +50,7 @@ export const UpdateExpenseDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => toggleDialog('edit')}>
+    <Dialog open={isOpen} onOpenChange={() => toggleDialog('expense', 'edit')}>
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
           <Edit />
@@ -61,7 +65,7 @@ export const UpdateExpenseDialog = ({
           expense={expense}
           onSubmit={handleCreate}
           isLoading={isPending}
-          onCloseDialog={toggleDialog}
+          onCloseDialog={() => closeDialog('expense')}
         />
       </DialogContent>
     </Dialog>
