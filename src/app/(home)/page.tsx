@@ -2,6 +2,7 @@ import { features } from '@/constants/features';
 import { CustomHeader } from '@/shared/components/CustomHeader';
 import { Button } from '@/shared/components/ui/button';
 import { currentUser } from '@clerk/nextjs/server';
+import { Metadata } from 'next';
 
 import {
   Card,
@@ -11,6 +12,38 @@ import {
 } from '@/shared/components/ui/card';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'CashTracker - Control de Finanzas Personales',
+  description: 'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.',
+  keywords: ['finanzas personales', 'control de gastos', 'presupuestos', 'ahorro', 'gestión financiera', 'cashtracker'],
+  authors: [{ name: 'CashTracker Team' }],
+  openGraph: {
+    title: 'CashTracker - Toma el control de tus finanzas personales',
+    description: 'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis para empezar.',
+    type: 'website',
+    locale: 'es_ES',
+    siteName: 'CashTracker',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'CashTracker - Control de Finanzas Personales',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CashTracker - Control de Finanzas Personales',
+    description: 'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default async function Home() {
   const user = await currentUser();
