@@ -11,7 +11,7 @@ import {
 import { Edit } from 'lucide-react';
 import { startTransition, useActionState } from 'react';
 import { BudgetForm } from './BudgetForm';
-import { useDialog } from '../../hooks/useDialog';
+import { useDialogStore } from '../../store/dialog.store';
 import { useActionWithToast } from '../../hooks/useActionWithToast';
 import { BudgetFormValues } from '../../schemas/budget.schema';
 import { Budget } from '../../types';
@@ -22,7 +22,11 @@ interface UpdateBudgetDialog {
 }
 
 export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialog) => {
-  const { isOpen, toggleDialog } = useDialog('budget');
+  const budgetDialogState = useDialogStore((state) => state.budget);
+  const toggleDialog = useDialogStore((state) => state.toggleDialog);
+  const closeDialog = useDialogStore((state) => state.closeDialog);
+
+  const isOpen = budgetDialogState === 'edit';
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateBudgetAction,
@@ -33,7 +37,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialog) => {
   );
 
   useActionWithToast(state, {
-    onSuccess: () => toggleDialog(),
+    onSuccess: () => closeDialog('budget'),
   });
 
   const handleUpdate = async (budgetFormValues: BudgetFormValues) => {
@@ -41,7 +45,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialog) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => toggleDialog('edit')}>
+    <Dialog open={isOpen} onOpenChange={() => toggleDialog('budget', 'edit')}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Edit />
@@ -58,7 +62,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialog) => {
           budget={budget}
           isLoading={isPending}
           onSubmit={handleUpdate}
-          onCloseDialog={toggleDialog}
+          onCloseDialog={() => closeDialog('budget')}
         />
       </DialogContent>
     </Dialog>

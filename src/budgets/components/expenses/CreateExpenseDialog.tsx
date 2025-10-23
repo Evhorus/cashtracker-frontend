@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { Button } from '@/shared/components/ui/button';
-import { useDialog } from '@/budgets/hooks/useDialog';
+import { useDialogStore } from '@/budgets/store/dialog.store';
 import { useActionWithToast } from '@/budgets/hooks/useActionWithToast';
 import { ExpenseForm } from './ExpenseForm';
 import { Expense } from '@/budgets/types';
@@ -27,7 +27,11 @@ const expense = {
 } as unknown as Expense;
 
 export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
-  const { isOpen, toggleDialog } = useDialog('expense');
+  const expenseDialogState = useDialogStore((state) => state.expense);
+  const toggleDialog = useDialogStore((state) => state.toggleDialog);
+  const closeDialog = useDialogStore((state) => state.closeDialog);
+
+  const isOpen = expenseDialogState === 'create';
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateExpenseAction,
@@ -38,7 +42,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
   );
 
   useActionWithToast(state, {
-    onSuccess: () => toggleDialog(),
+    onSuccess: () => closeDialog('expense'),
   });
 
   const handleCreate = async (expenseFormValues: ExpenseFormValues) => {
@@ -46,7 +50,10 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => toggleDialog('create')}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => toggleDialog('expense', 'create')}
+    >
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
           <Plus />
@@ -62,7 +69,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
           expense={expense}
           onSubmit={handleCreate}
           isLoading={isPending}
-          onCloseDialog={toggleDialog}
+          onCloseDialog={() => closeDialog('expense')}
         />
       </DialogContent>
     </Dialog>
