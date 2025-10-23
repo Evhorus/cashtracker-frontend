@@ -6,11 +6,13 @@ import { formatNumber, parseNumericValue } from '@/shared/lib/format-currency';
 export interface PriceInputProps<T extends FieldValues> {
   value: string | undefined;
   onChange: ControllerRenderProps<T>['onChange'];
+  disabled?: boolean;
 }
 
 export function PriceInput<T extends FieldValues>({
   value,
   onChange,
+  disabled,
   ...field
 }: PriceInputProps<T>) {
   const [displayValue, setDisplayValue] = useState<string>('');
@@ -58,6 +60,7 @@ export function PriceInput<T extends FieldValues>({
         onChange={handleChange}
         placeholder="0"
         autoComplete="off"
+        disabled={disabled}
       />
     </div>
   );

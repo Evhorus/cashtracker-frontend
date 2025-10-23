@@ -54,6 +54,7 @@ export const BudgetForm = ({
                 placeholder="Ej: Gastos del hogar"
                 autoComplete="off"
                 autoFocus
+                disabled={isLoading}
               />
               {errors && errors.name && (
                 <ErrorMessage>{errors.name.message}</ErrorMessage>
@@ -66,7 +67,7 @@ export const BudgetForm = ({
               render={({ field }) => (
                 <Field>
                   <FieldLabel htmlFor="amount">Monto</FieldLabel>
-                  <PriceInput value={field.value} onChange={field.onChange} />
+                  <PriceInput value={field.value} onChange={field.onChange} disabled={isLoading} />
                   {errors && errors.amount && (
                     <ErrorMessage>{errors.amount.message}</ErrorMessage>
                   )}
@@ -82,6 +83,7 @@ export const BudgetForm = ({
                 placeholder="Ej: Hogar, Entretenimiento"
                 type="text"
                 autoComplete="off"
+                disabled={isLoading}
               />
             </Field>
           </FieldGroup>
@@ -91,7 +93,7 @@ export const BudgetForm = ({
           <Button isLoading={isLoading} type="submit">
             Guardar
           </Button>
-          <Button type="button" variant="outline" onClick={onCloseDialog}>
+          <Button type="button" variant="outline" onClick={onCloseDialog} disabled={isLoading}>
             Cancelar
           </Button>
         </Field>
