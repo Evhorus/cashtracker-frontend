@@ -14,13 +14,23 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'),
   title: 'CashTracker - Control de Finanzas Personales',
-  description: 'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.',
-  keywords: ['finanzas personales', 'control de gastos', 'presupuestos', 'ahorro', 'gestión financiera', 'cashtracker'],
+  description:
+    'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.',
+  keywords: [
+    'finanzas personales',
+    'control de gastos',
+    'presupuestos',
+    'ahorro',
+    'gestión financiera',
+    'cashtracker',
+  ],
   authors: [{ name: 'CashTracker Team' }],
   openGraph: {
     title: 'CashTracker - Toma el control de tus finanzas personales',
-    description: 'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis para empezar.',
+    description:
+      'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis para empezar.',
     type: 'website',
     locale: 'es_ES',
     siteName: 'CashTracker',
@@ -36,7 +46,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'CashTracker - Control de Finanzas Personales',
-    description: 'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis.',
+    description:
+      'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis.',
     images: ['/og-image.png'],
   },
   robots: {
