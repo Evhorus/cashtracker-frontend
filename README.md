@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CashTracker Frontend
 
-## Getting Started
+Proyecto [Next.js](https://nextjs.org) creado con [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-First, run the development server:
+## Requisitos Previos
+
+- Node.js 18.x o superior
+- npm, yarn, pnpm o bun
+
+## Instalación
+
+1. Clona el repositorio:
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd cashtracker-frontend
+```
+
+2. Instala las dependencias:
+
+```bash
+npm install
+# o
+yarn install
+# o
+pnpm install
+# o
+bun install
+```
+
+3. Configura las variables de entorno:
+   - Crea un archivo `.env` en la raíz del proyecto (tomar como referencia el env.template)
+   - Agrega las variables necesarias (Clerk API keys, etc.)
+
+## Ejecutar el Proyecto
+
+### Modo Desarrollo
+
+Inicia el servidor de desarrollo:
 
 ```bash
 npm run dev
-# or
+# o
 yarn dev
-# or
+# o
 pnpm dev
-# or
+# o
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La página se actualiza automáticamente al editar los archivos.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Compilar para Producción
 
-## Learn More
+Genera una versión optimizada para producción:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+# o
+yarn build
+# o
+pnpm build
+# o
+bun build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Ejecutar en Producción
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Después de compilar, inicia el servidor de producción:
 
-## Deploy on Vercel
+```bash
+npm start
+# o
+yarn start
+# o
+pnpm start
+# o
+bun start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Estructura del Proyecto
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+cashtracker-frontend/
+├── src/
+│   ├── app/                          # Next.js App Router
+│   │   ├── (auth)/                   # Grupo de rutas de autenticación
+│   │   │   ├── sign-in/              # Página de inicio de sesión
+│   │   │   └── sign-up/              # Página de registro
+│   │   ├── (home)/                   # Grupo de rutas públicas
+│   │   │   └── page.tsx              # Página de inicio
+│   │   ├── dashboard/                # Panel principal
+│   │   │   ├── budget/[budgetId]/    # Detalle de presupuesto
+│   │   │   │   └── expenses/         # Gestión de gastos
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── layout.tsx                # Layout principal
+│   │   ├── globals.css               # Estilos globales
+│   │   └── not-found.tsx             # Página 404
+│   ├── auth/                         # Módulo de autenticación
+│   │   ├── actions/                  # Server actions de auth
+│   │   ├── components/               # Componentes de auth
+│   │   └── schemas/                  # Validaciones de auth
+│   ├── budgets/                      # Módulo de presupuestos
+│   │   ├── actions/                  # Server actions
+│   │   │   ├── budgets/              # CRUD de presupuestos
+│   │   │   └── expenses/             # CRUD de gastos
+│   │   ├── components/               # Componentes del módulo
+│   │   │   ├── budgets/              # Componentes de presupuestos
+│   │   │   └── expenses/             # Componentes de gastos
+│   │   ├── hooks/                    # Custom hooks
+│   │   ├── mappers/                  # Transformadores de datos
+│   │   ├── schemas/                  # Validaciones con Zod
+│   │   └── types/                    # Tipos de TypeScript
+│   ├── shared/                       # Código compartido
+│   │   ├── components/               # Componentes reutilizables
+│   │   │   └── ui/                   # Componentes UI base (shadcn)
+│   │   ├── fonts/                    # Configuración de fuentes
+│   │   └── lib/                      # Utilidades generales
+│   ├── constants/                    # Constantes de la aplicación
+│   └── middleware.ts                 # Middleware de Next.js
+├── public/                           # Archivos estáticos
+│   └── *.svg                         # Iconos e imágenes
+├── .env.template                     # Plantilla de variables de entorno
+├── package.json
+├── tsconfig.json
+└── next.config.ts
+```
+
+## Tecnologías
+
+- **Framework:** Next.js 15.5.6
+- **React:** 19.1.0
+- **Autenticación:** Clerk
+- **UI Components:** Radix UI
+- **Estilos:** Tailwind CSS
+- **Validación:** Zod
+- **Forms:** React Hook Form
+- **Gráficas:** Recharts
+
+## Recursos
+
+- [Documentación de Next.js](https://nextjs.org/docs)
+- [Tutorial de Next.js](https://nextjs.org/learn)
+- [Documentación de Clerk](https://clerk.com/docs)
+
+## Deploy
+
+La forma más fácil de desplegar tu aplicación Next.js es usando [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+
+Consulta la [documentación de deployment de Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
