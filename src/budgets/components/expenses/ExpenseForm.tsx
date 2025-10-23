@@ -65,14 +65,18 @@ export const ExpenseForm = ({
               )}
             </Field>
 
-            <FieldGroup className="flex flex-row">
+            <FieldGroup className="flex flex-col sm:flex-row">
               <Controller
                 control={control}
                 name="amount"
                 render={({ field }) => (
                   <Field>
                     <FieldLabel htmlFor="amount">Monto</FieldLabel>
-                    <PriceInput value={field.value} onChange={field.onChange} disabled={isLoading} />
+                    <PriceInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isLoading}
+                    />
                     {errors && errors.amount && (
                       <ErrorMessage>{errors.amount.message}</ErrorMessage>
                     )}
@@ -82,7 +86,12 @@ export const ExpenseForm = ({
 
               <Field>
                 <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
-                <Input {...register('date')} id="expense-date" type="date" disabled={isLoading} />
+                <Input
+                  {...register('date')}
+                  id="expense-date"
+                  type="date"
+                  disabled={isLoading}
+                />
                 {errors && errors.date && (
                   <ErrorMessage>{errors.date.message}</ErrorMessage>
                 )}
@@ -111,7 +120,12 @@ export const ExpenseForm = ({
           <Button isLoading={isLoading} type="submit">
             Guardar
           </Button>
-          <Button type="button" variant="outline" onClick={onCloseDialog} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCloseDialog}
+            disabled={isLoading}
+          >
             Cancelar
           </Button>
         </Field>
