@@ -2,7 +2,7 @@ import { getBudgetByIdAction } from '@/budgets/actions/budgets/get-budget-by-id.
 import { getExpenseByIdAction } from '@/budgets/actions/expenses/get-expese-by-id.action';
 import { DeleteExpenseAlertDialog } from '@/budgets/components/expenses/DeleteExpenseAlertDialog';
 import { UpdateExpenseDialog } from '@/budgets/components/expenses/UpdateExpenseDialog';
-import { Budget, Expense } from '@/budgets/types';
+
 import { Button } from '@/shared/components/ui/button';
 import {
   Card,
@@ -10,19 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/shared/components/ui/dialog';
-import { Input } from '@/shared/components/ui/input';
-import { Label } from '@/shared/components/ui/label';
-import { Textarea } from '@/shared/components/ui/textarea';
+
 import { formatCurrency } from '@/shared/lib/format-currency';
 import { formatDate } from '@/shared/lib/format-date';
-import { ArrowLeft, Calendar, Edit, FileText, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 interface ExpensePageProps {
@@ -37,6 +28,11 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   const budget = await getBudgetByIdAction(budgetId);
 
   const impactPercentage = (+expense.amount / +budget.amount) * 100;
+
+  // function createFixedDate(dateString: string): Date {
+  //   const [year, month, day] = dateString.split('-').map(Number);
+  //   return new Date(year, month - 1, day);
+  // }
 
   const budgeTotalAmount = +expense.amount;
   const budgetSpent = +budget.spent;
