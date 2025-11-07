@@ -52,7 +52,7 @@ export const UpdateExpenseDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={() => toggleDialog('expense', 'edit')}>
       <DialogTrigger asChild>
-        <Button variant="default" size="lg">
+        <Button variant="default" size="icon">
           <Edit />
         </Button>
       </DialogTrigger>
