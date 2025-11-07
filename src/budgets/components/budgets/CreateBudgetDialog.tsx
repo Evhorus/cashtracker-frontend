@@ -62,6 +62,7 @@ export const CreateBudgetDialog = () => {
             Aquí puedes crear un presupuesto
           </DialogDescription>
         </DialogHeader>
+
         <BudgetForm
           budget={budgetData}
           isLoading={isPending}

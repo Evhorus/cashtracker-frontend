@@ -67,7 +67,11 @@ export const BudgetForm = ({
               render={({ field }) => (
                 <Field>
                   <FieldLabel htmlFor="amount">Monto</FieldLabel>
-                  <PriceInput value={field.value} onChange={field.onChange} disabled={isLoading} />
+                  <PriceInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    disabled={isLoading}
+                  />
                   {errors && errors.amount && (
                     <ErrorMessage>{errors.amount.message}</ErrorMessage>
                   )}
@@ -93,7 +97,12 @@ export const BudgetForm = ({
           <Button isLoading={isLoading} type="submit">
             Guardar
           </Button>
-          <Button type="button" variant="outline" onClick={onCloseDialog} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCloseDialog}
+            disabled={isLoading}
+          >
             Cancelar
           </Button>
         </Field>
