@@ -23,15 +23,11 @@ export const CustomHeader = () => {
             <SignInButton>
               <Button
                 size="default"
-                className="hidden md:block"
                 variant="outline"
                 aria-label="Iniciar sesión"
               >
                 Iniciar sesión
               </Button>
-            </SignInButton>
-            <SignInButton>
-              <User2 className="md:hidden" size={18} />
             </SignInButton>
           </SignedOut>
         ) : (
