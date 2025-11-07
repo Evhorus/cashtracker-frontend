@@ -80,7 +80,7 @@ export const BudgetCard = ({ budget }: BudgetCardProps) => {
         </div>
 
         <Link href={`/dashboard/budget/${budgetId}`}>
-          <Button variant="outline" className="w-full group">
+          <Button variant="default" className="w-full group">
             Ver detalles
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>

@@ -51,15 +51,16 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
               </div>
 
               {/* Botón eliminar */}
-              <div
-                className="absolute bottom-4 right-4  sm:right-2 sm:top-0 sm:bottom-0 sm:self-center"
+              <Button
+                variant="outline"
+                size="icon"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DeleteExpenseAlertDialog
                   budgetId={budgetId}
                   expenseId={expense.id}
                 />
-              </div>
+              </Button>
             </div>
           ))}
         </div>

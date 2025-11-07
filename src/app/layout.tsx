@@ -3,6 +3,7 @@ import { geistMono, geistSans } from '@/shared/fonts/fonts';
 import './globals.css';
 import { Toaster } from '@/shared/components/ui/sonner';
 import { esMX } from '@clerk/localizations';
+import { ThemeProvider } from '@/shared/providers/theme-provider';
 
 export default function RootLayout({
   children,
@@ -11,12 +12,20 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider localization={esMX}>
-      <html lang="es">
+      <html lang="es" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
-          <Toaster />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+
+            <Toaster />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
