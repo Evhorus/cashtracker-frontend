@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { ChevronLeft } from 'lucide-react';
-import { Logo } from '@/shared/components/Logo';
 
 export default async function AuthLayout({
   children,
