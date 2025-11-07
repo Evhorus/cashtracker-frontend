@@ -1,5 +1,5 @@
 import { getBudgetByIdAction } from '@/budgets/actions/budgets/get-budget-by-id.action';
-import { getExpenseByIdAction } from '@/budgets/actions/expenses/get-expese-by-id.action';
+import { getExpenseByIdAction } from '@/budgets/actions/expenses/get-expense-by-id.action';
 import { DeleteExpenseAlertDialog } from '@/budgets/components/expenses/DeleteExpenseAlertDialog';
 import { UpdateExpenseDialog } from '@/budgets/components/expenses/UpdateExpenseDialog';
 
@@ -29,12 +29,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
 
   const impactPercentage = (+expense.amount / +budget.amount) * 100;
 
-  // function createFixedDate(dateString: string): Date {
-  //   const [year, month, day] = dateString.split('-').map(Number);
-  //   return new Date(year, month - 1, day);
-  // }
-
-  const budgeTotalAmount = +expense.amount;
+  const budgeTotalAmount = +budget.amount;
   const budgetSpent = +budget.spent;
 
   return (
@@ -129,8 +124,8 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     budgetSpent > budgeTotalAmount
                       ? 'bg-destructive'
                       : budgeTotalAmount - budgetSpent < budgeTotalAmount * 0.2
-                      ? 'bg-warning'
-                      : 'bg-success'
+                      ? 'bg-destructive'
+                      : 'bg-primary'
                   }`}
                 />
                 <span className="text-sm font-medium">
