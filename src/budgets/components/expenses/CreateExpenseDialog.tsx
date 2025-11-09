@@ -57,7 +57,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
           <Plus />
-          Agregar Gasto
+          <span className="hidden sm:inline-block">Agregar Gasto</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
