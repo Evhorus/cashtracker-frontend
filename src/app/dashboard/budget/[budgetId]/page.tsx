@@ -60,15 +60,15 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Historial de Gastos</CardTitle>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-row items-center justify-between">
+              <h2 className="font-bold text-2xl">Historial de Gastos</h2>
               <CreateExpenseDialog budgetId={budget.id} />
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div>
               <ExpensesList expenses={budget.expenses} />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-4">
