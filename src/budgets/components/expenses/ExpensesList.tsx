@@ -1,13 +1,13 @@
-'use client';
-import { Expense } from '@/budgets/types';
+"use client";
+import { Expense } from "@/budgets/types";
 
-import { Button } from '@/shared/components/ui/button';
-import { Calendar, Trash2 } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
-import { DeleteExpenseAlertDialog } from './DeleteExpenseAlertDialog';
-import { formatDate } from '@/shared/lib/format-date';
-import { formatCurrency } from '@/shared/lib/format-currency';
-import { Card, CardContent, CardHeader } from '@/shared/components/ui/card';
+import { Calendar } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";
+import { formatDate } from "@/shared/lib/format-date";
+import { formatCurrency } from "@/shared/lib/format-currency";
+import { Card, CardContent } from "@/shared/components/ui/card";
+import { useCallback } from "react";
 
 interface ExpensesGridProps {
   expenses: Expense[];
@@ -17,6 +17,13 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
   const { budgetId } = useParams<{ budgetId: string }>();
 
   const router = useRouter();
+
+  const handleExpenseClick = useCallback(
+    (expenseId: string) => {
+      router.push(`${budgetId}/expenses/${expenseId}`);
+    },
+    [budgetId, router]
+  );
 
   return (
     <>
@@ -30,7 +37,7 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
             <Card
               key={expense.id}
               className="flex flex-col gap-2 cursor-pointer transition-colors hover:bg-muted"
-              onClick={() => router.push(`${budgetId}/expenses/${expense.id}`)}
+              onClick={() => handleExpenseClick(expense.id)}
             >
               <CardContent className="space-y-6">
                 <div>

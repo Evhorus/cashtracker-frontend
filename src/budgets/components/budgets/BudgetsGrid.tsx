@@ -1,10 +1,9 @@
-import React from 'react';
-import { Budget } from '../../types';
-import { Card } from '@/shared/components/ui/card';
-import { Wallet } from 'lucide-react';
-import { CreateBudgetDialog } from './CreateBudgetDialog';
-import { BudgetCard } from './BudgetCard';
-import { BudgetFormValues } from '../../schemas/budget.schema';
+import React from "react";
+import { Budget } from "../../types";
+import { Card } from "@/shared/components/ui/card";
+import { Wallet } from "lucide-react";
+import { CreateBudgetDialog } from "./CreateBudgetDialog";
+import { BudgetCard } from "./BudgetCard";
 
 interface BudgetsGridProps {
   budgets: Budget[];

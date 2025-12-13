@@ -1,33 +1,40 @@
-import { Budget } from '@/budgets/types';
-import { Button } from '@/shared/components/ui/button';
+import { Budget } from "@/budgets/types";
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/shared/components/ui/card';
-import { Progress } from '@/shared/components/ui/progress';
-import { formatCurrency } from '@/shared/lib/format-currency';
-import { ArrowRight, TrendingDown, TrendingUp } from 'lucide-react';
+} from "@/shared/components/ui/card";
+import { Progress } from "@/shared/components/ui/progress";
+import { formatCurrency } from "@/shared/lib/format-currency";
+import { ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 
-import Link from 'next/link';
+import Link from "next/link";
+import { useMemo } from "react";
+import React from "react";
 
 interface BudgetCardProps {
   budget: Budget;
 }
 
-export const BudgetCard = ({ budget }: BudgetCardProps) => {
+export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
   const budgetId = budget.id;
-  const remaining = +budget.amount - +budget.spent;
-  const percentage = (+budget.spent / +budget.amount) * 100;
-  const isOverBudget = +budget.spent > +budget.amount;
+
+  const calculations = useMemo(() => {
+    const remaining = Number(budget.amount) - Number(budget.spent);
+    const percentage = (Number(budget.spent) / Number(budget.amount)) * 100;
+    const isOverBudget = Number(budget.spent) > Number(budget.amount);
+
+    return { remaining, percentage, isOverBudget };
+  }, [budget.amount, budget.spent]);
 
   return (
     <Card className="overflow-hidden transition-all hover:shadow-custom-md animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center justify-between">
           <span className="truncate">{budget.name}</span>
-          {isOverBudget ? (
+          {calculations.isOverBudget ? (
             <TrendingDown className="h-5 w-5 text-destructive " />
           ) : (
             <TrendingUp className="h-5 w-5 text-success " />
@@ -40,15 +47,19 @@ export const BudgetCard = ({ budget }: BudgetCardProps) => {
             <span className="text-muted-foreground">Gastado</span>
             <span
               className={`font-semibold ${
-                isOverBudget ? 'text-destructive' : 'text-foreground'
+                calculations.isOverBudget
+                  ? "text-destructive"
+                  : "text-foreground"
               }`}
             >
               {formatCurrency(+budget.spent)}
             </span>
           </div>
           <Progress
-            value={Math.min(percentage, 100)}
-            className={`h-2 ${isOverBudget ? '[&>div]:bg-destructive' : ''}`}
+            value={Math.min(calculations.percentage, 100)}
+            className={`h-2 ${
+              calculations.isOverBudget ? "[&>div]:bg-destructive" : ""
+            }`}
           />
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Total</span>
@@ -60,21 +71,21 @@ export const BudgetCard = ({ budget }: BudgetCardProps) => {
 
         <div
           className={`p-3 rounded-lg ${
-            isOverBudget
-              ? 'bg-destructive/10 border border-destructive/20'
-              : remaining < +budget.amount * 0.2
-              ? 'bg-warning/10 border border-warning/20'
-              : 'bg-success/10 border border-success/20'
+            calculations.isOverBudget
+              ? "bg-destructive/10 border border-destructive/20"
+              : calculations.remaining < Number(budget.amount) * 0.2
+              ? "bg-warning/10 border border-warning/20"
+              : "bg-success/10 border border-success/20"
           }`}
         >
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Disponible</span>
             <span
               className={`text-lg font-bold ${
-                isOverBudget ? 'text-destructive' : 'text-success'
+                calculations.isOverBudget ? "text-destructive" : "text-success"
               }`}
             >
-              {formatCurrency(remaining)}
+              {formatCurrency(calculations.remaining)}
             </span>
           </div>
         </div>
@@ -88,4 +99,6 @@ export const BudgetCard = ({ budget }: BudgetCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+BudgetCard.displayName = "BudgetCard";
