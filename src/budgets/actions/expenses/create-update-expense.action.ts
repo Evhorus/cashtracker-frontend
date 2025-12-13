@@ -1,6 +1,6 @@
 'use server';
 import { ExpenseFormValues } from '@/budgets/schemas/expense.schema';
-import { auth } from '@clerk/nextjs/server';
+import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 import { revalidateTag } from 'next/cache';
 
 type CreateExpenseActionState = {
@@ -12,9 +12,6 @@ export const createUpdateExpenseAction = async (
   _prevState: CreateExpenseActionState,
   formData: ExpenseFormValues & { budgetId: string; expenseId?: string }
 ): Promise<CreateExpenseActionState> => {
-  const { getToken } = await auth();
-  const token = await getToken();
-
   const budgetId = formData.budgetId;
 
   const expenseId = formData.expenseId;
@@ -24,12 +21,8 @@ export const createUpdateExpenseAction = async (
     : `${process.env.API_URL}/budgets/${budgetId}/expenses`;
 
   try {
-    const req = await fetch(URL, {
+    const req = await authenticatedFetch(URL, {
       method: expenseId ? 'PATCH' : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({
         amount: +formData.amount,
         name: formData.name,
