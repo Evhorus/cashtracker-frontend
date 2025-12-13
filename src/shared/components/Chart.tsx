@@ -72,16 +72,27 @@ export const Chart = ({ chartData, totalBudgets }: ChartProps) => {
                   color: "var(--popover-foreground)",
                 }}
                 formatter={(value: number) => formatCurrency(value)}
+                cursor={{ fill: "var(--primary)", opacity: 0.15 }}
               />
               <Bar
                 dataKey="Gastado"
                 className="fill-chart-3"
                 radius={[4, 4, 0, 0]}
+                activeBar={{
+                  opacity: 1,
+                  stroke: "var(--ring)",
+                  strokeWidth: 2,
+                }}
               />
               <Bar
                 dataKey="Total"
                 className="fill-chart-1"
                 radius={[4, 4, 0, 0]}
+                activeBar={{
+                  opacity: 1,
+                  stroke: "var(--ring)",
+                  strokeWidth: 2,
+                }}
               />
             </BarChart>
           </ResponsiveContainer>
