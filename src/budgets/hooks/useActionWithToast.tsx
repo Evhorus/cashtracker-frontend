@@ -1,6 +1,6 @@
-'use client';
-import { useEffect, useRef } from 'react';
-import { toast } from 'sonner';
+"use client";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 interface ActionState {
   errors?: string[];
@@ -16,6 +16,12 @@ export const useActionWithToast = (
   options?: UseActionWithToastOptions
 ) => {
   const prevStateRef = useRef<ActionState>(state);
+  const onSuccessRef = useRef(options?.onSuccess);
+
+  // Update ref when callback changes
+  useEffect(() => {
+    onSuccessRef.current = options?.onSuccess;
+  }, [options?.onSuccess]);
 
   useEffect(() => {
     // Solo procesar si el estado cambió
@@ -29,9 +35,9 @@ export const useActionWithToast = (
 
     if (state.success) {
       toast.success(state.success);
-      options?.onSuccess?.();
+      onSuccessRef.current?.();
     }
 
     prevStateRef.current = state;
-  }, [state, options]);
+  }, [state]); // ✅ Solo depende de state
 };

@@ -1,11 +1,11 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
-import type { ControllerRenderProps, FieldValues } from 'react-hook-form';
-import { Input } from './ui/input';
-import { formatNumber, parseNumericValue } from '@/shared/lib/format-currency';
+import { useState, type ChangeEvent } from "react";
+import type { ControllerRenderProps, FieldValues } from "react-hook-form";
+import { Input } from "./ui/input";
+import { formatNumber, parseNumericValue } from "@/shared/lib/format-currency";
 
 export interface PriceInputProps<T extends FieldValues> {
   value: string | undefined;
-  onChange: ControllerRenderProps<T>['onChange'];
+  onChange: ControllerRenderProps<T>["onChange"];
   disabled?: boolean;
 }
 
@@ -15,29 +15,25 @@ export function PriceInput<T extends FieldValues>({
   disabled,
   ...field
 }: PriceInputProps<T>) {
-  const [displayValue, setDisplayValue] = useState<string>('');
+  const [displayValue, setDisplayValue] = useState<string>("");
 
-  useEffect(() => {
-    if (value === undefined || value === '') {
-      setDisplayValue('');
-      return;
+  // Derive display value from prop value
+  const getDisplayValue = () => {
+    if (value === undefined || value === "") {
+      return "";
     }
-    
+
     const num = parseNumericValue(value);
-    if (num > 0) {
-      setDisplayValue(formatNumber(num));
-    } else {
-      setDisplayValue('');
-    }
-  }, [value]);
+    return num > 0 ? formatNumber(num) : "";
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    const cleanedValue = rawValue.replace(/\D/g, ''); // Remover todo excepto dígitos
+    const cleanedValue = rawValue.replace(/\D/g, ""); // Remover todo excepto dígitos
 
-    if (cleanedValue === '') {
-      setDisplayValue('');
-      onChange('');
+    if (cleanedValue === "") {
+      setDisplayValue("");
+      onChange("");
       return;
     }
 
@@ -56,7 +52,7 @@ export function PriceInput<T extends FieldValues>({
         type="text"
         inputMode="numeric"
         className="pl-8"
-        value={displayValue}
+        value={displayValue || getDisplayValue()}
         onChange={handleChange}
         placeholder="0"
         autoComplete="off"

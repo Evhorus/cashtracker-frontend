@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   PieChart,
   Pie,
@@ -6,9 +6,9 @@ import {
   ResponsiveContainer,
   Legend,
   Tooltip,
-} from 'recharts';
-import { formatCurrency } from '@/shared/lib/format-currency';
-import { useEffect, useState } from 'react';
+} from "recharts";
+import { formatCurrency } from "@/shared/lib/format-currency";
+import { useEffect, useState } from "react";
 
 interface BudgetChartProps {
   spent: number;
@@ -16,10 +16,10 @@ interface BudgetChartProps {
 }
 
 const COLORS = {
-  spent: 'var(--chart-1)',
-  available: 'var(--chart-2)',
-  overspent: 'var(--chart-3)',
-  overspentExtra: 'var(--chart-4)',
+  spent: "var(--chart-1)",
+  available: "var(--chart-2)",
+  overspent: "var(--chart-3)",
+  overspentExtra: "var(--chart-4)",
 };
 
 export const BudgetChart = ({ spent, total }: BudgetChartProps) => {
@@ -30,41 +30,50 @@ export const BudgetChart = ({ spent, total }: BudgetChartProps) => {
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const data =
     overspent > 0
       ? [
-          { name: 'Gastado', value: total, color: COLORS.overspent },
+          { name: "Gastado", value: total, color: COLORS.overspent },
           {
-            name: 'Excedido',
+            name: "Excedido",
             value: overspent,
             color: COLORS.overspentExtra,
           },
         ]
       : [
-          { name: 'Gastado', value: spent, color: COLORS.spent },
-          { name: 'Disponible', value: remaining, color: COLORS.available },
+          { name: "Gastado", value: spent, color: COLORS.spent },
+          { name: "Disponible", value: remaining, color: COLORS.available },
         ];
 
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
-  const renderCustomLegend = (props: any) => {
+  const renderCustomLegend = (props: { payload?: readonly unknown[] }) => {
     const { payload } = props;
+    if (!payload) return null;
+
     return (
       <ul className="flex flex-wrap justify-center gap-4 text-xs sm:text-sm">
-        {payload.map((entry: any, index: number) => {
-          const percentage = ((entry.payload.value / totalValue) * 100).toFixed(0);
+        {payload.map((entry, index: number) => {
+          const item = entry as {
+            value: string;
+            color: string;
+            payload: { value: number };
+          };
+          const percentage = ((item.payload.value / totalValue) * 100).toFixed(
+            0
+          );
           return (
             <li key={`item-${index}`} className="flex items-center gap-2">
               <span
                 className="h-3 w-3 rounded-full"
-                style={{ backgroundColor: entry.color }}
+                style={{ backgroundColor: item.color }}
               />
               <span className="text-muted-foreground">
-                {entry.value} {isMobile && `(${percentage}%)`}
+                {item.value} {isMobile && `(${percentage}%)`}
               </span>
             </li>
           );
@@ -101,12 +110,12 @@ export const BudgetChart = ({ spent, total }: BudgetChartProps) => {
           <Tooltip
             formatter={(value: number) => formatCurrency(value)}
             contentStyle={{
-              backgroundColor: 'var(--card)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius)',
+              backgroundColor: "var(--card)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius)",
             }}
           />
-          <Legend content={renderCustomLegend} />
+          <Legend content={renderCustomLegend as never} />
         </PieChart>
       </ResponsiveContainer>
     </div>

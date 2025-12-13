@@ -1,15 +1,15 @@
-'use client';
-import { Loader2, Menu, User2, Wallet } from 'lucide-react';
-import { Button } from './ui/button';
+"use client";
+import { Loader2 } from "lucide-react";
+import { Button } from "./ui/button";
 import {
   SignedIn,
   SignedOut,
   SignInButton,
   UserButton,
   useUser,
-} from '@clerk/nextjs';
-import { Logo } from './Logo';
-import { ModeToggle } from './mode-toggle';
+} from "@clerk/nextjs";
+import { Logo } from "./Logo";
+import { ModeToggle } from "./mode-toggle";
 
 export const CustomHeader = () => {
   const { isLoaded, user } = useUser();
