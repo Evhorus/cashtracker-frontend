@@ -48,8 +48,6 @@ export function PriceInput<T extends FieldValues>({
     // Calculate new cursor position
     // Count how many separators are before the cursor in the old value
     const beforeCursor = rawValue.slice(0, cursorPosition);
-    const separatorsBefore = (beforeCursor.match(/\./g) || []).length;
-
     // Count digits before cursor
     const digitsBefore = beforeCursor.replace(/\D/g, "").length;
 
