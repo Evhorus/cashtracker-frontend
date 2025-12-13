@@ -3,6 +3,7 @@ import { BudgetsGrid } from "@/budgets/components/budgets/BudgetsGrid";
 import { CreateBudgetDialog } from "@/budgets/components/budgets/CreateBudgetDialog";
 import { Chart } from "@/shared/components/Chart";
 import { StatsCards } from "@/shared/components/StatsCards";
+import { DashboardHelpers } from "@/budgets/lib/budget-helpers";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
@@ -10,16 +11,10 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const budgets = await getBudgetsAction();
 
-  const totalBudget = budgets.data.reduce((sum, b) => sum + +b.amount, 0);
-  const totalSpent = budgets.data.reduce((sum, b) => sum + +b.spent, 0);
-
-  const totalRemaining = totalBudget - totalSpent;
-
-  const chartData = budgets.data.slice(0, 5).map((b) => ({
-    name: b.name.length > 15 ? b.name.substring(0, 15) + "..." : b.name,
-    Gastado: +b.spent,
-    Total: +b.amount,
-  }));
+  const totalBudget = DashboardHelpers.getTotalBudget(budgets.data);
+  const totalSpent = DashboardHelpers.getTotalSpent(budgets.data);
+  const totalRemaining = DashboardHelpers.getTotalRemaining(budgets.data);
+  const chartData = DashboardHelpers.getChartData(budgets.data);
 
   return (
     <div className="space-y-6">

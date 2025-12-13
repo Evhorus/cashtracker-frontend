@@ -1,4 +1,3 @@
-import { Budget } from "@/budgets/types";
 import { Button } from "@/shared/components/ui/button";
 import {
   Card,
@@ -13,6 +12,8 @@ import { ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import React from "react";
+import { BudgetHelpers } from "@/budgets/lib/budget-helpers";
+import { Budget } from "@/budgets/types";
 
 interface BudgetCardProps {
   budget: Budget;
@@ -21,13 +22,14 @@ interface BudgetCardProps {
 export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
   const budgetId = budget.id;
 
-  const calculations = useMemo(() => {
-    const remaining = Number(budget.amount) - Number(budget.spent);
-    const percentage = (Number(budget.spent) / Number(budget.amount)) * 100;
-    const isOverBudget = Number(budget.spent) > Number(budget.amount);
-
-    return { remaining, percentage, isOverBudget };
-  }, [budget.amount, budget.spent]);
+  const calculations = useMemo(
+    () => ({
+      remaining: BudgetHelpers.getRemaining(budget),
+      percentage: BudgetHelpers.getPercentage(budget),
+      isOverBudget: BudgetHelpers.isOverBudget(budget),
+    }),
+    [budget]
+  );
 
   return (
     <Card className="overflow-hidden transition-all hover:shadow-custom-md animate-fade-in">
@@ -73,7 +75,7 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
           className={`p-3 rounded-lg ${
             calculations.isOverBudget
               ? "bg-destructive/10 border border-destructive/20"
-              : calculations.remaining < Number(budget.amount) * 0.2
+              : BudgetHelpers.isLowBudget(budget)
               ? "bg-warning/10 border border-warning/20"
               : "bg-success/10 border border-success/20"
           }`}
