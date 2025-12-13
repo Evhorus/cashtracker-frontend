@@ -48,10 +48,10 @@ export const createUpdateBudgetAction = async (
     }
 
     const successMessage = json.message as string;
-    revalidateTag('all-budgets');
+    revalidateTag('all-budgets', 'max');
 
     if (id) {
-      revalidateTag('budget');
+      revalidateTag('budget', 'max');
     }
     return {
       errors: [],

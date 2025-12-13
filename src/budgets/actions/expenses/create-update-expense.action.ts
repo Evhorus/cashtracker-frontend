@@ -50,10 +50,10 @@ export const createUpdateExpenseAction = async (
     }
 
     const successMessage = json.message as string;
-    revalidateTag('all-budgets');
+    revalidateTag('all-budgets', 'max');
 
     if (expenseId) {
-      revalidateTag('expense');
+      revalidateTag('expense', 'max');
     }
 
     return {

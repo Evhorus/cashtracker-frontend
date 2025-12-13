@@ -39,7 +39,7 @@ export const deleteExpenseAction = async (
       };
     }
 
-    revalidateTag('all-budgets');
+    revalidateTag('all-budgets', 'max');
     redirect(`/dashboard/budget/${budgetId}`);
   } catch (error) {
     console.error('Error fetching budgets:', error);
