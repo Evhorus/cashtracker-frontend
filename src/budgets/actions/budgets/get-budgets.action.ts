@@ -1,19 +1,12 @@
 'use server';
 import { BudgetsResponse } from '@/budgets/types/budget-response';
-import { auth } from '@clerk/nextjs/server';
+import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 
 const URL = `${process.env.API_URL}/budgets`;
 
 export const getBudgetsAction = async () => {
-  const { getToken } = await auth();
-  const token = await getToken();
-
   try {
-    const req = await fetch(URL, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+    const req = await authenticatedFetch(URL, {
       next: {
         tags: ['all-budgets'],
       },

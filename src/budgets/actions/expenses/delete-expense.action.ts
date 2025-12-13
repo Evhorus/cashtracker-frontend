@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
+import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -13,17 +13,10 @@ export const deleteExpenseAction = async (
   prevState: DeleteBudgetActionState,
   { budgetId, expenseId }: { budgetId: string; expenseId: string }
 ): Promise<DeleteBudgetActionState> => {
-  const { getToken } = await auth();
-  const token = await getToken();
-
   const URL = `${process.env.API_URL}/budgets/${budgetId}/expenses/${expenseId}`;
   try {
-    const req = await fetch(URL, {
+    const req = await authenticatedFetch(URL, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
       next: {
         tags: ['all-budgets'],
       },
