@@ -1,6 +1,6 @@
-'use client';
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+"use client";
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   Bar,
   BarChart,
@@ -9,8 +9,8 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
-import { formatCurrency } from '../lib/format-currency';
+} from "recharts";
+import { formatCurrency } from "../lib/format-currency";
 
 type ChartData = {
   name: string;
@@ -60,9 +60,16 @@ export const Chart = ({ chartData, totalBudgets }: ChartProps) => {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'var(--card)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 'var(--radius)',
+                  backgroundColor: "var(--popover)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  color: "var(--popover-foreground)",
+                }}
+                labelStyle={{
+                  color: "var(--popover-foreground)",
+                }}
+                itemStyle={{
+                  color: "var(--popover-foreground)",
                 }}
                 formatter={(value: number) => formatCurrency(value)}
               />

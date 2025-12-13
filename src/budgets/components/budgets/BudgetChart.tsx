@@ -110,9 +110,16 @@ export const BudgetChart = ({ spent, total }: BudgetChartProps) => {
           <Tooltip
             formatter={(value: number) => formatCurrency(value)}
             contentStyle={{
-              backgroundColor: "var(--card)",
+              backgroundColor: "var(--popover)",
               border: "1px solid var(--border)",
               borderRadius: "var(--radius)",
+              color: "var(--popover-foreground)",
+            }}
+            labelStyle={{
+              color: "var(--popover-foreground)",
+            }}
+            itemStyle={{
+              color: "var(--popover-foreground)",
             }}
           />
           <Legend content={renderCustomLegend as never} />
