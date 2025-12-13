@@ -14,6 +14,7 @@ export const getExpenseByIdAction = async (
       {
         next: {
           tags: ['expense'],
+          revalidate: 60, // Revalidate every 60 seconds
         },
       }
     );
