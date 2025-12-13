@@ -1,21 +1,24 @@
-import Link from 'next/link';
-import { getBudgetByIdAction } from '@/budgets/actions/budgets/get-budget-by-id.action';
-import { DeleteBudgetAlertDialog } from '@/budgets/components/budgets/DeleteBudgetAlertDialog';
-import { UpdateBudgetDialog } from '@/budgets/components/budgets/UpdateBudgetDialog';
-import { CreateExpenseDialog } from '@/budgets/components/expenses/CreateExpenseDialog';
-import { ExpensesList } from '@/budgets/components/expenses/ExpensesList';
+import Link from "next/link";
+import { getBudgetByIdAction } from "@/budgets/actions/budgets/get-budget-by-id.action";
+import { DeleteBudgetAlertDialog } from "@/budgets/components/budgets/DeleteBudgetAlertDialog";
+import { UpdateBudgetDialog } from "@/budgets/components/budgets/UpdateBudgetDialog";
+import { CreateExpenseDialog } from "@/budgets/components/expenses/CreateExpenseDialog";
+import { ExpensesList } from "@/budgets/components/expenses/ExpensesList";
 
-import { Button } from '@/shared/components/ui/button';
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/shared/components/ui/card';
-import { formatCurrency } from '@/shared/lib/format-currency';
+} from "@/shared/components/ui/card";
+import { formatCurrency } from "@/shared/lib/format-currency";
 
-import { ArrowLeft } from 'lucide-react';
-import { BudgetChart } from '@/budgets/components/budgets/BudgetChart';
+import { ArrowLeft } from "lucide-react";
+import { BudgetChart } from "@/budgets/components/budgets/BudgetChart";
+
+// Force dynamic rendering because this page uses Clerk auth
+export const dynamic = "force-dynamic";
 
 interface BudgetPageProps {
   params: Promise<{ budgetId: string }>;
@@ -105,10 +108,10 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
           <Card
             className={
               remaining < 0
-                ? 'border-destructive'
+                ? "border-destructive"
                 : remaining < +budget.amount * 0.2
-                ? 'border-warning'
-                : 'border-success'
+                ? "border-warning"
+                : "border-success"
             }
           >
             <CardHeader>
@@ -119,7 +122,7 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
             <CardContent>
               <div
                 className={`text-3xl font-bold ${
-                  remaining < 0 ? 'text-destructive' : 'text-success'
+                  remaining < 0 ? "text-destructive" : "text-success"
                 }`}
               >
                 {formatCurrency(remaining)}

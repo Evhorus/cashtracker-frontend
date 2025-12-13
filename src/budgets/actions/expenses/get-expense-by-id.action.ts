@@ -8,14 +8,15 @@ export const getExpenseByIdAction = async (
   budgetId: string,
   expenseId: string
 ) => {
-  const URL = `${process.env.API_URL}/budgets/${budgetId}/expenses/${expenseId}`;
-
   try {
-    const req = await authenticatedFetch(URL, {
-      next: {
-        tags: ['expense'],
-      },
-    });
+    const req = await authenticatedFetch(
+      `/budgets/${budgetId}/expenses/${expenseId}`,
+      {
+        next: {
+          tags: ['expense'],
+        },
+      }
+    );
 
     const json = await req.json();
 

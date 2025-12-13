@@ -1,20 +1,23 @@
-import { getBudgetByIdAction } from '@/budgets/actions/budgets/get-budget-by-id.action';
-import { getExpenseByIdAction } from '@/budgets/actions/expenses/get-expense-by-id.action';
-import { DeleteExpenseAlertDialog } from '@/budgets/components/expenses/DeleteExpenseAlertDialog';
-import { UpdateExpenseDialog } from '@/budgets/components/expenses/UpdateExpenseDialog';
+import { getBudgetByIdAction } from "@/budgets/actions/budgets/get-budget-by-id.action";
+import { getExpenseByIdAction } from "@/budgets/actions/expenses/get-expense-by-id.action";
+import { DeleteExpenseAlertDialog } from "@/budgets/components/expenses/DeleteExpenseAlertDialog";
+import { UpdateExpenseDialog } from "@/budgets/components/expenses/UpdateExpenseDialog";
 
-import { Button } from '@/shared/components/ui/button';
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/shared/components/ui/card';
+} from "@/shared/components/ui/card";
 
-import { formatCurrency } from '@/shared/lib/format-currency';
-import { formatDate } from '@/shared/lib/format-date';
-import { ArrowLeft, Calendar, FileText } from 'lucide-react';
-import Link from 'next/link';
+import { formatCurrency } from "@/shared/lib/format-currency";
+import { formatDate } from "@/shared/lib/format-date";
+import { ArrowLeft, Calendar, FileText } from "lucide-react";
+import Link from "next/link";
+
+// Force dynamic rendering because this page uses Clerk auth
+export const dynamic = "force-dynamic";
 
 interface ExpensePageProps {
   params: Promise<{ budgetId: string; expenseId: string }>;
@@ -122,18 +125,18 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                 <div
                   className={`h-3 w-3 rounded-full ${
                     budgetSpent > budgeTotalAmount
-                      ? 'bg-destructive'
+                      ? "bg-destructive"
                       : budgeTotalAmount - budgetSpent < budgeTotalAmount * 0.2
-                      ? 'bg-destructive'
-                      : 'bg-primary'
+                      ? "bg-destructive"
+                      : "bg-primary"
                   }`}
                 />
                 <span className="text-sm font-medium">
                   {budgetSpent > budgeTotalAmount
-                    ? 'Presupuesto excedido'
+                    ? "Presupuesto excedido"
                     : budgeTotalAmount - budgetSpent < budgeTotalAmount * 0.2
-                    ? 'Presupuesto bajo'
-                    : 'Presupuesto saludable'}
+                    ? "Presupuesto bajo"
+                    : "Presupuesto saludable"}
                 </span>
               </div>
             </div>
