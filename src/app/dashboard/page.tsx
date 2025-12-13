@@ -1,8 +1,11 @@
-import { getBudgetsAction } from '@/budgets/actions/budgets/get-budgets.action';
-import { BudgetsGrid } from '@/budgets/components/budgets/BudgetsGrid';
-import { CreateBudgetDialog } from '@/budgets/components/budgets/CreateBudgetDialog';
-import { Chart } from '@/shared/components/Chart';
-import { StatsCards } from '@/shared/components/StatsCards';
+import { getBudgetsAction } from "@/budgets/actions/budgets/get-budgets.action";
+import { BudgetsGrid } from "@/budgets/components/budgets/BudgetsGrid";
+import { CreateBudgetDialog } from "@/budgets/components/budgets/CreateBudgetDialog";
+import { Chart } from "@/shared/components/Chart";
+import { StatsCards } from "@/shared/components/StatsCards";
+
+// Force dynamic rendering because this page uses Clerk auth
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const budgets = await getBudgetsAction();
@@ -13,7 +16,7 @@ export default async function DashboardPage() {
   const totalRemaining = totalBudget - totalSpent;
 
   const chartData = budgets.data.slice(0, 5).map((b) => ({
-    name: b.name.length > 15 ? b.name.substring(0, 15) + '...' : b.name,
+    name: b.name.length > 15 ? b.name.substring(0, 15) + "..." : b.name,
     Gastado: +b.spent,
     Total: +b.amount,
   }));

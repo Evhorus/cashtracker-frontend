@@ -16,12 +16,12 @@ export const createUpdateExpenseAction = async (
 
   const expenseId = formData.expenseId;
 
-  const URL = expenseId
-    ? `${process.env.API_URL}/budgets/${budgetId}/expenses/${expenseId}`
-    : `${process.env.API_URL}/budgets/${budgetId}/expenses`;
+  const path = expenseId
+    ? `/budgets/${budgetId}/expenses/${expenseId}`
+    : `/budgets/${budgetId}/expenses`;
 
   try {
-    const req = await authenticatedFetch(URL, {
+    const req = await authenticatedFetch(path, {
       method: expenseId ? 'PATCH' : 'POST',
       body: JSON.stringify({
         amount: +formData.amount,

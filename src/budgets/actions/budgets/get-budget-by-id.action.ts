@@ -3,11 +3,9 @@ import { BudgetResponse } from '@/budgets/types/budget-response';
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 import { redirect } from 'next/navigation';
 
-const URL = `${process.env.API_URL}/budgets`;
-
 export const getBudgetByIdAction = async (id: string) => {
   try {
-    const req = await authenticatedFetch(`${URL}/${id}`, {
+    const req = await authenticatedFetch(`/budgets/${id}`, {
       next: {
         tags: ['budget'],
       },

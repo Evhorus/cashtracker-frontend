@@ -2,11 +2,9 @@
 import { BudgetsResponse } from '@/budgets/types/budget-response';
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 
-const URL = `${process.env.API_URL}/budgets`;
-
 export const getBudgetsAction = async () => {
   try {
-    const req = await authenticatedFetch(URL, {
+    const req = await authenticatedFetch('/budgets', {
       next: {
         tags: ['all-budgets'],
       },

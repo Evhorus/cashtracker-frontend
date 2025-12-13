@@ -13,9 +13,8 @@ export const deleteBudgetAction = async (
   prevState: DeleteBudgetActionState,
   budgetId: string
 ): Promise<DeleteBudgetActionState> => {
-  const URL = `${process.env.API_URL}/budgets/${budgetId}`;
   try {
-    const req = await authenticatedFetch(URL, {
+    const req = await authenticatedFetch(`/budgets/${budgetId}`, {
       method: 'DELETE',
       next: {
         tags: ['all-budgets'],
@@ -32,10 +31,16 @@ export const deleteBudgetAction = async (
       };
     }
 
+    // Revalidate cache before redirect
     revalidateTag('all-budgets', 'max');
-    redirect('/dashboard');
   } catch (error) {
-    console.error('Error fetching budgets:', error);
-    throw error;
+    console.error('Error deleting budget:', error);
+    return {
+      success: '',
+      errors: ['No se pudo eliminar el presupuesto. Intenta más tarde.'],
+    };
   }
+
+  // Redirect outside try-catch to avoid catching the redirect error
+  redirect('/dashboard');
 };

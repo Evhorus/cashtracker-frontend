@@ -15,12 +15,10 @@ export const createUpdateBudgetAction = async (
 ): Promise<CreateBudgetActionState> => {
   const id = formData.id;
 
-  const url = id
-    ? `${process.env.API_URL}/budgets/${id}`
-    : `${process.env.API_URL}/budgets`;
+  const path = id ? `/budgets/${id}` : '/budgets';
 
   try {
-    const req = await authenticatedFetch(url, {
+    const req = await authenticatedFetch(path, {
       method: id ? 'PATCH' : 'POST',
       body: JSON.stringify({
         amount: +formData.amount,

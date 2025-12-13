@@ -1,5 +1,5 @@
-'use client';
-import { Button } from '@/shared/components/ui/button';
+"use client";
+import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,37 +7,42 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/shared/components/ui/dialog';
-import { Edit } from 'lucide-react';
-import { startTransition, useActionState } from 'react';
-import { BudgetForm } from './BudgetForm';
-import { useDialogStore } from '../../store/dialog.store';
-import { useActionWithToast } from '../../hooks/useActionWithToast';
-import { BudgetFormValues } from '../../schemas/budget.schema';
-import { Budget } from '../../types';
-import { createUpdateBudgetAction } from '@/budgets/actions/budgets/create-update-budget.action';
+} from "@/shared/components/ui/dialog";
+import { Edit } from "lucide-react";
+import { startTransition, useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { BudgetForm } from "./BudgetForm";
+import { useDialogStore } from "../../store/dialog.store";
+import { useActionWithToast } from "../../hooks/useActionWithToast";
+import { BudgetFormValues } from "../../schemas/budget.schema";
+import { Budget } from "../../types";
+import { createUpdateBudgetAction } from "@/budgets/actions/budgets/create-update-budget.action";
 
-interface UpdateBudgetDialog {
+interface UpdateBudgetDialogProps {
   budget: Budget;
 }
 
-export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialog) => {
+export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
+  const router = useRouter();
   const budgetDialogState = useDialogStore((state) => state.budget);
   const toggleDialog = useDialogStore((state) => state.toggleDialog);
   const closeDialog = useDialogStore((state) => state.closeDialog);
 
-  const isOpen = budgetDialogState === 'edit';
+  const isOpen = budgetDialogState === "edit";
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateBudgetAction,
     {
       errors: [],
-      success: '',
+      success: "",
     }
   );
 
   useActionWithToast(state, {
-    onSuccess: () => closeDialog('budget'),
+    onSuccess: () => {
+      router.refresh();
+      closeDialog("budget");
+    },
   });
 
   const handleUpdate = async (budgetFormValues: BudgetFormValues) => {
@@ -45,7 +50,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialog) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => toggleDialog('budget', 'edit')}>
+    <Dialog open={isOpen} onOpenChange={() => toggleDialog("budget", "edit")}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Edit />
@@ -62,7 +67,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialog) => {
           budget={budget}
           isLoading={isPending}
           onSubmit={handleUpdate}
-          onCloseDialog={() => closeDialog('budget')}
+          onCloseDialog={() => closeDialog("budget")}
         />
       </DialogContent>
     </Dialog>
