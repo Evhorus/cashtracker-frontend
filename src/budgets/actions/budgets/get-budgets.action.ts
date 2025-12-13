@@ -7,6 +7,7 @@ export const getBudgetsAction = async () => {
     const req = await authenticatedFetch('/budgets', {
       next: {
         tags: ['all-budgets'],
+        revalidate: 60, // Revalidate every 60 seconds
       },
     });
 
