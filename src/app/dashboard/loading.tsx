@@ -3,19 +3,19 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/shared/components/ui/card';
-import { Skeleton } from '@/shared/components/ui/skeleton';
+} from "@/shared/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function DashboardLoadingSkeleton() {
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <Skeleton className="h-9 w-48 mb-2" />
-          <Skeleton className="h-5 w-64" />
+        <div className="w-full sm:w-auto">
+          <Skeleton className="h-9 w-full max-w-48 mb-2" />
+          <Skeleton className="h-5 w-full max-w-64" />
         </div>
-        <Skeleton className="h-10 w-40" />
+        <Skeleton className="h-10 w-full sm:w-40" />
       </div>
 
       {/* Stats Cards */}
@@ -46,7 +46,7 @@ export default function DashboardLoadingSkeleton() {
 
       {/* Budgets Grid */}
       <div>
-        <Skeleton className="h-7 w-48 mb-4" />
+        <Skeleton className="h-7 w-full max-w-48 mb-4" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Card key={i}>

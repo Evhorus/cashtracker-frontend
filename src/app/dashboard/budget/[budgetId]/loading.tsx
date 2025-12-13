@@ -1,26 +1,26 @@
-import { Button } from '@/shared/components/ui/button';
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/shared/components/ui/card';
-import { Skeleton } from '@/shared/components/ui/skeleton';
-import { ArrowLeft } from 'lucide-react';
+} from "@/shared/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { ArrowLeft } from "lucide-react";
 
 export default function BudgetLoadingSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" disabled>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <Button variant="ghost" size="icon" disabled className="shrink-0">
           <ArrowLeft className="h-5 w-5" />
         </Button>
 
-        <div className="flex-1">
-          <Skeleton className="h-9 w-64 mb-2" />
-          <Skeleton className="h-5 w-40" />
+        <div className="flex-1 min-w-0 w-full sm:w-auto">
+          <Skeleton className="h-9 w-full max-w-64 mb-2" />
+          <Skeleton className="h-5 w-full max-w-40" />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full sm:w-auto justify-end">
           <Skeleton className="h-10 w-10" />
           <Skeleton className="h-10 w-10" />
         </div>
@@ -34,7 +34,7 @@ export default function BudgetLoadingSkeleton() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center h-64">
-                <Skeleton className="h-48 w-48 rounded-full" />
+                <Skeleton className="h-32 w-32 sm:h-48 sm:w-48 rounded-full" />
               </div>
             </CardContent>
           </Card>
