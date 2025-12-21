@@ -71,7 +71,11 @@ export const Chart = ({ chartData, totalBudgets }: ChartProps) => {
                 itemStyle={{
                   color: "var(--popover-foreground)",
                 }}
-                formatter={(value: number) => formatCurrency(value)}
+                formatter={(value) => {
+                  const numValue =
+                    typeof value === "number" ? value : Number(value);
+                  return !isNaN(numValue) ? formatCurrency(numValue) : "";
+                }}
                 cursor={{ fill: "var(--primary)", opacity: 0.15 }}
               />
               <Bar
