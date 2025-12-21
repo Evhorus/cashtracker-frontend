@@ -1,9 +1,10 @@
-import { ClerkProvider } from '@clerk/nextjs';
-import { geistMono, geistSans } from '@/shared/fonts/fonts';
-import './globals.css';
-import { Toaster } from '@/shared/components/ui/sonner';
-import { esMX } from '@clerk/localizations';
-import { ThemeProvider } from '@/shared/providers/theme-provider';
+import { ClerkProvider } from "@clerk/nextjs";
+import { geistMono, geistSans } from "@/shared/fonts/fonts";
+import { Analytics } from "@vercel/analytics/react";
+import "./globals.css";
+import { Toaster } from "@/shared/components/ui/sonner";
+import { esMX } from "@clerk/localizations";
+import { ThemeProvider } from "@/shared/providers/theme-provider";
 
 export default function RootLayout({
   children,
@@ -23,7 +24,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
-
+            <Analytics />
             <Toaster />
           </ThemeProvider>
         </body>
