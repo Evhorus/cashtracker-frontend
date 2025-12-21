@@ -108,7 +108,11 @@ export const BudgetChart = ({ spent, total }: BudgetChartProps) => {
             ))}
           </Pie>
           <Tooltip
-            formatter={(value: number) => formatCurrency(value)}
+            formatter={(value) => {
+              const numValue =
+                typeof value === "number" ? value : Number(value);
+              return !isNaN(numValue) ? formatCurrency(numValue) : "";
+            }}
             contentStyle={{
               backgroundColor: "var(--popover)",
               border: "1px solid var(--border)",
