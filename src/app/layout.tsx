@@ -1,6 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { geistMono, geistSans } from "@/shared/fonts/fonts";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Toaster } from "@/shared/components/ui/sonner";
 import { esMX } from "@clerk/localizations";
