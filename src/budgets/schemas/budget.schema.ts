@@ -24,13 +24,12 @@ export const BudgetsAPIResponseSchema = z.object({
 
 export const budgetFormSchema = z.object({
   name: z
-    .string({ message: 'El nombre es obligatorio' })
+    .string()
     .min(1, { message: 'El nombre del presupuesto es obligatorio' })
-    .max(100, { message: 'El nombre no puede exceder 100 caracteres' }),
-  amount: z
-    .string({ message: 'El monto es obligatorio' })
-    .min(1, { message: 'El monto no puede estar vacío' }),
-  category: z.string().max(50).optional(),
+    .refine((val) => val.trim().length > 0, 'No puede ser solo espacios')
+    .transform((val) => val.trim()),
+  amount: z.string().min(1, { message: 'El monto no puede estar vacío' }),
+  category: z.string().trim().max(50).optional(),
 });
 
 export type BudgetFormValues = z.infer<typeof budgetFormSchema>;

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -68,6 +69,10 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Agregar Nuevo Gasto</DialogTitle>
+          <DialogDescription>
+            Completa el formulario para registrar un nuevo gasto en este
+            presupuesto
+          </DialogDescription>
         </DialogHeader>
 
         <ExpenseForm

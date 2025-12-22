@@ -1,9 +1,18 @@
-import { useState, useRef, type ChangeEvent } from "react";
+import {
+  useState,
+  useRef,
+  type ChangeEvent,
+  type InputHTMLAttributes,
+} from "react";
 import type { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { Input } from "./ui/input";
 import { formatNumber, parseNumericValue } from "@/shared/lib/format-currency";
 
-export interface PriceInputProps<T extends FieldValues> {
+export interface PriceInputProps<T extends FieldValues>
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "value" | "onChange" | "disabled" | "type"
+  > {
   value: string | undefined;
   onChange: ControllerRenderProps<T>["onChange"];
   disabled?: boolean;

@@ -1,24 +1,24 @@
-'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+"use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 
-import { Input } from '@/shared/components/ui/input';
-import { Button } from '@/shared/components/ui/button';
+import { Input } from "@/shared/components/ui/input";
+import { Button } from "@/shared/components/ui/button";
 import {
   Field,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from '@/shared/components/ui/field';
-import { ErrorMessage } from '@/shared/components/ErrorMessage';
-import { Expense } from '@/budgets/types';
+} from "@/shared/components/ui/field";
+import { ErrorMessage } from "@/shared/components/ErrorMessage";
+import { Expense } from "@/budgets/types";
 
 import {
   ExpenseFormValues,
   expenseSchema,
-} from '@/budgets/schemas/expense.schema';
-import { Textarea } from '@/shared/components/ui/textarea';
-import { PriceInput } from '@/shared/components/PriceInput';
+} from "@/budgets/schemas/expense.schema";
+import { Textarea } from "@/shared/components/ui/textarea";
+import { PriceInput } from "@/shared/components/PriceInput";
 
 interface BudgetFormProps {
   expense: Expense;
@@ -34,7 +34,6 @@ export const ExpenseForm = ({
   onCloseDialog,
 }: BudgetFormProps) => {
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors },
@@ -48,22 +47,26 @@ export const ExpenseForm = ({
       <FieldGroup>
         <FieldSet>
           <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="name">Nombre del gasto</FieldLabel>
-              <Input
-                {...register('name')}
-                id="name"
-                placeholder="Ej: Compra supermercado"
-                autoComplete="off"
-                autoFocus
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? 'name-error' : undefined}
-                disabled={isLoading}
-              />
-              {errors && errors.name && (
-                <ErrorMessage>{errors.name.message}</ErrorMessage>
+            <Controller
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel htmlFor="name">Nombre del gasto</FieldLabel>
+                  <Input
+                    {...field}
+                    id="name"
+                    placeholder="Ej: Compra supermercado"
+                    autoComplete="off"
+                    autoFocus
+                    disabled={isLoading}
+                  />
+                  {errors.name?.message && (
+                    <ErrorMessage>{errors.name.message}</ErrorMessage>
+                  )}
+                </Field>
               )}
-            </Field>
+            />
 
             <FieldGroup className="flex flex-col sm:flex-row">
               <Controller
@@ -72,48 +75,61 @@ export const ExpenseForm = ({
                 render={({ field }) => (
                   <Field>
                     <FieldLabel htmlFor="amount">Monto</FieldLabel>
-                    <PriceInput
-                      value={field.value}
-                      onChange={field.onChange}
-                      disabled={isLoading}
-                    />
-                    {errors && errors.amount && (
+                    <PriceInput id="amount" {...field} disabled={isLoading} />
+                    {errors.amount?.message && (
                       <ErrorMessage>{errors.amount.message}</ErrorMessage>
                     )}
                   </Field>
                 )}
               />
 
-              <Field>
-                <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
-                <Input
-                  {...register('date')}
-                  id="expense-date"
-                  type="date"
-                  disabled={isLoading}
-                />
-                {errors && errors.date && (
-                  <ErrorMessage>{errors.date.message}</ErrorMessage>
+              <Controller
+                control={control}
+                name="date"
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
+                    <Input
+                      {...field}
+                      value={
+                        field.value instanceof Date
+                          ? field.value.toISOString().split("T")[0]
+                          : field.value
+                      }
+                      id="expense-date"
+                      type="date"
+                      disabled={isLoading}
+                    />
+                    {errors.date?.message && (
+                      <ErrorMessage>{errors.date.message}</ErrorMessage>
+                    )}
+                  </Field>
                 )}
-              </Field>
+              />
             </FieldGroup>
           </FieldGroup>
 
-          <Field>
-            <FieldLabel htmlFor="expense-description">
-              Descripción (opcional)
-            </FieldLabel>
-            <Textarea
-              {...register('description')}
-              id="expense-description"
-              placeholder="Añade detalles del gasto..."
-              rows={3}
-              disabled={isLoading}
-            />
-            {errors && errors.description && (
-              <ErrorMessage>{errors.description.message}</ErrorMessage>
+          <Controller
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <Field>
+                <FieldLabel htmlFor="expense-description">
+                  Descripción (opcional)
+                </FieldLabel>
+                <Textarea
+                  {...field}
+                  id="expense-description"
+                  placeholder="Añade detalles del gasto..."
+                  rows={3}
+                  disabled={isLoading}
+                />
+                {errors.description?.message && (
+                  <ErrorMessage>{errors.description.message}</ErrorMessage>
+                )}
+              </Field>
             )}
-          </Field>
+          />
         </FieldSet>
 
         <Field orientation="responsive">
