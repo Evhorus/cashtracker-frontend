@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -64,6 +65,9 @@ export const UpdateExpenseDialog = ({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Editar Gasto</DialogTitle>
+          <DialogDescription>
+            Modifica los datos del gasto seleccionado
+          </DialogDescription>
         </DialogHeader>
 
         <ExpenseForm

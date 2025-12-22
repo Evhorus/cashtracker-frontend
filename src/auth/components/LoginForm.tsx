@@ -1,18 +1,18 @@
-'use client';
-import { startTransition, useActionState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+"use client";
+import { startTransition, useActionState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from '@/shared/components/ui/button';
-import { loginSchema } from '../schemas/login.schema';
-import { ErrorMessage } from '@/shared/components/ErrorMessage';
-import { loginUserAction } from '../actions/login-user.action';
-import { toast } from 'sonner';
+import { Button } from "@/shared/components/ui/button";
+import { loginSchema } from "../schemas/login.schema";
+import { ErrorMessage } from "@/shared/components/ErrorMessage";
+import { loginUserAction } from "../actions/login-user.action";
+import { toast } from "sonner";
 
 export const LoginForm: React.FC = () => {
   const [state, dispatch, isPending] = useActionState(loginUserAction, {
     errors: [],
-    success: '',
+    success: "",
   });
 
   const {
@@ -22,8 +22,8 @@ export const LoginForm: React.FC = () => {
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -49,9 +49,9 @@ export const LoginForm: React.FC = () => {
           type="email"
           placeholder="Email de Registro"
           className="w-full border border-gray-300 p-3 rounded-lg"
-          {...register('email')}
+          {...register("email")}
         />
-        {errors && errors.email && (
+        {errors.email?.message && (
           <ErrorMessage>{errors.email.message}</ErrorMessage>
         )}
       </div>
@@ -63,9 +63,9 @@ export const LoginForm: React.FC = () => {
           type="password"
           placeholder="Contraseña de Registro"
           className="w-full border border-gray-300 p-3 rounded-lg"
-          {...register('password')}
+          {...register("password")}
         />
-        {errors && errors.password && (
+        {errors.password?.message && (
           <ErrorMessage>{errors.password.message}</ErrorMessage>
         )}
       </div>
