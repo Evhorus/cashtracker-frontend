@@ -19,11 +19,21 @@ import { createUpdateBudgetAction } from "@/budgets/actions/budgets/create-updat
 
 interface UpdateBudgetDialogProps {
   budget: Budget;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
+export const UpdateBudgetDialog = ({
+  budget,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+}: UpdateBudgetDialogProps) => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? setControlledOpen : setInternalOpen;
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateBudgetAction,
@@ -36,7 +46,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
   useActionWithToast(state, {
     onSuccess: () => {
       router.refresh();
-      setOpen(false);
+      setOpen?.(false);
     },
   });
 
@@ -46,11 +56,13 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Edit />
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button variant="outline" size="icon">
+            <Edit />
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Editar</DialogTitle>
@@ -62,7 +74,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
           budget={budget}
           isLoading={isPending}
           onSubmit={handleUpdate}
-          onCloseDialog={() => setOpen(false)}
+          onCloseDialog={() => setOpen?.(false)}
         />
       </DialogContent>
     </Dialog>

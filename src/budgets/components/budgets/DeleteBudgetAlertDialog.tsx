@@ -26,18 +26,26 @@ import { toast } from "sonner";
 interface DeleteBudgetAlertDialogProps {
   id: string;
   name: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const DeleteBudgetAlertDialog = ({
   id,
   name,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
 }: DeleteBudgetAlertDialogProps) => {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [state, dispatch, isPending] = useActionState(deleteBudgetAction, {
     errors: [],
     success: "",
   });
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? setControlledOpen : setInternalOpen;
 
   useEffect(() => {
     if (state.errors) {
@@ -69,11 +77,13 @@ export const DeleteBudgetAlertDialog = ({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </AlertDialogTrigger>
+      {!isControlled && (
+        <AlertDialogTrigger asChild>
+          <Button variant="outline" size="icon">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar presupuesto?</AlertDialogTitle>

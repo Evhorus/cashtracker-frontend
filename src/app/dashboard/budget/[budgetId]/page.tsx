@@ -4,6 +4,7 @@ import { DeleteBudgetAlertDialog } from "@/budgets/components/budgets/DeleteBudg
 import { UpdateBudgetDialog } from "@/budgets/components/budgets/UpdateBudgetDialog";
 import { CreateExpenseDialog } from "@/budgets/components/expenses/CreateExpenseDialog";
 import { ExpensesList } from "@/budgets/components/expenses/ExpensesList";
+import { BudgetActionsMenu } from "@/budgets/components/budgets/BudgetActionsMenu";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -14,7 +15,13 @@ import {
 } from "@/shared/components/ui/card";
 import { formatCurrency } from "@/shared/lib/format-currency";
 
-import { ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  CreditCard,
+  DollarSign,
+  PiggyBank,
+  Wallet,
+} from "lucide-react";
 import { BudgetChart } from "@/budgets/components/budgets/BudgetChart";
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -30,119 +37,133 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
   const budget = await getBudgetByIdAction(budgetId);
 
   const remaining = +budget.amount - +budget.spent;
+  const percentage = (+budget.spent / +budget.amount) * 100;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="icon" className="-ml-2">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
 
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">{budget.name}</h1>
-          {budget.category && (
-            <p className="text-muted-foreground mt-1">{budget.category}</p>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <UpdateBudgetDialog budget={budget} />
-          <DeleteBudgetAlertDialog id={budgetId} name={budget.name} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribución del Presupuesto</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BudgetChart spent={+budget.spent} total={+budget.amount} />
-            </CardContent>
-          </Card>
-
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-row items-center justify-between">
-              <h2 className="font-bold text-2xl">Historial de Gastos</h2>
-              <CreateExpenseDialog budgetId={budget.id} />
-            </div>
-            <div>
-              <ExpensesList expenses={budget.expenses} />
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{budget.name}</h1>
+            {budget.category && (
+              <p className="text-muted-foreground">{budget.category}</p>
+            )}
           </div>
         </div>
 
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Presupuesto Total
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {formatCurrency(+budget.amount)}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex gap-2">
+          {/* Mobile Actions (Dropdown) */}
+          <div className="md:hidden">
+            <BudgetActionsMenu budget={budget} />
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Gastado
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {formatCurrency(+budget.spent)}
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                {((+budget.spent / +budget.amount) * 100).toFixed(1)}% del
-                presupuesto
+          {/* Desktop Actions (Buttons) */}
+          <div className="hidden md:flex gap-2">
+            <UpdateBudgetDialog budget={budget} />
+            <DeleteBudgetAlertDialog id={budgetId} name={budget.name} />
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid - Top on all devices */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card
+          className={
+            remaining < 0
+              ? "border-destructive/50 bg-destructive/5"
+              : remaining < +budget.amount * 0.2
+              ? "border-warning/50 bg-warning/5"
+              : "border-success/50 bg-success/5"
+          }
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Disponible</CardTitle>
+            <Wallet
+              className={`h-4 w-4 ${
+                remaining < 0 ? "text-destructive" : "text-success"
+              }`}
+            />
+          </CardHeader>
+          <CardContent>
+            <div
+              className={`text-2xl font-bold ${
+                remaining < 0 ? "text-destructive" : "text-success"
+              }`}
+            >
+              {formatCurrency(remaining)}
+            </div>
+            {remaining < 0 && (
+              <p className="text-xs text-destructive mt-1">
+                Presupuesto excedido
               </p>
-            </CardContent>
-          </Card>
+            )}
+          </CardContent>
+        </Card>
 
-          <Card
-            className={
-              remaining < 0
-                ? "border-destructive"
-                : remaining < +budget.amount * 0.2
-                ? "border-warning"
-                : "border-success"
-            }
-          >
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Disponible
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-3xl font-bold ${
-                  remaining < 0 ? "text-destructive" : "text-success"
-                }`}
-              >
-                {formatCurrency(remaining)}
-              </div>
-              {remaining < 0 && (
-                <p className="text-sm text-destructive mt-1">
-                  Presupuesto excedido
-                </p>
-              )}
-            </CardContent>
-          </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Gastado</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatCurrency(+budget.spent)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {percentage.toFixed(1)}% del presupuesto
+            </p>
+          </CardContent>
+        </Card>
 
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Presupuesto Total
+            </CardTitle>
+            <PiggyBank className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {formatCurrency(+budget.amount)}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {budget.expenses.length} transacciones
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Split */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Expenses List (Larger) */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="flex flex-row items-center justify-between">
+            <h2 className="font-bold text-xl flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-primary" />
+              Historial de Gastos
+            </h2>
+            <CreateExpenseDialog budgetId={budget.id} />
+          </div>
+          <ExpensesList expenses={budget.expenses} />
+        </div>
+
+        {/* Right Column: Chart */}
+        <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Número de Gastos
-              </CardTitle>
+              <CardTitle className="text-lg">Distribución</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{budget.expenses.length}</div>
+              <div className="h-[300px] w-full">
+                <BudgetChart spent={+budget.spent} total={+budget.amount} />
+              </div>
             </CardContent>
           </Card>
         </div>
