@@ -1,6 +1,6 @@
 "use client";
 import { Loader2 } from "lucide-react";
-import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import {
   SignedIn,
   SignedOut,
@@ -25,13 +25,14 @@ export const CustomHeader = () => {
           ) : !user ? (
             <SignedOut>
               <SignInButton>
-                <Button
-                  size="default"
-                  variant="outline"
-                  aria-label="Iniciar sesión"
+                <span
+                  className={buttonVariants({
+                    variant: "outline",
+                    size: "default",
+                  })}
                 >
                   Iniciar sesión
-                </Button>
+                </span>
               </SignInButton>
             </SignedOut>
           ) : (

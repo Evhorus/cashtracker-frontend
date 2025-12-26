@@ -92,12 +92,12 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
           </div>
         </div>
 
-        <Link href={`/dashboard/budget/${budgetId}`}>
-          <Button variant="default" className="w-full group">
+        <Button asChild variant="default" className="w-full group">
+          <Link href={`/dashboard/budget/${budgetId}`}>
             Ver detalles
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </CardContent>
     </Card>
   );

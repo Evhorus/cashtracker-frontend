@@ -1,7 +1,7 @@
-import { Wallet, DollarSign, TrendingUp, PieChart } from 'lucide-react';
-import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { formatCurrency } from '../lib/format-currency';
+import { Wallet, DollarSign, TrendingUp, PieChart } from "lucide-react";
+import React from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { formatCurrency } from "../lib/format-currency";
 
 interface StatsCardProps {
   totalCount: number;
@@ -30,7 +30,7 @@ export const StatsCards = ({
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+      <Card className="animate-fade-in [animation-delay:100ms]">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Presupuestado
@@ -44,7 +44,7 @@ export const StatsCards = ({
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+      <Card className="animate-fade-in [animation-delay:200ms]">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Gastado
@@ -56,13 +56,13 @@ export const StatsCards = ({
           <p className="text-xs text-muted-foreground mt-1">
             {totalBudget > 0
               ? `${((totalSpent / totalBudget) * 100).toFixed(1)}%`
-              : '0%'}{' '}
+              : "0%"}{" "}
             del total
           </p>
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+      <Card className="animate-fade-in [animation-delay:300ms]">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Disponible
