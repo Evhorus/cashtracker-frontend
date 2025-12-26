@@ -28,11 +28,13 @@ export interface ActionItem {
 interface ActionsDrawerProps {
   actions: ActionItem[];
   title?: string;
+  triggerClassName?: string;
 }
 
 export const ActionsDrawer = ({
   actions,
   title = "Acciones",
+  triggerClassName,
 }: ActionsDrawerProps) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -42,7 +44,7 @@ export const ActionsDrawer = ({
     return (
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className={triggerClassName}>
             <MoreVertical className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
@@ -75,7 +77,7 @@ export const ActionsDrawer = ({
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className={triggerClassName}>
           <MoreVertical className="h-5 w-5" />
         </Button>
       </DrawerTrigger>
