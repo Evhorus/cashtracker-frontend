@@ -9,10 +9,9 @@ import {
   DialogTrigger,
 } from "@/shared/components/ui/dialog";
 import { Edit } from "lucide-react";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BudgetForm } from "./BudgetForm";
-import { useDialogStore } from "../../store/dialog.store";
 import { useActionWithToast } from "../../hooks/useActionWithToast";
 import { BudgetFormValues } from "../../schemas/budget.schema";
 import { Budget } from "../../types";
@@ -24,11 +23,7 @@ interface UpdateBudgetDialogProps {
 
 export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
   const router = useRouter();
-  const budgetDialogState = useDialogStore((state) => state.budget);
-  const toggleDialog = useDialogStore((state) => state.toggleDialog);
-  const closeDialog = useDialogStore((state) => state.closeDialog);
-
-  const isOpen = budgetDialogState === "edit";
+  const [open, setOpen] = useState(false);
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateBudgetAction,
@@ -41,7 +36,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
   useActionWithToast(state, {
     onSuccess: () => {
       router.refresh();
-      closeDialog("budget");
+      setOpen(false);
     },
   });
 
@@ -50,7 +45,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => toggleDialog("budget", "edit")}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <Edit />
@@ -67,7 +62,7 @@ export const UpdateBudgetDialog = ({ budget }: UpdateBudgetDialogProps) => {
           budget={budget}
           isLoading={isPending}
           onSubmit={handleUpdate}
-          onCloseDialog={() => closeDialog("budget")}
+          onCloseDialog={() => setOpen(false)}
         />
       </DialogContent>
     </Dialog>

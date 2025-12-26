@@ -1,7 +1,7 @@
 'use server';
 import { ExpenseFormValues } from '@/budgets/schemas/expense.schema';
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 type CreateExpenseActionState = {
   errors: string[];
@@ -43,6 +43,8 @@ export const createUpdateExpenseAction = async (
     }
 
     const successMessage = json.message as string;
+    revalidatePath('/dashboard');
+    revalidatePath(`/dashboard/budget/${budgetId}`);
     revalidateTag('all-budgets', 'max');
 
     if (expenseId) {
