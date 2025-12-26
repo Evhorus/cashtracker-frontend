@@ -42,33 +42,35 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
           <Link href="/dashboard">
             <Button variant="ghost" size="icon" className="-ml-2">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
 
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{budget.name}</h1>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">
+              {budget.name}
+            </h1>
             {budget.category && (
-              <p className="text-muted-foreground">{budget.category}</p>
+              <p className="text-sm text-muted-foreground truncate">
+                {budget.category}
+              </p>
             )}
           </div>
         </div>
 
-        <div className="flex gap-2">
-          {/* Mobile Actions (Dropdown) */}
-          <div className="md:hidden">
-            <BudgetActionsMenu budget={budget} />
-          </div>
+        {/* Mobile Actions (Drawer) */}
+        <div className="md:hidden flex-shrink-0">
+          <BudgetActionsMenu budget={budget} />
+        </div>
 
-          {/* Desktop Actions (Buttons) */}
-          <div className="hidden md:flex gap-2">
-            <UpdateBudgetDialog budget={budget} />
-            <DeleteBudgetAlertDialog id={budgetId} name={budget.name} />
-          </div>
+        {/* Desktop Actions (Buttons) */}
+        <div className="hidden md:flex gap-2 flex-shrink-0">
+          <UpdateBudgetDialog budget={budget} />
+          <DeleteBudgetAlertDialog id={budgetId} name={budget.name} />
         </div>
       </div>
 
