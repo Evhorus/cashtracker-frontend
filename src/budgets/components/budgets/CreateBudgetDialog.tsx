@@ -1,5 +1,5 @@
 "use client";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from "@/shared/components/ui/dialog";
 import { Budget } from "../../types";
-import { useDialogStore } from "../../store/dialog.store";
 import { useActionWithToast } from "../../hooks/useActionWithToast";
 import { BudgetForm } from "./BudgetForm";
 import { BudgetFormValues } from "../../schemas/budget.schema";
@@ -27,11 +26,7 @@ const budgetData = {
 
 export const CreateBudgetDialog = () => {
   const router = useRouter();
-  const budgetDialogState = useDialogStore((state) => state.budget);
-  const toggleDialog = useDialogStore((state) => state.toggleDialog);
-  const closeDialog = useDialogStore((state) => state.closeDialog);
-
-  const isOpen = budgetDialogState === "create";
+  const [open, setOpen] = useState(false);
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateBudgetAction,
@@ -44,7 +39,7 @@ export const CreateBudgetDialog = () => {
   useActionWithToast(state, {
     onSuccess: () => {
       router.refresh();
-      closeDialog("budget");
+      setOpen(false);
     },
   });
 
@@ -53,7 +48,7 @@ export const CreateBudgetDialog = () => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => toggleDialog("budget", "create")}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
           <Plus className="h-5 w-5" />
@@ -72,7 +67,7 @@ export const CreateBudgetDialog = () => {
           budget={budgetData}
           isLoading={isPending}
           onSubmit={handleCreate}
-          onCloseDialog={() => closeDialog("budget")}
+          onCloseDialog={() => setOpen(false)}
         />
       </DialogContent>
     </Dialog>

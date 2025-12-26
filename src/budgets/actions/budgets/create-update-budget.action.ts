@@ -2,7 +2,7 @@
 
 import { BudgetFormValues } from '@/budgets/schemas/budget.schema';
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 type CreateBudgetActionState = {
   errors: string[];
@@ -39,6 +39,7 @@ export const createUpdateBudgetAction = async (
     }
 
     const successMessage = json.message as string;
+    revalidatePath('/dashboard');
     revalidateTag('all-budgets', 'max');
 
     if (id) {

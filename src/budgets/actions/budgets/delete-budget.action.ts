@@ -1,7 +1,7 @@
 'use server';
 
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 type DeleteBudgetActionState = {
@@ -32,6 +32,7 @@ export const deleteBudgetAction = async (
     }
 
     // Revalidate cache before redirect
+    revalidatePath('/dashboard');
     revalidateTag('all-budgets', 'max');
   } catch (error) {
     console.error('Error deleting budget:', error);

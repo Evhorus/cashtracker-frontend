@@ -1,5 +1,5 @@
 "use client";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/shared/components/ui/dialog";
 import { Button } from "@/shared/components/ui/button";
-import { useDialogStore } from "@/budgets/store/dialog.store";
 import { useActionWithToast } from "@/budgets/hooks/useActionWithToast";
 import { ExpenseForm } from "./ExpenseForm";
 import { Expense } from "@/budgets/types";
@@ -30,11 +29,7 @@ const expense = {
 
 export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
   const router = useRouter();
-  const expenseDialogState = useDialogStore((state) => state.expense);
-  const toggleDialog = useDialogStore((state) => state.toggleDialog);
-  const closeDialog = useDialogStore((state) => state.closeDialog);
-
-  const isOpen = expenseDialogState === "create";
+  const [open, setOpen] = useState(false);
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateExpenseAction,
@@ -47,7 +42,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
   useActionWithToast(state, {
     onSuccess: () => {
       router.refresh();
-      closeDialog("expense");
+      setOpen(false);
     },
   });
 
@@ -56,10 +51,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={() => toggleDialog("expense", "create")}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
           <Plus />
@@ -79,7 +71,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
           expense={expense}
           onSubmit={handleCreate}
           isLoading={isPending}
-          onCloseDialog={() => closeDialog("expense")}
+          onCloseDialog={() => setOpen(false)}
         />
       </DialogContent>
     </Dialog>
