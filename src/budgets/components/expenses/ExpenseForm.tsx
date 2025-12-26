@@ -39,7 +39,10 @@ export const ExpenseForm = ({
     formState: { errors },
   } = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
-    defaultValues: expense,
+    defaultValues: {
+      ...expense,
+      description: expense.description ?? "",
+    },
   });
 
   return (
