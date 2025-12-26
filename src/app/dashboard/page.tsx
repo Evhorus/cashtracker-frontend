@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { getBudgetsAction } from "@/budgets/actions/budgets/get-budgets.action";
 import { BudgetsGrid } from "@/budgets/components/budgets/BudgetsGrid";
-import { CreateBudgetDialog } from "@/budgets/components/budgets/CreateBudgetDialog";
+import { Button } from "@/shared/components/ui/button";
 import { Chart } from "@/shared/components/Chart";
 import { StatsCards } from "@/shared/components/StatsCards";
 import { DashboardHelpers } from "@/budgets/lib/budget-helpers";
@@ -26,7 +27,6 @@ export default async function DashboardPage() {
             Resumen general de tus finanzas
           </p>
         </div>
-        <CreateBudgetDialog />
       </div>
 
       <StatsCards
@@ -38,7 +38,14 @@ export default async function DashboardPage() {
 
       <Chart chartData={chartData} totalBudgets={budgets.count} />
 
-      <BudgetsGrid budgets={budgets.data} />
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Mis Presupuestos</h2>
+        <Link href="/dashboard/budgets">
+          <Button variant="link">Ver todos</Button>
+        </Link>
+      </div>
+
+      <BudgetsGrid budgets={budgets.data.slice(0, 6)} />
     </div>
   );
 }
