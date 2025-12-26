@@ -20,14 +20,22 @@ import { ExpenseFormValues } from "@/budgets/schemas/expense.schema";
 interface UpdateExpenseDialogProps {
   budgetId: string;
   expense: Expense;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const UpdateExpenseDialog = ({
   budgetId,
   expense,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
 }: UpdateExpenseDialogProps) => {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? setControlledOpen : setInternalOpen;
 
   const [state, dispatch, isPending] = useActionState(
     createUpdateExpenseAction,
@@ -40,7 +48,7 @@ export const UpdateExpenseDialog = ({
   useActionWithToast(state, {
     onSuccess: () => {
       router.refresh();
-      setOpen(false);
+      setOpen?.(false);
     },
   });
 
@@ -52,11 +60,13 @@ export const UpdateExpenseDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default" size="icon">
-          <Edit />
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button variant="default" size="icon">
+            <Edit />
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Editar Gasto</DialogTitle>
@@ -69,7 +79,7 @@ export const UpdateExpenseDialog = ({
           expense={expense}
           onSubmit={handleCreate}
           isLoading={isPending}
-          onCloseDialog={() => setOpen(false)}
+          onCloseDialog={() => setOpen?.(false)}
         />
       </DialogContent>
     </Dialog>
