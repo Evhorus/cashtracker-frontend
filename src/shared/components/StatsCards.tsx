@@ -18,24 +18,28 @@ export const StatsCards = ({
 }: StatsCardProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card className="animate-fade-in">
+      <Card className="animate-fade-in border-0 shadow-sm hover:bg-card transition-colors duration-300">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Presupuestos Activos
           </CardTitle>
-          <Wallet className="h-4 w-4 text-muted-foreground" />
+          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <Wallet className="h-4 w-4" />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalCount}</div>
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in [animation-delay:100ms]">
+      <Card className="animate-fade-in [animation-delay:100ms] border-0 shadow-sm bg-card/50 hover:bg-card transition-colors duration-300">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Presupuestado
           </CardTitle>
-          <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+            <DollarSign className="h-4 w-4" />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
@@ -44,12 +48,14 @@ export const StatsCards = ({
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in [animation-delay:200ms]">
+      <Card className="animate-fade-in [animation-delay:200ms] border-0 shadow-sm bg-card/50 hover:bg-card transition-colors duration-300">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Gastado
           </CardTitle>
-          <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
+            <TrendingUp className="h-4 w-4" />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(totalSpent)}</div>
@@ -62,15 +68,21 @@ export const StatsCards = ({
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in [animation-delay:300ms]">
+      <Card className="animate-fade-in [animation-delay:300ms] border-0 shadow-sm bg-card/50 hover:bg-card transition-colors duration-300">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Disponible
           </CardTitle>
-          <PieChart className="h-4 w-4 text-muted-foreground" />
+          <div className="h-8 w-8 rounded-full bg-success/10 flex items-center justify-center text-success">
+            <PieChart className="h-4 w-4" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold`}>
+          <div
+            className={`text-2xl font-bold ${
+              totalRemaining < 0 ? "text-destructive" : "text-success"
+            }`}
+          >
             {formatCurrency(totalRemaining)}
           </div>
         </CardContent>

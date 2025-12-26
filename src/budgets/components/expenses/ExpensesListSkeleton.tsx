@@ -9,7 +9,7 @@ export const ExpenseCardSkeleton = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Left: Icon + Name + Date */}
           <div className="flex items-start gap-3">
-            <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+            <Skeleton className="h-12 w-12 rounded-xl shrink-0" />
             <div className="space-y-2 flex-1">
               <Skeleton className="h-5 w-32 md:w-48" />
               <div className="flex items-center gap-2">

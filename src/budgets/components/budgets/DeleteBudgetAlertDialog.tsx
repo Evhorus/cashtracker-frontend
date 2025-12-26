@@ -79,8 +79,8 @@ export const DeleteBudgetAlertDialog = ({
     <AlertDialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <AlertDialogTrigger asChild>
-          <Button variant="outline" size="icon">
-            <Trash2 className="h-4 w-4" />
+          <Button variant="ghost" size="icon">
+            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" />
           </Button>
         </AlertDialogTrigger>
       )}
