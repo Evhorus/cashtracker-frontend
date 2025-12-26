@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/shared/components/ui/sonner";
 import { esMX } from "@clerk/localizations";
 import { ThemeProvider } from "@/shared/providers/theme-provider";
+import { ScrollToTop } from "@/shared/components/scroll-to-top";
 
 import "./globals.css";
 
@@ -18,6 +19,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <ScrollToTop />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
