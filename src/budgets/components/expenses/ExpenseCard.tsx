@@ -81,8 +81,12 @@ export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
               </span>
 
               {/* Actions: Absolute top-right on mobile, static on desktop */}
-              <div data-no-nav className="absolute top-2 right-2 md:static">
-                <ActionsDrawer actions={actions} title="Opciones de Gasto" />
+              <div data-no-nav className="absolute top-3.5 right-2 md:static">
+                <ActionsDrawer
+                  actions={actions}
+                  title="Opciones de Gasto"
+                  triggerClassName="md:bg-transparent bg-secondary/50 hover:bg-secondary h-8 w-8 md:h-9 md:w-9"
+                />
               </div>
             </div>
           </div>
