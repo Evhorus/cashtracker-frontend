@@ -19,7 +19,13 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
   const router = useRouter();
 
   const handleExpenseClick = useCallback(
-    (expenseId: string) => {
+    (expenseId: string, e: React.MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Evitar navegación si el click viene del Drawer Overlay (Portal fuera de la tarjeta)
+      if (!e.currentTarget.contains(target)) return;
+      // Evitar navegación si el click es en el botón de borrar (marcado con data-no-nav)
+      if (target.closest("[data-no-nav]")) return;
+
       router.push(`${budgetId}/expenses/${expenseId}`);
     },
     [budgetId, router]
@@ -37,7 +43,7 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
             <Card
               key={expense.id}
               className="flex flex-col gap-2 cursor-pointer transition-colors hover:bg-muted"
-              onClick={() => handleExpenseClick(expense.id)}
+              onClick={(e) => handleExpenseClick(expense.id, e)}
             >
               <CardContent className="space-y-6">
                 <div>
@@ -53,9 +59,7 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
                     {formatCurrency(+expense.amount)}
                   </span>
 
-                  <div
-                    onClick={(e) => e.stopPropagation()} // Evita que se propague el click y navegue
-                  >
+                  <div data-no-nav>
                     <DeleteExpenseAlertDialog
                       budgetId={budgetId}
                       expenseId={expense.id}
