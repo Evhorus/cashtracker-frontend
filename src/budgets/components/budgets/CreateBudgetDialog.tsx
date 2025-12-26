@@ -52,7 +52,7 @@ export const CreateBudgetDialog = () => {
       <DialogTrigger asChild>
         <Button variant="default" size="lg">
           <Plus className="h-5 w-5" />
-          Nuevo Presupuesto
+          <span className="hidden md:inline">Nuevo Presupuesto</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
