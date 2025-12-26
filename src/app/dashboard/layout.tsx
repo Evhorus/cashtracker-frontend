@@ -1,4 +1,5 @@
-import { CustomHeader } from '@/shared/components/CustomHeader';
+import { CustomHeader } from "@/shared/components/CustomHeader";
+import { MobileNav } from "@/shared/components/MobileNav";
 
 export default function DashboardLayout({
   children,
@@ -8,7 +9,10 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <CustomHeader />
-      <main className="container py-6 px-4 mx-auto">{children}</main>
+      <main className="container py-6 px-4 mx-auto pb-24 md:pb-6">
+        {children}
+      </main>
+      <MobileNav />
     </div>
   );
 }
