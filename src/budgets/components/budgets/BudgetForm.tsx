@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
@@ -37,7 +37,10 @@ export const BudgetForm = ({
     formState: { errors },
   } = useForm<BudgetFormValues>({
     resolver: zodResolver(budgetFormSchema),
-    defaultValues: { ...budget, amount: budget.amount },
+    defaultValues: {
+      ...budget,
+      category: budget.category ?? "",
+    },
   });
 
   return (

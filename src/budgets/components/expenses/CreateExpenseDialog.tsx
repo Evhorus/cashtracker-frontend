@@ -25,7 +25,7 @@ interface CreateExpenseDialogProps {
 const expense = {
   name: "",
   amount: "",
-  date: "",
+  date: new Date(),
 } as unknown as Expense;
 
 export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
