@@ -2,6 +2,7 @@ import { getBudgetByIdAction } from "@/budgets/actions/budgets/get-budget-by-id.
 import { getExpenseByIdAction } from "@/budgets/actions/expenses/get-expense-by-id.action";
 import { DeleteExpenseAlertDialog } from "@/budgets/components/expenses/DeleteExpenseAlertDialog";
 import { UpdateExpenseDialog } from "@/budgets/components/expenses/UpdateExpenseDialog";
+import { ExpenseActionsMenu } from "@/budgets/components/expenses/ExpenseActionsMenu";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -37,20 +38,33 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
-        <Link href={`/dashboard/budget/${budgetId}`}>
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </Link>
+      {/* Header Section */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <Link href={`/dashboard/budget/${budgetId}`}>
+            <Button variant="ghost" size="icon" className="-ml-2">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
 
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">{expense.name}</h1>
-          <p className="text-muted-foreground mt-1">Gasto de {budget.name}</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl md:text-3xl font-bold truncate">
+              {expense.name}
+            </h1>
+            <p className="text-sm text-muted-foreground truncate">
+              Gasto de {budget.name}
+            </p>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <UpdateExpenseDialog budgetId={budgetId} expense={expense} />
 
+        {/* Mobile Actions (Drawer) */}
+        <div className="md:hidden shrink-0">
+          <ExpenseActionsMenu budgetId={budgetId} expense={expense} />
+        </div>
+
+        {/* Desktop Actions (Buttons) */}
+        <div className="hidden md:flex gap-2 shrink-0">
+          <UpdateExpenseDialog budgetId={budgetId} expense={expense} />
           <DeleteExpenseAlertDialog budgetId={budgetId} expenseId={expenseId} />
         </div>
       </div>

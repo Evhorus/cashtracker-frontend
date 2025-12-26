@@ -32,19 +32,28 @@ interface DeleteExpenseAlertDialogProps {
   budgetId: string;
   expenseId: string;
   className?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const DeleteExpenseAlertDialog = ({
   budgetId,
   expenseId,
   className = "",
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
 }: DeleteExpenseAlertDialogProps) => {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [state, dispatch, isPending] = useActionState(deleteExpenseAction, {
     errors: [],
     success: "",
   });
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? setControlledOpen : setInternalOpen;
+
   useEffect(() => {
     if (state.errors) {
       state.errors.forEach((err) => {
@@ -60,11 +69,13 @@ export const DeleteExpenseAlertDialog = ({
   if (isDesktop) {
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger asChild>
-          <Button className={cn(className)} variant="outline" size="icon">
-            <Trash2 className="text-destructive" />
-          </Button>
-        </AlertDialogTrigger>
+        {!isControlled && (
+          <AlertDialogTrigger asChild>
+            <Button className={cn(className)} variant="outline" size="icon">
+              <Trash2 className="text-destructive" />
+            </Button>
+          </AlertDialogTrigger>
+        )}
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar gasto?</AlertDialogTitle>
@@ -93,11 +104,13 @@ export const DeleteExpenseAlertDialog = ({
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button className={cn(className)} variant="outline" size="icon">
-          <Trash2 className="text-destructive" />
-        </Button>
-      </DrawerTrigger>
+      {!isControlled && (
+        <DrawerTrigger asChild>
+          <Button className={cn(className)} variant="outline" size="icon">
+            <Trash2 className="text-destructive" />
+          </Button>
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>¿Eliminar gasto?</DrawerTitle>

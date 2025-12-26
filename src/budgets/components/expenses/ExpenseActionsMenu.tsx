@@ -2,27 +2,31 @@
 
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
-import { Budget } from "../../types";
-import { UpdateBudgetDialog } from "./UpdateBudgetDialog";
-import { DeleteBudgetAlertDialog } from "./DeleteBudgetAlertDialog";
+import { Expense } from "../../types";
+import { UpdateExpenseDialog } from "./UpdateExpenseDialog";
+import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";
 import { ActionsDrawer, ActionItem } from "@/shared/components/ActionsDrawer";
 
-interface BudgetActionsMenuProps {
-  budget: Budget;
+interface ExpenseActionsMenuProps {
+  budgetId: string;
+  expense: Expense;
 }
 
-export const BudgetActionsMenu = ({ budget }: BudgetActionsMenuProps) => {
+export const ExpenseActionsMenu = ({
+  budgetId,
+  expense,
+}: ExpenseActionsMenuProps) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const actions: ActionItem[] = [
     {
-      label: "Editar Presupuesto",
+      label: "Editar Gasto",
       icon: Edit,
       onClick: () => setShowEditDialog(true),
     },
     {
-      label: "Eliminar Presupuesto",
+      label: "Eliminar Gasto",
       icon: Trash2,
       onClick: () => setShowDeleteDialog(true),
       variant: "destructive",
@@ -33,14 +37,15 @@ export const BudgetActionsMenu = ({ budget }: BudgetActionsMenuProps) => {
     <>
       <ActionsDrawer actions={actions} />
 
-      <UpdateBudgetDialog
-        budget={budget}
+      <UpdateExpenseDialog
+        budgetId={budgetId}
+        expense={expense}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
       />
-      <DeleteBudgetAlertDialog
-        id={budget.id}
-        name={budget.name}
+      <DeleteExpenseAlertDialog
+        budgetId={budgetId}
+        expenseId={expense.id}
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
       />
