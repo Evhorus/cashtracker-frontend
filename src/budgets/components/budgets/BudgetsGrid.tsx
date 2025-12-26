@@ -12,7 +12,6 @@ interface BudgetsGridProps {
 export const BudgetsGrid = ({ budgets }: BudgetsGridProps) => {
   return (
     <>
-      <h2 className="text-2xl font-semibold mb-4">Mis Presupuestos</h2>
       {budgets.length === 0 ? (
         <Card className="p-12 text-center animate-fade-in">
           <div className="max-w-md mx-auto space-y-4">
