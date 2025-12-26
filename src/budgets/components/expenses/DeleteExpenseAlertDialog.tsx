@@ -1,5 +1,5 @@
-'use client';
-import { deleteExpenseAction } from '@/budgets/actions/expenses/delete-expense.action';
+"use client";
+import { deleteExpenseAction } from "@/budgets/actions/expenses/delete-expense.action";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,12 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/shared/components/ui/alert-dialog';
-import { Button } from '@/shared/components/ui/button';
-import { cn } from '@/shared/lib/utils';
-import { Loader2, Trash2 } from 'lucide-react';
-import { startTransition, useActionState, useEffect } from 'react';
-import { toast } from 'sonner';
+} from "@/shared/components/ui/alert-dialog";
+import { Button } from "@/shared/components/ui/button";
+import { cn } from "@/shared/lib/utils";
+import { Loader2, Trash2 } from "lucide-react";
+import { startTransition, useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
 interface DeleteExpenseAlertDialogProps {
   budgetId: string;
@@ -26,11 +26,11 @@ interface DeleteExpenseAlertDialogProps {
 export const DeleteExpenseAlertDialog = ({
   budgetId,
   expenseId,
-  className = '',
+  className = "",
 }: DeleteExpenseAlertDialogProps) => {
   const [state, dispatch, isPending] = useActionState(deleteExpenseAction, {
     errors: [],
-    success: '',
+    success: "",
   });
   useEffect(() => {
     if (state.errors) {
@@ -43,13 +43,6 @@ export const DeleteExpenseAlertDialog = ({
   const handleDeleteBudget = async () => {
     startTransition(() => dispatch({ budgetId, expenseId }));
   };
-
-  if (isPending)
-    return (
-      <div className="flex items-center">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
 
   return (
     <AlertDialog>
@@ -68,9 +61,14 @@ export const DeleteExpenseAlertDialog = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleDeleteBudget}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={(e) => {
+              e.preventDefault();
+              handleDeleteBudget();
+            }}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
+            disabled={isPending}
           >
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Eliminar
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
 
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
@@ -56,6 +57,8 @@ export const ExpenseForm = ({
     },
   });
 
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
@@ -103,7 +106,10 @@ export const ExpenseForm = ({
                 render={({ field }) => (
                   <Field>
                     <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
-                    <Popover>
+                    <Popover
+                      open={isCalendarOpen}
+                      onOpenChange={setIsCalendarOpen}
+                    >
                       <PopoverTrigger asChild>
                         <Button
                           id="expense-date"
@@ -126,7 +132,10 @@ export const ExpenseForm = ({
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={(date) => {
+                            field.onChange(date);
+                            setIsCalendarOpen(false);
+                          }}
                           locale={es}
                           captionLayout="dropdown"
                           autoFocus

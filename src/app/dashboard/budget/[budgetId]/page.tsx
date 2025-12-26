@@ -48,7 +48,7 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
         </div>
         <div className="flex gap-2">
           <UpdateBudgetDialog budget={budget} />
-          <DeleteBudgetAlertDialog id={budgetId} />
+          <DeleteBudgetAlertDialog id={budgetId} name={budget.name} />
         </div>
       </div>
 
