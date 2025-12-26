@@ -1,16 +1,13 @@
 "use client";
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { formatCurrency } from "../lib/format-currency";
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "./ui/chart";
 
 type ChartData = {
   name: string;
@@ -23,14 +20,19 @@ interface ChartProps {
   chartData: ChartData[];
 }
 
-const formatCompactNumber = (value: number) => {
-  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
-  return value.toString();
-};
-
 export const Chart = ({ chartData, totalBudgets }: ChartProps) => {
   if (totalBudgets === 0) return null;
+
+  const chartConfig = {
+    Gastado: {
+      label: "Gastado",
+      color: "var(--chart-1)",
+    },
+    Total: {
+      label: "Total",
+      color: "var(--chart-2)",
+    },
+  } satisfies ChartConfig;
 
   return (
     <Card className="animate-fade-in [animation-delay:0.4s]">
@@ -38,69 +40,21 @@ export const Chart = ({ chartData, totalBudgets }: ChartProps) => {
         <CardTitle>Resumen de Presupuestos</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="w-full overflow-hidden">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={chartData}
-              margin={{ top: 10, right: 10, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-              <XAxis
-                dataKey="name"
-                className="text-xs text-muted-foreground"
-                stroke="currentColor"
-                tick={{ fontSize: 11 }}
-              />
-              <YAxis
-                className="text-xs text-muted-foreground"
-                stroke="currentColor"
-                tickFormatter={formatCompactNumber}
-                width={40}
-                tick={{ fontSize: 11 }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "var(--popover)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--radius)",
-                  color: "var(--popover-foreground)",
-                }}
-                labelStyle={{
-                  color: "var(--popover-foreground)",
-                }}
-                itemStyle={{
-                  color: "var(--popover-foreground)",
-                }}
-                formatter={(value) => {
-                  const numValue =
-                    typeof value === "number" ? value : Number(value);
-                  return !isNaN(numValue) ? formatCurrency(numValue) : "";
-                }}
-                cursor={{ fill: "var(--primary)", opacity: 0.15 }}
-              />
-              <Bar
-                dataKey="Gastado"
-                className="fill-chart-3"
-                radius={[4, 4, 0, 0]}
-                activeBar={{
-                  opacity: 1,
-                  stroke: "var(--ring)",
-                  strokeWidth: 2,
-                }}
-              />
-              <Bar
-                dataKey="Total"
-                className="fill-chart-1"
-                radius={[4, 4, 0, 0]}
-                activeBar={{
-                  opacity: 1,
-                  stroke: "var(--ring)",
-                  strokeWidth: 2,
-                }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <ChartContainer config={chartConfig} className="h-80 w-full">
+          <BarChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="Gastado" fill="var(--color-Gastado)" radius={4} />
+            <Bar dataKey="Total" fill="var(--color-Total)" radius={4} />
+          </BarChart>
+        </ChartContainer>
       </CardContent>
     </Card>
   );
