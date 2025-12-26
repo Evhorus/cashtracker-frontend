@@ -62,8 +62,8 @@ export const UpdateExpenseDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <DialogTrigger asChild>
-          <Button variant="default" size="icon">
-            <Edit />
+          <Button variant="ghost" size="icon">
+            <Edit className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
           </Button>
         </DialogTrigger>
       )}

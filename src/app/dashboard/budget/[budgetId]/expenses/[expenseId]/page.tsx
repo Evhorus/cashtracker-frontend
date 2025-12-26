@@ -3,8 +3,8 @@ import { getExpenseByIdAction } from "@/budgets/actions/expenses/get-expense-by-
 import { DeleteExpenseAlertDialog } from "@/budgets/components/expenses/DeleteExpenseAlertDialog";
 import { UpdateExpenseDialog } from "@/budgets/components/expenses/UpdateExpenseDialog";
 import { ExpenseActionsMenu } from "@/budgets/components/expenses/ExpenseActionsMenu";
+import { PageHeader } from "@/shared/components/PageHeader";
 
-import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import {
 
 import { formatCurrency } from "@/shared/lib/format-currency";
 import { formatDate } from "@/shared/lib/format-date";
-import { ArrowLeft, Calendar, FileText } from "lucide-react";
+import { Calendar, FileText, Receipt } from "lucide-react";
 import Link from "next/link";
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -26,164 +26,177 @@ interface ExpensePageProps {
 
 export default async function ExpensePage({ params }: ExpensePageProps) {
   const { budgetId, expenseId } = await params;
-
   const expense = await getExpenseByIdAction(budgetId, expenseId);
-
   const budget = await getBudgetByIdAction(budgetId);
 
-  const impactPercentage = (+expense.amount / +budget.amount) * 100;
-
-  const budgeTotalAmount = +budget.amount;
+  const budgetAmount = +budget.amount;
   const budgetSpent = +budget.spent;
+  const expenseAmount = +expense.amount;
+  const impactPercentage = (expenseAmount / budgetAmount) * 100;
+
+  // Determine budget health color
+  const isOverBudget = budgetSpent > budgetAmount;
+  const isHealthy = budgetAmount - budgetSpent >= budgetAmount * 0.2;
+  const healthColor = isOverBudget
+    ? "text-destructive"
+    : isHealthy
+    ? "text-emerald-500"
+    : "text-amber-500";
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-8 pb-10">
       {/* Header Section */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <Link href={`/dashboard/budget/${budgetId}`}>
-            <Button variant="ghost" size="icon" className="-ml-2">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl md:text-3xl font-bold truncate">
-              {expense.name}
-            </h1>
-            <p className="text-sm text-muted-foreground truncate">
-              Gasto de {budget.name}
-            </p>
-          </div>
-        </div>
-
-        {/* Mobile Actions (Drawer) */}
-        <div className="md:hidden shrink-0">
-          <ExpenseActionsMenu budgetId={budgetId} expense={expense} />
-        </div>
-
-        {/* Desktop Actions (Buttons) */}
-        <div className="hidden md:flex gap-2 shrink-0">
-          <UpdateExpenseDialog budgetId={budgetId} expense={expense} />
-          <DeleteExpenseAlertDialog budgetId={budgetId} expenseId={expenseId} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Detalles del Gasto</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-start gap-3">
-              <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm text-muted-foreground">Fecha</p>
-                <p className="font-semibold">{formatDate(expense.date)}</p>
-              </div>
-            </div>
-
-            {/* {expense.category && (
-              <div className="flex items-start gap-3">
-                <Tag className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Categoría</p>
-                  <p className="font-semibold">{expense.category}</p>
-                </div>
-              </div>
-            )} */}
-
-            {expense.description && (
-              <div className="flex items-start gap-3">
-                <FileText className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Descripción</p>
-                  <p className="text-sm mt-1">{expense.description}</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Impacto en el Presupuesto</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">
-                Monto del gasto
-              </p>
-              <p className="text-3xl font-bold">
-                {formatCurrency(+expense.amount)}
-              </p>
-            </div>
-
-            <div className="p-4 rounded-lg bg-muted">
-              <p className="text-sm text-muted-foreground mb-1">
-                Porcentaje del presupuesto
-              </p>
-              <p className="text-2xl font-bold text-primary">
-                {impactPercentage.toFixed(1)}%
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                de {formatCurrency(+budget.amount)}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">
-                Estado del presupuesto
-              </p>
-              <div className="flex items-center gap-2">
-                <div
-                  className={`h-3 w-3 rounded-full ${
-                    budgetSpent > budgeTotalAmount
-                      ? "bg-destructive"
-                      : budgeTotalAmount - budgetSpent < budgeTotalAmount * 0.2
-                      ? "bg-destructive"
-                      : "bg-primary"
-                  }`}
-                />
-                <span className="text-sm font-medium">
-                  {budgetSpent > budgeTotalAmount
-                    ? "Presupuesto excedido"
-                    : budgeTotalAmount - budgetSpent < budgeTotalAmount * 0.2
-                    ? "Presupuesto bajo"
-                    : "Presupuesto saludable"}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Información Adicional</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Fecha de creación:</span>
-            <span className="font-medium">{formatDate(expense.createdAt)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">
-              Fecha de actualización:
-            </span>
-            <span className="font-medium">{formatDate(expense.updatedAt)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Presupuesto asociado:</span>
-
-            <Link href={`/dashboard/budget/${budgetId}`}>
-              <Button variant="link" className="h-auto p-0 font-medium">
-                {budget.name}
-              </Button>
+      <PageHeader
+        title="Detalle del Gasto"
+        backUrl={`/dashboard/budget/${budgetId}`}
+        description={
+          <>
+            <span className="text-sm">En presupuesto:</span>
+            <Link
+              href={`/dashboard/budget/${budgetId}`}
+              className="hover:underline text-primary text-sm font-medium"
+            >
+              {budget.name}
             </Link>
-          </div>
-        </CardContent>
-      </Card>
+          </>
+        }
+        actions={
+          <>
+            <UpdateExpenseDialog budgetId={budgetId} expense={expense} />
+            <DeleteExpenseAlertDialog
+              budgetId={budgetId}
+              expenseId={expenseId}
+            />
+          </>
+        }
+        mobileActions={
+          <ExpenseActionsMenu budgetId={budgetId} expense={expense} />
+        }
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Info Column (2/3 width) */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Expense Highlight Card */}
+          <Card className="overflow-hidden border-0 shadow-md bg-linear-to-br from-card to-secondary/10">
+            <CardContent className="p-8">
+              <div className="flex flex-col sm:flex-row gap-4 items-start md:items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-inner">
+                    <Receipt className="h-7 w-7" />
+                  </div>
+                  <div className="space-y-1">
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                      {expense.name}
+                    </h2>
+                    <div className="flex items-center gap-2 text-muted-foreground bg-background/50 px-2.5 py-1 rounded-full w-fit">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span className="text-xs sm:text-sm font-medium">
+                        {formatDate(expense.date)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-left md:text-right pl-18 sm:pl-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-0.5">
+                    Monto Total
+                  </p>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight">
+                    {formatCurrency(expenseAmount)}
+                  </p>
+                </div>
+              </div>
+
+              {expense.description && (
+                <div className="mt-8 pt-6 border-t border-border/50">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Descripción
+                  </h3>
+                  <p className="text-base leading-relaxed text-foreground/80 max-w-2xl">
+                    {expense.description}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Additional Meta Info */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">Información de Sistema</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="space-y-1">
+                <p className="text-muted-foreground">Creado el</p>
+                <p className="font-medium">{formatDate(expense.createdAt)}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground">Última actualización</p>
+                <p className="font-medium">{formatDate(expense.updatedAt)}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar Column (1/3 width) - Impact & Context */}
+        <div className="space-y-6">
+          {/* Impact Analysis */}
+          <Card className="border-0 shadow-md overflow-hidden">
+            <CardHeader className="pb-2 pt-6">
+              <CardTitle className="text-lg flex items-center gap-2">
+                Impacto en Presupuesto
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-4">
+              <div>
+                <div className="flex justify-between items-end mb-2">
+                  <span className="text-sm text-muted-foreground font-medium w-full">
+                    Representa el
+                  </span>
+                  <span className="text-2xl font-bold text-primary">
+                    {impactPercentage.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="w-full bg-secondary h-3 rounded-full overflow-hidden">
+                  <div
+                    className="bg-primary h-full rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(impactPercentage, 100)}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 text-right">
+                  del total asignado ({formatCurrency(budgetAmount)})
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-border/50 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">
+                    Estado del Presupuesto
+                  </span>
+                  <span
+                    className={`text-xs font-bold px-3 py-1 rounded-md bg-muted/50 border ${healthColor}`}
+                  >
+                    {isOverBudget
+                      ? "EXCEDIDO"
+                      : isHealthy
+                      ? "SALUDABLE"
+                      : "EN RIESGO"}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Gastado Total</span>
+                    <span className="font-semibold">
+                      {formatCurrency(budgetSpent)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

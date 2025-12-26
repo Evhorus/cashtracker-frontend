@@ -59,7 +59,7 @@ export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
   return (
     <>
       <Card
-        className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0 shadow-sm bg-card/50 hover:bg-card"
+        className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0 shadow-sm hover:bg-card"
         onClick={handleCardClick}
       >
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/60 group-hover:bg-primary transition-colors duration-300" />

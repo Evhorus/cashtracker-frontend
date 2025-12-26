@@ -1,12 +1,11 @@
-import Link from "next/link";
 import { getBudgetByIdAction } from "@/budgets/actions/budgets/get-budget-by-id.action";
 import { DeleteBudgetAlertDialog } from "@/budgets/components/budgets/DeleteBudgetAlertDialog";
 import { UpdateBudgetDialog } from "@/budgets/components/budgets/UpdateBudgetDialog";
 import { CreateExpenseDialog } from "@/budgets/components/expenses/CreateExpenseDialog";
 import { ExpensesList } from "@/budgets/components/expenses/ExpensesList";
 import { BudgetActionsMenu } from "@/budgets/components/budgets/BudgetActionsMenu";
+import { PageHeader } from "@/shared/components/PageHeader";
 
-import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
@@ -15,13 +14,7 @@ import {
 } from "@/shared/components/ui/card";
 import { formatCurrency } from "@/shared/lib/format-currency";
 
-import {
-  ArrowLeft,
-  CreditCard,
-  DollarSign,
-  PiggyBank,
-  Wallet,
-} from "lucide-react";
+import { CreditCard, DollarSign, PiggyBank, Wallet } from "lucide-react";
 import { BudgetChart } from "@/budgets/components/budgets/BudgetChart";
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -40,39 +33,26 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
   const percentage = (+budget.spent / +budget.amount) * 100;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-24">
       {/* Header Section */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="icon" className="-ml-2">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">
-              {budget.name}
-            </h1>
-            {budget.category && (
-              <p className="text-sm text-muted-foreground truncate">
-                {budget.category}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Actions (Drawer) */}
-        <div className="md:hidden flex-shrink-0">
-          <BudgetActionsMenu budget={budget} />
-        </div>
-
-        {/* Desktop Actions (Buttons) */}
-        <div className="hidden md:flex gap-2 flex-shrink-0">
-          <UpdateBudgetDialog budget={budget} />
-          <DeleteBudgetAlertDialog id={budgetId} name={budget.name} />
-        </div>
-      </div>
+      <PageHeader
+        title={budget.name}
+        backUrl="/dashboard/budgets"
+        description={
+          budget.category && (
+            <p className="text-sm text-muted-foreground truncate">
+              {budget.category}
+            </p>
+          )
+        }
+        actions={
+          <>
+            <UpdateBudgetDialog budget={budget} />
+            <DeleteBudgetAlertDialog id={budgetId} name={budget.name} />
+          </>
+        }
+        mobileActions={<BudgetActionsMenu budget={budget} />}
+      />
 
       {/* Stats Grid - Top on all devices */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -82,16 +62,22 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
               ? "border-destructive/50 bg-destructive/5"
               : remaining < +budget.amount * 0.2
               ? "border-warning/50 bg-warning/5"
-              : "border-success/50 bg-success/5"
+              : "border-0 shadow-sm hover:bg-card transition-colors duration-300"
           }
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Disponible</CardTitle>
-            <Wallet
-              className={`h-4 w-4 ${
-                remaining < 0 ? "text-destructive" : "text-success"
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Disponible
+            </CardTitle>
+            <div
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                remaining < 0
+                  ? "bg-destructive/10 text-destructive"
+                  : "bg-success/10 text-success"
               }`}
-            />
+            >
+              <Wallet className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
             <div
@@ -109,10 +95,14 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-sm hover:bg-card transition-colors duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Gastado</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Gastado
+            </CardTitle>
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <CreditCard className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -124,12 +114,14 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-sm hover:bg-card transition-colors duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
               Presupuesto Total
             </CardTitle>
-            <PiggyBank className="h-4 w-4 text-muted-foreground" />
+            <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+              <PiggyBank className="h-4 w-4" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -158,16 +150,9 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
 
         {/* Right Column: Chart */}
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Distribución</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px] w-full">
-                <BudgetChart spent={+budget.spent} total={+budget.amount} />
-              </div>
-            </CardContent>
-          </Card>
+          <div className="h-[300px] w-full">
+            <BudgetChart spent={+budget.spent} total={+budget.amount} />
+          </div>
         </div>
       </div>
     </div>

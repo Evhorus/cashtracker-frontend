@@ -71,8 +71,8 @@ export const DeleteExpenseAlertDialog = ({
       <AlertDialog open={open} onOpenChange={setOpen}>
         {!isControlled && (
           <AlertDialogTrigger asChild>
-            <Button className={cn(className)} variant="outline" size="icon">
-              <Trash2 className="text-destructive" />
+            <Button className={cn(className)} variant="ghost" size="icon">
+              <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" />
             </Button>
           </AlertDialogTrigger>
         )}
@@ -106,8 +106,8 @@ export const DeleteExpenseAlertDialog = ({
     <Drawer open={open} onOpenChange={setOpen}>
       {!isControlled && (
         <DrawerTrigger asChild>
-          <Button className={cn(className)} variant="outline" size="icon">
-            <Trash2 className="text-destructive" />
+          <Button className={cn(className)} variant="ghost" size="icon">
+            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" />
           </Button>
         </DrawerTrigger>
       )}
