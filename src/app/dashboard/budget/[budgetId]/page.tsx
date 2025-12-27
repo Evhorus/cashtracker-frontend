@@ -1,7 +1,9 @@
 import { getBudgetByIdAction } from "@/budgets/actions/budgets/get-budget-by-id.action";
+import { getExpensesAction } from "@/budgets/actions/expenses/get-expenses.action";
 import { DeleteBudgetAlertDialog } from "@/budgets/components/budgets/DeleteBudgetAlertDialog";
 import { UpdateBudgetDialog } from "@/budgets/components/budgets/UpdateBudgetDialog";
 import { CreateExpenseDialog } from "@/budgets/components/expenses/CreateExpenseDialog";
+import { ExpensesFilter } from "@/budgets/components/expenses/ExpensesFilter";
 import { ExpensesList } from "@/budgets/components/expenses/ExpensesList";
 import { BudgetActionsMenu } from "@/budgets/components/budgets/BudgetActionsMenu";
 import { PageHeader } from "@/shared/components/PageHeader";
@@ -22,12 +24,30 @@ export const dynamic = "force-dynamic";
 
 interface BudgetPageProps {
   params: Promise<{ budgetId: string }>;
+  searchParams: Promise<{
+    startDate?: string;
+    endDate?: string;
+    search?: string;
+    sort?: string;
+  }>;
 }
 
-export default async function BudgetPage({ params }: BudgetPageProps) {
+export default async function BudgetPage({
+  params,
+  searchParams,
+}: BudgetPageProps) {
   const { budgetId } = await params;
+  const { startDate, endDate, search, sort } = await searchParams;
 
-  const budget = await getBudgetByIdAction(budgetId);
+  const [budget, expenses] = await Promise.all([
+    getBudgetByIdAction(budgetId),
+    getExpensesAction(budgetId, {
+      startDate,
+      endDate,
+      search,
+      sort,
+    }),
+  ]);
 
   const remaining = +budget.amount - +budget.spent;
   const percentage = (+budget.spent / +budget.amount) * 100;
@@ -145,7 +165,9 @@ export default async function BudgetPage({ params }: BudgetPageProps) {
             </h2>
             <CreateExpenseDialog budgetId={budget.id} />
           </div>
-          <ExpensesList expenses={budget.expenses} />
+
+          <ExpensesFilter />
+          <ExpensesList expenses={expenses} />
         </div>
 
         {/* Right Column: Chart */}
