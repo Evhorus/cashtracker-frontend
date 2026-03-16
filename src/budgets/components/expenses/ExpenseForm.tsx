@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
+import { parseISO } from "date-fns";
 
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
@@ -20,7 +21,7 @@ import {
 } from "@/budgets/schemas/expense.schema";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { PriceInput } from "@/shared/components/PriceInput";
-import { format } from "date-fns";
+import { formatDate } from "@/shared/lib/format-date";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -53,7 +54,7 @@ export const ExpenseForm = ({
     defaultValues: {
       ...expense,
       description: expense.description ?? "",
-      date: expense.date ? new Date(expense.date) : undefined,
+      date: expense.date ? (typeof expense.date === 'string' ? parseISO(expense.date) : new Date(expense.date)) : undefined,
     },
   });
 
@@ -121,7 +122,7 @@ export const ExpenseForm = ({
                           disabled={isLoading}
                         >
                           {field.value ? (
-                            format(field.value, "PPP", { locale: es })
+                            formatDate(field.value)
                           ) : (
                             <span>Seleccionar fecha</span>
                           )}

@@ -1,8 +1,16 @@
-import dayjs from 'dayjs';
-import 'dayjs/locale/es';
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 
-dayjs.locale('es');
+export function formatDate(dateInput: Date | string | number): string {
+  let dateObj: Date;
+  
+  if (typeof dateInput === 'string') {
+    dateObj = parseISO(dateInput);
+  } else {
+    dateObj = new Date(dateInput);
+  }
 
-export function formatDate(dateInput: Date): string {
-  return dayjs(dateInput).format('dddd, D [de] MMMM [de] YYYY');
+  return format(dateObj, "EEEE, d 'de' MMMM 'de' yyyy", {
+    locale: es,
+  });
 }
