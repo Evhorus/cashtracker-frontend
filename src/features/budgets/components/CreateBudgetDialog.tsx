@@ -11,10 +11,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/shared/components/ui/dialog";
-import { Budget } from '@/features/budgets/types';
-import { useActionWithToast } from '@/shared/hooks/useActionWithToast';
+import { useActionWithToast } from "@/shared/hooks/useActionWithToast";
 import { BudgetForm } from "./BudgetForm";
-import { BudgetFormValues } from '@/features/budgets/schemas/budget.schema';
+import { BudgetFormValues } from "@/features/budgets/schemas/budget.schema";
 
 import { createBudgetAction } from "@/features/budgets/actions/create-budget.action";
 
@@ -22,13 +21,10 @@ export const CreateBudgetDialog = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const [state, dispatch, isPending] = useActionState(
-    createBudgetAction,
-    {
-      errors: [],
-      success: "",
-    }
-  );
+  const [state, dispatch, isPending] = useActionState(createBudgetAction, {
+    errors: [],
+    success: "",
+  });
 
   useActionWithToast(state, {
     onSuccess: () => {

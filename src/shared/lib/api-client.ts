@@ -1,7 +1,14 @@
-import { authenticatedFetch, AuthenticatedFetchOptions } from './authenticated-fetch';
+import {
+  authenticatedFetch,
+  AuthenticatedFetchOptions,
+} from './authenticated-fetch';
 
 export class ApiError extends Error {
-  constructor(public status: number, message: string, public data?: any) {
+  constructor(
+    public status: number,
+    message: string,
+    public data?: unknown,
+  ) {
     super(message);
     this.name = 'ApiError';
   }
@@ -10,10 +17,13 @@ export class ApiError extends Error {
 /**
  * Fetch wrapper that automatically handles JSON parsing and throws typed ApiError
  */
-export async function fetchApi<T>(path: string, options?: AuthenticatedFetchOptions): Promise<T> {
+export async function fetchApi<T>(
+  path: string,
+  options?: AuthenticatedFetchOptions,
+): Promise<T> {
   const response = await authenticatedFetch(path, options);
-  
-  let data: any;
+
+  let data: unknown;
   const contentType = response.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     data = await response.json().catch(() => null);
@@ -24,8 +34,8 @@ export async function fetchApi<T>(path: string, options?: AuthenticatedFetchOpti
   if (!response.ok) {
     throw new ApiError(
       response.status,
-      data?.message || response.statusText || 'Error en la petición API',
-      data
+      (data as Record<string, unknown>)?.message as string || response.statusText || 'Error en la petición API',
+      data,
     );
   }
 

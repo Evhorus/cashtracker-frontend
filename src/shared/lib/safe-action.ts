@@ -1,6 +1,6 @@
 import { ApiError } from './api-client';
 
-export type ActionState<T = any> = {
+export type ActionState<T = unknown> = {
   data?: T;
   errors?: string[]; // Mantener el array por retrocompatibilidad con useActionWithToast
   success?: string;

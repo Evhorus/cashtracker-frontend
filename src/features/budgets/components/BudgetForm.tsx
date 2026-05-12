@@ -11,7 +11,6 @@ import {
   FieldSet,
 } from "@/shared/components/ui/field";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
-import { Budget } from "@/features/budgets/types";
 import {
   budgetFormSchema,
   BudgetFormValues,

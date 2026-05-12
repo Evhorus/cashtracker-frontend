@@ -13,7 +13,6 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { useActionWithToast } from "@/shared/hooks/useActionWithToast";
 import { ExpenseForm } from "./ExpenseForm";
-import { Expense } from "@/features/expenses/types";
 import { createExpenseAction } from "@/features/expenses/actions/create-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
 
@@ -25,13 +24,10 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const [state, dispatch, isPending] = useActionState(
-    createExpenseAction,
-    {
-      errors: [],
-      success: "",
-    }
-  );
+  const [state, dispatch, isPending] = useActionState(createExpenseAction, {
+    errors: [],
+    success: "",
+  });
 
   useActionWithToast(state, {
     onSuccess: () => {
