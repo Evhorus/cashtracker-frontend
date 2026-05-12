@@ -1,5 +1,5 @@
 import { PageHeaderSkeleton } from "@/shared/components/PageHeaderSkeleton";
-import { BudgetsListSkeleton } from "@/budgets/components/budgets/BudgetsListSkeleton";
+import { BudgetsListSkeleton } from "@/features/budgets/components/BudgetsListSkeleton";
 
 export default function BudgetsLoading() {
   return (

@@ -2,7 +2,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 
-type AuthenticatedFetchOptions = Omit<RequestInit, 'headers'> & {
+export type AuthenticatedFetchOptions = Omit<RequestInit, 'headers'> & {
   headers?: Record<string, string>;
 };
 

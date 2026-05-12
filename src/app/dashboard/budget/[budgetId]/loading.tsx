@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import { ExpensesListSkeleton } from "@/budgets/components/expenses/ExpensesListSkeleton";
+import { ExpensesListSkeleton } from "@/features/expenses/components/ExpensesListSkeleton";
 
 export default function BudgetDetailLoading() {
   return (

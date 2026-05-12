@@ -1,11 +1,11 @@
-import { getBudgetByIdAction } from "@/budgets/actions/budgets/get-budget-by-id.action";
-import { getExpensesAction } from "@/budgets/actions/expenses/get-expenses.action";
-import { DeleteBudgetAlertDialog } from "@/budgets/components/budgets/DeleteBudgetAlertDialog";
-import { UpdateBudgetDialog } from "@/budgets/components/budgets/UpdateBudgetDialog";
-import { CreateExpenseDialog } from "@/budgets/components/expenses/CreateExpenseDialog";
-import { ExpensesFilter } from "@/budgets/components/expenses/ExpensesFilter";
-import { ExpensesList } from "@/budgets/components/expenses/ExpensesList";
-import { BudgetActionsMenu } from "@/budgets/components/budgets/BudgetActionsMenu";
+import { getBudgetByIdAction } from "@/features/budgets/actions/get-budget-by-id.action";
+import { getExpensesAction } from "@/features/expenses/actions/get-expenses.action";
+import { DeleteBudgetAlertDialog } from "@/features/budgets/components/DeleteBudgetAlertDialog";
+import { UpdateBudgetDialog } from "@/features/budgets/components/UpdateBudgetDialog";
+import { CreateExpenseDialog } from "@/features/expenses/components/CreateExpenseDialog";
+import { ExpensesFilter } from "@/features/expenses/components/ExpensesFilter";
+import { ExpensesList } from "@/features/expenses/components/ExpensesList";
+import { BudgetActionsMenu } from "@/features/budgets/components/BudgetActionsMenu";
 import { PageHeader } from "@/shared/components/PageHeader";
 
 import {
@@ -17,7 +17,7 @@ import {
 import { formatCurrency } from "@/shared/lib/format-currency";
 
 import { CreditCard, DollarSign, PiggyBank, Wallet } from "lucide-react";
-import { BudgetChart } from "@/budgets/components/budgets/BudgetChart";
+import { BudgetChart } from "@/features/budgets/components/BudgetChart";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";

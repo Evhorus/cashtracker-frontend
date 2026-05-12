@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { getBudgetsAction } from "@/budgets/actions/budgets/get-budgets.action";
-import { BudgetsGrid } from "@/budgets/components/budgets/BudgetsGrid";
+import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
+import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
 import { Button } from "@/shared/components/ui/button";
 import { Chart } from "@/shared/components/Chart";
 import { StatsCards } from "@/shared/components/StatsCards";
-import { DashboardHelpers } from "@/budgets/lib/budget-helpers";
+import { DashboardHelpers } from "@/features/budgets/lib/budget-helpers";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";

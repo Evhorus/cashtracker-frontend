@@ -12,7 +12,7 @@ import { Logo } from "./Logo";
 import { ModeToggle } from "./mode-toggle";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "../lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 export const CustomHeader = () => {
   const { isLoaded, user } = useUser();

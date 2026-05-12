@@ -1,8 +1,8 @@
-import { getBudgetByIdAction } from "@/budgets/actions/budgets/get-budget-by-id.action";
-import { getExpenseByIdAction } from "@/budgets/actions/expenses/get-expense-by-id.action";
-import { DeleteExpenseAlertDialog } from "@/budgets/components/expenses/DeleteExpenseAlertDialog";
-import { UpdateExpenseDialog } from "@/budgets/components/expenses/UpdateExpenseDialog";
-import { ExpenseActionsMenu } from "@/budgets/components/expenses/ExpenseActionsMenu";
+import { getBudgetByIdAction } from "@/features/budgets/actions/get-budget-by-id.action";
+import { getExpenseByIdAction } from "@/features/expenses/actions/get-expense-by-id.action";
+import { DeleteExpenseAlertDialog } from "@/features/expenses/components/DeleteExpenseAlertDialog";
+import { UpdateExpenseDialog } from "@/features/expenses/components/UpdateExpenseDialog";
+import { ExpenseActionsMenu } from "@/features/expenses/components/ExpenseActionsMenu";
 import { PageHeader } from "@/shared/components/PageHeader";
 
 import {
