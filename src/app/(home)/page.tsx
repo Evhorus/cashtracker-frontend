@@ -1,4 +1,4 @@
-import { features } from '@/constants/features';
+import { features } from '@/shared/constants/features';
 import { CustomHeader } from '@/shared/components/CustomHeader';
 import { Button } from '@/shared/components/ui/button';
 import { currentUser } from '@clerk/nextjs/server';
