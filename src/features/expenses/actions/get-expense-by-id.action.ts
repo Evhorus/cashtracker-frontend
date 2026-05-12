@@ -1,5 +1,5 @@
 'use server';
-import { ExpenseResponse } from '@/features/budgets/types/budget-response';
+import { Expense } from '@/features/expenses/types';
 
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 import { redirect } from 'next/navigation';
@@ -25,7 +25,7 @@ export const getExpenseByIdAction = async (
       redirect(`/dashboard/budget/${budgetId}`);
     }
 
-    const expense: ExpenseResponse = json;
+    const expense: Expense = json;
 
     return expense;
   } catch (error) {

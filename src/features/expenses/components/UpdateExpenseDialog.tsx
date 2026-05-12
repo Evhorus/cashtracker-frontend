@@ -14,7 +14,7 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { useActionWithToast } from "@/shared/hooks/useActionWithToast";
 import { ExpenseForm } from "./ExpenseForm";
-import { Expense } from "@/features/budgets/types";
+import { Expense } from "@/features/expenses/types";
 import { updateExpenseAction } from "@/features/expenses/actions/update-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
 

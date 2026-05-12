@@ -1,6 +1,6 @@
 import { fetchApi } from '@/shared/lib/api-client';
 import { BudgetFormValues } from '../schemas/budget.schema';
-import { BudgetResponse, BudgetsResponse } from '../types/budget-response';
+import { Budget, BudgetsResponse } from '../types';
 
 export const BudgetsService = {
   getAll: () => {
@@ -10,7 +10,7 @@ export const BudgetsService = {
   },
 
   getById: (id: string) => {
-    return fetchApi<BudgetResponse>(`/budgets/${id}`, {
+    return fetchApi<Budget>(`/budgets/${id}`, {
       next: { tags: ['budget'], revalidate: 60 },
     });
   },

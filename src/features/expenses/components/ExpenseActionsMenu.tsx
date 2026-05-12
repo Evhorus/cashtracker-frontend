@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
-import { Expense } from '@/features/budgets/types';
+import { Expense } from "@/features/expenses/types";
 import { UpdateExpenseDialog } from "./UpdateExpenseDialog";
 import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";
 import { ActionsDrawer, ActionItem } from "@/shared/components/ActionsDrawer";

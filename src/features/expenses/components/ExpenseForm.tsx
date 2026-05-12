@@ -13,7 +13,7 @@ import {
   FieldSet,
 } from "@/shared/components/ui/field";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
-import { Expense } from "@/features/budgets/types";
+import { Expense } from "@/features/expenses/types";
 
 import {
   ExpenseFormValues,

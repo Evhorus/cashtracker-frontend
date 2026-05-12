@@ -1,6 +1,6 @@
 "use client";
 
-import { Expense } from "@/features/budgets/types";
+import { Expense } from "@/features/expenses/types";
 import { Calendar, Edit, Receipt, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";

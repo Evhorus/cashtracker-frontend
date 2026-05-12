@@ -1,5 +1,5 @@
 'use server';
-import { BudgetsResponse } from '@/features/budgets/types/budget-response';
+import { BudgetsResponse } from '@/features/budgets/types';
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 
 export const getBudgetsAction = async () => {
