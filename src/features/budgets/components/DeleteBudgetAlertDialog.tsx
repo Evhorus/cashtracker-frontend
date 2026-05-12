@@ -1,0 +1,113 @@
+"use client";
+import { deleteBudgetAction } from "@/features/budgets/actions/delete-budget.action";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/components/ui/alert-dialog";
+import { Input } from "@/shared/components/ui/input";
+import { Button } from "@/shared/components/ui/button";
+import { Loader2, Trash2 } from "lucide-react";
+import React, {
+  startTransition,
+  useActionState,
+  useEffect,
+  useState,
+} from "react";
+import { toast } from "sonner";
+
+interface DeleteBudgetAlertDialogProps {
+  id: string;
+  name: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export const DeleteBudgetAlertDialog = ({
+  id,
+  name,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+}: DeleteBudgetAlertDialogProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [state, dispatch, isPending] = useActionState(deleteBudgetAction, {
+    errors: [],
+    success: "",
+  });
+
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? setControlledOpen : setInternalOpen;
+
+  useEffect(() => {
+    if (state.errors) {
+      state.errors.forEach((err) => {
+        toast.error(err);
+      });
+    }
+  }, [state]);
+
+  const handleDeleteBudget = async () => {
+    startTransition(() => dispatch(id));
+  };
+
+  const Content = (
+    <div className="my-2 space-y-2">
+      <p className="text-sm text-muted-foreground">
+        Escribe <span className="font-bold text-foreground">{name}</span> para
+        confirmar:
+      </p>
+      <Input
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder="Nombre del presupuesto"
+        className="col-span-3"
+        autoComplete="off"
+      />
+    </div>
+  );
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      {!isControlled && (
+        <AlertDialogTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" />
+          </Button>
+        </AlertDialogTrigger>
+      )}
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>¿Eliminar presupuesto?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Esta acción no se puede deshacer. Se eliminarán todos los gastos
+            asociados.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        {Content}
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
+            onClick={(e) => {
+              e.preventDefault();
+              handleDeleteBudget();
+            }}
+            disabled={isPending || inputValue !== name}
+          >
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Eliminar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};

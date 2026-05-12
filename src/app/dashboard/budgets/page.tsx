@@ -1,6 +1,6 @@
-import { getBudgetsAction } from "@/budgets/actions/budgets/get-budgets.action";
-import { BudgetsGrid } from "@/budgets/components/budgets/BudgetsGrid";
-import { CreateBudgetDialog } from "@/budgets/components/budgets/CreateBudgetDialog";
+import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
+import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
+import { CreateBudgetDialog } from "@/features/budgets/components/CreateBudgetDialog";
 import { PageHeader } from "@/shared/components/PageHeader";
 
 // Force dynamic rendering because this page uses Clerk auth

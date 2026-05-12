@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import { BudgetsListSkeleton } from "@/budgets/components/budgets/BudgetsListSkeleton";
+import { BudgetsListSkeleton } from "@/features/budgets/components/BudgetsListSkeleton";
 
 export default function DashboardLoadingSkeleton() {
   return (

@@ -1,7 +1,7 @@
 import { Wallet, DollarSign, TrendingUp, PieChart } from "lucide-react";
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { formatCurrency } from "../lib/format-currency";
+import { formatCurrency } from "@/shared/lib/format-currency";
 
 interface StatsCardProps {
   totalCount: number;
