@@ -2,7 +2,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
-import { parseISO } from "date-fns";
 
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
@@ -13,7 +12,6 @@ import {
   FieldSet,
 } from "@/shared/components/ui/field";
 import { ErrorMessage } from "@/shared/components/ErrorMessage";
-import { Expense } from "@/features/expenses/types";
 
 import {
   ExpenseFormValues,
@@ -119,7 +117,7 @@ export const ExpenseForm = ({
                           variant={"outline"}
                           className={cn(
                             "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                           disabled={isLoading}
                         >
