@@ -1,6 +1,6 @@
 'use server';
 
-import { Expense } from '@/features/budgets/types';
+import { Expense } from "@/features/expenses/types";
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 
 interface GetExpensesFilters {

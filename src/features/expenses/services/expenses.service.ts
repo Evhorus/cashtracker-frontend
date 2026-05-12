@@ -1,5 +1,5 @@
 import { fetchApi } from '@/shared/lib/api-client';
-import { Expense } from '@/features/budgets/types';
+import { Expense } from "@/features/expenses/types";
 import { ExpenseFormValues } from '../schemas/expense.schema';
 
 export const ExpensesService = {

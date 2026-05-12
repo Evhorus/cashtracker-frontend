@@ -1,4 +1,5 @@
-import type { Budget, Expense } from '../types';
+import type { Budget } from '../types';
+import type { Expense } from '@/features/expenses/types';
 
 /**
  * Helper functions to work with Budget amounts as numbers

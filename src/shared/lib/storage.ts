@@ -1,4 +1,6 @@
-import { Budget, Expense, User } from '@/features/budgets/types';
+import { Budget } from '@/features/budgets/types';
+import { Expense } from '@/features/expenses/types';
+import { User } from '@/shared/types/user';
 
 const STORAGE_KEYS = {
   USER: 'cashtracker_user_demo',

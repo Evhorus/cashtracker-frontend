@@ -1,5 +1,5 @@
 'use server';
-import { BudgetResponse } from '@/features/budgets/types/budget-response';
+import { Budget } from '@/features/budgets/types';
 import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
 import { redirect } from 'next/navigation';
 
@@ -18,7 +18,7 @@ export const getBudgetByIdAction = async (id: string) => {
 
     const json = await req.json();
 
-    const budget: BudgetResponse = json;
+    const budget: Budget = json;
 
     return budget;
   } catch (error) {

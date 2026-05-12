@@ -1,5 +1,5 @@
 "use client";
-import { Expense } from "@/features/budgets/types";
+import { Expense } from "@/features/expenses/types";
 import { useParams } from "next/navigation";
 import { ExpenseCard } from "./ExpenseCard";
 
