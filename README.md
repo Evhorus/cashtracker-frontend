@@ -4,7 +4,7 @@ Proyecto [Next.js](https://nextjs.org) creado con [`create-next-app`](https://ne
 
 ## Requisitos Previos
 
-- Node.js 18.x o superior
+- Node.js 20.x o superior
 - npm, yarn, pnpm o bun
 
 ## Instalación
@@ -86,59 +86,74 @@ bun start
 cashtracker-frontend/
 ├── src/
 │   ├── app/                          # Next.js App Router
-│   │   ├── (auth)/                   # Grupo de rutas de autenticación
+│   │   ├── (auth)/                   # Rutas de autenticación (Clerk)
 │   │   │   ├── sign-in/              # Página de inicio de sesión
+│   │   │   │   └── [[...sign-in]]
 │   │   │   └── sign-up/              # Página de registro
-│   │   ├── (home)/                   # Grupo de rutas públicas
-│   │   │   └── page.tsx              # Página de inicio
-│   │   ├── dashboard/                # Panel principal
-│   │   │   ├── budget/[budgetId]/    # Detalle de presupuesto
-│   │   │   │   └── expenses/         # Gestión de gastos
+│   │   │       └── [[...sign-up]]
+│   │   ├── (home)/                   # Rutas públicas (Landing page)
+│   │   │   └── page.tsx
+│   │   ├── dashboard/                # Panel principal (Rutas protegidas)
+│   │   │   ├── budgets/              # Listado de presupuestos
+│   │   │   ├── budget/               # Rutas de detalle de presupuesto
+│   │   │   │   └── [budgetId]/
 │   │   │   ├── layout.tsx
+│   │   │   ├── loading.tsx
 │   │   │   └── page.tsx
 │   │   ├── layout.tsx                # Layout principal
 │   │   ├── globals.css               # Estilos globales
 │   │   └── not-found.tsx             # Página 404
-│   ├── auth/                         # Módulo de autenticación
-│   │   ├── actions/                  # Server actions de auth
-│   │   ├── components/               # Componentes de auth
-│   │   └── schemas/                  # Validaciones de auth
-│   ├── budgets/                      # Módulo de presupuestos
-│   │   ├── actions/                  # Server actions
-│   │   │   ├── budgets/              # CRUD de presupuestos
-│   │   │   └── expenses/             # CRUD de gastos
-│   │   ├── components/               # Componentes del módulo
-│   │   │   ├── budgets/              # Componentes de presupuestos
-│   │   │   └── expenses/             # Componentes de gastos
-│   │   ├── hooks/                    # Custom hooks
-│   │   ├── mappers/                  # Transformadores de datos
-│   │   ├── schemas/                  # Validaciones con Zod
-│   │   └── types/                    # Tipos de TypeScript
-│   ├── shared/                       # Código compartido
+│   ├── features/                     # Lógica de negocio organizada por dominio
+│   │   ├── budgets/                  # Módulo de presupuestos
+│   │   │   ├── actions/              # Server Actions (CRUD)
+│   │   │   ├── components/           # Componentes específicos
+│   │   │   ├── lib/                  # Helpers y utilidades del dominio
+│   │   │   ├── mappers/              # Transformadores de datos
+│   │   │   ├── schemas/              # Validaciones con Zod
+│   │   │   ├── services/             # Llamadas a API externa / servicios
+│   │   │   └── types/                # Tipos TypeScript del dominio
+│   │   └── expenses/                 # Módulo de gastos
+│   │       ├── actions/              # Server Actions (CRUD)
+│   │       ├── components/           # Componentes específicos
+│   │       ├── schemas/              # Validaciones con Zod
+│   │       ├── services/             # Llamadas a API externa / servicios
+│   │       └── types/                # Tipos TypeScript del dominio
+│   ├── shared/                       # Código compartido y utilidades
 │   │   ├── components/               # Componentes reutilizables
-│   │   │   └── ui/                   # Componentes UI base (shadcn)
-│   │   ├── fonts/                    # Configuración de fuentes
-│   │   └── lib/                      # Utilidades generales
-│   ├── constants/                    # Constantes de la aplicación
-│   └── middleware.ts                 # Middleware de Next.js
-├── public/                           # Archivos estáticos
-│   └── *.svg                         # Iconos e imágenes
-├── .env.template                     # Plantilla de variables de entorno
-├── package.json
-├── tsconfig.json
-└── next.config.ts
+│   │   │   └── ui/                   # Componentes base (shadcn/ui)
+│   │   ├── constants/                # Constantes globales
+│   │   ├── fonts/                    # Definición de fuentes compartidas
+│   │   ├── hooks/                    # Custom hooks compartidos
+│   │   ├── lib/                      # Utilidades generales (api, formatos, etc.)
+│   │   ├── providers/                # Context Providers y ThemeProvider
+│   │   └── types/                    # Tipos compartidos
+│   └── proxy.ts                      # Proxy para autenticación y rutas
+├── public/                           # Archivos estáticos (imágenes, fuentes, favicon)
+├── .env.template                     # Plantilla de variables de entorno necesarias
+├── .gitignore                        # Archivos y carpetas excluidos del control de versiones
+├── CLAUDE.md                         # Guía de estilo y reglas para asistentes de IA
+├── components.json                   # Configuración de componentes shadcn/ui
+├── eslint.config.mjs                 # Configuración de reglas de linting (ESLint)
+├── next.config.ts                    # Configuración avanzada de Next.js
+├── package.json                      # Scripts, dependencias y metadatos del proyecto
+├── pnpm-lock.yaml                    # Bloqueo de versiones exactas de dependencias
+├── postcss.config.mjs                # Configuración de PostCSS para el procesamiento de CSS
+├── skills-lock.json                  # Estado y sincronización de herramientas de IA
+└── tsconfig.json                     # Configuración del compilador de TypeScript
 ```
 
 ## Tecnologías
 
-- **Framework:** Next.js 15.5.6
-- **React:** 19.1.0
+- **Framework:** Next.js 16
+- **React:** 19
 - **Autenticación:** Clerk
 - **UI Components:** Radix UI
 - **Estilos:** Tailwind CSS
 - **Validación:** Zod
 - **Forms:** React Hook Form
 - **Gráficas:** Recharts
+- **Internacionalización:** @clerk/localizations
+- **Utilidades de fechas:** date-fns
 
 ## Recursos
 
