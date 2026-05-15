@@ -1,6 +1,6 @@
 "use client";
 import { startTransition, useActionState, useState } from "react";
-import { parseISO } from "date-fns";
+import { parseUTCDate } from "@/shared/lib/format-date";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -81,7 +81,7 @@ export const UpdateExpenseDialog = ({
             name: expense.name,
             amount: expense.amount,
             description: expense.description || "",
-            date: typeof expense.date === 'string' ? parseISO(expense.date) : new Date(expense.date),
+            date: parseUTCDate(expense.date),
           }}
           onSubmit={handleCreate}
           isLoading={isPending}
