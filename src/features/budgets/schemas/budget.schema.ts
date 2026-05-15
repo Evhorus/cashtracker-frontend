@@ -4,19 +4,23 @@ import { ExpenseAPIResponseSchema } from '@/features/expenses/schemas/expense.sc
 export const BudgetAPIResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
-  amount: z.coerce.number(),
+  amount: z.string(),
+  spent: z.string(),
+  category: z.string().optional(),
+  description: z.string().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  spent: z.string(),
   expenses: z.array(ExpenseAPIResponseSchema),
 });
 
-export type Budget = z.infer<typeof BudgetAPIResponseSchema>;
+export type BudgetApi = z.infer<typeof BudgetAPIResponseSchema>;
 
 export const BudgetsAPIResponseSchema = z.object({
   count: z.number(),
   data: z.array(BudgetAPIResponseSchema),
 });
+
+export type BudgetsResponseApi = z.infer<typeof BudgetsAPIResponseSchema>;
 
 /*
  * Budget Form

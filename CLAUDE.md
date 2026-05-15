@@ -33,6 +33,37 @@ This is a Next.js 16 project using the App Router and TypeScript.
     - `providers/`: Application-level context providers.
 - `src/proxy.ts`: Proxy configuration for authentication and routing.
 
+### Key Patterns
+
+#### Forms & Validation
+- **Presentational UI**: Forms are decoupled from submission logic. Components receive `onSubmit`, `isLoading`, and `defaultValues` as props.
+- **Schema-Driven**: Use `react-hook-form` with `zod` resolvers. Wrap custom inputs in the `Controller` component.
+- **Submission Flow**: Parent components (e.g., Dialogs) use `useActionState` and `startTransition` to dispatch data to Server Actions.
+
+### Key Patterns
+
+#### Forms & Validation
+- **Presentational UI**: Forms are decoupled from submission logic. Components receive `onSubmit`, `isLoading`, and `defaultValues` as props.
+- **Schema-Driven**: Use `react-hook-form` with `zod` resolvers. Wrap custom inputs in the `Controller` component.
+- **Submission Flow**: Parent components (e.g., Dialogs) use `useActionState` and `startTransition` to dispatch data to Server Actions.
+
+#### API & Data Flow
+- **Boundary Validation**: All API responses are validated at the network boundary using Zod schemas within `fetchApi` (`src/shared/lib/api-client.ts`) to prevent corrupt data from reaching the UI.
+- **Bidirectional Mapping**: 
+    - `toApiRequest` (Outbound): Transforms UI models to API formats, including locale-specific formatting (e.g., removing Colombian currency dots).
+    - `fromApi` (Inbound): Transforms raw API responses (e.g., ISO date strings) into rich domain models (e.g., JavaScript `Date` objects).
+- **Type Separation**: Maintain a strict distinction between API types (raw server response) and Domain types (UI-optimized models).
+- **Transport vs. Contract**: Communication is split between `authenticated-fetch.ts` (Transport/Auth) and `api-client.ts` (Validation/Contract).
+
+#### Server Actions & State
+- **Safe Actions**: Wrap all actions with `createSafeAction` (`src/shared/lib/safe-action`) for standardized error handling.
+- **Service Layer**: Actions must delegate business logic to a Service class (e.g., `BudgetsService`) rather than implementing it directly.
+- **Cache Invalidation**: Use `revalidatePath` or `revalidateTag` in actions to ensure the UI remains current.
+- **UI Feedback**: Use `useActionWithToast` (`src/shared/hooks/useActionWithToast.tsx`) to handle success/error notifications and trigger `router.refresh()`.
+
+#### Domain Organization
+- Features in `src/features/` strictly separate orchestration (`actions`), business logic (`services`), data transformation (`mappers`), and validation (`schemas`).
+
 ### Key Technical Choices
 
 - **Authentication**: Clerk 6 is used for user management and session control.

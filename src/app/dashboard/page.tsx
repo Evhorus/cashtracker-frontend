@@ -4,7 +4,7 @@ import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
 import { Button } from "@/shared/components/ui/button";
 import { Chart } from "@/shared/components/Chart";
 import { StatsCards } from "@/shared/components/StatsCards";
-import { DashboardHelpers } from "@/features/budgets/lib/budget-helpers";
+import { DashboardHelpers } from "@/shared/lib/dashboard-helpers";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";

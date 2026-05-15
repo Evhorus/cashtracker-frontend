@@ -1,41 +1,36 @@
 import { fetchApi } from '@/shared/lib/api-client';
 import { Expense } from "@/features/expenses/types";
-import { ExpenseFormValues } from '../schemas/expense.schema';
+import { ExpenseFormValues, ExpenseAPIResponseSchema, ExpensesAPIResponseSchema, ExpenseApi, ExpensesResponseApi } from '../schemas/expense.schema';
+import { ExpenseMapper } from '../mappers/expense.mapper';
 
 export const ExpensesService = {
-  getAll: (budgetId: string) => {
-    return fetchApi<Expense[]>(`/budgets/${budgetId}/expenses`, {
+  getAll: async (budgetId: string): Promise<Expense[]> => {
+    const expenses = await fetchApi<ExpensesResponseApi>(`/budgets/${budgetId}/expenses`, {
       next: { tags: [`expenses-${budgetId}`], revalidate: 60 },
-    });
+    }, ExpensesAPIResponseSchema);
+
+    return expenses.map(ExpenseMapper.fromApi);
   },
 
-  getById: (budgetId: string, expenseId: string) => {
-    return fetchApi<Expense>(`/budgets/${budgetId}/expenses/${expenseId}`, {
+  getById: async (budgetId: string, expenseId: string): Promise<Expense> => {
+    const expense = await fetchApi<ExpenseApi>(`/budgets/${budgetId}/expenses/${expenseId}`, {
       next: { tags: ['expense'], revalidate: 60 },
-    });
+    }, ExpenseAPIResponseSchema);
+
+    return ExpenseMapper.fromApi(expense);
   },
 
   create: (budgetId: string, data: ExpenseFormValues) => {
     return fetchApi<{ message: string }>(`/budgets/${budgetId}/expenses`, {
       method: 'POST',
-      body: JSON.stringify({
-        amount: +data.amount,
-        name: data.name,
-        date: data.date,
-        description: data.description,
-      }),
+      body: JSON.stringify(ExpenseMapper.toApiRequest(data)),
     });
   },
 
   update: (budgetId: string, expenseId: string, data: ExpenseFormValues) => {
     return fetchApi<{ message: string }>(`/budgets/${budgetId}/expenses/${expenseId}`, {
       method: 'PATCH',
-      body: JSON.stringify({
-        amount: +data.amount,
-        name: data.name,
-        date: data.date,
-        description: data.description,
-      }),
+      body: JSON.stringify(ExpenseMapper.toApiRequest(data)),
     });
   },
 

@@ -4,12 +4,15 @@ export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   amount: z.string(),
+  date: z.string(),
+  description: z.string().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
 
-export type Expense = z.infer<typeof ExpenseAPIResponseSchema>;
+export type ExpenseApi = z.infer<typeof ExpenseAPIResponseSchema>;
 export const ExpensesAPIResponseSchema = z.array(ExpenseAPIResponseSchema);
+export type ExpensesResponseApi = z.infer<typeof ExpensesAPIResponseSchema>;
 
 export const expenseSchema = z.object({
   name: z.string().min(1, { message: 'El Nombre del gasto es obligatorio' }),
