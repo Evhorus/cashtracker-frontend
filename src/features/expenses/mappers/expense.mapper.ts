@@ -12,7 +12,8 @@ export const ExpenseMapper = {
    */
   toApiRequest: (data: ExpenseFormValues) => ({
     name: data.name,
-    amount: Number(data.amount.replace(/\./g, '')),
+    amount: Number(data.amount),
+    currency: data.currency,
     date: data.date,
     description: data.description,
   }),

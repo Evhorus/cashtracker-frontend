@@ -4,6 +4,7 @@ export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   amount: z.string(),
+  currency: z.string().default('COP'),
   date: z.string(),
   description: z.string().optional(),
   createdAt: z.string(),
@@ -19,6 +20,7 @@ export const expenseSchema = z.object({
   amount: z
     .string({ message: 'El monto es obligatorio' })
     .min(1, { message: 'El monto no puede estar vacío' }),
+  currency: z.enum(['COP', 'USD', 'EUR']),
   date: z.coerce.date<Date>({ message: 'La fecha es obligatoria' }),
 
   description: z

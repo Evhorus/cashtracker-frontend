@@ -5,6 +5,7 @@ export const BudgetAPIResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   amount: z.string(),
+  currency: z.string().default('COP'),
   spent: z.string(),
   category: z.string().optional(),
   description: z.string().optional(),
@@ -33,6 +34,7 @@ export const budgetFormSchema = z.object({
     .refine((val) => val.trim().length > 0, 'No puede ser solo espacios')
     .transform((val) => val.trim()),
   amount: z.string().min(1, { message: 'El monto no puede estar vacío' }),
+  currency: z.enum(['COP', 'USD', 'EUR']),
   category: z.string().trim().max(50).optional(),
 });
 

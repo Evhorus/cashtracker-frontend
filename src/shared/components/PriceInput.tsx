@@ -6,7 +6,7 @@ import {
 } from "react";
 import type { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { Input } from "./ui/input";
-import { formatNumber, parseNumericValue } from "@/shared/lib/format-currency";
+import { formatNumber, parseNumericValue, DEFAULT_CURRENCY_CONFIG, type CurrencyConfig } from "@/shared/lib/format-currency";
 
 export interface PriceInputProps<T extends FieldValues>
   extends Omit<
@@ -16,12 +16,14 @@ export interface PriceInputProps<T extends FieldValues>
   value: string | undefined;
   onChange: ControllerRenderProps<T>["onChange"];
   disabled?: boolean;
+  currencyConfig?: CurrencyConfig;
 }
 
 export function PriceInput<T extends FieldValues>({
   value,
   onChange,
   disabled,
+  currencyConfig = DEFAULT_CURRENCY_CONFIG,
   ...field
 }: PriceInputProps<T>) {
   const [displayValue, setDisplayValue] = useState<string>("");
@@ -33,8 +35,8 @@ export function PriceInput<T extends FieldValues>({
       return "";
     }
 
-    const num = parseNumericValue(value);
-    return num > 0 ? formatNumber(num) : "";
+    const num = parseNumericValue(value, currencyConfig);
+    return num !== 0 ? formatNumber(num, currencyConfig) : "";
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,42 +44,65 @@ export function PriceInput<T extends FieldValues>({
     const rawValue = input.value;
     const cursorPosition = input.selectionStart || 0;
 
-    // Remove all non-digits
-    const cleanedValue = rawValue.replace(/\D/g, "");
+    const config = currencyConfig;
+    const decimalSeparator = config.locale.startsWith("en") ? "." : ",";
+    const thousandSeparator = config.locale.startsWith("en") ? "," : ".";
 
-    if (cleanedValue === "") {
+    // 1. Clean the input: allow only digits and one decimal separator
+    let cleaned = rawValue.replace(new RegExp(`\\${thousandSeparator}`, "g"), "");
+
+    // Handle decimal separator: only allow the first occurrence
+    const parts = cleaned.split(decimalSeparator);
+    if (parts.length > 2) {
+      cleaned = parts[0] + decimalSeparator + parts.slice(1).join("");
+    }
+
+    // Remove any other non-digit/non-decimal characters
+    cleaned = cleaned.replace(new RegExp(`[^0-9${decimalSeparator}]`, "g"), "");
+
+    if (cleaned === "") {
       setDisplayValue("");
       onChange("");
       return;
     }
 
-    const numberValue = Number(cleanedValue);
-    const formatted = formatNumber(numberValue);
+    // 2. Normalize to a standard numeric string (e.g., "1234.56") for the API/Form state
+    const normalizedValue = cleaned.replace(decimalSeparator, ".");
 
-    // Calculate new cursor position
-    // Count how many separators are before the cursor in the old value
+    // 3. Format for display
+    const [integerPart, fractionalPart] = normalizedValue.split(".");
+    const formattedInteger = formatNumber(Number(integerPart || 0), config);
+    const formatted = fractionalPart !== undefined
+      ? `${formattedInteger}${decimalSeparator}${fractionalPart}`
+      : formattedInteger;
+
+    // 4. Calculate new cursor position
+    // Count how many "significant" characters (digits + decimal) were before the cursor
     const beforeCursor = rawValue.slice(0, cursorPosition);
-    // Count digits before cursor
-    const digitsBefore = beforeCursor.replace(/\D/g, "").length;
+    const significantCharsBefore = beforeCursor
+      .replace(new RegExp(`\\${thousandSeparator}`, "g"), "")
+      .replace(new RegExp(`[^0-9${decimalSeparator}]`, "g"), "");
 
-    // Find position in formatted string
+    const sigCount = significantCharsBefore.length;
+
     let newPosition = 0;
-    let digitsCount = 0;
+    let currentSigCount = 0;
 
     for (let i = 0; i < formatted.length; i++) {
-      if (formatted[i] !== ".") {
-        digitsCount++;
+      const char = formatted[i];
+      // Check if char is a digit or the localized decimal separator
+      if (/[0-9]/.test(char) || char === decimalSeparator) {
+        currentSigCount++;
       }
-      if (digitsCount >= digitsBefore) {
+      if (currentSigCount >= sigCount) {
         newPosition = i + 1;
         break;
       }
     }
 
     setDisplayValue(formatted);
-    onChange(cleanedValue);
+    onChange(normalizedValue);
 
-    // Restore cursor position after React updates
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.setSelectionRange(newPosition, newPosition);
@@ -88,7 +113,7 @@ export function PriceInput<T extends FieldValues>({
   return (
     <div className="relative">
       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
-        $
+        {currencyConfig.symbol}
       </span>
       <Input
         {...field}
