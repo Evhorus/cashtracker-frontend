@@ -10,7 +10,8 @@ export const BudgetMapper = {
    */
   toApiRequest: (data: BudgetFormValues) => ({
     name: data.name,
-    amount: Number(data.amount.replace(/\./g, '')),
+    amount: Number(data.amount),
+    currency: data.currency,
     category: data.category,
   }),
 

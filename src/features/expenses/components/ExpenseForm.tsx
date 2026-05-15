@@ -1,6 +1,10 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import {
+  Controller,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { useState } from "react";
 
 import { Input } from "@/shared/components/ui/input";
@@ -19,6 +23,8 @@ import {
 } from "@/features/expenses/schemas/expense.schema";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { PriceInput } from "@/shared/components/PriceInput";
+import { CurrencySelector } from "@/shared/components/CurrencySelector";
+import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/shared/lib/format-currency";
 import { formatDate } from "@/shared/lib/format-date";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -52,10 +58,16 @@ export const ExpenseForm = ({
     defaultValues: {
       name: "",
       amount: "",
+      currency: "COP",
       description: "",
       date: new Date(),
       ...defaultValues,
     },
+  });
+
+  const selectedCurrency = useWatch({
+    control,
+    name: "currency",
   });
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -86,71 +98,95 @@ export const ExpenseForm = ({
               )}
             />
 
-            <FieldGroup className="flex flex-col sm:flex-row">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Controller
+                control={control}
+                name="currency"
+                render={({ field }) => (
+                  <Field >
+                    <FieldLabel htmlFor="currency">Moneda</FieldLabel>
+                    <CurrencySelector
+                      {...field}
+                      id="currency"
+                      disabled={isLoading}
+                    />
+                    {errors.currency?.message && (
+                      <ErrorMessage>{errors.currency.message}</ErrorMessage>
+                    )}
+                  </Field>
+                )}
+              />
               <Controller
                 control={control}
                 name="amount"
                 render={({ field }) => (
                   <Field>
                     <FieldLabel htmlFor="amount">Monto</FieldLabel>
-                    <PriceInput id="amount" {...field} disabled={isLoading} />
+                    <PriceInput
+                      id="amount"
+                      {...field}
+                      disabled={isLoading}
+                      currencyConfig={
+                        selectedCurrency ? CURRENCY_MAP[selectedCurrency] : DEFAULT_CURRENCY_CONFIG
+                      }
+                    />
                     {errors.amount?.message && (
                       <ErrorMessage>{errors.amount.message}</ErrorMessage>
                     )}
                   </Field>
                 )}
               />
+              
+            </div>
 
-              <Controller
-                control={control}
-                name="date"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
-                    <Popover
-                      open={isCalendarOpen}
-                      onOpenChange={setIsCalendarOpen}
-                    >
-                      <PopoverTrigger asChild>
-                        <Button
-                          id="expense-date"
-                          variant={"outline"}
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                          disabled={isLoading}
-                        >
-                          {field.value ? (
-                            formatDate(field.value)
-                          ) : (
-                            <span>Seleccionar fecha</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={(date) => {
-                            field.onChange(date);
-                            setIsCalendarOpen(false);
-                          }}
-                          locale={es}
-                          captionLayout="dropdown"
-                          autoFocus
-                        />
-                      </PopoverContent>
-                      {/* Hidden input to ensure form submission logic works if needed, though onSelect handles it */}
-                    </Popover>
-                    {errors.date?.message && (
-                      <ErrorMessage>{errors.date.message}</ErrorMessage>
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
+            <Controller
+              control={control}
+              name="date"
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
+                  <Popover
+                    open={isCalendarOpen}
+                    onOpenChange={setIsCalendarOpen}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="expense-date"
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground",
+                        )}
+                        disabled={isLoading}
+                      >
+                        {field.value ? (
+                          formatDate(field.value)
+                        ) : (
+                          <span>Seleccionar fecha</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
+                        locale={es}
+                        captionLayout="dropdown"
+                        autoFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  {errors.date?.message && (
+                    <ErrorMessage>{errors.date.message}</ErrorMessage>
+                  )}
+                </Field>
+              )}
+            />
           </FieldGroup>
 
           <Controller
