@@ -45,7 +45,7 @@ export const BudgetForm = ({
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit!)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <FieldSet>
           <FieldGroup>
