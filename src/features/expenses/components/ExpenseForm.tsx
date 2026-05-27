@@ -6,7 +6,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useState } from "react";
-import { formatDate, getTodayInAppTimezone } from "@/shared/lib/date-helpers";
+import { formatDate, getToday } from "@/shared/lib/date-helpers";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -62,7 +62,7 @@ export const ExpenseForm = ({
       amount: "",
       currency: "COP",
       description: "",
-      date: getTodayInAppTimezone(),
+      date: getToday(),
       ...defaultValues,
     },
   });
@@ -138,7 +138,7 @@ export const ExpenseForm = ({
                   </Field>
                 )}
               />
-              
+
             </div>
 
             <Controller

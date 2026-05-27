@@ -1,6 +1,6 @@
 "use client";
 import { startTransition, useActionState, useState } from "react";
-import { parseUTCDate } from "@/shared/lib/date-helpers";
+import { parseDateInput } from "@/shared/lib/date-helpers";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -81,7 +81,7 @@ export const UpdateExpenseDialog = ({
             name: expense.name,
             amount: expense.amount,
             description: expense.description || "",
-            date: parseUTCDate(expense.date),
+            date: parseDateInput(expense.date),
           }}
           onSubmit={handleCreate}
           isLoading={isPending}
