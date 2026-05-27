@@ -4,7 +4,7 @@ import { Expense } from "@/features/expenses/types";
 import { Calendar, Edit, Receipt, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
-import { formatDate } from "@/shared/lib/format-date";
+import { formatDate } from "@/shared/lib/date-helpers";
 import { formatCurrency } from "@/shared/lib/format-currency";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { ActionsDrawer, ActionItem } from "@/shared/components/ActionsDrawer";

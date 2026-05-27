@@ -6,6 +6,11 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useState } from "react";
+import { formatDate, getTodayInAppTimezone } from "@/shared/lib/date-helpers";
+import { es } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/shared/lib/utils";
+
 
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
@@ -25,16 +30,13 @@ import { Textarea } from "@/shared/components/ui/textarea";
 import { PriceInput } from "@/shared/components/PriceInput";
 import { CurrencySelector } from "@/shared/components/CurrencySelector";
 import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/shared/lib/format-currency";
-import { formatDate } from "@/shared/lib/format-date";
-import { es } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
 import { Calendar } from "@/shared/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/shared/components/ui/popover";
+
 
 interface ExpenseFormProps {
   defaultValues?: Partial<ExpenseFormValues>;
@@ -60,7 +62,7 @@ export const ExpenseForm = ({
       amount: "",
       currency: "COP",
       description: "",
-      date: new Date(),
+      date: getTodayInAppTimezone(),
       ...defaultValues,
     },
   });
