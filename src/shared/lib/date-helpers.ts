@@ -21,10 +21,11 @@ export function formatDate(dateInput: Date | string | number): string {
   return format(
     toDeviceTimeZone(parseDateInput(dateInput)),
     "EEEE, d 'de' MMMM 'de' yyyy",
-    { locale: es }
+    { locale: es },
   );
 }
 
 export function getToday(): Date {
-  return toDeviceTimeZone(new Date());
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
