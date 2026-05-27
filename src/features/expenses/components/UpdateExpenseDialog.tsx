@@ -1,6 +1,6 @@
 "use client";
 import { startTransition, useActionState, useState } from "react";
-import { parseUTCDate } from "@/shared/lib/format-date";
+import { parseUTCDate } from "@/shared/lib/date-helpers";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {

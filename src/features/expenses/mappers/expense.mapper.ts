@@ -1,7 +1,8 @@
-import { ExpenseFormValues } from '../schemas/expense.schema';
-import { Expense } from '../types';
-import { ExpenseAPIResponseSchema } from '../schemas/expense.schema';
-import { z } from 'zod';
+import { ExpenseFormValues } from "../schemas/expense.schema";
+import { Expense } from "../types";
+import { ExpenseAPIResponseSchema } from "../schemas/expense.schema";
+import { parseUTCDate } from "@/shared/lib/date-helpers";
+import { z } from "zod";
 
 type ApiExpense = z.infer<typeof ExpenseAPIResponseSchema>;
 
@@ -27,10 +28,10 @@ export const ExpenseMapper = {
       id: apiExpense.id,
       name: apiExpense.name,
       amount: apiExpense.amount,
-      date: new Date(apiExpense.date),
+      date: parseUTCDate(apiExpense.date),
       description: apiExpense.description,
-      createdAt: new Date(apiExpense.createdAt),
-      updatedAt: new Date(apiExpense.updatedAt),
+      createdAt: parseUTCDate(apiExpense.createdAt),
+      updatedAt: parseUTCDate(apiExpense.updatedAt),
     };
   },
 };

@@ -13,7 +13,7 @@ import {
 } from "@/shared/components/ui/card";
 
 import { formatCurrency } from "@/shared/lib/format-currency";
-import { formatDate } from "@/shared/lib/format-date";
+import { formatDate } from "@/shared/lib/date-helpers";
 import { Calendar, FileText, Receipt } from "lucide-react";
 import Link from "next/link";
 
