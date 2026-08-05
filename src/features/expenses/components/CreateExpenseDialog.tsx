@@ -1,7 +1,6 @@
 "use client";
-import { startTransition, useActionState, useState } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/shared/components/ui/dialog";
 import { Button } from "@/shared/components/ui/button";
-import { useActionWithToast } from "@/shared/hooks/useActionWithToast";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { ExpenseForm } from "./ExpenseForm";
 import { createExpenseAction } from "@/features/expenses/actions/create-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
@@ -21,23 +20,21 @@ interface CreateExpenseDialogProps {
 }
 
 export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const [state, dispatch, isPending] = useActionState(createExpenseAction, {
-    errors: [],
-    success: "",
-  });
-
-  useActionWithToast(state, {
-    onSuccess: () => {
-      router.refresh();
-      setOpen(false);
+  const { dispatch, isPending } = useActionDialog(
+    createExpenseAction,
+    {
+      errors: [],
+      success: "",
     },
-  });
+    {
+      setOpen,
+    },
+  );
 
   const handleCreate = async (expenseFormValues: ExpenseFormValues) => {
-    startTransition(() => dispatch({ ...expenseFormValues, budgetId }));
+    dispatch({ ...expenseFormValues, budgetId });
   };
 
   return (
@@ -48,7 +45,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
           <span className="hidden sm:inline-block">Agregar Gasto</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>Agregar Nuevo Gasto</DialogTitle>
           <DialogDescription>
