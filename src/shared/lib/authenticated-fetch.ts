@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { auth } from '@clerk/nextjs/server';
+import { auth } from "@clerk/nextjs/server";
 
-export type AuthenticatedFetchOptions = Omit<RequestInit, 'headers'> & {
+export type AuthenticatedFetchOptions = Omit<RequestInit, "headers"> & {
   headers?: Record<string, string>;
 };
 
@@ -15,16 +15,17 @@ export type AuthenticatedFetchOptions = Omit<RequestInit, 'headers'> & {
  */
 export async function authenticatedFetch(
   path: string,
-  options?: AuthenticatedFetchOptions
+  options?: AuthenticatedFetchOptions,
 ): Promise<Response> {
+  await auth.protect();
   const { getToken } = await auth();
   const token = await getToken();
 
   // Build full URL if path is relative
-  const url = path.startsWith('http') ? path : `${process.env.API_URL}${path}`;
+  const url = path.startsWith("http") ? path : `${process.env.API_URL}${path}`;
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...(options?.headers || {}),
   };
 

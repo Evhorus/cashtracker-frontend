@@ -14,11 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider localization={esMX}>
-      <html lang="es" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+    <html lang="es" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ClerkProvider localization={esMX}>
           <ScrollToTop />
           <ThemeProvider
             attribute="class"
@@ -30,8 +30,8 @@ export default function RootLayout({
             <Analytics />
             <Toaster />
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
