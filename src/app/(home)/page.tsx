@@ -1,54 +1,54 @@
-import { features } from '@/shared/constants/features';
-import { CustomHeader } from '@/shared/components/CustomHeader';
-import { Button } from '@/shared/components/ui/button';
-import { currentUser } from '@clerk/nextjs/server';
-import { Metadata } from 'next';
+import { features } from "@/shared/constants/features";
+import { CustomHeader } from "@/shared/components/CustomHeader";
+import { Button } from "@/shared/components/ui/button";
+import { currentUser } from "@clerk/nextjs/server";
+import { Metadata } from "next";
 
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/shared/components/ui/card';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
+} from "@/shared/components/ui/card";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'),
-  title: 'CashTracker - Control de Finanzas Personales',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:3000"),
+  title: "CashTracker - Control de Finanzas Personales",
   description:
-    'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.',
+    "Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.",
   keywords: [
-    'finanzas personales',
-    'control de gastos',
-    'presupuestos',
-    'ahorro',
-    'gestión financiera',
-    'cashtracker',
+    "finanzas personales",
+    "control de gastos",
+    "presupuestos",
+    "ahorro",
+    "gestión financiera",
+    "cashtracker",
   ],
-  authors: [{ name: 'CashTracker Team' }],
+  authors: [{ name: "CashTracker Team" }],
   openGraph: {
-    title: 'CashTracker - Toma el control de tus finanzas personales',
+    title: "CashTracker - Toma el control de tus finanzas personales",
     description:
-      'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis para empezar.',
-    type: 'website',
-    locale: 'es_ES',
-    siteName: 'CashTracker',
+      "Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis para empezar.",
+    type: "website",
+    locale: "es_ES",
+    siteName: "CashTracker",
     images: [
       {
-        url: '/og-image.png',
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: 'CashTracker - Control de Finanzas Personales',
+        alt: "CashTracker - Control de Finanzas Personales",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'CashTracker - Control de Finanzas Personales',
+    card: "summary_large_image",
+    title: "CashTracker - Control de Finanzas Personales",
     description:
-      'Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis.',
-    images: ['/og-image.png'],
+      "Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 export default async function Home() {
   const user = await currentUser();
 
-  if (user) redirect('/dashboard');
+  if (user) redirect("/dashboard");
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,7 +69,7 @@ export default async function Home() {
       <section className="container mx-auto px-4 py-20 md:py-32 text-center">
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
           <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight">
-            Toma el control de tus{' '}
+            Toma el control de tus{" "}
             <span className="text-primary">finanzas personales</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -78,7 +78,7 @@ export default async function Home() {
             moderna y fácil de usar.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-            <Link href="/sig-in">
+            <Link href="/sign-in">
               <Button size="lg" className="w-full sm:w-auto">
                 Comenzar Gratis
               </Button>
@@ -191,7 +191,7 @@ export default async function Home() {
                   <p className="text-white/80 mb-6">
                     Únete a miles de personas que ya controlan sus finanzas
                   </p>
-                  <Link href="/sig-in">
+                  <Link href="/sign-in">
                     <Button size="lg" variant="secondary" className="w-full">
                       Crear Cuenta Gratis
                     </Button>
@@ -213,7 +213,7 @@ export default async function Home() {
             No necesitas tarjeta de crédito. Comienza gratis en menos de 2
             minutos.
           </p>
-          <Link href="/sig-in">
+          <Link href="/sign-in">
             <Button size="lg" className="mt-6">
               Comenzar Ahora
             </Button>
