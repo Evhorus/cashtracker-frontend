@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { getBudgetByIdAction } from "@/features/budgets/actions/get-budget-by-id.action";
 import { getExpensesAction } from "@/features/expenses/actions/get-expenses.action";
 import { DeleteBudgetAlertDialog } from "@/features/budgets/components/DeleteBudgetAlertDialog";
@@ -36,6 +37,7 @@ export default async function BudgetPage({
   params,
   searchParams,
 }: BudgetPageProps) {
+  await auth.protect();
   const { budgetId } = await params;
   const { startDate, endDate, search, sort } = await searchParams;
 
@@ -81,8 +83,8 @@ export default async function BudgetPage({
             remaining < 0
               ? "border-destructive/50 bg-destructive/5"
               : remaining < +budget.amount * 0.2
-              ? "border-warning/50 bg-warning/5"
-              : "border-0 shadow-sm hover:bg-card transition-colors duration-300"
+                ? "border-warning/50 bg-warning/5"
+                : "border-0 shadow-sm hover:bg-card transition-colors duration-300"
           }
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

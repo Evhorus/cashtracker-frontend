@@ -1,17 +1,13 @@
 "use client";
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { buttonVariants } from "./ui/button";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
+import { Show, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+
+import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
 import { ModeToggle } from "./mode-toggle";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+
 import { cn } from "@/shared/lib/utils";
 
 export const CustomHeader = () => {
@@ -42,7 +38,7 @@ export const CustomHeader = () => {
                   "text-sm font-medium transition-colors hover:text-primary",
                   pathname === item.href
                     ? "text-foreground"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 {item.name}
@@ -54,10 +50,11 @@ export const CustomHeader = () => {
         {/* User Actions */}
         <div className="flex items-center gap-4">
           <ModeToggle />
+
           {!isLoaded ? (
-            <Loader2 className="animate-spin h-5 w-5 text-muted-foreground" />
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           ) : !user ? (
-            <SignedOut>
+            <Show when="signed-out">
               <SignInButton>
                 <span
                   className={buttonVariants({
@@ -69,9 +66,9 @@ export const CustomHeader = () => {
                   Iniciar sesión
                 </span>
               </SignInButton>
-            </SignedOut>
+            </Show>
           ) : (
-            <SignedIn>
+            <Show when="signed-in">
               <UserButton
                 appearance={{
                   elements: {
@@ -79,7 +76,7 @@ export const CustomHeader = () => {
                   },
                 }}
               />
-            </SignedIn>
+            </Show>
           )}
         </div>
       </div>

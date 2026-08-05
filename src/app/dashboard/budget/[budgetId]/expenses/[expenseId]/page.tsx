@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { getBudgetByIdAction } from "@/features/budgets/actions/get-budget-by-id.action";
 import { getExpenseByIdAction } from "@/features/expenses/actions/get-expense-by-id.action";
 import { DeleteExpenseAlertDialog } from "@/features/expenses/components/DeleteExpenseAlertDialog";
@@ -25,6 +26,7 @@ interface ExpensePageProps {
 }
 
 export default async function ExpensePage({ params }: ExpensePageProps) {
+  await auth.protect();
   const { budgetId, expenseId } = await params;
   const expense = await getExpenseByIdAction(budgetId, expenseId);
   const budget = await getBudgetByIdAction(budgetId);
@@ -40,8 +42,8 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   const healthColor = isOverBudget
     ? "text-destructive"
     : isHealthy
-    ? "text-emerald-500"
-    : "text-amber-500";
+      ? "text-emerald-500"
+      : "text-amber-500";
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-10">
@@ -180,8 +182,8 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     {isOverBudget
                       ? "EXCEDIDO"
                       : isHealthy
-                      ? "SALUDABLE"
-                      : "EN RIESGO"}
+                        ? "SALUDABLE"
+                        : "EN RIESGO"}
                   </span>
                 </div>
                 <div className="space-y-1">

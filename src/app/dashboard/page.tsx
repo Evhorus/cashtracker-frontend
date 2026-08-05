@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
 import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
 import { Button } from "@/shared/components/ui/button";
@@ -10,6 +11,7 @@ import { DashboardHelpers } from "@/shared/lib/dashboard-helpers";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  await auth.protect();
   const budgets = await getBudgetsAction();
 
   const totalBudget = DashboardHelpers.getTotalBudget(budgets.data);

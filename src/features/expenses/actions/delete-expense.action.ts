@@ -1,8 +1,9 @@
-'use server';
+"use server";
 
-import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { redirect } from 'next/navigation';
+import { auth } from "@clerk/nextjs/server";
+import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 
 type DeleteBudgetActionState = {
   errors: string[];
@@ -11,17 +12,19 @@ type DeleteBudgetActionState = {
 
 export const deleteExpenseAction = async (
   prevState: DeleteBudgetActionState,
-  { budgetId, expenseId }: { budgetId: string; expenseId: string }
+  { budgetId, expenseId }: { budgetId: string; expenseId: string },
 ): Promise<DeleteBudgetActionState> => {
+  await auth.protect();
+
   try {
     const req = await authenticatedFetch(
       `/budgets/${budgetId}/expenses/${expenseId}`,
       {
-        method: 'DELETE',
+        method: "DELETE",
         next: {
-          tags: ['all-budgets'],
+          tags: ["all-budgets"],
         },
-      }
+      },
     );
 
     const json = await req.json();
@@ -29,20 +32,20 @@ export const deleteExpenseAction = async (
     if (!req.ok) {
       const errorMessage = json.message as string;
       return {
-        success: '',
+        success: "",
         errors: [errorMessage],
       };
     }
 
     // Revalidate cache before redirect
-    revalidatePath('/dashboard');
+    revalidatePath("/dashboard");
     revalidatePath(`/dashboard/budget/${budgetId}`);
-    revalidateTag('all-budgets', 'max');
+    revalidateTag("all-budgets", "max");
   } catch (error) {
-    console.error('Error deleting expense:', error);
+    console.error("Error deleting expense:", error);
     return {
-      success: '',
-      errors: ['No se pudo eliminar el gasto. Intenta más tarde.'],
+      success: "",
+      errors: ["No se pudo eliminar el gasto. Intenta más tarde."],
     };
   }
 

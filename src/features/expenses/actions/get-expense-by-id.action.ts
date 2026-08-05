@@ -1,22 +1,25 @@
-'use server';
-import { Expense } from '@/features/expenses/types';
+"use server";
+import { auth } from "@clerk/nextjs/server";
+import { Expense } from "@/features/expenses/types";
 
-import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
-import { redirect } from 'next/navigation';
+import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
+import { redirect } from "next/navigation";
 
 export const getExpenseByIdAction = async (
   budgetId: string,
-  expenseId: string
+  expenseId: string,
 ) => {
+  await auth.protect();
+
   try {
     const req = await authenticatedFetch(
       `/budgets/${budgetId}/expenses/${expenseId}`,
       {
         next: {
-          tags: ['expense'],
+          tags: ["expense"],
           revalidate: 60, // Revalidate every 60 seconds
         },
-      }
+      },
     );
 
     const json = await req.json();
@@ -29,7 +32,7 @@ export const getExpenseByIdAction = async (
 
     return expense;
   } catch (error) {
-    console.error('Error fetching budget by id:', error);
+    console.error("Error fetching budget by id:", error);
     throw error;
   }
 };
