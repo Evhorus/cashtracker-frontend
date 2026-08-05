@@ -1,11 +1,13 @@
 import { CustomHeader } from "@/shared/components/CustomHeader";
 import { MobileNav } from "@/shared/components/MobileNav";
+import { auth } from "@clerk/nextjs/server";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await auth.protect();
   return (
     <div className="min-h-screen bg-background">
       <CustomHeader />

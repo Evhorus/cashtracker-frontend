@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
 import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
 import { CreateBudgetDialog } from "@/features/budgets/components/CreateBudgetDialog";
@@ -7,6 +8,7 @@ import { PageHeader } from "@/shared/components/PageHeader";
 export const dynamic = "force-dynamic";
 
 export default async function BudgetsPage() {
+  await auth.protect();
   const budgets = await getBudgetsAction();
 
   return (

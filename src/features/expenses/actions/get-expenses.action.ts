@@ -1,7 +1,8 @@
-'use server';
+"use server";
 
+import { auth } from "@clerk/nextjs/server";
 import { Expense } from "@/features/expenses/types";
-import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
+import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
 
 interface GetExpensesFilters {
   startDate?: string;
@@ -13,22 +14,25 @@ interface GetExpensesFilters {
 
 export const getExpensesAction = async (
   budgetId: string,
-  filters: GetExpensesFilters
+  filters: GetExpensesFilters,
 ): Promise<Expense[]> => {
+  await auth.protect();
+
   try {
     const params = new URLSearchParams();
 
-    if (filters.startDate) params.append('startDate', filters.startDate);
-    if (filters.endDate) params.append('endDate', filters.endDate);
-    if (filters.search) params.append('search', filters.search);
-    if (filters.categoryId) params.append('categoryId', filters.categoryId);
-    if (filters.sort) params.append('sort', filters.sort);
+    if (filters.startDate) params.append("startDate", filters.startDate);
+    if (filters.endDate) params.append("endDate", filters.endDate);
+    if (filters.search) params.append("search", filters.search);
+    if (filters.categoryId) params.append("categoryId", filters.categoryId);
+    if (filters.sort) params.append("sort", filters.sort);
 
     const queryString = params.toString();
     const url = `/budgets/${budgetId}/expenses${
-      queryString ? `?${queryString}` : ''
+      queryString ? `?${queryString}` : ""
     }`;
 
+    await auth.protect();
     const req = await authenticatedFetch(url, {
       next: {
         tags: [`expenses-${budgetId}`],
@@ -37,14 +41,14 @@ export const getExpensesAction = async (
     });
 
     if (!req.ok) {
-      console.error('Failed to fetch expenses');
+      console.error("Failed to fetch expenses");
       return [];
     }
 
     const expenses: Expense[] = await req.json();
     return expenses;
   } catch (error) {
-    console.error('Error fetching filtered expenses:', error);
+    console.error("Error fetching filtered expenses:", error);
     return [];
   }
 };

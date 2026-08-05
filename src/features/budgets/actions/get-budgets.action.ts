@@ -1,12 +1,15 @@
-'use server';
-import { BudgetsResponse } from '@/features/budgets/types';
-import { authenticatedFetch } from '@/shared/lib/authenticated-fetch';
+"use server";
+import { auth } from "@clerk/nextjs/server";
+import { BudgetsResponse } from "@/features/budgets/types";
+import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
 
 export const getBudgetsAction = async () => {
+  await auth.protect();
+
   try {
-    const req = await authenticatedFetch('/budgets', {
+    const req = await authenticatedFetch("/budgets", {
       next: {
-        tags: ['all-budgets'],
+        tags: ["all-budgets"],
         revalidate: 60, // Revalidate every 60 seconds
       },
     });
@@ -14,14 +17,14 @@ export const getBudgetsAction = async () => {
     const json = await req.json();
 
     if (!req.ok) {
-      throw new Error('Failed to fetch budgets');
+      throw new Error("Failed to fetch budgets");
     }
 
     const budgets: BudgetsResponse = json;
 
     return budgets;
   } catch (error) {
-    console.error('Error fetching budgets:', error);
+    console.error("Error fetching budgets:", error);
     throw error;
   }
 };
