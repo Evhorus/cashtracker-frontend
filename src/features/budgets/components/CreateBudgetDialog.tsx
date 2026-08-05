@@ -1,7 +1,6 @@
 "use client";
-import { startTransition, useActionState, useState } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,
@@ -11,30 +10,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/shared/components/ui/dialog";
-import { useActionWithToast } from "@/shared/hooks/useActionWithToast";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { BudgetForm } from "./BudgetForm";
 import { BudgetFormValues } from "@/features/budgets/schemas/budget.schema";
 
 import { createBudgetAction } from "@/features/budgets/actions/create-budget.action";
 
 export const CreateBudgetDialog = () => {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const [state, dispatch, isPending] = useActionState(createBudgetAction, {
+  const { dispatch, isPending } = useActionDialog(createBudgetAction, {
     errors: [],
     success: "",
-  });
-
-  useActionWithToast(state, {
-    onSuccess: () => {
-      router.refresh();
-      setOpen(false);
-    },
+  }, {
+    setOpen,
   });
 
   const handleCreate = async (budgetFormValues: BudgetFormValues) => {
-    startTransition(() => dispatch(budgetFormValues));
+    dispatch(budgetFormValues);
   };
 
   return (

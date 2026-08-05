@@ -31,7 +31,7 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
       percentage: BudgetHelpers.getPercentage(budget),
       isOverBudget: BudgetHelpers.isOverBudget(budget),
     }),
-    [budget]
+    [budget],
   );
 
   return (
@@ -48,7 +48,7 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
 
           <div className="space-y-1">
             <CardTitle className="text-lg font-bold leading-none tracking-tight group-hover:text-primary transition-colors duration-200">
-              <span className="truncate block max-w-[150px] sm:max-w-[200px]">
+              <span className="truncate block max-w-37.5 sm:max-w-50">
                 {budget.name}
               </span>
             </CardTitle>

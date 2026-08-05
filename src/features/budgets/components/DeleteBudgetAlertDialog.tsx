@@ -14,14 +14,10 @@ import {
 } from "@/shared/components/ui/alert-dialog";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { Loader2, Trash2 } from "lucide-react";
-import React, {
-  startTransition,
-  useActionState,
-  useEffect,
-  useState,
-} from "react";
-import { toast } from "sonner";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
 
 interface DeleteBudgetAlertDialogProps {
   id: string;
@@ -36,27 +32,38 @@ export const DeleteBudgetAlertDialog = ({
   open: controlledOpen,
   onOpenChange: setControlledOpen,
 }: DeleteBudgetAlertDialogProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const [internalOpen, setInternalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [state, dispatch, isPending] = useActionState(deleteBudgetAction, {
+  const { dispatch, isPending } = useActionDialog(deleteBudgetAction, {
     errors: [],
     success: "",
+  }, {
+    setOpen: (open) => {
+      if (controlledOpen === undefined) {
+        setInternalOpen(open);
+      } else {
+        setControlledOpen?.(open);
+      }
+    },
+    onSuccess: () => {
+      setInputValue("");
+
+      if (pathname.startsWith("/dashboard/budget/")) {
+        router.replace("/dashboard/budgets");
+      } else {
+        router.refresh();
+      }
+    },
   });
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? setControlledOpen : setInternalOpen;
 
-  useEffect(() => {
-    if (state.errors) {
-      state.errors.forEach((err) => {
-        toast.error(err);
-      });
-    }
-  }, [state]);
-
   const handleDeleteBudget = async () => {
-    startTransition(() => dispatch(id));
+    dispatch(id);
   };
 
   const Content = (

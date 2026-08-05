@@ -1,8 +1,7 @@
 "use client";
-import { startTransition, useActionState, useState } from "react";
+import { useState } from "react";
 import { parseDateInput } from "@/shared/lib/date-helpers";
 import { Edit } from "lucide-react";
-import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/shared/components/ui/dialog";
 import { Button } from "@/shared/components/ui/button";
-import { useActionWithToast } from "@/shared/hooks/useActionWithToast";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { ExpenseForm } from "./ExpenseForm";
 import { Expense } from "@/features/expenses/types";
 import { updateExpenseAction } from "@/features/expenses/actions/update-expense.action";
@@ -31,32 +30,25 @@ export const UpdateExpenseDialog = ({
   open: controlledOpen,
   onOpenChange: setControlledOpen,
 }: UpdateExpenseDialogProps) => {
-  const router = useRouter();
   const [internalOpen, setInternalOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? setControlledOpen : setInternalOpen;
 
-  const [state, dispatch, isPending] = useActionState(
+  const { dispatch, isPending } = useActionDialog(
     updateExpenseAction,
     {
       errors: [],
       success: "",
-    }
+    },
+    {
+      setOpen,
+    },
   );
 
-  useActionWithToast(state, {
-    onSuccess: () => {
-      router.refresh();
-      setOpen?.(false);
-    },
-  });
-
   const handleCreate = async (expenseFormValues: ExpenseFormValues) => {
-    startTransition(() =>
-      dispatch({ ...expenseFormValues, budgetId, expenseId: expense.id })
-    );
+    dispatch({ ...expenseFormValues, budgetId, expenseId: expense.id });
   };
 
   return (
@@ -68,7 +60,7 @@ export const UpdateExpenseDialog = ({
           </Button>
         </DialogTrigger>
       )}
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>Editar Gasto</DialogTitle>
           <DialogDescription>

@@ -71,7 +71,7 @@ export const BudgetChart = ({ spent, total }: BudgetChartProps) => {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px]"
+          className="mx-auto aspect-square max-h-75"
         >
           <PieChart>
             <ChartTooltip

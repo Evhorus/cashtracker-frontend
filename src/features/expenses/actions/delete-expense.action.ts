@@ -3,7 +3,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
 
 type DeleteBudgetActionState = {
   errors: string[];
@@ -37,10 +36,14 @@ export const deleteExpenseAction = async (
       };
     }
 
-    // Revalidate cache before redirect
     revalidatePath("/dashboard");
     revalidatePath(`/dashboard/budget/${budgetId}`);
     revalidateTag("all-budgets", "max");
+
+    return {
+      success: "Gasto eliminado correctamente.",
+      errors: [],
+    };
   } catch (error) {
     console.error("Error deleting expense:", error);
     return {
@@ -48,7 +51,4 @@ export const deleteExpenseAction = async (
       errors: ["No se pudo eliminar el gasto. Intenta más tarde."],
     };
   }
-
-  // Redirect outside try-catch to avoid catching the redirect error
-  redirect(`/dashboard/budget/${budgetId}`);
 };

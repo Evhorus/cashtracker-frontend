@@ -24,9 +24,9 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
 import { Loader2, Trash2 } from "lucide-react";
-import { startTransition, useActionState, useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "@/shared/hooks/use-media-query";
-import { toast } from "sonner";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 
 interface DeleteExpenseAlertDialogProps {
   budgetId: string;
@@ -45,25 +45,25 @@ export const DeleteExpenseAlertDialog = ({
 }: DeleteExpenseAlertDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [state, dispatch, isPending] = useActionState(deleteExpenseAction, {
+  const { dispatch, isPending } = useActionDialog(deleteExpenseAction, {
     errors: [],
     success: "",
+  }, {
+    setOpen: (open) => {
+      if (controlledOpen === undefined) {
+        setInternalOpen(open);
+      } else {
+        setControlledOpen?.(open);
+      }
+    },
   });
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? setControlledOpen : setInternalOpen;
 
-  useEffect(() => {
-    if (state.errors) {
-      state.errors.forEach((err) => {
-        toast.error(err);
-      });
-    }
-  }, [state]);
-
   const handleDeleteBudget = async () => {
-    startTransition(() => dispatch({ budgetId, expenseId }));
+    dispatch({ budgetId, expenseId });
   };
 
   if (isDesktop) {
