@@ -34,7 +34,9 @@ export const EnvelopeMapper = {
       description: apiEnvelope.description ?? undefined,
       createdAt: new Date(apiEnvelope.createdAt),
       updatedAt: new Date(apiEnvelope.updatedAt),
-      expenses: apiEnvelope.expenses.map(ExpenseMapper.fromApi),
+      // Absent on the paginated list endpoint - only the detail endpoint
+      // embeds expenses.
+      expenses: apiEnvelope.expenses?.map(ExpenseMapper.fromApi) ?? [],
     };
   },
 };

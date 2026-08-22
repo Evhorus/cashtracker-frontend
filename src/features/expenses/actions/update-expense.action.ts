@@ -23,6 +23,7 @@ export const updateExpenseAction = createSafeAction(
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
     revalidateTag("all-envelopes", "max");
     revalidateTag("expense", "max");
+    revalidateTag("dashboard-summary", "max");
 
     return { successMessage: response.message };
   },

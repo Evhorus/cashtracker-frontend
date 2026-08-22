@@ -19,6 +19,7 @@ export const updateEnvelopeAction = createSafeAction(
     revalidatePath("/dashboard");
     revalidateTag("all-envelopes", "max");
     revalidateTag("envelope", "max");
+    revalidateTag("dashboard-summary", "max");
 
     return { successMessage: response.message };
   },

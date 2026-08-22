@@ -1,5 +1,9 @@
 import { fetchApi } from "@/lib/api-client";
 import {
+  appendPaginationParams,
+  type PaginationParams,
+} from "@/lib/pagination";
+import {
   EnvelopeFormValues,
   EnvelopeAPIResponseSchema,
   EnvelopesAPIResponseSchema,
@@ -10,9 +14,13 @@ import { Envelope, EnvelopesResponse } from "../types";
 import { EnvelopeMapper } from "../mappers/envelope.mapper";
 
 export const EnvelopesService = {
-  getAll: async (): Promise<EnvelopesResponse> => {
+  getAll: async (params?: PaginationParams): Promise<EnvelopesResponse> => {
+    const query = new URLSearchParams();
+    if (params) appendPaginationParams(query, params);
+    const qs = query.toString();
+
     const response = await fetchApi<EnvelopesResponseApi>(
-      "/envelopes",
+      `/envelopes${qs ? `?${qs}` : ""}`,
       {
         next: { tags: ["all-envelopes"], revalidate: 60 },
       },
@@ -20,8 +28,8 @@ export const EnvelopesService = {
     );
 
     return {
-      count: response.count,
       data: response.data.map(EnvelopeMapper.fromApi),
+      meta: response.meta,
     };
   },
 

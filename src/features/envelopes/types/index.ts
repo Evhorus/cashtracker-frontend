@@ -1,9 +1,10 @@
 import { Expense } from "@/features/expenses/types";
 import type { CurrencyCode } from "@/lib/format-currency";
+import type { PaginationMeta } from "@/lib/pagination";
 
 export interface EnvelopesResponse {
-  count: number;
   data: Envelope[];
+  meta: PaginationMeta;
 }
 
 export interface Envelope {

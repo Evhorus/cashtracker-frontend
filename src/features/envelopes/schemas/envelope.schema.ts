@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ExpenseAPIResponseSchema } from "@/features/expenses/schemas/expense.schema";
 import { CURRENCY_CODES } from "@/lib/format-currency";
+import { paginatedSchema } from "@/lib/pagination";
 
 export const EnvelopeAPIResponseSchema = z.object({
   id: z.string(),
@@ -15,15 +16,17 @@ export const EnvelopeAPIResponseSchema = z.object({
   description: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  expenses: z.array(ExpenseAPIResponseSchema),
+  // Only present on the single-envelope detail endpoint
+  // (EnvelopeWithExpensesResponseDto) - the paginated list endpoint
+  // (EnvelopeResponseDto) never includes it.
+  expenses: z.array(ExpenseAPIResponseSchema).optional(),
 });
 
 export type EnvelopeApi = z.infer<typeof EnvelopeAPIResponseSchema>;
 
-export const EnvelopesAPIResponseSchema = z.object({
-  count: z.number(),
-  data: z.array(EnvelopeAPIResponseSchema),
-});
+export const EnvelopesAPIResponseSchema = paginatedSchema(
+  EnvelopeAPIResponseSchema,
+);
 
 export type EnvelopesResponseApi = z.infer<typeof EnvelopesAPIResponseSchema>;
 

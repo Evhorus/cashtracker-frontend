@@ -36,6 +36,7 @@ export const deleteEnvelopeAction = async (
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/envelopes");
     revalidateTag("all-envelopes", "max");
+    revalidateTag("dashboard-summary", "max");
 
     return {
       success: "Sobre eliminado correctamente.",

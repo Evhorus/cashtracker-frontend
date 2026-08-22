@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
+import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
 import { Button } from "@/components/ui/button";
 import nextDynamic from "next/dynamic";
 import { EnvelopesSummaryChartSkeleton } from "@/components/common/envelopes-summary-chart-skeleton";
 import { StatsCards } from "@/components/common/stats-cards";
-import { DashboardHelpers } from "@/lib/dashboard-helpers";
+import { cn } from "@/lib/utils";
 
 // recharts is a heavy dependency - code-split it into its own chunk,
 // only needed once this section of the dashboard renders.
@@ -24,14 +25,31 @@ const EnvelopesSummaryChart = nextDynamic(
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
-  await auth.protect();
-  const envelopes = await getEnvelopesAction();
+// Recent envelopes preview on the dashboard - "see all" goes to the
+// full paginated list at /dashboard/envelopes.
+const RECENT_ENVELOPES_LIMIT = 6;
 
-  const totalAmount = DashboardHelpers.getTotalAmount(envelopes.data);
-  const totalSpent = DashboardHelpers.getTotalSpent(envelopes.data);
-  const totalRemaining = DashboardHelpers.getTotalRemaining(envelopes.data);
-  const chartData = DashboardHelpers.getChartData(envelopes.data);
+interface DashboardPageProps {
+  searchParams: Promise<{ year?: string }>;
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: DashboardPageProps) {
+  await auth.protect();
+  const { year: yearParam } = await searchParams;
+  const year = yearParam ? parseInt(yearParam, 10) || undefined : undefined;
+
+  const [summary, envelopes] = await Promise.all([
+    getDashboardSummaryAction(year),
+    getEnvelopesAction({ limit: RECENT_ENVELOPES_LIMIT }),
+  ]);
+
+  const chartData = summary.chart.map((entry) => ({
+    name: entry.name,
+    Gastado: entry.spent,
+    Disponible: entry.available,
+  }));
 
   return (
     <div className="space-y-6">
@@ -43,18 +61,43 @@ export default async function DashboardPage() {
             Resumen general de tus finanzas
           </p>
         </div>
+
+        {summary.availableYears.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant={!year ? "secondary" : "ghost"}
+              size="sm"
+              nativeButton={false}
+              render={<Link href="/dashboard" />}
+            >
+              Todos
+            </Button>
+            {summary.availableYears.map((y) => (
+              <Button
+                key={y}
+                variant={y === year ? "secondary" : "ghost"}
+                size="sm"
+                nativeButton={false}
+                render={<Link href={`/dashboard?year=${y}`} />}
+                className={cn(y === year && "font-semibold")}
+              >
+                {y}
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
 
       <StatsCards
-        totalAmount={totalAmount}
-        totalCount={envelopes.count}
-        totalSpent={totalSpent}
-        totalRemaining={totalRemaining}
+        totalAmount={summary.totalAssigned}
+        totalCount={summary.totalEnvelopes}
+        totalSpent={summary.totalSpent}
+        totalRemaining={summary.totalAvailable}
       />
 
       <EnvelopesSummaryChart
         chartData={chartData}
-        totalEnvelopes={envelopes.count}
+        totalEnvelopes={summary.totalEnvelopes}
       />
 
       <div className="flex items-center justify-between">
@@ -64,7 +107,7 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      <EnvelopesGrid envelopes={envelopes.data.slice(0, 6)} />
+      <EnvelopesGrid envelopes={envelopes.data} />
     </div>
   );
 }

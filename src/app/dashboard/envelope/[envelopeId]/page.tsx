@@ -8,6 +8,7 @@ import { ExpensesFilter } from "@/features/expenses/components/expenses-filter";
 import { ExpensesList } from "@/features/expenses/components/expenses-list";
 import { EnvelopeActionsMenu } from "@/features/envelopes/components/envelope-actions-menu";
 import { PageHeader } from "@/components/common/page-header";
+import { PaginationControls } from "@/components/common/pagination-controls";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format-currency";
@@ -39,6 +40,8 @@ const EnvelopeChart = nextDynamic(
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
+const EXPENSES_PER_PAGE = 10;
+
 interface EnvelopePageProps {
   params: Promise<{ envelopeId: string }>;
   searchParams: Promise<{
@@ -46,6 +49,7 @@ interface EnvelopePageProps {
     endDate?: string;
     search?: string;
     sort?: string;
+    page?: string;
   }>;
 }
 
@@ -55,15 +59,26 @@ export default async function EnvelopePage({
 }: EnvelopePageProps) {
   await auth.protect();
   const { envelopeId } = await params;
-  const { startDate, endDate, search, sort } = await searchParams;
+  const {
+    startDate,
+    endDate,
+    search,
+    sort,
+    page: pageParam,
+  } = await searchParams;
+  const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
+  const sortOrder =
+    sort === "DESC" ? "DESC" : sort === "ASC" ? "ASC" : undefined;
 
-  const [envelope, expenses] = await Promise.all([
+  const [envelope, expensesResult] = await Promise.all([
     getEnvelopeByIdAction(envelopeId),
     getExpensesAction(envelopeId, {
       startDate,
       endDate,
       search,
-      sort,
+      sort: sortOrder,
+      page,
+      limit: EXPENSES_PER_PAGE,
     }),
   ]);
 
@@ -205,7 +220,18 @@ export default async function EnvelopePage({
           </div>
 
           <ExpensesFilter />
-          <ExpensesList expenses={expenses} currency={envelope.currency} />
+          <ExpensesList
+            expenses={expensesResult.data}
+            currency={envelope.currency}
+          />
+          <PaginationControls
+            page={expensesResult.meta.page}
+            totalPages={expensesResult.meta.totalPages}
+            hasNextPage={expensesResult.meta.hasNextPage}
+            hasPreviousPage={expensesResult.meta.hasPreviousPage}
+            basePath={`/dashboard/envelope/${envelopeId}`}
+            searchParams={{ startDate, endDate, search, sort }}
+          />
         </div>
 
         {/* Right Column: Chart */}

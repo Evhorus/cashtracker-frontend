@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { CurrencyCode } from "@/lib/format-currency";
+import { paginatedSchema } from "@/lib/pagination";
 
 export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),
@@ -15,7 +16,9 @@ export const ExpenseAPIResponseSchema = z.object({
 });
 
 export type ExpenseApi = z.infer<typeof ExpenseAPIResponseSchema>;
-export const ExpensesAPIResponseSchema = z.array(ExpenseAPIResponseSchema);
+export const ExpensesAPIResponseSchema = paginatedSchema(
+  ExpenseAPIResponseSchema,
+);
 export type ExpensesResponseApi = z.infer<typeof ExpensesAPIResponseSchema>;
 
 /**
