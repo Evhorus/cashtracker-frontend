@@ -206,25 +206,27 @@ export default async function EnvelopePage({
                   </div>
                 )}
 
+                {/* "Transacciones" gets its own row rather than riding as
+                    a caption under "Límite total" - the count has nothing
+                    to do with the limit itself, and reading them stacked
+                    together read as if they were related. */}
+                {!isUnlimited && (
+                  <div className="flex items-center justify-between py-3 first:pt-0">
+                    <dt className="text-sm text-muted-foreground">
+                      Límite total
+                    </dt>
+                    <dd className="text-base font-bold">
+                      {formatCurrency(+envelope.amount!, currencyConfig)}
+                    </dd>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                   <dt className="text-sm text-muted-foreground">
-                    {isUnlimited ? "Transacciones" : "Límite total"}
+                    Transacciones
                   </dt>
-                  <dd className="text-right">
-                    {isUnlimited ? (
-                      <p className="text-base font-bold">
-                        {envelope.expenses.length}
-                      </p>
-                    ) : (
-                      <>
-                        <p className="text-base font-bold">
-                          {formatCurrency(+envelope.amount!, currencyConfig)}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {envelope.expenses.length} transacciones
-                        </p>
-                      </>
-                    )}
+                  <dd className="text-base font-bold">
+                    {envelope.expenses.length}
                   </dd>
                 </div>
               </dl>

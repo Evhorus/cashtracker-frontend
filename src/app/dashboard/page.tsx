@@ -4,6 +4,7 @@ import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.a
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
 import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
+import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
 import { Button } from "@/components/ui/button";
 import nextDynamic from "next/dynamic";
 import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
@@ -84,9 +85,12 @@ export default async function DashboardPage({
 
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Mis Sobres</h2>
-        <Link href="/dashboard/envelopes">
-          <Button variant="link">Ver todos</Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/envelopes">
+            <Button variant="link">Ver todos</Button>
+          </Link>
+          <CreateEnvelopeDialog />
+        </div>
       </div>
 
       <EnvelopesGrid envelopes={envelopes.data} />
