@@ -69,6 +69,8 @@
   --spacing: 0.25rem;
   --background: oklch(0.9843 0.0017 247.8393);
   --foreground: oklch(0.2079 0.0399 265.7275);
+  --success: oklch(0.6959 0.1491 162.48);
+  --success-foreground: oklch(0.9899 0.0049 12.1788);
 }
 
 .dark {
@@ -133,6 +135,8 @@
     0px 4px 10px 0px hsl(220 30% 10% / 0.5),
     0px 8px 10px -1px hsl(220 30% 10% / 0.5);
   --shadow-2xl: 0px 4px 10px 0px hsl(220 30% 10% / 1.25);
+  --success: oklch(0.7729 0.1535 163.223);
+  --success-foreground: oklch(0.2079 0.0399 265.7275);
 }
 
 @theme inline {
@@ -152,6 +156,8 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -190,6 +196,18 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-fade-in: fade-in 0.5s ease-out both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {

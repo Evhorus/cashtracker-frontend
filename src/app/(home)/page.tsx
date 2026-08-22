@@ -3,6 +3,7 @@ import { CustomHeader } from "@/components/common/custom-header";
 import { Button } from "@/components/ui/button";
 import { currentUser } from "@clerk/nextjs/server";
 import { Metadata } from "next";
+import { Check, Sparkles, Wallet } from "lucide-react";
 
 import {
   Card,
@@ -66,8 +67,19 @@ export default async function Home() {
       <CustomHeader />
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 text-center md:py-32">
-        <div className="animate-fade-in mx-auto max-w-4xl space-y-8">
+      <section className="relative overflow-hidden px-4 py-20 text-center md:py-32">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 flex justify-center"
+        >
+          <div className="mt-[-10rem] h-[28rem] w-[28rem] rounded-full bg-primary/20 blur-3xl md:h-[36rem] md:w-[36rem]" />
+        </div>
+
+        <div className="container mx-auto max-w-4xl animate-fade-in space-y-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+            <Sparkles className="h-4 w-4" />
+            100% gratis para empezar
+          </div>
           <h2 className="text-4xl leading-tight font-bold text-foreground md:text-6xl">
             Toma el control de tus{" "}
             <span className="text-primary">finanzas personales</span>
@@ -135,8 +147,8 @@ export default async function Home() {
               </h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
-                    <span className="text-success text-sm font-bold">✓</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success/20">
+                    <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
                     <h4 className="mb-1 font-semibold text-foreground">
@@ -149,8 +161,8 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
-                    <span className="text-success text-sm font-bold">✓</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success/20">
+                    <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
                     <h4 className="mb-1 font-semibold text-foreground">
@@ -163,8 +175,8 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
-                    <span className="text-success text-sm font-bold">✓</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success/20">
+                    <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
                     <h4 className="mb-1 font-semibold text-foreground">
@@ -223,8 +235,12 @@ export default async function Home() {
 
       {/* Footer */}
       <footer className="border-t border-border/40 py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>
+        <div className="container mx-auto flex flex-col items-center gap-3 px-4 text-center text-muted-foreground">
+          <div className="flex items-center gap-2 text-foreground">
+            <Wallet className="h-5 w-5 text-primary" />
+            <span className="font-semibold">CashTracker</span>
+          </div>
+          <p className="text-sm">
             &copy; {new Date().getFullYear()} CashTracker. Control de gastos
             personales.
           </p>

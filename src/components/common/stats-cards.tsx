@@ -73,7 +73,7 @@ export const StatsCards = ({
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Total Disponible
           </CardTitle>
-          <div className="bg-success/10 text-success flex h-8 w-8 items-center justify-center rounded-full">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success/10 text-success">
             <PieChart className="h-4 w-4" />
           </div>
         </CardHeader>
