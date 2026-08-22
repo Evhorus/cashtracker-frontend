@@ -4,7 +4,7 @@ import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.a
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
 import { Button } from "@/components/ui/button";
 import nextDynamic from "next/dynamic";
-import { ChartSkeleton } from "@/components/common/chart-skeleton";
+import { EnvelopesSummaryChartSkeleton } from "@/components/common/envelopes-summary-chart-skeleton";
 import { StatsCards } from "@/components/common/stats-cards";
 import { DashboardHelpers } from "@/lib/dashboard-helpers";
 
@@ -13,9 +13,12 @@ import { DashboardHelpers } from "@/lib/dashboard-helpers";
 // Aliased to `nextDynamic`: this file also exports the route segment
 // config `dynamic = "force-dynamic"` below, which would otherwise
 // collide with next/dynamic's default export name.
-const Chart = nextDynamic(
-  () => import("@/components/common/chart").then((mod) => mod.Chart),
-  { loading: () => <ChartSkeleton /> },
+const EnvelopesSummaryChart = nextDynamic(
+  () =>
+    import("@/components/common/envelopes-summary-chart").then(
+      (mod) => mod.EnvelopesSummaryChart,
+    ),
+  { loading: () => <EnvelopesSummaryChartSkeleton /> },
 );
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -49,7 +52,10 @@ export default async function DashboardPage() {
         totalRemaining={totalRemaining}
       />
 
-      <Chart chartData={chartData} totalEnvelopes={envelopes.count} />
+      <EnvelopesSummaryChart
+        chartData={chartData}
+        totalEnvelopes={envelopes.count}
+      />
 
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Mis Presupuestos</h2>

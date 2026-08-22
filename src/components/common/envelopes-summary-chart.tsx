@@ -9,18 +9,21 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-type ChartData = {
+type EnvelopesSummaryChartData = {
   name: string;
   Gastado: number;
   Total: number;
 };
 
-interface ChartProps {
+interface EnvelopesSummaryChartProps {
   totalEnvelopes: number;
-  chartData: ChartData[];
+  chartData: EnvelopesSummaryChartData[];
 }
 
-export const Chart = ({ chartData, totalEnvelopes }: ChartProps) => {
+export const EnvelopesSummaryChart = ({
+  chartData,
+  totalEnvelopes,
+}: EnvelopesSummaryChartProps) => {
   if (totalEnvelopes === 0) return null;
 
   const chartConfig = {
