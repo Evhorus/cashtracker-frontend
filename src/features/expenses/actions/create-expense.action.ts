@@ -19,6 +19,7 @@ export const createExpenseAction = createSafeAction(
     revalidatePath("/dashboard");
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
     revalidateTag("all-envelopes", "max");
+    revalidateTag("dashboard-summary", "max");
 
     return { successMessage: response.message };
   },

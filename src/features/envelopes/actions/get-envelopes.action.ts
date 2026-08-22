@@ -1,28 +1,17 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
-import { EnvelopesResponse } from "@/features/envelopes/types";
-import { authenticatedFetch } from "@/lib/authenticated-fetch";
+import { EnvelopesService } from "@/features/envelopes/services/envelopes.service";
+import type { PaginationParams } from "@/lib/pagination";
 
-export const getEnvelopesAction = async () => {
+export const getEnvelopesAction = async (params?: PaginationParams) => {
   await auth.protect();
 
   try {
-    const req = await authenticatedFetch("/envelopes", {
-      next: {
-        tags: ["all-envelopes"],
-        revalidate: 60, // Revalidate every 60 seconds
-      },
-    });
-
-    const json = await req.json();
-
-    if (!req.ok) {
-      throw new Error("Failed to fetch envelopes");
-    }
-
-    const envelopes: EnvelopesResponse = json;
-
-    return envelopes;
+    // Delegates to EnvelopesService (fetchApi + Zod validation +
+    // EnvelopeMapper) instead of an unchecked raw fetch, so a malformed
+    // API response fails loudly here instead of reaching the UI as
+    // `undefined` fields.
+    return await EnvelopesService.getAll(params);
   } catch (error) {
     console.error("Error fetching envelopes:", error);
     throw error;

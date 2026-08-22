@@ -1,54 +1,41 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { Expense } from "@/features/expenses/types";
-import { authenticatedFetch } from "@/lib/authenticated-fetch";
+import {
+  ExpensesService,
+  type GetExpensesParams,
+  type ExpensesResponse,
+} from "@/features/expenses/services/expenses.service";
 
-interface GetExpensesFilters {
-  startDate?: string;
-  endDate?: string;
-  search?: string;
-  categoryId?: string;
-  sort?: string;
-}
+const EMPTY_RESPONSE: ExpensesResponse = {
+  data: [],
+  meta: {
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  },
+};
 
 export const getExpensesAction = async (
   envelopeId: string,
-  filters: GetExpensesFilters,
-): Promise<Expense[]> => {
+  params: GetExpensesParams,
+): Promise<ExpensesResponse> => {
   await auth.protect();
 
   try {
-    const params = new URLSearchParams();
-
-    if (filters.startDate) params.append("startDate", filters.startDate);
-    if (filters.endDate) params.append("endDate", filters.endDate);
-    if (filters.search) params.append("search", filters.search);
-    if (filters.categoryId) params.append("categoryId", filters.categoryId);
-    if (filters.sort) params.append("sort", filters.sort);
-
-    const queryString = params.toString();
-    const url = `/envelopes/${envelopeId}/expenses${
-      queryString ? `?${queryString}` : ""
-    }`;
-
-    await auth.protect();
-    const req = await authenticatedFetch(url, {
-      next: {
-        tags: [`expenses-${envelopeId}`],
-        revalidate: 0, // Always fresh for filters
-      },
-    });
-
-    if (!req.ok) {
-      console.error("Failed to fetch expenses");
-      return [];
-    }
-
-    const expenses: Expense[] = await req.json();
-    return expenses;
+    // Delegates to ExpensesService (fetchApi + Zod validation +
+    // ExpenseMapper) instead of an unchecked raw fetch, so a malformed
+    // API response fails loudly here instead of reaching the UI as
+    // `undefined` fields.
+    return await ExpensesService.getAll(envelopeId, params);
   } catch (error) {
     console.error("Error fetching filtered expenses:", error);
-    return [];
+    return {
+      ...EMPTY_RESPONSE,
+      meta: { ...EMPTY_RESPONSE.meta, limit: params.limit ?? 10 },
+    };
   }
 };

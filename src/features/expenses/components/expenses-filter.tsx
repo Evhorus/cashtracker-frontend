@@ -52,6 +52,10 @@ export const ExpensesFilter = () => {
       params.delete("search");
     }
 
+    // Changing a filter can shrink the result set - start back at page 1
+    // instead of leaving the user stuck on a now out-of-range page.
+    params.delete("page");
+
     startTransition(() => {
       const query = params.toString();
       router.replace(`${pathname}${query ? `?${query}` : ""}`);
