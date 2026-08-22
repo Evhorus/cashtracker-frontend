@@ -56,8 +56,7 @@ export const CreateExpenseDialog = ({
         <DialogHeader>
           <DialogTitle>Agregar Nuevo Gasto</DialogTitle>
           <DialogDescription>
-            Completa el formulario para registrar un nuevo gasto en este
-            presupuesto
+            Completa el formulario para registrar un nuevo gasto en este sobre
           </DialogDescription>
         </DialogHeader>
         <ExpenseForm

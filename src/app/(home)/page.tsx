@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:3000"),
   title: "CashTracker - Control de Finanzas Personales",
   description:
-    "Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.",
+    "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.",
   keywords: [
     "finanzas personales",
     "control de gastos",
-    "presupuestos",
+    "sobres",
     "ahorro",
     "gestión financiera",
     "cashtracker",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CashTracker - Toma el control de tus finanzas personales",
     description:
-      "Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis para empezar.",
+      "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras. 100% gratis para empezar.",
     type: "website",
     locale: "es_ES",
     siteName: "CashTracker",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "CashTracker - Control de Finanzas Personales",
     description:
-      "Gestiona tus gastos, crea presupuestos inteligentes y alcanza tus metas financieras. 100% gratis.",
+      "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras. 100% gratis.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -73,7 +73,7 @@ export default async function Home() {
             <span className="text-primary">finanzas personales</span>
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
-            CashTracker te ayuda a gestionar tus gastos, crear presupuestos
+            CashTracker te ayuda a gestionar tus gastos, crear sobres
             inteligentes y alcanzar tus metas financieras con una interfaz
             moderna y fácil de usar.
           </p>

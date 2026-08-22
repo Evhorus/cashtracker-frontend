@@ -14,8 +14,8 @@ export default async function EnvelopesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Mis Presupuestos"
-        description="Gestiona todos tus presupuestos"
+        title="Mis Sobres"
+        description="Gestiona todos tus sobres"
         backUrl="/dashboard"
         actions={<CreateEnvelopeDialog />}
         mobileActions={<CreateEnvelopeDialog />}

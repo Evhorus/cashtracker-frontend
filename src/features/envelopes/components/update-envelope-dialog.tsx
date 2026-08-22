@@ -62,9 +62,7 @@ export const UpdateEnvelopeDialog = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Editar</DialogTitle>
-          <DialogDescription>
-            Aquí puedes editar el presupuesto
-          </DialogDescription>
+          <DialogDescription>Aquí puedes editar el sobre</DialogDescription>
         </DialogHeader>
         <EnvelopeForm
           defaultValues={{

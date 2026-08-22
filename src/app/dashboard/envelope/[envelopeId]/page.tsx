@@ -140,7 +140,7 @@ export default async function EnvelopePage({
                 </div>
                 {remaining !== null && remaining < 0 && (
                   <p className="mt-1 text-xs text-destructive">
-                    Presupuesto excedido
+                    Límite excedido
                   </p>
                 )}
               </>
@@ -163,8 +163,8 @@ export default async function EnvelopePage({
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               {isUnlimited
-                ? "Sin límite de presupuesto"
-                : `${(percentage ?? 0).toFixed(1)}% del presupuesto`}
+                ? "Sin límite de gasto"
+                : `${(percentage ?? 0).toFixed(1)}% del límite`}
             </p>
           </CardContent>
         </Card>
@@ -172,7 +172,7 @@ export default async function EnvelopePage({
         <Card className="border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Presupuesto Total
+              Límite Total
             </CardTitle>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
               <PiggyBank className="h-4 w-4" />
@@ -215,7 +215,7 @@ export default async function EnvelopePage({
               <Card className="flex h-full flex-col items-center justify-center gap-2 border-0 text-center shadow-sm">
                 <InfinityIcon className="h-8 w-8 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">
-                  Este presupuesto no tiene límite de gasto
+                  Este sobre no tiene límite de gasto
                 </p>
                 <p className="text-lg font-bold">
                   {formatCurrency(+envelope.spent)} gastado

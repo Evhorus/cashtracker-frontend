@@ -40,16 +40,14 @@ export const CreateEnvelopeDialog = () => {
         render={
           <Button variant="default" size="lg">
             <Plus className="h-5 w-5" />
-            <span className="hidden md:inline">Nuevo Presupuesto</span>
+            <span className="hidden md:inline">Nuevo Sobre</span>
           </Button>
         }
       />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Crear</DialogTitle>
-          <DialogDescription>
-            Aquí puedes crear un presupuesto
-          </DialogDescription>
+          <DialogDescription>Aquí puedes crear un sobre</DialogDescription>
         </DialogHeader>
         <EnvelopeForm
           isLoading={isPending}

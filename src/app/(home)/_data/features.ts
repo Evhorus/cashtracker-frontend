@@ -12,7 +12,7 @@ export const features = [
     icon: Wallet,
     title: "Control Total",
     description:
-      "Administra tus gastos y presupuestos desde un solo lugar de forma intuitiva.",
+      "Administra tus gastos y sobres desde un solo lugar de forma intuitiva.",
   },
   {
     icon: PieChart,
@@ -22,9 +22,9 @@ export const features = [
   },
   {
     icon: Target,
-    title: "Presupuestos Inteligentes",
+    title: "Sobres Inteligentes",
     description:
-      "Crea presupuestos personalizados y recibe alertas cuando te acerques al límite.",
+      "Crea sobres personalizados y recibe alertas cuando te acerques al límite.",
   },
   {
     icon: TrendingDown,

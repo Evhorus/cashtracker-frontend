@@ -58,7 +58,7 @@ export default async function DashboardPage() {
       />
 
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Mis Presupuestos</h2>
+        <h2 className="text-2xl font-bold">Mis Sobres</h2>
         <Link href="/dashboard/envelopes">
           <Button variant="link">Ver todos</Button>
         </Link>

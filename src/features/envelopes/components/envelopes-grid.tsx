@@ -18,11 +18,9 @@ export const EnvelopesGrid = ({ envelopes }: EnvelopesGridProps) => {
             <div className="bg-primary-light mx-auto flex h-16 w-16 items-center justify-center rounded-full">
               <Wallet className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold">
-              No tienes presupuestos aún
-            </h3>
+            <h3 className="text-xl font-semibold">No tienes sobres aún</h3>
             <p className="text-muted-foreground">
-              Crea tu primer presupuesto para comenzar a controlar tus gastos
+              Crea tu primer sobre para comenzar a controlar tus gastos
             </p>
             <CreateEnvelopeDialog />
           </div>

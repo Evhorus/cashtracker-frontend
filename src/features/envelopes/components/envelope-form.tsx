@@ -66,9 +66,7 @@ export const EnvelopeForm = ({
                 name="name"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel htmlFor="name">
-                      Nombre del presupuesto
-                    </FieldLabel>
+                    <FieldLabel htmlFor="name">Nombre del sobre</FieldLabel>
                     <Input
                       id="name"
                       placeholder="Ej: Gastos del hogar"
@@ -117,7 +115,7 @@ export const EnvelopeForm = ({
                         disabled={isLoading}
                       />
                       <FieldLabel htmlFor="hasLimit" className="font-normal">
-                        Este presupuesto tiene un límite de gasto
+                        Este sobre tiene un límite de gasto
                       </FieldLabel>
                     </div>
                   </Field>

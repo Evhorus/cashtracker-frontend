@@ -38,14 +38,14 @@ export const deleteEnvelopeAction = async (
     revalidateTag("all-envelopes", "max");
 
     return {
-      success: "Presupuesto eliminado correctamente.",
+      success: "Sobre eliminado correctamente.",
       errors: [],
     };
   } catch (error) {
     console.error("Error deleting envelope:", error);
     return {
       success: "",
-      errors: ["No se pudo eliminar el presupuesto. Intenta más tarde."],
+      errors: ["No se pudo eliminar el sobre. Intenta más tarde."],
     };
   }
 };
