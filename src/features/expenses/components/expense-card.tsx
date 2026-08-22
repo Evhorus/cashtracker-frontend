@@ -3,11 +3,12 @@
 import { Expense } from "@/features/expenses/types";
 import { Calendar, Edit, Receipt, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { Card, CardContent } from "@/components/ui/card";
 import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
+import { CardHoverActions } from "@/components/common/card-hover-actions";
+import { CardActionButton } from "@/components/common/card-action-button";
 import { useState } from "react";
 import { UpdateExpenseDialog } from "./update-expense-dialog";
 import { DeleteExpenseAlertDialog } from "./delete-expense-alert-dialog";
@@ -102,30 +103,25 @@ export const ExpenseCard = ({
                 </span>
 
                 {/* Desktop Actions */}
-                <div className="hidden translate-x-2 items-center gap-2 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 md:flex">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                <CardHoverActions>
+                  <CardActionButton
+                    icon={Edit}
+                    label="Editar gasto"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowEditDialog(true);
                     }}
-                  >
-                    <Edit className="h-4.5 w-4.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  />
+                  <CardActionButton
+                    icon={Trash2}
+                    label="Eliminar gasto"
+                    tone="destructive"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowDeleteDialog(true);
                     }}
-                  >
-                    <Trash2 className="h-4.5 w-4.5" />
-                  </Button>
-                </div>
+                  />
+                </CardHoverActions>
 
                 {/* Mobile Actions (Drawer) */}
                 <div className="md:hidden">

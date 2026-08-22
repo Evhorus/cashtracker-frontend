@@ -10,6 +10,7 @@ import { useMemo } from "react";
 import React from "react";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { Envelope } from "@/features/envelopes/types";
+import { CardHoverActions } from "@/components/common/card-hover-actions";
 import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
 import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
 import { EnvelopeActionsMenu } from "./envelope-actions-menu";
@@ -92,11 +93,10 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
 
         {/* Actions */}
         <div className="flex items-center">
-          {/* Desktop Actions */}
-          <div className="hidden translate-x-2 items-center gap-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 md:flex">
+          <CardHoverActions>
             <UpdateEnvelopeDialog envelope={envelope} />
             <DeleteEnvelopeAlertDialog id={envelope.id} name={envelope.name} />
-          </div>
+          </CardHoverActions>
 
           {/* Mobile Actions */}
           <div className="md:hidden">
