@@ -68,16 +68,25 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                 {envelope.name}
               </span>
             </CardTitle>
-            {(envelope.category || envelope.currency !== "COP") && (
-              <p className="flex items-center gap-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                {envelope.category}
-                {envelope.currency !== "COP" && (
-                  <span className="rounded-sm bg-secondary px-1 py-0.5 text-secondary-foreground">
-                    {envelope.currency}
-                  </span>
-                )}
-              </p>
-            )}
+            {/* Always shows the creation month/year, not just when a
+                category is set - envelope names are free text and
+                commonly reused across years (e.g. a recurring "Agosto
+                NUU" every year), so without this there'd be no way to
+                tell which year's card is which in the list. */}
+            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">
+              <span>{formatMonthYear(envelope.createdAt)}</span>
+              {envelope.category && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{envelope.category}</span>
+                </>
+              )}
+              {envelope.currency !== "COP" && (
+                <span className="rounded-sm bg-secondary px-1 py-0.5 text-secondary-foreground">
+                  {envelope.currency}
+                </span>
+              )}
+            </p>
           </div>
         </div>
 
@@ -130,6 +139,10 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
           />
         </div>
 
+        {/* The creation date now lives in the header (see above), so
+            unlimited envelopes don't need a "Desde" filler here anymore -
+            just the one Gastado cell. Still the same row height as the
+            capped variant's two cells (both are label+value pairs). */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground">
@@ -139,26 +152,22 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
               {formatCurrency(+envelope.spent, currencyConfig)}
             </p>
           </div>
-          <div className="space-y-1 text-right">
-            <p className="text-xs font-medium text-muted-foreground">
-              {calculations.isUnlimited ? "Desde" : "Disponible"}
-            </p>
-            <p
-              className={
-                calculations.isUnlimited
-                  ? "text-sm font-bold text-foreground capitalize"
-                  : `text-sm font-bold ${
-                      (calculations.remaining ?? 0) < 0
-                        ? "text-destructive"
-                        : "text-success"
-                    }`
-              }
-            >
-              {calculations.isUnlimited
-                ? formatMonthYear(envelope.createdAt)
-                : formatCurrency(calculations.remaining ?? 0, currencyConfig)}
-            </p>
-          </div>
+          {!calculations.isUnlimited && (
+            <div className="space-y-1 text-right">
+              <p className="text-xs font-medium text-muted-foreground">
+                Disponible
+              </p>
+              <p
+                className={`text-sm font-bold ${
+                  (calculations.remaining ?? 0) < 0
+                    ? "text-destructive"
+                    : "text-success"
+                }`}
+              >
+                {formatCurrency(calculations.remaining ?? 0, currencyConfig)}
+              </p>
+            </div>
+          )}
         </div>
 
         <Button
