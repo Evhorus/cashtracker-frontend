@@ -29,7 +29,7 @@ export const ExpenseMapper = {
       name: apiExpense.name,
       amount: apiExpense.amount,
       date: parseDateInput(apiExpense.date),
-      description: apiExpense.description,
+      description: apiExpense.description ?? undefined,
       createdAt: parseDateInput(apiExpense.createdAt),
       updatedAt: parseDateInput(apiExpense.updatedAt),
     };

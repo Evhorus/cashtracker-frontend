@@ -1,5 +1,5 @@
-import { PageHeaderSkeleton } from "@/components/common/PageHeaderSkeleton";
-import { Card, CardContent, CardHeader } from "@/components/common/card";
+import { PageHeaderSkeleton } from "@/components/common/page-header-skeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ExpenseLoadingSkeleton() {

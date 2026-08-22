@@ -1,11 +1,6 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { EnvelopesListSkeleton } from "@/features/envelopes/components/EnvelopesListSkeleton";
+import { EnvelopesListSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 
 export default function DashboardLoadingSkeleton() {
   return (

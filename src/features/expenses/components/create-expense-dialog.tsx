@@ -9,9 +9,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import { useActionDialog } from "@/hooks/useActionDialog";
-import { ExpenseForm } from "./ExpenseForm";
+import { ExpenseForm } from "./expense-form";
 import { createExpenseAction } from "@/features/expenses/actions/create-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
 import type { CurrencyCode } from "@/lib/format-currency";
@@ -44,12 +44,14 @@ export const CreateExpenseDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default" size="lg">
-          <Plus />
-          <span className="hidden sm:inline-block">Agregar Gasto</span>
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="default" size="lg">
+            <Plus />
+            <span className="hidden sm:inline-block">Agregar Gasto</span>
+          </Button>
+        }
+      />
       <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>Agregar Nuevo Gasto</DialogTitle>

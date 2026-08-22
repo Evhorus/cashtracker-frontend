@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
-import { EnvelopesGrid } from "@/features/envelopes/components/EnvelopesGrid";
-import { Button } from "@/components/common/button";
+import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
+import { Button } from "@/components/ui/button";
 import nextDynamic from "next/dynamic";
-import { ChartSkeleton } from "@/components/common/ChartSkeleton";
-import { StatsCards } from "@/components/common/StatsCards";
+import { ChartSkeleton } from "@/components/common/chart-skeleton";
+import { StatsCards } from "@/components/common/stats-cards";
 import { DashboardHelpers } from "@/lib/dashboard-helpers";
 
 // recharts is a heavy dependency - code-split it into its own chunk,
@@ -14,7 +14,7 @@ import { DashboardHelpers } from "@/lib/dashboard-helpers";
 // config `dynamic = "force-dynamic"` below, which would otherwise
 // collide with next/dynamic's default export name.
 const Chart = nextDynamic(
-  () => import("@/components/common/Chart").then((mod) => mod.Chart),
+  () => import("@/components/common/chart").then((mod) => mod.Chart),
   { loading: () => <ChartSkeleton /> },
 );
 

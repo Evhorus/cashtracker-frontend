@@ -21,7 +21,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -74,11 +74,13 @@ export const DeleteExpenseAlertDialog = ({
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
         {!isControlled && (
-          <AlertDialogTrigger asChild>
-            <Button className={cn(className)} variant="ghost" size="icon">
-              <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
-            </Button>
-          </AlertDialogTrigger>
+          <AlertDialogTrigger
+            render={
+              <Button className={cn(className)} variant="ghost" size="icon">
+                <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
+              </Button>
+            }
+          />
         )}
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -109,11 +111,13 @@ export const DeleteExpenseAlertDialog = ({
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       {!isControlled && (
-        <DrawerTrigger asChild>
-          <Button className={cn(className)} variant="ghost" size="icon">
-            <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
-          </Button>
-        </DrawerTrigger>
+        <DrawerTrigger
+          render={
+            <Button className={cn(className)} variant="ghost" size="icon">
+              <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
+            </Button>
+          }
+        />
       )}
       <DrawerContent>
         <DrawerHeader className="text-left">
@@ -131,11 +135,13 @@ export const DeleteExpenseAlertDialog = ({
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Eliminar
           </Button>
-          <DrawerClose asChild>
-            <Button variant="outline" className="w-full">
-              Cancelar
-            </Button>
-          </DrawerClose>
+          <DrawerClose
+            render={
+              <Button variant="outline" className="w-full">
+                Cancelar
+              </Button>
+            }
+          />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

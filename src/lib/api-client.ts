@@ -54,7 +54,7 @@ export async function fetchApi<T>(
 
   const result = schema.safeParse(data);
   if (!result.success) {
-    console.error(`API Validation Error at ${path}:`, result.error.format());
+    console.error(`API Validation Error at ${path}:`, result.error.issues);
     throw new ApiError(
       response.status,
       `Server response does not match the expected format.`,

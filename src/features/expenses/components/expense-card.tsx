@@ -3,14 +3,14 @@
 import { Expense } from "@/features/expenses/types";
 import { Calendar, Edit, Receipt, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/date-helpers";
 import { formatCurrency } from "@/lib/format-currency";
-import { Card, CardContent } from "@/components/common/card";
-import { ActionsDrawer, ActionItem } from "@/components/common/ActionsDrawer";
+import { Card, CardContent } from "@/components/ui/card";
+import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
 import { useState } from "react";
-import { UpdateExpenseDialog } from "./UpdateExpenseDialog";
-import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";
+import { UpdateExpenseDialog } from "./update-expense-dialog";
+import { DeleteExpenseAlertDialog } from "./delete-expense-alert-dialog";
 import type { CurrencyCode } from "@/lib/format-currency";
 
 interface ExpenseCardProps {
@@ -65,7 +65,7 @@ export const ExpenseCard = ({
   return (
     <>
       <Card
-        className="group relative overflow-hidden border-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg"
+        className="group relative overflow-hidden border-0 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg"
         onClick={handleCardClick}
       >
         <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/60 transition-colors duration-300 group-hover:bg-primary" />

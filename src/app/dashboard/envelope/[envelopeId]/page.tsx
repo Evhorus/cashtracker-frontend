@@ -1,20 +1,15 @@
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopeByIdAction } from "@/features/envelopes/actions/get-envelope-by-id.action";
 import { getExpensesAction } from "@/features/expenses/actions/get-expenses.action";
-import { DeleteEnvelopeAlertDialog } from "@/features/envelopes/components/DeleteEnvelopeAlertDialog";
-import { UpdateEnvelopeDialog } from "@/features/envelopes/components/UpdateEnvelopeDialog";
-import { CreateExpenseDialog } from "@/features/expenses/components/CreateExpenseDialog";
-import { ExpensesFilter } from "@/features/expenses/components/ExpensesFilter";
-import { ExpensesList } from "@/features/expenses/components/ExpensesList";
-import { EnvelopeActionsMenu } from "@/features/envelopes/components/EnvelopeActionsMenu";
-import { PageHeader } from "@/components/common/PageHeader";
+import { DeleteEnvelopeAlertDialog } from "@/features/envelopes/components/delete-envelope-alert-dialog";
+import { UpdateEnvelopeDialog } from "@/features/envelopes/components/update-envelope-dialog";
+import { CreateExpenseDialog } from "@/features/expenses/components/create-expense-dialog";
+import { ExpensesFilter } from "@/features/expenses/components/expenses-filter";
+import { ExpensesList } from "@/features/expenses/components/expenses-list";
+import { EnvelopeActionsMenu } from "@/features/envelopes/components/envelope-actions-menu";
+import { PageHeader } from "@/components/common/page-header";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format-currency";
 
 import {
@@ -25,7 +20,7 @@ import {
   Wallet,
 } from "lucide-react";
 import nextDynamic from "next/dynamic";
-import { EnvelopeChartSkeleton } from "@/features/envelopes/components/EnvelopeChartSkeleton";
+import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 
 // recharts is a heavy dependency - code-split it into its own chunk,
@@ -35,7 +30,7 @@ import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 // collide with next/dynamic's default export name.
 const EnvelopeChart = nextDynamic(
   () =>
-    import("@/features/envelopes/components/EnvelopeChart").then(
+    import("@/features/envelopes/components/envelope-chart").then(
       (mod) => mod.EnvelopeChart,
     ),
   { loading: () => <EnvelopeChartSkeleton /> },
@@ -103,13 +98,13 @@ export default async function EnvelopePage({
         <Card
           className={
             isUnlimited
-              ? "border-0 shadow-sm transition-colors duration-300 hover:bg-card"
+              ? "border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card"
               : remaining !== null && remaining < 0
                 ? "border-destructive/50 bg-destructive/5"
                 : remaining !== null &&
                     remaining < (envelope.amount ? +envelope.amount * 0.2 : 0)
                   ? "border-warning/50 bg-warning/5"
-                  : "border-0 shadow-sm transition-colors duration-300 hover:bg-card"
+                  : "border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card"
           }
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -153,7 +148,7 @@ export default async function EnvelopePage({
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm transition-colors duration-300 hover:bg-card">
+        <Card className="border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Gastado
@@ -174,7 +169,7 @@ export default async function EnvelopePage({
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-sm transition-colors duration-300 hover:bg-card">
+        <Card className="border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Presupuesto Total

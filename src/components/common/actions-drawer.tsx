@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import { LucideIcon, MoreVertical } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
@@ -43,11 +43,13 @@ export const ActionsDrawer = ({
   if (isDesktop) {
     return (
       <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className={triggerClassName}>
-            <MoreVertical className="h-5 w-5" />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon" className={triggerClassName}>
+              <MoreVertical className="h-5 w-5" />
+            </Button>
+          }
+        />
         <DropdownMenuContent align="end">
           {actions.map((action, index) => {
             const Icon = action.icon;
@@ -76,11 +78,13 @@ export const ActionsDrawer = ({
   // Mobile: Drawer
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="ghost" size="icon" className={triggerClassName}>
-          <MoreVertical className="h-5 w-5" />
-        </Button>
-      </DrawerTrigger>
+      <DrawerTrigger
+        render={
+          <Button variant="ghost" size="icon" className={triggerClassName}>
+            <MoreVertical className="h-5 w-5" />
+          </Button>
+        }
+      />
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>

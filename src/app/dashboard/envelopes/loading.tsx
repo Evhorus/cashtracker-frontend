@@ -1,5 +1,5 @@
-import { PageHeaderSkeleton } from "@/components/common/PageHeaderSkeleton";
-import { EnvelopesListSkeleton } from "@/features/envelopes/components/EnvelopesListSkeleton";
+import { PageHeaderSkeleton } from "@/components/common/page-header-skeleton";
+import { EnvelopesListSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 
 export default function EnvelopesLoading() {
   return (

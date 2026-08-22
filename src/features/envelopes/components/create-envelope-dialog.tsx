@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useActionDialog } from "@/hooks/useActionDialog";
-import { EnvelopeForm } from "./EnvelopeForm";
+import { EnvelopeForm } from "./envelope-form";
 import { EnvelopeFormValues } from "@/features/envelopes/schemas/envelope.schema";
 
 import { createEnvelopeAction } from "@/features/envelopes/actions/create-envelope.action";
@@ -36,12 +36,14 @@ export const CreateEnvelopeDialog = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default" size="lg">
-          <Plus className="h-5 w-5" />
-          <span className="hidden md:inline">Nuevo Presupuesto</span>
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="default" size="lg">
+            <Plus className="h-5 w-5" />
+            <span className="hidden md:inline">Nuevo Presupuesto</span>
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Crear</DialogTitle>

@@ -1,11 +1,6 @@
 import { Wallet, DollarSign, TrendingUp, PieChart } from "lucide-react";
 import React from "react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/common/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format-currency";
 
 interface StatsCardProps {
@@ -23,7 +18,7 @@ export const StatsCards = ({
 }: StatsCardProps) => {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="animate-fade-in border-0 shadow-sm transition-colors duration-300 hover:bg-card">
+      <Card className="animate-fade-in border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Presupuestos Activos

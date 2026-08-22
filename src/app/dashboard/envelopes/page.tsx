@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
-import { EnvelopesGrid } from "@/features/envelopes/components/EnvelopesGrid";
-import { CreateEnvelopeDialog } from "@/features/envelopes/components/CreateEnvelopeDialog";
-import { PageHeader } from "@/components/common/PageHeader";
+import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
+import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
+import { PageHeader } from "@/components/common/page-header";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";

@@ -10,9 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import { useActionDialog } from "@/hooks/useActionDialog";
-import { ExpenseForm } from "./ExpenseForm";
+import { ExpenseForm } from "./expense-form";
 import { Expense } from "@/features/expenses/types";
 import { updateExpenseAction } from "@/features/expenses/actions/update-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
@@ -57,11 +57,13 @@ export const UpdateExpenseDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
-        <DialogTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Edit className="h-4 w-4 text-muted-foreground transition-colors hover:text-primary" />
-          </Button>
-        </DialogTrigger>
+        <DialogTrigger
+          render={
+            <Button variant="ghost" size="icon">
+              <Edit className="h-4 w-4 text-muted-foreground transition-colors hover:text-primary" />
+            </Button>
+          }
+        />
       )}
       <DialogContent className="sm:max-w-125">
         <DialogHeader>

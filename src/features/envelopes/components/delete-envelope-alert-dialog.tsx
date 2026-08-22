@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import { useActionDialog } from "@/hooks/useActionDialog";
 import { Loader2, Trash2 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -89,11 +89,13 @@ export const DeleteEnvelopeAlertDialog = ({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
-        <AlertDialogTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
-          </Button>
-        </AlertDialogTrigger>
+        <AlertDialogTrigger
+          render={
+            <Button variant="ghost" size="icon">
+              <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
+            </Button>
+          }
+        />
       )}
       <AlertDialogContent>
         <AlertDialogHeader>

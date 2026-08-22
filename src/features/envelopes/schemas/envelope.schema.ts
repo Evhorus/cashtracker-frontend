@@ -9,8 +9,10 @@ export const EnvelopeAPIResponseSchema = z.object({
   amount: z.string().nullable(),
   currency: z.string().default("COP"),
   spent: z.string(),
-  category: z.string().optional(),
-  description: z.string().optional(),
+  // The API sends explicit `null` (not just an absent key) when these are
+  // unset, so `.optional()` alone rejects them - needs `.nullable()` too.
+  category: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
   expenses: z.array(ExpenseAPIResponseSchema),

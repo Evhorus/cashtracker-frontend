@@ -4,15 +4,16 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/common/submit-button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { ErrorMessage } from "@/components/common/ErrorMessage";
+import { ErrorMessage } from "@/components/common/error-message";
 import {
   envelopeFormSchema,
   EnvelopeFormValues,
 } from "@/features/envelopes/schemas/envelope.schema";
-import { PriceInput } from "@/components/common/PriceInput";
-import { CurrencySelector } from "@/components/common/CurrencySelector";
+import { PriceInput } from "@/components/common/price-input";
+import { CurrencySelector } from "@/components/common/currency-selector";
 import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/lib/format-currency";
 
 interface EnvelopeFormProps {
@@ -171,9 +172,9 @@ export const EnvelopeForm = ({
         </FieldSet>
 
         <Field orientation="responsive">
-          <Button isLoading={isLoading} type="submit">
+          <SubmitButton isLoading={isLoading} type="submit">
             Guardar
-          </Button>
+          </SubmitButton>
           <Button
             type="button"
             variant="outline"

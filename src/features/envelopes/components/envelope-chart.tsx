@@ -1,11 +1,6 @@
 "use client";
 import { Cell, Pie, PieChart } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -71,7 +66,7 @@ export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-75"
+          className="mx-auto aspect-square h-75 max-h-75"
         >
           <PieChart>
             <ChartTooltip
