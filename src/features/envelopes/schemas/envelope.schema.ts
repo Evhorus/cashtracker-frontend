@@ -35,7 +35,7 @@ export const envelopeFormSchema = z
   .object({
     name: z
       .string()
-      .min(1, { message: "El nombre del presupuesto es obligatorio" })
+      .min(1, { message: "El nombre del sobre es obligatorio" })
       .refine((val) => val.trim().length > 0, "No puede ser solo espacios")
       .transform((val) => val.trim()),
     // UI-only toggle - never persisted. When false, `amount` is sent as

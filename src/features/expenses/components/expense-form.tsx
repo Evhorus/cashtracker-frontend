@@ -102,7 +102,7 @@ export const ExpenseForm = ({
                   className="flex h-9 w-full items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground"
                 >
                   {currencyConfig.label} ({currencyConfig.symbol}) - hereda del
-                  presupuesto
+                  sobre
                 </div>
               </Field>
               <Controller

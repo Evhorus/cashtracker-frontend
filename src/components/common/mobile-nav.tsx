@@ -15,7 +15,7 @@ export const MobileNav = () => {
       icon: Home,
     },
     {
-      name: "Presupuestos",
+      name: "Sobres",
       href: "/dashboard/envelopes",
       icon: Wallet,
     },

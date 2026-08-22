@@ -5,7 +5,7 @@ export const EnvelopesSummaryChartSkeleton = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Resumen de Presupuestos</CardTitle>
+        <CardTitle>Resumen de Sobres</CardTitle>
       </CardHeader>
       <CardContent>
         <Skeleton className="h-80 w-full" />

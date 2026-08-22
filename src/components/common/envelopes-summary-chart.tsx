@@ -51,7 +51,7 @@ export const EnvelopesSummaryChart = ({
   return (
     <Card className="animate-fade-in [animation-delay:0.4s]">
       <CardHeader>
-        <CardTitle>Resumen de Presupuestos</CardTitle>
+        <CardTitle>Resumen de Sobres</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer

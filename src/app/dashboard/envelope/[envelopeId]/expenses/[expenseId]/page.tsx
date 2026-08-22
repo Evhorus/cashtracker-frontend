@@ -59,7 +59,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
         backUrl={`/dashboard/envelope/${envelopeId}`}
         description={
           <>
-            <span className="text-sm">En presupuesto:</span>
+            <span className="text-sm">En el sobre:</span>
             <Link
               href={`/dashboard/envelope/${envelopeId}`}
               className="text-sm font-medium text-primary hover:underline"
@@ -161,7 +161,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
           <Card className="overflow-hidden border-0 shadow-md">
             <CardHeader className="pt-6 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg">
-                Impacto en Presupuesto
+                Impacto en el Sobre
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 pt-4">
@@ -169,7 +169,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                 <div className="flex flex-col items-center gap-2 py-2 text-center">
                   <InfinityIcon className="h-6 w-6 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Este presupuesto no tiene límite de gasto
+                    Este sobre no tiene límite de gasto
                   </p>
                 </div>
               ) : (
@@ -198,9 +198,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
 
               <div className="space-y-3 border-t border-border/50 pt-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">
-                    Estado del Presupuesto
-                  </span>
+                  <span className="text-sm font-medium">Estado del Sobre</span>
                   <span
                     className={`rounded-md border bg-muted/50 px-3 py-1 text-xs font-bold ${healthColor}`}
                   >

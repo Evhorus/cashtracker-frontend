@@ -21,7 +21,7 @@ export const StatsCards = ({
       <Card className="animate-fade-in border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            Presupuestos Activos
+            Sobres Activos
           </CardTitle>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Wallet className="h-4 w-4" />
@@ -35,7 +35,7 @@ export const StatsCards = ({
       <Card className="animate-fade-in border-0 bg-card/50 shadow-sm transition-colors duration-300 [animation-delay:100ms] hover:bg-card">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            Total Presupuestado
+            Total Asignado
           </CardTitle>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
             <DollarSign className="h-4 w-4" />

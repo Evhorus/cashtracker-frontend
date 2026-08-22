@@ -17,12 +17,12 @@ export const EnvelopeActionsMenu = ({ envelope }: EnvelopeActionsMenuProps) => {
 
   const actions: ActionItem[] = [
     {
-      label: "Editar Presupuesto",
+      label: "Editar Sobre",
       icon: Edit,
       onClick: () => setShowEditDialog(true),
     },
     {
-      label: "Eliminar Presupuesto",
+      label: "Eliminar Sobre",
       icon: Trash2,
       onClick: () => setShowDeleteDialog(true),
       variant: "destructive",

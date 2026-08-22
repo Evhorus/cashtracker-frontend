@@ -79,7 +79,7 @@ export const DeleteEnvelopeAlertDialog = ({
       <Input
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Nombre del presupuesto"
+        placeholder="Nombre del sobre"
         className="col-span-3"
         autoComplete="off"
       />
@@ -99,7 +99,7 @@ export const DeleteEnvelopeAlertDialog = ({
       )}
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Eliminar presupuesto?</AlertDialogTitle>
+          <AlertDialogTitle>¿Eliminar sobre?</AlertDialogTitle>
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminarán todos los gastos
             asociados.
