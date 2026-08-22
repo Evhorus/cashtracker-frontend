@@ -86,11 +86,18 @@
   --popover-foreground: oklch(0.9838 0.0035 247.8583);
   --primary: oklch(0.7229 0.1921 149.5827);
   --primary-foreground: oklch(0.9827 0.0234 152.1196);
-  --secondary: oklch(0.28 0.0369 259.974);
+  /* Light mode gives secondary/muted/accent a real gap below --card
+     (0.9684 vs 1.0) - dark mode had them at the exact same value as
+     --card/--popover (0.28), so any hover/focus state painted with them
+     (ghost buttons, dropdown items, select items...) on a card or popover
+     was invisible, and the whole UI read as one flat surface. Lightened
+     them to restore that same elevation gap, just inverted (lighter, not
+     darker, since dark-mode elevation goes the other way). */
+  --secondary: oklch(0.34 0.0369 259.974);
   --secondary-foreground: oklch(0.9838 0.0035 247.8583);
-  --muted: oklch(0.28 0.0369 259.974);
+  --muted: oklch(0.34 0.0369 259.974);
   --muted-foreground: oklch(0.7107 0.0351 256.7877);
-  --accent: oklch(0.28 0.0369 259.974);
+  --accent: oklch(0.34 0.0369 259.974);
   --accent-foreground: oklch(0.9838 0.0035 247.8583);
   --destructive: oklch(0.6368 0.2078 25.3259);
   --destructive-foreground: oklch(0.9838 0.0035 247.8583);
