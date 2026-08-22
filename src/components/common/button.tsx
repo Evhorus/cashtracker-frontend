@@ -24,15 +24,32 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
+  // When `asChild` is set, the underlying shadcn Button renders a Radix
+  // Slot, which requires exactly one React element child to clone onto.
+  // Always rendering `{isLoading && <Loader2 />}{children}` - even when
+  // isLoading is false - puts two items in the children array (`false`
+  // still counts as an array slot) and breaks Slot for every `asChild`
+  // consumer, not just loading ones. Two separate branches keep each
+  // one passing through exactly the children it received.
+  if (isLoading) {
+    return (
+      <UiButton
+        className={cn("cursor-pointer", className)}
+        disabled
+        {...props}
+      >
+        <Loader2 aria-hidden className="mr-2 size-4 animate-spin" />
+        {children}
+      </UiButton>
+    );
+  }
+
   return (
     <UiButton
       className={cn("cursor-pointer", className)}
-      disabled={disabled || isLoading}
+      disabled={disabled}
       {...props}
     >
-      {isLoading && (
-        <Loader2 aria-hidden className="mr-2 size-4 animate-spin" />
-      )}
       {children}
     </UiButton>
   );
