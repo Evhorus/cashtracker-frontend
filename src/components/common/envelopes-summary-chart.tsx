@@ -26,6 +26,11 @@ interface EnvelopesSummaryChartProps {
 // envelope amount, so stacking them is meaningful (the bar's total height
 // is the envelope's amount). Two distinct chart colors (not both green)
 // per design feedback.
+//
+// TODO(charts): this and EnvelopeChart (src/features/envelopes/components/
+// envelope-chart.tsx) still need a real design pass - colors, tooltip
+// content, empty/loading states - once the current pending work is done.
+// Revisit both together, not just this one.
 export const EnvelopesSummaryChart = ({
   chartData,
   totalEnvelopes,
