@@ -1,74 +1,53 @@
 import { PageHeaderSkeleton } from "@/components/common/page-header-skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExpensesListSkeleton } from "@/features/expenses/components/expenses-list-skeleton";
+import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
 
+// Mirrors the real page's layout: Historial de Gastos (main, left on
+// desktop) + a single "Resumen" panel (sidebar, sticky on desktop) -
+// replaced the old 3-separate-stat-cards + isolated chart layout, which
+// no longer matches since that page was consolidated into one panel.
 export default function EnvelopeDetailLoading() {
   return (
-    <div className="space-y-8">
-      {/* Header Section */}
-      <PageHeaderSkeleton />
+    <div className="space-y-8 pb-24">
+      <PageHeaderSkeleton actions="icon-pair" />
 
-      {/* Stats Grid - Top on all devices */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {/* Available Card Skeleton */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-8 w-8 rounded-full" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="mb-2 h-8 w-32" />
-            <Skeleton className="h-3 w-40" />
-          </CardContent>
-        </Card>
-
-        {/* Total Spent Card Skeleton */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-8 w-8 rounded-full" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="mb-2 h-8 w-32" />
-            <Skeleton className="h-3 w-40" />
-          </CardContent>
-        </Card>
-
-        {/* Total Envelope Card Skeleton */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-8 w-8 rounded-full" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="mb-2 h-8 w-32" />
-            <Skeleton className="h-3 w-40" />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content Split */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Left Column: Expenses List (Larger) */}
-        <div className="space-y-6 lg:col-span-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="order-2 space-y-6 lg:order-1 lg:col-span-2">
           <div className="flex flex-row items-center justify-between">
             <Skeleton className="h-7 w-48" />
-            <Skeleton className="h-10 w-10 md:w-40" />
+            <Skeleton className="h-10 w-10 sm:w-36" />
           </div>
+
+          {/* Matches ExpensesFilter */}
+          <div className="flex flex-col gap-4 md:flex-row">
+            <Skeleton className="h-9 flex-1" />
+            <Skeleton className="h-9 w-52" />
+          </div>
+
           <ExpensesListSkeleton />
         </div>
 
-        {/* Right Column: Chart */}
-        <div className="space-y-6">
-          <Card>
+        <div className="order-1 lg:order-2">
+          <Card className="border-0 bg-card/50 shadow-sm">
             <CardHeader>
-              <CardTitle>
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
+              <Skeleton className="h-6 w-24" />
             </CardHeader>
-            <CardContent>
-              <Skeleton className="h-[300px] w-full" />
+            <CardContent className="space-y-5">
+              <EnvelopeChartSkeleton />
+
+              <div className="divide-y divide-border/60">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                  >
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>
