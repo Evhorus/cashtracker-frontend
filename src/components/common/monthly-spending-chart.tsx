@@ -65,17 +65,20 @@ export const MonthlySpendingChart = ({
               Full labels ("Ago 2026") got shown-but-cramped: on narrow
               screens recharts starts skipping ticks to avoid overlap,
               leaving it ambiguous which bar was which month/year. A
-              single-letter initial is short enough to never need
-              skipping, so every bar keeps some at-a-glance reference -
-              the full month/year still shows in the tooltip on hover
-              (desktop) or tap (touch, recharts already treats a touch
-              as a hover for this).
+              single letter turned out too ambiguous on its own ("O"
+              could be almost anything) - the 3-letter month
+              abbreviation (labels already start with one, e.g. "Ago")
+              is still short enough to avoid skipping, but actually
+              reads as a month. Full month/year (plus the year, when
+              the range spans more than one) still shows in the
+              tooltip on hover (desktop) or tap (touch, recharts
+              already treats a touch as a hover for this).
             */}
             <XAxis
               dataKey="label"
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value: string) => value.charAt(0)}
+              tickFormatter={(value: string) => value.slice(0, 3)}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
