@@ -1,6 +1,5 @@
 "use client";
 import { Cell, Label, Pie, PieChart } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -13,13 +12,14 @@ interface EnvelopeChartProps {
   total: number;
 }
 
-// "Donut Chart - Text" pattern from ui.shadcn.com/charts/pie: the two stat
-// cards above this on the envelope detail page already spell out the exact
+// "Donut Chart - Text" pattern from ui.shadcn.com/charts/pie: the stats
+// next to this on the envelope detail page already spell out the exact
 // spent/limit numbers and percentage, so this chart's only job is to be the
 // one *visual* read of that same ratio - the center label carries the
 // number so nobody has to eyeball a slice size, and there's no separate
 // legend competing with it (the two colors are self-explained by the
-// center label plus the surrounding cards).
+// center label plus the surrounding numbers). No Card wrapper here - it's
+// embedded inside the envelope detail page's own summary panel.
 export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
   const isExceeded = spent > total;
   const percentage = total > 0 ? (spent / total) * 100 : 0;
@@ -55,84 +55,79 @@ export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
   } satisfies ChartConfig;
 
   return (
-    <Card className="flex flex-col border-0 shadow-sm">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Distribución de Gastos</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 pb-4">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square h-64 max-h-64"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={data}
-              dataKey="value"
-              nameKey="name"
-              innerRadius={60}
-              outerRadius={90}
-              strokeWidth={5}
-            >
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={entry.fill}
-                  fillOpacity={entry.name === "available" ? 0.35 : 1}
-                />
-              ))}
-              <Label
-                content={({ viewBox }) => {
-                  if (!viewBox || !("cx" in viewBox)) return null;
-                  return (
-                    <text
+    <div>
+      <ChartContainer
+        config={chartConfig}
+        className="mx-auto aspect-square h-48 max-h-48"
+      >
+        <PieChart>
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent hideLabel />}
+          />
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            innerRadius={52}
+            outerRadius={76}
+            strokeWidth={5}
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={entry.fill}
+                fillOpacity={entry.name === "available" ? 0.35 : 1}
+              />
+            ))}
+            <Label
+              content={({ viewBox }) => {
+                if (!viewBox || !("cx" in viewBox)) return null;
+                return (
+                  <text
+                    x={viewBox.cx}
+                    y={viewBox.cy}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    <tspan
                       x={viewBox.cx}
                       y={viewBox.cy}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
+                      className={`text-2xl font-bold ${
+                        isExceeded ? "fill-destructive" : "fill-foreground"
+                      }`}
                     >
-                      <tspan
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        className={`text-3xl font-bold ${
-                          isExceeded ? "fill-destructive" : "fill-foreground"
-                        }`}
-                      >
-                        {Math.round(percentage)}%
-                      </tspan>
-                      <tspan
-                        x={viewBox.cx}
-                        y={(viewBox.cy ?? 0) + 22}
-                        className="fill-muted-foreground text-xs"
-                      >
-                        {isExceeded ? "Límite excedido" : "usado"}
-                      </tspan>
-                    </text>
-                  );
-                }}
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
-
-        <div className="mt-2 flex items-center justify-center gap-4 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-chart-1" />
-            Gastado
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span
-              className={`h-2 w-2 rounded-full ${
-                isExceeded ? "bg-destructive" : "bg-muted-foreground/35"
-              }`}
+                      {Math.round(percentage)}%
+                    </tspan>
+                    <tspan
+                      x={viewBox.cx}
+                      y={(viewBox.cy ?? 0) + 20}
+                      className="fill-muted-foreground text-xs"
+                    >
+                      {isExceeded ? "Límite excedido" : "usado"}
+                    </tspan>
+                  </text>
+                );
+              }}
             />
-            {isExceeded ? "Excedido" : "Disponible"}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
+          </Pie>
+        </PieChart>
+      </ChartContainer>
+
+      <div className="mt-1 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-chart-1" />
+          Gastado
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span
+            className={`h-2 w-2 rounded-full ${
+              isExceeded ? "bg-destructive" : "bg-muted-foreground/35"
+            }`}
+          />
+          {isExceeded ? "Excedido" : "Disponible"}
+        </span>
+      </div>
+    </div>
   );
 };

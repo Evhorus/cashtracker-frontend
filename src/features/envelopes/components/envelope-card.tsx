@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
+import { formatMonthYear } from "@/lib/date-helpers";
 import { ArrowRight, Infinity as InfinityIcon, Wallet } from "lucide-react";
 
 import Link from "next/link";
@@ -33,11 +34,15 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
     };
   }, [envelope]);
 
+  // Targets the actual filled bar (Progress renders Root > Track > Indicator,
+  // so the indicator is a grandchild, not a direct child - a plain
+  // `[&>div]` here would only ever reach the Track and never recolor the
+  // fill itself, which is why this used to always render green).
   const progressColorClass = calculations.isExceeded
-    ? "[&>div]:bg-destructive"
+    ? "[&_[data-slot=progress-indicator]]:bg-destructive"
     : calculations.isWarning
-      ? "[&>div]:bg-amber-500"
-      : "[&>div]:bg-primary";
+      ? "[&_[data-slot=progress-indicator]]:bg-amber-500"
+      : "[&_[data-slot=progress-indicator]]:bg-primary";
 
   const amountTextColorClass = calculations.isExceeded
     ? "text-destructive"
@@ -46,7 +51,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
       : "text-primary";
 
   return (
-    <Card className="group relative overflow-hidden border-0 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
+    <Card className="group relative h-full overflow-hidden border-0 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
       <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/60 transition-colors duration-300 group-hover:bg-primary" />
 
       <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -93,64 +98,68 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
         </div>
       </CardHeader>
 
+      {/* Both variants share the exact same two-row shape (status row +
+          2-column stats) so capped and unlimited cards come out the same
+          height in the grid - only the labels/values inside differ. */}
       <CardContent className="relative z-10 space-y-5">
-        {calculations.isUnlimited ? (
-          <div className="flex items-center justify-between rounded-lg bg-secondary/40 px-3 py-2">
+        <div className="space-y-2">
+          <div className="flex items-end justify-between">
             <span className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-              <InfinityIcon className="h-4 w-4" />
-              Sin límite
+              {calculations.isUnlimited && (
+                <InfinityIcon className="h-3.5 w-3.5" />
+              )}
+              {calculations.isUnlimited ? "Sin límite de gasto" : "Progreso"}
             </span>
-            <span className="text-sm font-bold text-foreground">
-              {formatCurrency(+envelope.spent, currencyConfig)} gastado
-            </span>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <div className="flex items-end justify-between">
-              <span className="text-sm font-medium text-muted-foreground">
-                Progreso
-              </span>
+            {!calculations.isUnlimited && (
               <span className={`text-sm font-bold ${amountTextColorClass}`}>
                 {Math.min(calculations.percentage ?? 0, 100).toFixed(0)}%
               </span>
-            </div>
-            <Progress
-              value={Math.min(calculations.percentage ?? 0, 100)}
-              className={`h-2.5 rounded-full bg-secondary/50 ${progressColorClass}`}
-            />
+            )}
           </div>
-        )}
+          <Progress
+            value={
+              calculations.isUnlimited
+                ? 100
+                : Math.min(calculations.percentage ?? 0, 100)
+            }
+            className={`h-2.5 rounded-full bg-secondary/50 ${
+              calculations.isUnlimited
+                ? "[&_[data-slot=progress-indicator]]:bg-muted-foreground/30"
+                : progressColorClass
+            }`}
+          />
+        </div>
 
-        {/* For unlimited envelopes the pill above already states the
-            spent amount ("Sin límite · $X gastado") - repeating it here
-            would just duplicate that number under a lopsided single
-            column, so this block only applies to capped envelopes. */}
-        {!calculations.isUnlimited && (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">
-                Gastado
-              </p>
-              <p className={`text-sm font-bold ${amountTextColorClass}`}>
-                {formatCurrency(+envelope.spent, currencyConfig)}
-              </p>
-            </div>
-            <div className="space-y-1 text-right">
-              <p className="text-xs font-medium text-muted-foreground">
-                Disponible
-              </p>
-              <p
-                className={`text-sm font-bold ${
-                  (calculations.remaining ?? 0) < 0
-                    ? "text-destructive"
-                    : "text-success"
-                }`}
-              >
-                {formatCurrency(calculations.remaining ?? 0, currencyConfig)}
-              </p>
-            </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <p className="text-xs font-medium text-muted-foreground">
+              Gastado
+            </p>
+            <p className={`text-sm font-bold ${amountTextColorClass}`}>
+              {formatCurrency(+envelope.spent, currencyConfig)}
+            </p>
           </div>
-        )}
+          <div className="space-y-1 text-right">
+            <p className="text-xs font-medium text-muted-foreground">
+              {calculations.isUnlimited ? "Desde" : "Disponible"}
+            </p>
+            <p
+              className={
+                calculations.isUnlimited
+                  ? "text-sm font-bold text-foreground capitalize"
+                  : `text-sm font-bold ${
+                      (calculations.remaining ?? 0) < 0
+                        ? "text-destructive"
+                        : "text-success"
+                    }`
+              }
+            >
+              {calculations.isUnlimited
+                ? formatMonthYear(envelope.createdAt)
+                : formatCurrency(calculations.remaining ?? 0, currencyConfig)}
+            </p>
+          </div>
+        </div>
 
         <Button
           variant="ghost"

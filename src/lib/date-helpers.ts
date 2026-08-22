@@ -25,6 +25,14 @@ export function formatDate(dateInput: Date | string | number): string {
   );
 }
 
+/** Compact "mmm yyyy" form (e.g. "jul 2026") - for tight spaces like a card cell,
+ * where the full formatDate() output ("miércoles, 15 de julio de 2026") doesn't fit. */
+export function formatMonthYear(dateInput: Date | string | number): string {
+  return format(toDeviceTimeZone(parseDateInput(dateInput)), "MMM yyyy", {
+    locale: es,
+  });
+}
+
 export function getToday(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());

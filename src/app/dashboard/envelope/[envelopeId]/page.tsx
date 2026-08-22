@@ -12,14 +12,9 @@ import { PaginationControls } from "@/components/common/pagination-controls";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
+import { cn } from "@/lib/utils";
 
-import {
-  CreditCard,
-  DollarSign,
-  Infinity as InfinityIcon,
-  PiggyBank,
-  Wallet,
-} from "lucide-react";
+import { DollarSign, Infinity as InfinityIcon } from "lucide-react";
 import nextDynamic from "next/dynamic";
 import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
@@ -85,7 +80,14 @@ export default async function EnvelopePage({
   const isUnlimited = envelope.amount === null;
   const remaining = EnvelopeHelpers.getRemaining(envelope);
   const percentage = EnvelopeHelpers.getPercentage(envelope);
+  const status = EnvelopeHelpers.getProgressStatus(envelope);
   const currencyConfig = CURRENCY_MAP[envelope.currency];
+  const spentColorClass =
+    status === "exceeded"
+      ? "text-destructive"
+      : status === "warning"
+        ? "text-amber-500"
+        : "text-primary";
 
   return (
     <div className="space-y-8 pb-24">
@@ -109,108 +111,13 @@ export default async function EnvelopePage({
         mobileActions={<EnvelopeActionsMenu envelope={envelope} />}
       />
 
-      {/* Stats Grid - Top on all devices */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <Card
-          className={
-            isUnlimited
-              ? "border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card"
-              : remaining !== null && remaining < 0
-                ? "border-destructive/50 bg-destructive/5"
-                : remaining !== null &&
-                    remaining < (envelope.amount ? +envelope.amount * 0.2 : 0)
-                  ? "border-warning/50 bg-warning/5"
-                  : "border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card"
-          }
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Disponible
-            </CardTitle>
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                remaining !== null && remaining < 0
-                  ? "bg-destructive/10 text-destructive"
-                  : "bg-success/10 text-success"
-              }`}
-            >
-              <Wallet className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {isUnlimited ? (
-              <div className="flex items-center gap-1.5 text-2xl font-bold text-muted-foreground">
-                <InfinityIcon className="h-5 w-5" />
-                Sin límite
-              </div>
-            ) : (
-              <>
-                <div
-                  className={`text-2xl font-bold ${
-                    remaining !== null && remaining < 0
-                      ? "text-destructive"
-                      : "text-success"
-                  }`}
-                >
-                  {formatCurrency(remaining ?? 0, currencyConfig)}
-                </div>
-                {remaining !== null && remaining < 0 && (
-                  <p className="mt-1 text-xs text-destructive">
-                    Límite excedido
-                  </p>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Gastado
-            </CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <CreditCard className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(+envelope.spent, currencyConfig)}
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {isUnlimited
-                ? "Sin límite de gasto"
-                : `${(percentage ?? 0).toFixed(1)}% del límite`}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Límite Total
-            </CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
-              <PiggyBank className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isUnlimited
-                ? "Sin límite"
-                : formatCurrency(+envelope.amount!, currencyConfig)}
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {envelope.expenses.length} transacciones
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content Split */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Left Column: Expenses List (Larger) */}
-        <div className="space-y-6 lg:col-span-2">
+      {/* Historial de Gastos (main, left on desktop) + Resumen (sidebar,
+          sticky on desktop) - a single grid instead of a full-width stats
+          row followed by a lopsided main/sidebar split, so the summary
+          isn't a short block floating above a lot of empty space next to
+          a much taller expense list. */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="order-2 space-y-6 lg:order-1 lg:col-span-2">
           <div className="flex flex-row items-center justify-between">
             <h2 className="flex items-center gap-2 text-xl font-bold">
               <DollarSign className="h-5 w-5 text-primary" />
@@ -237,26 +144,92 @@ export default async function EnvelopePage({
           />
         </div>
 
-        {/* Right Column: Chart */}
-        <div className="space-y-6">
-          <div className="h-[300px] w-full">
-            {isUnlimited ? (
-              <Card className="flex h-full flex-col items-center justify-center gap-2 border-0 text-center shadow-sm">
-                <InfinityIcon className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  Este sobre no tiene límite de gasto
-                </p>
-                <p className="text-lg font-bold">
-                  {formatCurrency(+envelope.spent, currencyConfig)} gastado
-                </p>
-              </Card>
-            ) : (
-              <EnvelopeChart
-                spent={+envelope.spent}
-                total={+envelope.amount!}
-              />
-            )}
-          </div>
+        <div className="order-1 lg:order-2 lg:sticky lg:top-20 lg:self-start">
+          <Card className="border-0 bg-card/50 shadow-sm">
+            <CardHeader>
+              <CardTitle>Resumen</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {isUnlimited ? (
+                <div className="flex flex-col items-center gap-1.5 rounded-lg bg-secondary/40 px-4 py-6 text-center">
+                  <InfinityIcon className="h-7 w-7 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    Sin límite de gasto
+                  </p>
+                  <p className="text-2xl font-bold">
+                    {formatCurrency(+envelope.spent, currencyConfig)}
+                  </p>
+                </div>
+              ) : (
+                <EnvelopeChart
+                  spent={+envelope.spent}
+                  total={+envelope.amount!}
+                />
+              )}
+
+              <dl className="divide-y divide-border/60">
+                {!isUnlimited && (
+                  <div className="flex items-center justify-between py-3 first:pt-0">
+                    <dt className="text-sm text-muted-foreground">
+                      Disponible
+                    </dt>
+                    <dd
+                      className={cn(
+                        "text-base font-bold",
+                        (remaining ?? 0) < 0
+                          ? "text-destructive"
+                          : "text-success",
+                      )}
+                    >
+                      {formatCurrency(remaining ?? 0, currencyConfig)}
+                    </dd>
+                  </div>
+                )}
+
+                {/* For unlimited envelopes the block above already states
+                    the spent amount - repeating it here would be the same
+                    duplication problem fixed on the envelope card, so this
+                    row only applies to capped envelopes. */}
+                {!isUnlimited && (
+                  <div className="flex items-center justify-between py-3 first:pt-0">
+                    <dt className="text-sm text-muted-foreground">Gastado</dt>
+                    <dd className="text-right">
+                      <p
+                        className={cn("text-base font-bold", spentColorClass)}
+                      >
+                        {formatCurrency(+envelope.spent, currencyConfig)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {(percentage ?? 0).toFixed(1)}% del límite
+                      </p>
+                    </dd>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                  <dt className="text-sm text-muted-foreground">
+                    {isUnlimited ? "Transacciones" : "Límite total"}
+                  </dt>
+                  <dd className="text-right">
+                    {isUnlimited ? (
+                      <p className="text-base font-bold">
+                        {envelope.expenses.length}
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-base font-bold">
+                          {formatCurrency(+envelope.amount!, currencyConfig)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {envelope.expenses.length} transacciones
+                        </p>
+                      </>
+                    )}
+                  </dd>
+                </div>
+              </dl>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
