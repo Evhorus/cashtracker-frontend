@@ -1,11 +1,15 @@
-# Contrato de backend pendiente: búsqueda en `GET /envelopes`
+# Contrato de backend: búsqueda en `GET /envelopes` — implementado
 
-Este documento describe un cambio de backend **aún no implementado**. Se generó porque
-`/dashboard/envelopes` (frontend) no tiene buscador ni orden — solo paginación — y con 27+ sobres
-ya es tedioso encontrar uno. No se puede resolver solo en frontend: filtrar la página ya cargada
-(12 sobres) daría resultados incompletos, un sobre en otra página simplemente no aparecería. El
-backend (`cashtracker-backend`) está en refactor aparte, así que este archivo queda como el prompt
-a pasarle cuando se retome ese trabajo.
+Este documento describía un cambio de backend pendiente. **Ya está implementado** (backend:
+`GetEnvelopesFilterDto`, `findAllLight` y `findByUserIdLight` con `search` vía `createQueryBuilder`,
+exactamente como se pidió abajo; frontend: `EnvelopesService.getAll`/`getEnvelopesAction` pasan
+`search`, y `EnvelopesFilter` es el buscador en `/dashboard/envelopes`, con un empty-state propio
+para "sin resultados" distinto del de "no tienes sobres aún"). Se deja como referencia histórica.
+
+Motivo original: `/dashboard/envelopes` no tenía buscador ni orden — solo paginación — y con 27+
+sobres ya era tedioso encontrar uno. No se podía resolver solo en frontend: filtrar la página ya
+cargada (12 sobres) habría dado resultados incompletos, un sobre en otra página simplemente no
+aparecía.
 
 ## Prompt para el refactor de backend
 
