@@ -12,7 +12,7 @@ import { ExpenseMapper } from "../mappers/expense.mapper";
 export const ExpensesService = {
   getAll: async (envelopeId: string): Promise<Expense[]> => {
     const expenses = await fetchApi<ExpensesResponseApi>(
-      `/budgets/${envelopeId}/expenses`,
+      `/envelopes/${envelopeId}/expenses`,
       {
         next: { tags: [`expenses-${envelopeId}`], revalidate: 60 },
       },
@@ -24,7 +24,7 @@ export const ExpensesService = {
 
   getById: async (envelopeId: string, expenseId: string): Promise<Expense> => {
     const expense = await fetchApi<ExpenseApi>(
-      `/budgets/${envelopeId}/expenses/${expenseId}`,
+      `/envelopes/${envelopeId}/expenses/${expenseId}`,
       {
         next: { tags: ["expense"], revalidate: 60 },
       },
@@ -35,7 +35,7 @@ export const ExpensesService = {
   },
 
   create: (envelopeId: string, data: ExpenseFormValues) => {
-    return fetchApi<{ message: string }>(`/budgets/${envelopeId}/expenses`, {
+    return fetchApi<{ message: string }>(`/envelopes/${envelopeId}/expenses`, {
       method: "POST",
       body: JSON.stringify(ExpenseMapper.toApiRequest(data)),
     });
@@ -43,7 +43,7 @@ export const ExpensesService = {
 
   update: (envelopeId: string, expenseId: string, data: ExpenseFormValues) => {
     return fetchApi<{ message: string }>(
-      `/budgets/${envelopeId}/expenses/${expenseId}`,
+      `/envelopes/${envelopeId}/expenses/${expenseId}`,
       {
         method: "PATCH",
         body: JSON.stringify(ExpenseMapper.toApiRequest(data)),
@@ -53,7 +53,7 @@ export const ExpensesService = {
 
   delete: (envelopeId: string, expenseId: string) => {
     return fetchApi<{ message: string }>(
-      `/budgets/${envelopeId}/expenses/${expenseId}`,
+      `/envelopes/${envelopeId}/expenses/${expenseId}`,
       {
         method: "DELETE",
       },

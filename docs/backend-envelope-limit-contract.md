@@ -1,28 +1,37 @@
-# Contrato de backend: límite opcional en presupuestos (envelopes)
+# Contrato de backend: límite opcional en envelopes — implementado
 
-Cambio pequeño y aditivo sobre el contrato ya existente — no se agregan rutas nuevas, no se rompe nada de lo actual.
+Este documento describía un cambio pendiente de backend. **Ya está implementado** (repo `cashtracker-backend`, branch `feat/rename-budget-to-envelope`) y aplicado contra la base de datos real. Se deja como referencia histórica.
 
-## Qué cambia
+## Qué cambió (backend)
 
-`amount` pasa de obligatorio a opcional/nullable en el modelo de `Budget` (el frontend lo renombra internamente a `Envelope`, pero la URL de la API sigue siendo `/budgets`, ver más abajo):
+- `amount` pasó de obligatorio a opcional/nullable en el modelo (ahora `Envelope`, antes `Budget`).
+- **A diferencia del plan original**: no solo se renombró internamente en el frontend — se renombró también en el backend (tabla, columnas, entidades, DTOs) y **las rutas cambiaron de `/budgets` a `/envelopes`**:
 
 ```
-POST  /budgets            -> el body ya no exige `amount`; acepta su ausencia o null
-PATCH /budgets/:id        -> igual, `amount` pasa a ser opcional/nullable
-GET   /budgets            -> cada budget en la respuesta puede traer amount: string | null
-GET   /budgets/:id        -> igual
+POST   /envelopes
+GET    /envelopes
+GET    /envelopes/:envelopeId
+PATCH  /envelopes/:envelopeId
+DELETE /envelopes/:envelopeId
+POST   /envelopes/:envelopeId/expenses
+GET    /envelopes/:envelopeId/expenses
+GET    /envelopes/:envelopeId/expenses/:expenseId
+PATCH  /envelopes/:envelopeId/expenses/:expenseId
+DELETE /envelopes/:envelopeId/expenses/:expenseId
 ```
 
-## Reglas de negocio
+- `amount: string | null` — nulo/ausente = "sin límite" (contador corriente, sin barra de progreso ni tope de gasto).
+- Bug encontrado y corregido de paso: `currency` nunca se serializaba en las respuestas de `Budget`/`Expense` (se guardaba y validaba en el DTO de entrada, pero no salía en el JSON de respuesta). El frontend solo "funcionaba" por el `.default("COP")` de su schema Zod, que era silenciosamente incorrecto para cualquier envelope en otra moneda.
 
-- `amount` nulo/ausente = "sin límite" (contador corriente, sin barra de progreso ni tope de gasto).
-- No se requiere ninguna validación server-side nueva de moneda: la moneda siempre vive en `Budget.currency` y cada gasto siempre pertenece a un budget, así que no hay superficie donde pueda colarse una moneda distinta.
-- El resto del contrato de expenses (`/budgets/:budgetId/expenses...`) no cambia en absoluto.
+## Qué cambió (frontend, este repo)
 
-## Por qué las URLs no cambian
+Todas las llamadas `fetchApi`/`authenticatedFetch` en `src/features/envelopes` y `src/features/expenses` (services + actions) se actualizaron de `/budgets/...` a `/envelopes/...` para que coincidan con las rutas reales del backend.
 
-El frontend renombra el concepto internamente de "Budget" a "Envelope" (carpeta, tipos, componentes, rutas de Next.js) porque conceptualmente ya no es solo un presupuesto con límite - puede ser un agrupador de gastos sin límite. Pero renombrar las rutas de la API por una preferencia de naming interno del frontend sería un cambio de backend innecesario. Las URLs siguen siendo `/budgets/...` tal cual están hoy; solo cambia cómo se llama la variable en el código del frontend.
+## Migración de datos
 
-## Estado
+Ejecutada contra la base de datos real (Neon), con backup previo (`cashtracker-backend/scripts/backup-db.js`, ya que `pg_dump` no estaba disponible en el entorno):
 
-Pendiente de implementar en el backend. El frontend ya está listo para consumir `amount: string | null` en cuanto este cambio exista.
+1. `MakeBudgetAmountNullable` — `ALTER TABLE "budget" ALTER COLUMN "amount" DROP NOT NULL`.
+2. `RenameBudgetToEnvelope` — `ALTER TABLE "budget" RENAME TO "envelope"`, `ALTER TABLE "expense" RENAME COLUMN "budgetId" TO "envelopeId"`.
+
+Verificado post-migración: mismo conteo de filas y mismos valores (30 envelopes, 333 expenses) comparando un backup antes/después.

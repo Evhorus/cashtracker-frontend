@@ -28,7 +28,7 @@ export const getExpensesAction = async (
     if (filters.sort) params.append("sort", filters.sort);
 
     const queryString = params.toString();
-    const url = `/budgets/${envelopeId}/expenses${
+    const url = `/envelopes/${envelopeId}/expenses${
       queryString ? `?${queryString}` : ""
     }`;
 

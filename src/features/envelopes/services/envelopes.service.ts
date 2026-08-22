@@ -12,7 +12,7 @@ import { EnvelopeMapper } from "../mappers/envelope.mapper";
 export const EnvelopesService = {
   getAll: async (): Promise<EnvelopesResponse> => {
     const response = await fetchApi<EnvelopesResponseApi>(
-      "/budgets",
+      "/envelopes",
       {
         next: { tags: ["all-envelopes"], revalidate: 60 },
       },
@@ -27,7 +27,7 @@ export const EnvelopesService = {
 
   getById: async (id: string): Promise<Envelope> => {
     const envelope = await fetchApi<EnvelopeApi>(
-      `/budgets/${id}`,
+      `/envelopes/${id}`,
       {
         next: { tags: ["envelope"], revalidate: 60 },
       },
@@ -38,21 +38,21 @@ export const EnvelopesService = {
   },
 
   create: (data: EnvelopeFormValues) => {
-    return fetchApi<{ message: string }>("/budgets", {
+    return fetchApi<{ message: string }>("/envelopes", {
       method: "POST",
       body: JSON.stringify(EnvelopeMapper.toApiRequest(data)),
     });
   },
 
   update: (id: string, data: EnvelopeFormValues) => {
-    return fetchApi<{ message: string }>(`/budgets/${id}`, {
+    return fetchApi<{ message: string }>(`/envelopes/${id}`, {
       method: "PATCH",
       body: JSON.stringify(EnvelopeMapper.toApiRequest(data)),
     });
   },
 
   delete: (id: string) => {
-    return fetchApi<{ message: string }>(`/budgets/${id}`, {
+    return fetchApi<{ message: string }>(`/envelopes/${id}`, {
       method: "DELETE",
     });
   },
