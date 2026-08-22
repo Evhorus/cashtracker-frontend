@@ -121,14 +121,20 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground">Gastado</p>
-            <p className={`text-sm font-bold ${amountTextColorClass}`}>
-              {formatCurrency(+envelope.spent, currencyConfig)}
-            </p>
-          </div>
-          {!calculations.isUnlimited && (
+        {/* For unlimited envelopes the pill above already states the
+            spent amount ("Sin límite · $X gastado") - repeating it here
+            would just duplicate that number under a lopsided single
+            column, so this block only applies to capped envelopes. */}
+        {!calculations.isUnlimited && (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">
+                Gastado
+              </p>
+              <p className={`text-sm font-bold ${amountTextColorClass}`}>
+                {formatCurrency(+envelope.spent, currencyConfig)}
+              </p>
+            </div>
             <div className="space-y-1 text-right">
               <p className="text-xs font-medium text-muted-foreground">
                 Disponible
@@ -143,8 +149,8 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                 {formatCurrency(calculations.remaining ?? 0, currencyConfig)}
               </p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <Button
           variant="ghost"
