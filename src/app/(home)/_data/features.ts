@@ -5,43 +5,43 @@ import {
   TrendingDown,
   Shield,
   BarChart3,
-} from 'lucide-react';
+} from "lucide-react";
 
 export const features = [
   {
     icon: Wallet,
-    title: 'Control Total',
+    title: "Control Total",
     description:
-      'Administra tus gastos y presupuestos desde un solo lugar de forma intuitiva.',
+      "Administra tus gastos y presupuestos desde un solo lugar de forma intuitiva.",
   },
   {
     icon: PieChart,
-    title: 'Visualización Clara',
+    title: "Visualización Clara",
     description:
-      'Gráficos interactivos que muestran exactamente en qué gastas tu dinero.',
+      "Gráficos interactivos que muestran exactamente en qué gastas tu dinero.",
   },
   {
     icon: Target,
-    title: 'Presupuestos Inteligentes',
+    title: "Presupuestos Inteligentes",
     description:
-      'Crea presupuestos personalizados y recibe alertas cuando te acerques al límite.',
+      "Crea presupuestos personalizados y recibe alertas cuando te acerques al límite.",
   },
   {
     icon: TrendingDown,
-    title: 'Reduce Gastos',
+    title: "Reduce Gastos",
     description:
-      'Identifica patrones de gasto y encuentra oportunidades para ahorrar.',
+      "Identifica patrones de gasto y encuentra oportunidades para ahorrar.",
   },
   {
     icon: Shield,
-    title: 'Datos Seguros',
+    title: "Datos Seguros",
     description:
-      'Tu información financiera está protegida y solo tú tienes acceso a ella.',
+      "Tu información financiera está protegida y solo tú tienes acceso a ella.",
   },
   {
     icon: BarChart3,
-    title: 'Reportes Detallados',
+    title: "Reportes Detallados",
     description:
-      'Accede a reportes completos sobre tus hábitos financieros y progreso.',
+      "Accede a reportes completos sobre tus hábitos financieros y progreso.",
   },
 ];

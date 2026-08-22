@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
-import { Budget } from '@/features/budgets/types';
+import { Budget } from "@/features/budgets/types";
 import { UpdateBudgetDialog } from "./UpdateBudgetDialog";
 import { DeleteBudgetAlertDialog } from "./DeleteBudgetAlertDialog";
 import { ActionsDrawer, ActionItem } from "@/components/common/ActionsDrawer";

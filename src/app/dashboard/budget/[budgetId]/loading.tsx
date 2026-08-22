@@ -15,7 +15,7 @@ export default function BudgetDetailLoading() {
       <PageHeaderSkeleton />
 
       {/* Stats Grid - Top on all devices */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Available Card Skeleton */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -23,7 +23,7 @@ export default function BudgetDetailLoading() {
             <Skeleton className="h-8 w-8 rounded-full" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="h-8 w-32 mb-2" />
+            <Skeleton className="mb-2 h-8 w-32" />
             <Skeleton className="h-3 w-40" />
           </CardContent>
         </Card>
@@ -35,7 +35,7 @@ export default function BudgetDetailLoading() {
             <Skeleton className="h-8 w-8 rounded-full" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="h-8 w-32 mb-2" />
+            <Skeleton className="mb-2 h-8 w-32" />
             <Skeleton className="h-3 w-40" />
           </CardContent>
         </Card>
@@ -47,16 +47,16 @@ export default function BudgetDetailLoading() {
             <Skeleton className="h-8 w-8 rounded-full" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="h-8 w-32 mb-2" />
+            <Skeleton className="mb-2 h-8 w-32" />
             <Skeleton className="h-3 w-40" />
           </CardContent>
         </Card>
       </div>
 
       {/* Main Content Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Left Column: Expenses List (Larger) */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <div className="flex flex-row items-center justify-between">
             <Skeleton className="h-7 w-48" />
             <Skeleton className="h-10 w-10 md:w-40" />

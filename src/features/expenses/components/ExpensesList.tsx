@@ -13,9 +13,9 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
   return (
     <>
       {expenses.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="py-12 text-center text-muted-foreground">
           <p className="text-lg">No hay gastos registrados</p>
-          <p className="text-sm mt-1">Comienza agregando tu primer gasto</p>
+          <p className="mt-1 text-sm">Comienza agregando tu primer gasto</p>
         </div>
       ) : (
         <div className="space-y-3">

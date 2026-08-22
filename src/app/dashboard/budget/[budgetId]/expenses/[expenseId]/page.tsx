@@ -46,7 +46,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
       : "text-amber-500";
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-10">
+    <div className="mx-auto max-w-5xl space-y-8 pb-10">
       {/* Header Section */}
       <PageHeader
         title="Detalle del Gasto"
@@ -56,7 +56,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
             <span className="text-sm">En presupuesto:</span>
             <Link
               href={`/dashboard/budget/${budgetId}`}
-              className="hover:underline text-primary text-sm font-medium"
+              className="text-sm font-medium text-primary hover:underline"
             >
               {budget.name}
             </Link>
@@ -76,46 +76,46 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
         }
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main Info Column (2/3 width) */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           {/* Expense Highlight Card */}
-          <Card className="overflow-hidden border-0 shadow-md bg-linear-to-br from-card to-secondary/10">
+          <Card className="overflow-hidden border-0 bg-linear-to-br from-card to-secondary/10 shadow-md">
             <CardContent className="p-8">
-              <div className="flex flex-col sm:flex-row gap-4 items-start md:items-center justify-between">
+              <div className="flex flex-col items-start justify-between gap-4 sm:flex-row md:items-center">
                 <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-inner">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
                     <Receipt className="h-7 w-7" />
                   </div>
                   <div className="space-y-1">
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                    <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                       {expense.name}
                     </h2>
-                    <div className="flex items-center gap-2 text-muted-foreground bg-background/50 px-2.5 py-1 rounded-full w-fit">
+                    <div className="flex w-fit items-center gap-2 rounded-full bg-background/50 px-2.5 py-1 text-muted-foreground">
                       <Calendar className="h-3.5 w-3.5" />
-                      <span className="text-xs sm:text-sm font-medium">
+                      <span className="text-xs font-medium sm:text-sm">
                         {formatDate(expense.date)}
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className="text-left md:text-right pl-18 sm:pl-0">
-                  <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-0.5">
+                <div className="pl-18 text-left sm:pl-0 md:text-right">
+                  <p className="mb-0.5 text-xs font-medium text-muted-foreground sm:text-sm">
                     Monto Total
                   </p>
-                  <p className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight">
+                  <p className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
                     {formatCurrency(expenseAmount)}
                   </p>
                 </div>
               </div>
 
               {expense.description && (
-                <div className="mt-8 pt-6 border-t border-border/50">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                <div className="mt-8 border-t border-border/50 pt-6">
+                  <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <FileText className="h-4 w-4" />
                     Descripción
                   </h3>
-                  <p className="text-base leading-relaxed text-foreground/80 max-w-2xl">
+                  <p className="max-w-2xl text-base leading-relaxed text-foreground/80">
                     {expense.description}
                   </p>
                 </div>
@@ -128,7 +128,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
             <CardHeader>
               <CardTitle className="text-lg">Información de Sistema</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+            <CardContent className="grid grid-cols-1 gap-6 text-sm sm:grid-cols-2">
               <div className="space-y-1">
                 <p className="text-muted-foreground">Creado el</p>
                 <p className="font-medium">{formatDate(expense.createdAt)}</p>
@@ -144,40 +144,40 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
         {/* Sidebar Column (1/3 width) - Impact & Context */}
         <div className="space-y-6">
           {/* Impact Analysis */}
-          <Card className="border-0 shadow-md overflow-hidden">
-            <CardHeader className="pb-2 pt-6">
-              <CardTitle className="text-lg flex items-center gap-2">
+          <Card className="overflow-hidden border-0 shadow-md">
+            <CardHeader className="pt-6 pb-2">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 Impacto en Presupuesto
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 pt-4">
               <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-sm text-muted-foreground font-medium w-full">
+                <div className="mb-2 flex items-end justify-between">
+                  <span className="w-full text-sm font-medium text-muted-foreground">
                     Representa el
                   </span>
                   <span className="text-2xl font-bold text-primary">
                     {impactPercentage.toFixed(1)}%
                   </span>
                 </div>
-                <div className="w-full bg-secondary h-3 rounded-full overflow-hidden">
+                <div className="h-3 w-full overflow-hidden rounded-full bg-secondary">
                   <div
-                    className="bg-primary h-full rounded-full transition-all duration-500"
+                    className="h-full rounded-full bg-primary transition-all duration-500"
                     style={{ width: `${Math.min(impactPercentage, 100)}%` }}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground mt-2 text-right">
+                <p className="mt-2 text-right text-xs text-muted-foreground">
                   del total asignado ({formatCurrency(budgetAmount)})
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-border/50 space-y-3">
-                <div className="flex justify-between items-center">
+              <div className="space-y-3 border-t border-border/50 pt-4">
+                <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">
                     Estado del Presupuesto
                   </span>
                   <span
-                    className={`text-xs font-bold px-3 py-1 rounded-md bg-muted/50 border ${healthColor}`}
+                    className={`rounded-md border bg-muted/50 px-3 py-1 text-xs font-bold ${healthColor}`}
                   >
                     {isOverBudget
                       ? "EXCEDIDO"

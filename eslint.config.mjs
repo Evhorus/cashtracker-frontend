@@ -8,13 +8,13 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    plugins: { '@clerk/next': clerkNext },
+    plugins: { "@clerk/next": clerkNext },
     rules: {
-      '@clerk/next/require-auth-protection': [
-        'error',
+      "@clerk/next/require-auth-protection": [
+        "error",
         {
-          protected: ['src/app/dashboard/**', 'src/features/**'],
-          public: ['src/app/(auth)/**', 'src/app/(home)/**'],
+          protected: ["src/app/dashboard/**", "src/features/**"],
+          public: ["src/app/(auth)/**", "src/app/(home)/**"],
           resources: {
             routeHandlers: true,
             serverFunctions: true,

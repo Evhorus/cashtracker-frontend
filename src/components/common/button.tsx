@@ -1,8 +1,8 @@
-import type { ComponentProps } from 'react';
-import { Loader2 } from 'lucide-react';
+import type { ComponentProps } from "react";
+import { Loader2 } from "lucide-react";
 
-import { cn } from '@/lib/utils';
-import { Button as UiButton, buttonVariants } from '@/components/ui/button';
+import { cn } from "@/lib/utils";
+import { Button as UiButton, buttonVariants } from "@/components/ui/button";
 
 export type ButtonProps = ComponentProps<typeof UiButton> & {
   isLoading?: boolean;
@@ -17,10 +17,16 @@ export type ButtonProps = ComponentProps<typeof UiButton> & {
  * - `isLoading`: shows a spinner and forces `disabled` while true.
  * - `cursor-pointer`: not part of stock shadcn's base classes.
  */
-function Button({ className, isLoading = false, disabled, children, ...props }: ButtonProps) {
+function Button({
+  className,
+  isLoading = false,
+  disabled,
+  children,
+  ...props
+}: ButtonProps) {
   return (
     <UiButton
-      className={cn('cursor-pointer', className)}
+      className={cn("cursor-pointer", className)}
       disabled={disabled || isLoading}
       {...props}
     >

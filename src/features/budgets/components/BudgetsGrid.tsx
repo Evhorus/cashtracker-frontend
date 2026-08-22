@@ -1,5 +1,5 @@
 import React from "react";
-import { Budget } from '@/features/budgets/types';
+import { Budget } from "@/features/budgets/types";
 import { Card } from "@/components/common/card";
 import { Wallet } from "lucide-react";
 import { CreateBudgetDialog } from "./CreateBudgetDialog";
@@ -13,9 +13,9 @@ export const BudgetsGrid = ({ budgets }: BudgetsGridProps) => {
   return (
     <>
       {budgets.length === 0 ? (
-        <Card className="p-12 text-center animate-fade-in">
-          <div className="max-w-md mx-auto space-y-4">
-            <div className="w-16 h-16 rounded-full bg-primary-light mx-auto flex items-center justify-center">
+        <Card className="animate-fade-in p-12 text-center">
+          <div className="mx-auto max-w-md space-y-4">
+            <div className="bg-primary-light mx-auto flex h-16 w-16 items-center justify-center rounded-full">
               <Wallet className="h-8 w-8 text-primary" />
             </div>
             <h3 className="text-xl font-semibold">
@@ -28,7 +28,7 @@ export const BudgetsGrid = ({ budgets }: BudgetsGridProps) => {
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {budgets.map((budget, index) => (
             <div
               key={budget.id}

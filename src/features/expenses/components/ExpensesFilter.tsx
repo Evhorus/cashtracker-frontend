@@ -75,10 +75,10 @@ export const ExpensesFilter = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
+    <div className="mb-6 flex flex-col gap-4 md:flex-row">
       <div className="flex-1">
         <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nombre..."
             className="pl-8"

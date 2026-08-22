@@ -4,10 +4,10 @@ import {
   Loader2Icon,
   OctagonXIcon,
   TriangleAlertIcon,
-} from 'lucide-react';
-import type { ToasterProps } from 'sonner';
+} from "lucide-react";
+import type { ToasterProps } from "sonner";
 
-import { Toaster as UiToaster } from '@/components/ui/sonner';
+import { Toaster as UiToaster } from "@/components/ui/sonner";
 
 /**
  * App-wide Toaster. Wraps the stock shadcn Toaster (components/ui/sonner.tsx)

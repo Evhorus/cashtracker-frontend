@@ -1,4 +1,4 @@
-import { TriangleAlert } from 'lucide-react';
+import { TriangleAlert } from "lucide-react";
 
 export const ErrorMessage: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -6,10 +6,10 @@ export const ErrorMessage: React.FC<{ children: React.ReactNode }> = ({
   return (
     <div
       id="description-error"
-      className="flex items-center gap-2 bg-red-50 border border-red-300 text-red-700 rounded-lg px-2 py-1 shadow-sm"
+      className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-2 py-1 text-red-700 shadow-sm"
     >
       <TriangleAlert size={16} />
-      <span className="font-medium text-sm">{children}</span>
+      <span className="text-sm font-medium">{children}</span>
     </div>
   );
 };

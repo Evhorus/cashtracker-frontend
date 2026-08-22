@@ -20,8 +20,8 @@ export const CustomHeader = () => {
   ];
 
   return (
-    <header className="border-b border-border/40 bg-background/95 backdrop-blur sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo Section */}
         <div className="flex items-center">
           <Logo />
@@ -29,7 +29,7 @@ export const CustomHeader = () => {
 
         {/* Navigation Center */}
         {isLoaded && user && (
-          <nav className="hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 md:flex">
             {navItems.map((item) => (
               <Link
                 key={item.href}

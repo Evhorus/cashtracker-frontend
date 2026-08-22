@@ -2,7 +2,12 @@
 
 import { Component, ReactNode } from "react";
 import { Button } from "@/components/common/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/common/card";
 import { AlertTriangle } from "lucide-react";
 
 interface Props {
@@ -40,8 +45,8 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <Card className="max-w-md w-full">
+        <div className="flex min-h-screen items-center justify-center p-4">
+          <Card className="w-full max-w-md">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-6 w-6 text-destructive" />
@@ -58,7 +63,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   <summary className="cursor-pointer font-medium">
                     Detalles del error
                   </summary>
-                  <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
+                  <pre className="mt-2 overflow-auto rounded bg-muted p-2 text-xs">
                     {this.state.error.message}
                   </pre>
                 </details>

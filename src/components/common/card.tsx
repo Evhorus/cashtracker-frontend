@@ -1,6 +1,6 @@
-import type { ComponentProps } from 'react';
+import type { ComponentProps } from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 import {
   Card as UiCard,
   CardHeader,
@@ -9,7 +9,7 @@ import {
   CardAction,
   CardDescription,
   CardContent,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
 /**
  * App-wide Card. Wraps the stock shadcn Card (components/ui/card.tsx)
@@ -22,7 +22,7 @@ import {
  * the envelope detail page.
  */
 function Card({ className, ...props }: ComponentProps<typeof UiCard>) {
-  return <UiCard className={cn('bg-card/50', className)} {...props} />;
+  return <UiCard className={cn("bg-card/50", className)} {...props} />;
 }
 
 export {

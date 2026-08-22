@@ -11,7 +11,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-background">
       <CustomHeader />
-      <main className="container py-6 px-4 mx-auto pb-24 md:pb-6">
+      <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
         {children}
       </main>
       <MobileNav />

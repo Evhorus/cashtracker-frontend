@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   amount: z.string(),
-  currency: z.string().default('COP'),
+  currency: z.string().default("COP"),
   date: z.string(),
   description: z.string().optional(),
   createdAt: z.string(),
@@ -16,16 +16,16 @@ export const ExpensesAPIResponseSchema = z.array(ExpenseAPIResponseSchema);
 export type ExpensesResponseApi = z.infer<typeof ExpensesAPIResponseSchema>;
 
 export const expenseSchema = z.object({
-  name: z.string().min(1, { message: 'El Nombre del gasto es obligatorio' }),
+  name: z.string().min(1, { message: "El Nombre del gasto es obligatorio" }),
   amount: z
-    .string({ message: 'El monto es obligatorio' })
-    .min(1, { message: 'El monto no puede estar vacío' }),
-  currency: z.enum(['COP', 'USD', 'EUR']),
-  date: z.coerce.date<Date>({ message: 'La fecha es obligatoria' }),
+    .string({ message: "El monto es obligatorio" })
+    .min(1, { message: "El monto no puede estar vacío" }),
+  currency: z.enum(["COP", "USD", "EUR"]),
+  date: z.coerce.date<Date>({ message: "La fecha es obligatoria" }),
 
   description: z
     .string()
-    .max(500, { message: 'La descripción es muy larga' })
+    .max(500, { message: "La descripción es muy larga" })
     .optional(),
 });
 

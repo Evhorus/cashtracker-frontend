@@ -1,6 +1,11 @@
 "use client";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/common/card";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import {
   ChartConfig,

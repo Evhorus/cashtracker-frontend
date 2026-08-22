@@ -1,19 +1,10 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Controller,
-  useForm,
-  useWatch,
-} from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/common/button";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
 import {
   budgetFormSchema,
@@ -67,7 +58,9 @@ export const BudgetForm = ({
                 name="name"
                 render={({ field }) => (
                   <Field>
-                    <FieldLabel htmlFor="name">Nombre del presupuesto</FieldLabel>
+                    <FieldLabel htmlFor="name">
+                      Nombre del presupuesto
+                    </FieldLabel>
                     <Input
                       id="name"
                       placeholder="Ej: Gastos del hogar"
@@ -83,69 +76,68 @@ export const BudgetForm = ({
                 )}
               />
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                
-                  <Controller
-                    control={control}
-                    name="currency"
-                    render={({ field }) => (
-                      <Field>
-                        <FieldLabel htmlFor="currency">Moneda</FieldLabel>
-                        <CurrencySelector
-                          {...field}
-                          id="currency"
-                          disabled={isLoading}
-                        />
-                        {errors.currency?.message && (
-                          <ErrorMessage>{errors.currency.message}</ErrorMessage>
-                        )}
-                      </Field>
-                    )}
-                  />
-
-                  <Controller
-                    control={control}
-                    name="amount"
-                    render={({ field }) => (
-                      <Field>
-                        <FieldLabel htmlFor="amount">Monto</FieldLabel>
-                        <PriceInput
-                          id="amount"
-                          {...field}
-                          disabled={isLoading}
-                          currencyConfig={
-                            selectedCurrency ? CURRENCY_MAP[selectedCurrency] : DEFAULT_CURRENCY_CONFIG
-                          }
-                        />
-                        {errors.amount?.message && (
-                          <ErrorMessage>{errors.amount.message}</ErrorMessage>
-                        )}
-                      </Field>
-                    )}
-                  />
-                
-                
-              </div>
-            </div>
-            <Controller
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <Controller
                   control={control}
-                  name="category"
+                  name="currency"
                   render={({ field }) => (
-                    <Field className="md:col-span-4">
-                      <FieldLabel htmlFor="category">
-                        Categoría (opcional)
-                      </FieldLabel>
-                      <Input
-                        id="category"
-                        placeholder="Ej: Hogar, Entretenimiento"
-                        type="text"
-                        autoComplete="off"
+                    <Field>
+                      <FieldLabel htmlFor="currency">Moneda</FieldLabel>
+                      <CurrencySelector
                         {...field}
+                        id="currency"
                         disabled={isLoading}
                       />
+                      {errors.currency?.message && (
+                        <ErrorMessage>{errors.currency.message}</ErrorMessage>
+                      )}
                     </Field>
                   )}
                 />
+
+                <Controller
+                  control={control}
+                  name="amount"
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel htmlFor="amount">Monto</FieldLabel>
+                      <PriceInput
+                        id="amount"
+                        {...field}
+                        disabled={isLoading}
+                        currencyConfig={
+                          selectedCurrency
+                            ? CURRENCY_MAP[selectedCurrency]
+                            : DEFAULT_CURRENCY_CONFIG
+                        }
+                      />
+                      {errors.amount?.message && (
+                        <ErrorMessage>{errors.amount.message}</ErrorMessage>
+                      )}
+                    </Field>
+                  )}
+                />
+              </div>
+            </div>
+            <Controller
+              control={control}
+              name="category"
+              render={({ field }) => (
+                <Field className="md:col-span-4">
+                  <FieldLabel htmlFor="category">
+                    Categoría (opcional)
+                  </FieldLabel>
+                  <Input
+                    id="category"
+                    placeholder="Ej: Hogar, Entretenimiento"
+                    type="text"
+                    autoComplete="off"
+                    {...field}
+                    disabled={isLoading}
+                  />
+                </Field>
+              )}
+            />
           </FieldSet>
         </FieldSet>
 

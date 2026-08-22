@@ -22,7 +22,7 @@ export const PageHeader = ({
 }: PageHeaderProps) => {
   return (
     <div className="flex items-center justify-between gap-4">
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         {backUrl && (
           <Link href={backUrl}>
             <Button
@@ -36,7 +36,7 @@ export const PageHeader = ({
         )}
 
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">
+          <h1 className="truncate text-2xl font-bold tracking-tight md:text-3xl">
             {title}
           </h1>
           {description && (
@@ -48,7 +48,7 @@ export const PageHeader = ({
       </div>
 
       <div className="flex items-center gap-2">
-        {actions && <div className="hidden md:flex gap-2">{actions}</div>}
+        {actions && <div className="hidden gap-2 md:flex">{actions}</div>}
         {mobileActions && <div className="md:hidden">{mobileActions}</div>}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { ApiError } from './api-client';
+import { ApiError } from "./api-client";
 
 export type ActionState<T = unknown> = {
   data?: T;
@@ -10,32 +10,34 @@ export type ActionState<T = unknown> = {
  * Creates a safe Server Action that automatically catches errors and formats the response.
  */
 export function createSafeAction<TPayload, TResult>(
-  handler: (payload: TPayload) => Promise<{ data?: TResult; successMessage?: string }>
+  handler: (
+    payload: TPayload,
+  ) => Promise<{ data?: TResult; successMessage?: string }>,
 ) {
   return async (
     _prevState: ActionState<TResult>,
-    payload: TPayload
+    payload: TPayload,
   ): Promise<ActionState<TResult>> => {
     try {
       const result = await handler(payload);
-      return { 
-        data: result.data, 
+      return {
+        data: result.data,
         success: result.successMessage,
-        errors: []
+        errors: [],
       };
     } catch (error) {
-      console.error('Action error:', error);
-      
+      console.error("Action error:", error);
+
       if (error instanceof ApiError) {
-        return { 
+        return {
           errors: [error.message],
-          success: ''
+          success: "",
         };
       }
-      
-      return { 
-        errors: ['Ocurrió un error inesperado. Por favor, intenta de nuevo.'],
-        success: ''
+
+      return {
+        errors: ["Ocurrió un error inesperado. Por favor, intenta de nuevo."],
+        success: "",
       };
     }
   };

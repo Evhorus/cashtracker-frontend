@@ -15,7 +15,7 @@ import { DashboardHelpers } from "@/lib/dashboard-helpers";
 // collide with next/dynamic's default export name.
 const Chart = nextDynamic(
   () => import("@/components/common/Chart").then((mod) => mod.Chart),
-  { loading: () => <ChartSkeleton /> }
+  { loading: () => <ChartSkeleton /> },
 );
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -33,10 +33,10 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Resumen general de tus finanzas
           </p>
         </div>

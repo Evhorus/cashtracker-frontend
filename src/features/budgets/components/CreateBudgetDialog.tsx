@@ -19,12 +19,16 @@ import { createBudgetAction } from "@/features/budgets/actions/create-budget.act
 export const CreateBudgetDialog = () => {
   const [open, setOpen] = useState(false);
 
-  const { dispatch, isPending } = useActionDialog(createBudgetAction, {
-    errors: [],
-    success: "",
-  }, {
-    setOpen,
-  });
+  const { dispatch, isPending } = useActionDialog(
+    createBudgetAction,
+    {
+      errors: [],
+      success: "",
+    },
+    {
+      setOpen,
+    },
+  );
 
   const handleCreate = async (budgetFormValues: BudgetFormValues) => {
     dispatch(budgetFormValues);

@@ -1,4 +1,4 @@
-import type { Budget } from '@/features/budgets/types';
+import type { Budget } from "@/features/budgets/types";
 
 /**
  * Aggregate calculations for dashboard
@@ -32,7 +32,7 @@ export const DashboardHelpers = {
    */
   getChartData: (budgets: Budget[], limit = 5) => {
     return budgets.slice(0, limit).map((b) => ({
-      name: b.name.length > 15 ? b.name.substring(0, 15) + '...' : b.name,
+      name: b.name.length > 15 ? b.name.substring(0, 15) + "..." : b.name,
       Gastado: Number(b.spent),
       Total: Number(b.amount),
     }));
