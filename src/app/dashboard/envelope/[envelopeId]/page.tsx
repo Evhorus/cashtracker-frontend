@@ -12,6 +12,7 @@ import { PaginationControls } from "@/components/common/pagination-controls";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
+import { formatMonthYear } from "@/lib/date-helpers";
 import { cn } from "@/lib/utils";
 
 import { DollarSign, Infinity as InfinityIcon } from "lucide-react";
@@ -96,11 +97,14 @@ export default async function EnvelopePage({
         title={envelope.name}
         backUrl="/dashboard/envelopes"
         description={
-          envelope.category && (
-            <p className="truncate text-sm text-muted-foreground">
-              {envelope.category}
-            </p>
-          )
+          // Always shows the creation month/year, not just when a
+          // category is set - same reasoning as the envelope card: names
+          // are free text and commonly reused across years, so this is
+          // the one place that disambiguates which year's envelope this is.
+          <p className="truncate text-sm text-muted-foreground">
+            {formatMonthYear(envelope.createdAt)}
+            {envelope.category && ` · ${envelope.category}`}
+          </p>
         }
         actions={
           <>
