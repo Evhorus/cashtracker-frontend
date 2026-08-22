@@ -4,17 +4,17 @@ import { getExpenseByIdAction } from "@/features/expenses/actions/get-expense-by
 import { DeleteExpenseAlertDialog } from "@/features/expenses/components/DeleteExpenseAlertDialog";
 import { UpdateExpenseDialog } from "@/features/expenses/components/UpdateExpenseDialog";
 import { ExpenseActionsMenu } from "@/features/expenses/components/ExpenseActionsMenu";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/components/ui/card";
+} from "@/components/common/card";
 
-import { formatCurrency } from "@/shared/lib/format-currency";
-import { formatDate } from "@/shared/lib/date-helpers";
+import { formatCurrency } from "@/lib/format-currency";
+import { formatDate } from "@/lib/date-helpers";
 import { Calendar, FileText, Receipt } from "lucide-react";
 import Link from "next/link";
 

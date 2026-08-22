@@ -1,11 +1,11 @@
-import { PageHeaderSkeleton } from "@/shared/components/PageHeaderSkeleton";
+import { PageHeaderSkeleton } from "@/components/common/PageHeaderSkeleton";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/components/ui/card";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+} from "@/components/common/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ExpensesListSkeleton } from "@/features/expenses/components/ExpensesListSkeleton";
 
 export default function BudgetDetailLoading() {

@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/shared/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 import {
   Drawer,
   DrawerClose,
@@ -20,13 +20,13 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/shared/components/ui/drawer";
-import { Button } from "@/shared/components/ui/button";
-import { cn } from "@/shared/lib/utils";
+} from "@/components/ui/drawer";
+import { Button } from "@/components/common/button";
+import { cn } from "@/lib/utils";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useMediaQuery } from "@/shared/hooks/use-media-query";
-import { useActionDialog } from "@/shared/hooks/useActionDialog";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { useActionDialog } from "@/hooks/useActionDialog";
 
 interface DeleteExpenseAlertDialogProps {
   budgetId: string;

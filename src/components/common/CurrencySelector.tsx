@@ -1,5 +1,5 @@
-import { cn } from "@/shared/lib/utils";
-import { CURRENCY_MAP } from "@/shared/lib/format-currency";
+import { cn } from "@/lib/utils";
+import { CURRENCY_MAP } from "@/lib/format-currency";
 
 export interface CurrencySelectorProps {
   value: string;

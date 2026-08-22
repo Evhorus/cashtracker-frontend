@@ -3,11 +3,11 @@
 import { Expense } from "@/features/expenses/types";
 import { Calendar, Edit, Receipt, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/shared/components/ui/button";
-import { formatDate } from "@/shared/lib/date-helpers";
-import { formatCurrency } from "@/shared/lib/format-currency";
-import { Card, CardContent } from "@/shared/components/ui/card";
-import { ActionsDrawer, ActionItem } from "@/shared/components/ActionsDrawer";
+import { Button } from "@/components/common/button";
+import { formatDate } from "@/lib/date-helpers";
+import { formatCurrency } from "@/lib/format-currency";
+import { Card, CardContent } from "@/components/common/card";
+import { ActionsDrawer, ActionItem } from "@/components/common/ActionsDrawer";
 import { useState } from "react";
 import { UpdateExpenseDialog } from "./UpdateExpenseDialog";
 import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";

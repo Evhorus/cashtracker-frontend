@@ -1,12 +1,12 @@
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/components/common/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/components/ui/card";
-import { Progress } from "@/shared/components/ui/progress";
-import { formatCurrency } from "@/shared/lib/format-currency";
+} from "@/components/common/card";
+import { Progress } from "@/components/ui/progress";
+import { formatCurrency } from "@/lib/format-currency";
 import { ArrowRight, Wallet } from "lucide-react";
 
 import Link from "next/link";

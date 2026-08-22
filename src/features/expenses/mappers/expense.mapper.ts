@@ -1,7 +1,7 @@
 import { ExpenseFormValues } from "../schemas/expense.schema";
 import { Expense } from "../types";
 import { ExpenseAPIResponseSchema } from "../schemas/expense.schema";
-import { parseDateInput } from "@/shared/lib/date-helpers";
+import { parseDateInput } from "@/lib/date-helpers";
 import { z } from "zod";
 
 type ApiExpense = z.infer<typeof ExpenseAPIResponseSchema>;

@@ -1,4 +1,4 @@
-import { fetchApi } from '@/shared/lib/api-client';
+import { fetchApi } from '@/lib/api-client';
 import { BudgetFormValues, BudgetAPIResponseSchema, BudgetsAPIResponseSchema, BudgetApi, BudgetsResponseApi } from '../schemas/budget.schema';
 import { Budget, BudgetsResponse } from '../types';
 import { BudgetMapper } from '../mappers/budget.mapper';

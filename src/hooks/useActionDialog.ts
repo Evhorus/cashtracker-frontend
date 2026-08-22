@@ -2,7 +2,7 @@
 
 import { startTransition, useActionState } from "react";
 import { useRouter } from "next/navigation";
-import { useActionWithToast } from "@/shared/hooks/useActionWithToast";
+import { useActionWithToast } from "@/hooks/useActionWithToast";
 
 interface ActionState {
   errors?: string[];

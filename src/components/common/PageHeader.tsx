@@ -3,7 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/common/button";
 
 interface PageHeaderProps {
   title: string;

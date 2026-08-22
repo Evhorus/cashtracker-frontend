@@ -7,15 +7,15 @@ import { CreateExpenseDialog } from "@/features/expenses/components/CreateExpens
 import { ExpensesFilter } from "@/features/expenses/components/ExpensesFilter";
 import { ExpensesList } from "@/features/expenses/components/ExpensesList";
 import { BudgetActionsMenu } from "@/features/budgets/components/BudgetActionsMenu";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/components/ui/card";
-import { formatCurrency } from "@/shared/lib/format-currency";
+} from "@/components/common/card";
+import { formatCurrency } from "@/lib/format-currency";
 
 import { CreditCard, DollarSign, PiggyBank, Wallet } from "lucide-react";
 import { BudgetChart } from "@/features/budgets/components/BudgetChart";

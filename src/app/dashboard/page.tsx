@@ -2,10 +2,10 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
 import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
-import { Button } from "@/shared/components/ui/button";
-import { Chart } from "@/shared/components/Chart";
-import { StatsCards } from "@/shared/components/StatsCards";
-import { DashboardHelpers } from "@/shared/lib/dashboard-helpers";
+import { Button } from "@/components/common/button";
+import { Chart } from "@/components/common/Chart";
+import { StatsCards } from "@/components/common/StatsCards";
+import { DashboardHelpers } from "@/lib/dashboard-helpers";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
