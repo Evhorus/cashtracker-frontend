@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 /**
  * Forces the window to scroll to top whenever the pathname changes.
- * This ensures navigating between different "Budgets" or "Details"
+ * This ensures navigating between different "Envelopes" or "Details"
  * always starts from the top position.
  */
 export function ScrollToTop() {

@@ -9,19 +9,19 @@ import { createSafeAction } from "@/lib/safe-action";
 // eslint-disable-next-line @clerk/next/require-auth-protection -- Protected inside createSafeAction wrapper by calling auth.protect() in the handler.
 export const updateExpenseAction = createSafeAction(
   async (
-    formData: ExpenseFormValues & { budgetId: string; expenseId: string },
+    formData: ExpenseFormValues & { envelopeId: string; expenseId: string },
   ) => {
     await auth.protect();
-    const { budgetId, expenseId, ...data } = formData;
+    const { envelopeId, expenseId, ...data } = formData;
     const response = await ExpensesService.update(
-      budgetId,
+      envelopeId,
       expenseId,
       data as ExpenseFormValues,
     );
 
     revalidatePath("/dashboard");
-    revalidatePath(`/dashboard/budget/${budgetId}`);
-    revalidateTag("all-budgets", "max");
+    revalidatePath(`/dashboard/envelope/${envelopeId}`);
+    revalidateTag("all-envelopes", "max");
     revalidateTag("expense", "max");
 
     return { successMessage: response.message };

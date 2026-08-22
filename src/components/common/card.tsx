@@ -18,7 +18,7 @@ import {
  *
  * Adds a translucent background (`bg-card/50`) that turns solid on hover
  * (paired with `hover:bg-card` at each call site) - a deliberate design
- * pattern used across StatsCards, BudgetCard/EnvelopeCard, ExpenseCard and
+ * pattern used across StatsCards, EnvelopeCard/EnvelopeCard, ExpenseCard and
  * the envelope detail page.
  */
 function Card({ className, ...props }: ComponentProps<typeof UiCard>) {

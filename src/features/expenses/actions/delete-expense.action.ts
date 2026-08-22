@@ -4,24 +4,27 @@ import { auth } from "@clerk/nextjs/server";
 import { authenticatedFetch } from "@/lib/authenticated-fetch";
 import { revalidatePath, revalidateTag } from "next/cache";
 
-type DeleteBudgetActionState = {
+// Previously misnamed `DeleteBudgetActionState` (copy-paste from the
+// envelope delete action) - this state actually belongs to deleting an
+// expense, not an envelope.
+type DeleteExpenseActionState = {
   errors: string[];
   success: string;
 };
 
 export const deleteExpenseAction = async (
-  prevState: DeleteBudgetActionState,
-  { budgetId, expenseId }: { budgetId: string; expenseId: string },
-): Promise<DeleteBudgetActionState> => {
+  prevState: DeleteExpenseActionState,
+  { envelopeId, expenseId }: { envelopeId: string; expenseId: string },
+): Promise<DeleteExpenseActionState> => {
   await auth.protect();
 
   try {
     const req = await authenticatedFetch(
-      `/budgets/${budgetId}/expenses/${expenseId}`,
+      `/budgets/${envelopeId}/expenses/${expenseId}`,
       {
         method: "DELETE",
         next: {
-          tags: ["all-budgets"],
+          tags: ["all-envelopes"],
         },
       },
     );
@@ -37,8 +40,8 @@ export const deleteExpenseAction = async (
     }
 
     revalidatePath("/dashboard");
-    revalidatePath(`/dashboard/budget/${budgetId}`);
-    revalidateTag("all-budgets", "max");
+    revalidatePath(`/dashboard/envelope/${envelopeId}`);
+    revalidateTag("all-envelopes", "max");
 
     return {
       success: "Gasto eliminado correctamente.",

@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "@/components/common/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BudgetsListSkeleton } from "@/features/budgets/components/BudgetsListSkeleton";
+import { EnvelopesListSkeleton } from "@/features/envelopes/components/EnvelopesListSkeleton";
 
 export default function DashboardLoadingSkeleton() {
   return (
@@ -45,10 +45,10 @@ export default function DashboardLoadingSkeleton() {
         </CardContent>
       </Card>
 
-      {/* Budgets Grid */}
+      {/* Envelopes Grid */}
       <div>
         <Skeleton className="mb-4 h-7 w-full max-w-48" />
-        <BudgetsListSkeleton />
+        <EnvelopesListSkeleton />
       </div>
     </div>
   );

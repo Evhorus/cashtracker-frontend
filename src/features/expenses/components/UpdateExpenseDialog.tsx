@@ -16,16 +16,19 @@ import { ExpenseForm } from "./ExpenseForm";
 import { Expense } from "@/features/expenses/types";
 import { updateExpenseAction } from "@/features/expenses/actions/update-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
+import type { CurrencyCode } from "@/lib/format-currency";
 
 interface UpdateExpenseDialogProps {
-  budgetId: string;
+  envelopeId: string;
+  currency: CurrencyCode;
   expense: Expense;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
 export const UpdateExpenseDialog = ({
-  budgetId,
+  envelopeId,
+  currency,
   expense,
   open: controlledOpen,
   onOpenChange: setControlledOpen,
@@ -48,7 +51,7 @@ export const UpdateExpenseDialog = ({
   );
 
   const handleCreate = async (expenseFormValues: ExpenseFormValues) => {
-    dispatch({ ...expenseFormValues, budgetId, expenseId: expense.id });
+    dispatch({ ...expenseFormValues, envelopeId, expenseId: expense.id });
   };
 
   return (
@@ -69,6 +72,7 @@ export const UpdateExpenseDialog = ({
         </DialogHeader>
 
         <ExpenseForm
+          currency={currency}
           defaultValues={{
             name: expense.name,
             amount: expense.amount,

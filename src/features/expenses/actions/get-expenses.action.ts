@@ -13,7 +13,7 @@ interface GetExpensesFilters {
 }
 
 export const getExpensesAction = async (
-  budgetId: string,
+  envelopeId: string,
   filters: GetExpensesFilters,
 ): Promise<Expense[]> => {
   await auth.protect();
@@ -28,14 +28,14 @@ export const getExpensesAction = async (
     if (filters.sort) params.append("sort", filters.sort);
 
     const queryString = params.toString();
-    const url = `/budgets/${budgetId}/expenses${
+    const url = `/budgets/${envelopeId}/expenses${
       queryString ? `?${queryString}` : ""
     }`;
 
     await auth.protect();
     const req = await authenticatedFetch(url, {
       next: {
-        tags: [`expenses-${budgetId}`],
+        tags: [`expenses-${envelopeId}`],
         revalidate: 0, // Always fresh for filters
       },
     });

@@ -10,11 +10,11 @@ import {
 import { ExpenseMapper } from "../mappers/expense.mapper";
 
 export const ExpensesService = {
-  getAll: async (budgetId: string): Promise<Expense[]> => {
+  getAll: async (envelopeId: string): Promise<Expense[]> => {
     const expenses = await fetchApi<ExpensesResponseApi>(
-      `/budgets/${budgetId}/expenses`,
+      `/budgets/${envelopeId}/expenses`,
       {
-        next: { tags: [`expenses-${budgetId}`], revalidate: 60 },
+        next: { tags: [`expenses-${envelopeId}`], revalidate: 60 },
       },
       ExpensesAPIResponseSchema,
     );
@@ -22,9 +22,9 @@ export const ExpensesService = {
     return expenses.map(ExpenseMapper.fromApi);
   },
 
-  getById: async (budgetId: string, expenseId: string): Promise<Expense> => {
+  getById: async (envelopeId: string, expenseId: string): Promise<Expense> => {
     const expense = await fetchApi<ExpenseApi>(
-      `/budgets/${budgetId}/expenses/${expenseId}`,
+      `/budgets/${envelopeId}/expenses/${expenseId}`,
       {
         next: { tags: ["expense"], revalidate: 60 },
       },
@@ -34,16 +34,16 @@ export const ExpensesService = {
     return ExpenseMapper.fromApi(expense);
   },
 
-  create: (budgetId: string, data: ExpenseFormValues) => {
-    return fetchApi<{ message: string }>(`/budgets/${budgetId}/expenses`, {
+  create: (envelopeId: string, data: ExpenseFormValues) => {
+    return fetchApi<{ message: string }>(`/budgets/${envelopeId}/expenses`, {
       method: "POST",
       body: JSON.stringify(ExpenseMapper.toApiRequest(data)),
     });
   },
 
-  update: (budgetId: string, expenseId: string, data: ExpenseFormValues) => {
+  update: (envelopeId: string, expenseId: string, data: ExpenseFormValues) => {
     return fetchApi<{ message: string }>(
-      `/budgets/${budgetId}/expenses/${expenseId}`,
+      `/budgets/${envelopeId}/expenses/${expenseId}`,
       {
         method: "PATCH",
         body: JSON.stringify(ExpenseMapper.toApiRequest(data)),
@@ -51,9 +51,9 @@ export const ExpensesService = {
     );
   },
 
-  delete: (budgetId: string, expenseId: string) => {
+  delete: (envelopeId: string, expenseId: string) => {
     return fetchApi<{ message: string }>(
-      `/budgets/${budgetId}/expenses/${expenseId}`,
+      `/budgets/${envelopeId}/expenses/${expenseId}`,
       {
         method: "DELETE",
       },

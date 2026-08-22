@@ -29,7 +29,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { useActionDialog } from "@/hooks/useActionDialog";
 
 interface DeleteExpenseAlertDialogProps {
-  budgetId: string;
+  envelopeId: string;
   expenseId: string;
   className?: string;
   open?: boolean;
@@ -37,7 +37,7 @@ interface DeleteExpenseAlertDialogProps {
 }
 
 export const DeleteExpenseAlertDialog = ({
-  budgetId,
+  envelopeId,
   expenseId,
   className = "",
   open: controlledOpen,
@@ -66,8 +66,8 @@ export const DeleteExpenseAlertDialog = ({
   const open = isControlled ? controlledOpen : internalOpen;
   const setOpen = isControlled ? setControlledOpen : setInternalOpen;
 
-  const handleDeleteBudget = async () => {
-    dispatch({ budgetId, expenseId });
+  const handleDeleteExpense = async () => {
+    dispatch({ envelopeId, expenseId });
   };
 
   if (isDesktop) {
@@ -92,7 +92,7 @@ export const DeleteExpenseAlertDialog = ({
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
-                handleDeleteBudget();
+                handleDeleteExpense();
               }}
               className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 sm:w-auto"
               disabled={isPending}
@@ -125,7 +125,7 @@ export const DeleteExpenseAlertDialog = ({
         <DrawerFooter className="pt-2">
           <Button
             className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            onClick={handleDeleteBudget}
+            onClick={handleDeleteExpense}
             disabled={isPending}
           >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

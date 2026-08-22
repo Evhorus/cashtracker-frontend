@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
-import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
+import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
+import { EnvelopesGrid } from "@/features/envelopes/components/EnvelopesGrid";
 import { Button } from "@/components/common/button";
 import nextDynamic from "next/dynamic";
 import { ChartSkeleton } from "@/components/common/ChartSkeleton";
@@ -23,12 +23,12 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   await auth.protect();
-  const budgets = await getBudgetsAction();
+  const envelopes = await getEnvelopesAction();
 
-  const totalBudget = DashboardHelpers.getTotalBudget(budgets.data);
-  const totalSpent = DashboardHelpers.getTotalSpent(budgets.data);
-  const totalRemaining = DashboardHelpers.getTotalRemaining(budgets.data);
-  const chartData = DashboardHelpers.getChartData(budgets.data);
+  const totalAmount = DashboardHelpers.getTotalAmount(envelopes.data);
+  const totalSpent = DashboardHelpers.getTotalSpent(envelopes.data);
+  const totalRemaining = DashboardHelpers.getTotalRemaining(envelopes.data);
+  const chartData = DashboardHelpers.getChartData(envelopes.data);
 
   return (
     <div className="space-y-6">
@@ -43,22 +43,22 @@ export default async function DashboardPage() {
       </div>
 
       <StatsCards
-        totalBudget={totalBudget}
-        totalCount={budgets.count}
+        totalAmount={totalAmount}
+        totalCount={envelopes.count}
         totalSpent={totalSpent}
         totalRemaining={totalRemaining}
       />
 
-      <Chart chartData={chartData} totalBudgets={budgets.count} />
+      <Chart chartData={chartData} totalEnvelopes={envelopes.count} />
 
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Mis Presupuestos</h2>
-        <Link href="/dashboard/budgets">
+        <Link href="/dashboard/envelopes">
           <Button variant="link">Ver todos</Button>
         </Link>
       </div>
 
-      <BudgetsGrid budgets={budgets.data.slice(0, 6)} />
+      <EnvelopesGrid envelopes={envelopes.data.slice(0, 6)} />
     </div>
   );
 }
