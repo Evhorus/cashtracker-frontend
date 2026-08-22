@@ -10,31 +10,32 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-type EnvelopesSummaryChartData = {
-  name: string;
+type MonthlySpendingChartData = {
+  label: string;
   Gastado: number;
   Disponible: number;
 };
 
-interface EnvelopesSummaryChartProps {
+interface MonthlySpendingChartProps {
   totalEnvelopes: number;
-  chartData: EnvelopesSummaryChartData[];
+  chartData: MonthlySpendingChartData[];
 }
 
-// "Bar Chart - Stacked + Legend" pattern from ui.shadcn.com/charts/bar,
-// adapted to our data: Gastado + Disponible are the two parts of the same
-// envelope amount, so stacking them is meaningful (the bar's total height
-// is the envelope's amount). Two distinct chart colors (not both green)
-// per design feedback.
+// "Bar Chart - Stacked + Legend" pattern from ui.shadcn.com/charts/bar.
+// Grouped by month (not by envelope) - envelopes in this app are always
+// "one account for one month" (e.g. "Marzo Rappi"), so a per-envelope
+// chart mixed accounts and months with no meaningful order. Per-month
+// is both meaningful on its own and naturally sorts chronologically -
+// the backend already returns entries oldest-to-newest.
 //
 // TODO(charts): this and EnvelopeChart (src/features/envelopes/components/
 // envelope-chart.tsx) still need a real design pass - colors, tooltip
 // content, empty/loading states - once the current pending work is done.
 // Revisit both together, not just this one.
-export const EnvelopesSummaryChart = ({
+export const MonthlySpendingChart = ({
   chartData,
   totalEnvelopes,
-}: EnvelopesSummaryChartProps) => {
+}: MonthlySpendingChartProps) => {
   if (totalEnvelopes === 0) return null;
 
   const chartConfig = {
@@ -51,7 +52,7 @@ export const EnvelopesSummaryChart = ({
   return (
     <Card className="animate-fade-in [animation-delay:0.4s]">
       <CardHeader>
-        <CardTitle>Resumen de Sobres</CardTitle>
+        <CardTitle>Gastos por Mes</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer
@@ -61,23 +62,22 @@ export const EnvelopesSummaryChart = ({
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="name"
+              dataKey="label"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
             <Bar
               dataKey="Gastado"
-              stackId="envelope"
+              stackId="month"
               fill="var(--color-Gastado)"
               radius={[0, 0, 4, 4]}
             />
             <Bar
               dataKey="Disponible"
-              stackId="envelope"
+              stackId="month"
               fill="var(--color-Disponible)"
               radius={[4, 4, 0, 0]}
             />
