@@ -63,7 +63,7 @@ export default async function Home() {
   if (user) redirect("/dashboard");
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <CustomHeader />
 
       {/* Hero Section */}

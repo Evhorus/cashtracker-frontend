@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { formatCurrency } from "@/lib/format-currency";
+import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { ArrowRight, Infinity as InfinityIcon, Wallet } from "lucide-react";
 
 import Link from "next/link";
@@ -19,6 +19,7 @@ interface EnvelopeCardProps {
 
 export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
   const envelopeId = envelope.id;
+  const currencyConfig = CURRENCY_MAP[envelope.currency];
 
   const calculations = useMemo(() => {
     const status = EnvelopeHelpers.getProgressStatus(envelope);
@@ -62,9 +63,14 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                 {envelope.name}
               </span>
             </CardTitle>
-            {envelope.category && (
-              <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            {(envelope.category || envelope.currency !== "COP") && (
+              <p className="flex items-center gap-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">
                 {envelope.category}
+                {envelope.currency !== "COP" && (
+                  <span className="rounded-sm bg-secondary px-1 py-0.5 text-secondary-foreground">
+                    {envelope.currency}
+                  </span>
+                )}
               </p>
             )}
           </div>
@@ -95,7 +101,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
               Sin límite
             </span>
             <span className="text-sm font-bold text-foreground">
-              {formatCurrency(+envelope.spent)} gastado
+              {formatCurrency(+envelope.spent, currencyConfig)} gastado
             </span>
           </div>
         ) : (
@@ -119,7 +125,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground">Gastado</p>
             <p className={`text-sm font-bold ${amountTextColorClass}`}>
-              {formatCurrency(+envelope.spent)}
+              {formatCurrency(+envelope.spent, currencyConfig)}
             </p>
           </div>
           {!calculations.isUnlimited && (
@@ -134,7 +140,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                     : "text-success"
                 }`}
               >
-                {formatCurrency(calculations.remaining ?? 0)}
+                {formatCurrency(calculations.remaining ?? 0, currencyConfig)}
               </p>
             </div>
           )}

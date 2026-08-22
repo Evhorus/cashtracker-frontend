@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/common/page-header";
 import { PaginationControls } from "@/components/common/pagination-controls";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/format-currency";
+import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 
 import {
   CreditCard,
@@ -85,6 +85,7 @@ export default async function EnvelopePage({
   const isUnlimited = envelope.amount === null;
   const remaining = EnvelopeHelpers.getRemaining(envelope);
   const percentage = EnvelopeHelpers.getPercentage(envelope);
+  const currencyConfig = CURRENCY_MAP[envelope.currency];
 
   return (
     <div className="space-y-8 pb-24">
@@ -151,7 +152,7 @@ export default async function EnvelopePage({
                       : "text-success"
                   }`}
                 >
-                  {formatCurrency(remaining ?? 0)}
+                  {formatCurrency(remaining ?? 0, currencyConfig)}
                 </div>
                 {remaining !== null && remaining < 0 && (
                   <p className="mt-1 text-xs text-destructive">
@@ -174,7 +175,7 @@ export default async function EnvelopePage({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(+envelope.spent)}
+              {formatCurrency(+envelope.spent, currencyConfig)}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               {isUnlimited
@@ -195,7 +196,9 @@ export default async function EnvelopePage({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isUnlimited ? "Sin límite" : formatCurrency(+envelope.amount!)}
+              {isUnlimited
+                ? "Sin límite"
+                : formatCurrency(+envelope.amount!, currencyConfig)}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               {envelope.expenses.length} transacciones
@@ -244,7 +247,7 @@ export default async function EnvelopePage({
                   Este sobre no tiene límite de gasto
                 </p>
                 <p className="text-lg font-bold">
-                  {formatCurrency(+envelope.spent)} gastado
+                  {formatCurrency(+envelope.spent, currencyConfig)} gastado
                 </p>
               </Card>
             ) : (

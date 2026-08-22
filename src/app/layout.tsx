@@ -22,7 +22,7 @@ export default function RootLayout({
           <ScrollToTop />
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
