@@ -11,13 +11,19 @@ import { ActionsDrawer, ActionItem } from "@/components/common/ActionsDrawer";
 import { useState } from "react";
 import { UpdateExpenseDialog } from "./UpdateExpenseDialog";
 import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";
+import type { CurrencyCode } from "@/lib/format-currency";
 
 interface ExpenseCardProps {
   expense: Expense;
-  budgetId: string;
+  envelopeId: string;
+  currency: CurrencyCode;
 }
 
-export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
+export const ExpenseCard = ({
+  expense,
+  envelopeId,
+  currency,
+}: ExpenseCardProps) => {
   const router = useRouter();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -39,7 +45,7 @@ export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
       return;
     }
 
-    router.push(`${budgetId}/expenses/${expense.id}`);
+    router.push(`${envelopeId}/expenses/${expense.id}`);
   };
 
   const actions: ActionItem[] = [
@@ -138,13 +144,14 @@ export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
       </Card>
 
       <UpdateExpenseDialog
-        budgetId={budgetId}
+        envelopeId={envelopeId}
+        currency={currency}
         expense={expense}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
       />
       <DeleteExpenseAlertDialog
-        budgetId={budgetId}
+        envelopeId={envelopeId}
         expenseId={expense.id}
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}

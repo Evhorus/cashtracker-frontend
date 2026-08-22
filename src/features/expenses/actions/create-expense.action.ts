@@ -8,17 +8,17 @@ import { createSafeAction } from "@/lib/safe-action";
 
 // eslint-disable-next-line @clerk/next/require-auth-protection -- Protected inside createSafeAction wrapper by calling auth.protect() in the handler.
 export const createExpenseAction = createSafeAction(
-  async (formData: ExpenseFormValues & { budgetId: string }) => {
+  async (formData: ExpenseFormValues & { envelopeId: string }) => {
     await auth.protect();
-    const { budgetId, ...data } = formData;
+    const { envelopeId, ...data } = formData;
     const response = await ExpensesService.create(
-      budgetId,
+      envelopeId,
       data as ExpenseFormValues,
     );
 
     revalidatePath("/dashboard");
-    revalidatePath(`/dashboard/budget/${budgetId}`);
-    revalidateTag("all-budgets", "max");
+    revalidatePath(`/dashboard/envelope/${envelopeId}`);
+    revalidateTag("all-envelopes", "max");
 
     return { successMessage: response.message };
   },

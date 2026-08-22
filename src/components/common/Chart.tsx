@@ -21,12 +21,12 @@ type ChartData = {
 };
 
 interface ChartProps {
-  totalBudgets: number;
+  totalEnvelopes: number;
   chartData: ChartData[];
 }
 
-export const Chart = ({ chartData, totalBudgets }: ChartProps) => {
-  if (totalBudgets === 0) return null;
+export const Chart = ({ chartData, totalEnvelopes }: ChartProps) => {
+  if (totalEnvelopes === 0) return null;
 
   const chartConfig = {
     Gastado: {

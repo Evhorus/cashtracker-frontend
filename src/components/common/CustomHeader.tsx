@@ -16,7 +16,7 @@ export const CustomHeader = () => {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Presupuestos", href: "/dashboard/budgets" },
+    { name: "Presupuestos", href: "/dashboard/envelopes" },
   ];
 
   return (

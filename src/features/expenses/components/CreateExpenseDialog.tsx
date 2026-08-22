@@ -14,12 +14,17 @@ import { useActionDialog } from "@/hooks/useActionDialog";
 import { ExpenseForm } from "./ExpenseForm";
 import { createExpenseAction } from "@/features/expenses/actions/create-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
+import type { CurrencyCode } from "@/lib/format-currency";
 
 interface CreateExpenseDialogProps {
-  budgetId: string;
+  envelopeId: string;
+  currency: CurrencyCode;
 }
 
-export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
+export const CreateExpenseDialog = ({
+  envelopeId,
+  currency,
+}: CreateExpenseDialogProps) => {
   const [open, setOpen] = useState(false);
 
   const { dispatch, isPending } = useActionDialog(
@@ -34,7 +39,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
   );
 
   const handleCreate = async (expenseFormValues: ExpenseFormValues) => {
-    dispatch({ ...expenseFormValues, budgetId });
+    dispatch({ ...expenseFormValues, envelopeId });
   };
 
   return (
@@ -54,6 +59,7 @@ export const CreateExpenseDialog = ({ budgetId }: CreateExpenseDialogProps) => {
           </DialogDescription>
         </DialogHeader>
         <ExpenseForm
+          currency={currency}
           onSubmit={handleCreate}
           isLoading={isPending}
           onCloseDialog={() => setOpen(false)}

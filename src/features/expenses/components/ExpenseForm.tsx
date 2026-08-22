@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useMemo, useState } from "react";
 import { formatDate, getToday } from "@/lib/date-helpers";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -14,12 +14,11 @@ import { ErrorMessage } from "@/components/common/ErrorMessage";
 
 import {
   ExpenseFormValues,
-  expenseSchema,
+  buildExpenseSchema,
 } from "@/features/expenses/schemas/expense.schema";
 import { Textarea } from "@/components/ui/textarea";
 import { PriceInput } from "@/components/common/PriceInput";
-import { CurrencySelector } from "@/components/common/CurrencySelector";
-import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/lib/format-currency";
+import { CURRENCY_MAP, type CurrencyCode } from "@/lib/format-currency";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -28,6 +27,12 @@ import {
 } from "@/components/ui/popover";
 
 interface ExpenseFormProps {
+  /**
+   * Currency the expense is created/edited in. Always the currency of the
+   * envelope this expense belongs to - never chosen freely here, so it's
+   * structurally impossible to mix currencies within one envelope.
+   */
+  currency: CurrencyCode;
   defaultValues?: Partial<ExpenseFormValues>;
   isLoading: boolean;
   onSubmit: (expenseFormValues: ExpenseFormValues) => Promise<void>;
@@ -35,11 +40,15 @@ interface ExpenseFormProps {
 }
 
 export const ExpenseForm = ({
+  currency,
   defaultValues,
   isLoading,
   onSubmit,
   onCloseDialog,
 }: ExpenseFormProps) => {
+  const expenseSchema = useMemo(() => buildExpenseSchema(currency), [currency]);
+  const currencyConfig = CURRENCY_MAP[currency];
+
   const {
     handleSubmit,
     control,
@@ -49,16 +58,11 @@ export const ExpenseForm = ({
     defaultValues: {
       name: "",
       amount: "",
-      currency: "COP",
+      currency,
       description: "",
       date: getToday(),
       ...defaultValues,
     },
-  });
-
-  const selectedCurrency = useWatch({
-    control,
-    name: "currency",
   });
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -90,23 +94,16 @@ export const ExpenseForm = ({
             />
 
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Controller
-                control={control}
-                name="currency"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel htmlFor="currency">Moneda</FieldLabel>
-                    <CurrencySelector
-                      {...field}
-                      id="currency"
-                      disabled={isLoading}
-                    />
-                    {errors.currency?.message && (
-                      <ErrorMessage>{errors.currency.message}</ErrorMessage>
-                    )}
-                  </Field>
-                )}
-              />
+              <Field>
+                <FieldLabel htmlFor="currency-display">Moneda</FieldLabel>
+                <div
+                  id="currency-display"
+                  className="flex h-9 w-full items-center rounded-md border border-input bg-muted/40 px-3 text-sm text-muted-foreground"
+                >
+                  {currencyConfig.label} ({currencyConfig.symbol}) - hereda del
+                  presupuesto
+                </div>
+              </Field>
               <Controller
                 control={control}
                 name="amount"
@@ -117,11 +114,7 @@ export const ExpenseForm = ({
                       id="amount"
                       {...field}
                       disabled={isLoading}
-                      currencyConfig={
-                        selectedCurrency
-                          ? CURRENCY_MAP[selectedCurrency]
-                          : DEFAULT_CURRENCY_CONFIG
-                      }
+                      currencyConfig={currencyConfig}
                     />
                     {errors.amount?.message && (
                       <ErrorMessage>{errors.amount.message}</ErrorMessage>

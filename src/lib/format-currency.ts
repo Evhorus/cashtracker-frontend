@@ -1,3 +1,6 @@
+export const CURRENCY_CODES = ["COP", "USD", "EUR"] as const;
+export type CurrencyCode = (typeof CURRENCY_CODES)[number];
+
 export interface CurrencyConfig {
   locale: string;
   currency: string;
@@ -5,7 +8,7 @@ export interface CurrencyConfig {
   label: string;
 }
 
-export const CURRENCY_MAP: Record<string, CurrencyConfig> = {
+export const CURRENCY_MAP: Record<CurrencyCode, CurrencyConfig> = {
   COP: {
     locale: "es-CO",
     currency: "COP",

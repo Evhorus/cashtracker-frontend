@@ -2,13 +2,15 @@
 import { Expense } from "@/features/expenses/types";
 import { useParams } from "next/navigation";
 import { ExpenseCard } from "./ExpenseCard";
+import type { CurrencyCode } from "@/lib/format-currency";
 
 interface ExpensesGridProps {
   expenses: Expense[];
+  currency: CurrencyCode;
 }
 
-export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
-  const { budgetId } = useParams<{ budgetId: string }>();
+export const ExpensesList = ({ expenses, currency }: ExpensesGridProps) => {
+  const { envelopeId } = useParams<{ envelopeId: string }>();
 
   return (
     <>
@@ -23,7 +25,8 @@ export const ExpensesList = ({ expenses }: ExpensesGridProps) => {
             <ExpenseCard
               key={expense.id}
               expense={expense}
-              budgetId={budgetId}
+              envelopeId={envelopeId}
+              currency={currency}
             />
           ))}
         </div>

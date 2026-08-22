@@ -1,0 +1,27 @@
+import { auth } from "@clerk/nextjs/server";
+import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
+import { EnvelopesGrid } from "@/features/envelopes/components/EnvelopesGrid";
+import { CreateEnvelopeDialog } from "@/features/envelopes/components/CreateEnvelopeDialog";
+import { PageHeader } from "@/components/common/PageHeader";
+
+// Force dynamic rendering because this page uses Clerk auth
+export const dynamic = "force-dynamic";
+
+export default async function EnvelopesPage() {
+  await auth.protect();
+  const envelopes = await getEnvelopesAction();
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Mis Presupuestos"
+        description="Gestiona todos tus presupuestos"
+        backUrl="/dashboard"
+        actions={<CreateEnvelopeDialog />}
+        mobileActions={<CreateEnvelopeDialog />}
+      />
+
+      <EnvelopesGrid envelopes={envelopes.data} />
+    </div>
+  );
+}

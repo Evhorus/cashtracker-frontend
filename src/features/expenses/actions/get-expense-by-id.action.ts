@@ -6,14 +6,14 @@ import { authenticatedFetch } from "@/lib/authenticated-fetch";
 import { redirect } from "next/navigation";
 
 export const getExpenseByIdAction = async (
-  budgetId: string,
+  envelopeId: string,
   expenseId: string,
 ) => {
   await auth.protect();
 
   try {
     const req = await authenticatedFetch(
-      `/budgets/${budgetId}/expenses/${expenseId}`,
+      `/budgets/${envelopeId}/expenses/${expenseId}`,
       {
         next: {
           tags: ["expense"],
@@ -25,14 +25,14 @@ export const getExpenseByIdAction = async (
     const json = await req.json();
 
     if (!req.ok) {
-      redirect(`/dashboard/budget/${budgetId}`);
+      redirect(`/dashboard/envelope/${envelopeId}`);
     }
 
     const expense: Expense = json;
 
     return expense;
   } catch (error) {
-    console.error("Error fetching budget by id:", error);
+    console.error("Error fetching envelope by id:", error);
     throw error;
   }
 };

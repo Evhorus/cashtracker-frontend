@@ -6,14 +6,17 @@ import { Expense } from "@/features/expenses/types";
 import { UpdateExpenseDialog } from "./UpdateExpenseDialog";
 import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";
 import { ActionsDrawer, ActionItem } from "@/components/common/ActionsDrawer";
+import type { CurrencyCode } from "@/lib/format-currency";
 
 interface ExpenseActionsMenuProps {
-  budgetId: string;
+  envelopeId: string;
+  currency: CurrencyCode;
   expense: Expense;
 }
 
 export const ExpenseActionsMenu = ({
-  budgetId,
+  envelopeId,
+  currency,
   expense,
 }: ExpenseActionsMenuProps) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -38,13 +41,14 @@ export const ExpenseActionsMenu = ({
       <ActionsDrawer actions={actions} />
 
       <UpdateExpenseDialog
-        budgetId={budgetId}
+        envelopeId={envelopeId}
+        currency={currency}
         expense={expense}
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
       />
       <DeleteExpenseAlertDialog
-        budgetId={budgetId}
+        envelopeId={envelopeId}
         expenseId={expense.id}
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}

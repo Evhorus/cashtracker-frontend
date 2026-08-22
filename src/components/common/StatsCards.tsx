@@ -10,13 +10,13 @@ import { formatCurrency } from "@/lib/format-currency";
 
 interface StatsCardProps {
   totalCount: number;
-  totalBudget: number;
+  totalAmount: number;
   totalSpent: number;
   totalRemaining: number;
 }
 
 export const StatsCards = ({
-  totalBudget,
+  totalAmount,
   totalCount,
   totalSpent,
   totalRemaining,
@@ -48,7 +48,7 @@ export const StatsCards = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {formatCurrency(totalBudget)}
+            {formatCurrency(totalAmount)}
           </div>
         </CardContent>
       </Card>
@@ -65,8 +65,8 @@ export const StatsCards = ({
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(totalSpent)}</div>
           <p className="mt-1 text-xs text-muted-foreground">
-            {totalBudget > 0
-              ? `${((totalSpent / totalBudget) * 100).toFixed(1)}%`
+            {totalAmount > 0
+              ? `${((totalSpent / totalAmount) * 100).toFixed(1)}%`
               : "0%"}{" "}
             del total
           </p>
