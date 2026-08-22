@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CardActionButton } from "@/components/common/card-action-button";
 import { Edit } from "lucide-react";
 import { useState } from "react";
 import { EnvelopeForm } from "./envelope-form";
@@ -51,13 +51,7 @@ export const UpdateEnvelopeDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
-        <DialogTrigger
-          render={
-            <Button variant="ghost" size="icon">
-              <Edit className="h-4 w-4 text-muted-foreground transition-colors hover:text-primary" />
-            </Button>
-          }
-        />
+        <DialogTrigger render={<CardActionButton icon={Edit} label="Editar sobre" />} />
       )}
       <DialogContent>
         <DialogHeader>
