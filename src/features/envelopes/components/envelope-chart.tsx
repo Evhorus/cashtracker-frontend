@@ -12,9 +12,9 @@ import {
 
 // TODO(charts): needs a real design pass - colors currently reuse
 // --primary/--secondary/--destructive instead of the dedicated --chart-*
-// palette used by EnvelopesSummaryChart, and it hasn't been checked on
+// palette used by MonthlySpendingChart, and it hasn't been checked on
 // mobile viewports yet. Revisit together with
-// src/components/common/envelopes-summary-chart.tsx once the current
+// src/components/common/monthly-spending-chart.tsx once the current
 // pending work is done.
 interface EnvelopeChartProps {
   spent: number;

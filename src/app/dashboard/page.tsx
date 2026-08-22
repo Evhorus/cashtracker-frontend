@@ -2,24 +2,24 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
+import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
 import { Button } from "@/components/ui/button";
 import nextDynamic from "next/dynamic";
-import { EnvelopesSummaryChartSkeleton } from "@/components/common/envelopes-summary-chart-skeleton";
+import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
 import { StatsCards } from "@/components/common/stats-cards";
-import { cn } from "@/lib/utils";
 
 // recharts is a heavy dependency - code-split it into its own chunk,
 // only needed once this section of the dashboard renders.
 // Aliased to `nextDynamic`: this file also exports the route segment
 // config `dynamic = "force-dynamic"` below, which would otherwise
 // collide with next/dynamic's default export name.
-const EnvelopesSummaryChart = nextDynamic(
+const MonthlySpendingChart = nextDynamic(
   () =>
-    import("@/components/common/envelopes-summary-chart").then(
-      (mod) => mod.EnvelopesSummaryChart,
+    import("@/components/common/monthly-spending-chart").then(
+      (mod) => mod.MonthlySpendingChart,
     ),
-  { loading: () => <EnvelopesSummaryChartSkeleton /> },
+  { loading: () => <MonthlySpendingChartSkeleton /> },
 );
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -46,7 +46,7 @@ export default async function DashboardPage({
   ]);
 
   const chartData = summary.chart.map((entry) => ({
-    name: entry.name,
+    label: entry.label,
     Gastado: entry.spent,
     Disponible: entry.available,
   }));
@@ -63,28 +63,10 @@ export default async function DashboardPage({
         </div>
 
         {summary.availableYears.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant={!year ? "secondary" : "ghost"}
-              size="sm"
-              nativeButton={false}
-              render={<Link href="/dashboard" />}
-            >
-              Todos
-            </Button>
-            {summary.availableYears.map((y) => (
-              <Button
-                key={y}
-                variant={y === year ? "secondary" : "ghost"}
-                size="sm"
-                nativeButton={false}
-                render={<Link href={`/dashboard?year=${y}`} />}
-                className={cn(y === year && "font-semibold")}
-              >
-                {y}
-              </Button>
-            ))}
-          </div>
+          <YearFilterSelect
+            years={summary.availableYears}
+            selectedYear={year}
+          />
         )}
       </div>
 
@@ -95,7 +77,7 @@ export default async function DashboardPage({
         totalRemaining={summary.totalAvailable}
       />
 
-      <EnvelopesSummaryChart
+      <MonthlySpendingChart
         chartData={chartData}
         totalEnvelopes={summary.totalEnvelopes}
       />

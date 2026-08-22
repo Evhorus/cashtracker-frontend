@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const DashboardChartEntrySchema = z.object({
-  name: z.string(),
+  label: z.string(),
   spent: z.number(),
   available: z.number(),
 });
