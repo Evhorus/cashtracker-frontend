@@ -62,19 +62,20 @@ export const MonthlySpendingChart = ({
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             {/*
-              Tick labels hidden instead of shown-but-cramped: on narrow
+              Full labels ("Ago 2026") got shown-but-cramped: on narrow
               screens recharts starts skipping ticks to avoid overlap,
-              which left it ambiguous which bar was which month/year.
-              The category axis itself stays (bars still lay out
-              correctly) - the month/year now only surfaces in the
-              tooltip below, on hover (desktop) or tap (touch, recharts
-              already treats a touch as a hover for this).
+              leaving it ambiguous which bar was which month/year. A
+              single-letter initial is short enough to never need
+              skipping, so every bar keeps some at-a-glance reference -
+              the full month/year still shows in the tooltip on hover
+              (desktop) or tap (touch, recharts already treats a touch
+              as a hover for this).
             */}
             <XAxis
               dataKey="label"
               tickLine={false}
               axisLine={false}
-              tick={false}
+              tickFormatter={(value: string) => value.charAt(0)}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
