@@ -1,6 +1,6 @@
-import { PageHeaderSkeleton } from "@/shared/components/PageHeaderSkeleton";
-import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { PageHeaderSkeleton } from "@/components/common/PageHeaderSkeleton";
+import { Card, CardContent, CardHeader } from "@/components/common/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ExpenseLoadingSkeleton() {
   return (

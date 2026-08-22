@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
 import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
 import { CreateBudgetDialog } from "@/features/budgets/components/CreateBudgetDialog";
-import { PageHeader } from "@/shared/components/PageHeader";
+import { PageHeader } from "@/components/common/PageHeader";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";

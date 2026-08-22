@@ -1,6 +1,6 @@
 import React from "react";
 import { Budget } from '@/features/budgets/types';
-import { Card } from "@/shared/components/ui/card";
+import { Card } from "@/components/common/card";
 import { Wallet } from "lucide-react";
 import { CreateBudgetDialog } from "./CreateBudgetDialog";
 import { BudgetCard } from "./BudgetCard";

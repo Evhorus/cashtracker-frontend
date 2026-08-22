@@ -1,10 +1,10 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { geistMono, geistSans } from "@/shared/fonts/fonts";
+import { geistMono, geistSans } from "./fonts";
 import { Analytics } from "@vercel/analytics/next";
-import { Toaster } from "@/shared/components/ui/sonner";
+import { Toaster } from "@/components/common/sonner";
 import { esMX } from "@clerk/localizations";
-import { ThemeProvider } from "@/shared/providers/theme-provider";
-import { ScrollToTop } from "@/shared/components/scroll-to-top";
+import { ThemeProvider } from "@/providers/theme-provider";
+import { ScrollToTop } from "@/components/common/scroll-to-top";
 
 import "./globals.css";
 

@@ -7,16 +7,16 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/shared/components/ui/drawer";
+} from "@/components/ui/drawer";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu";
-import { Button } from "@/shared/components/ui/button";
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/common/button";
 import { LucideIcon, MoreVertical } from "lucide-react";
-import { useMediaQuery } from "@/shared/hooks/use-media-query";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export interface ActionItem {
   label: string;

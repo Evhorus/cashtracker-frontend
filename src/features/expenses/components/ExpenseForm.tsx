@@ -6,36 +6,36 @@ import {
   useWatch,
 } from "react-hook-form";
 import { useState } from "react";
-import { formatDate, getToday } from "@/shared/lib/date-helpers";
+import { formatDate, getToday } from "@/lib/date-helpers";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 
 
-import { Input } from "@/shared/components/ui/input";
-import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/common/button";
 import {
   Field,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "@/shared/components/ui/field";
-import { ErrorMessage } from "@/shared/components/ErrorMessage";
+} from "@/components/ui/field";
+import { ErrorMessage } from "@/components/common/ErrorMessage";
 
 import {
   ExpenseFormValues,
   expenseSchema,
 } from "@/features/expenses/schemas/expense.schema";
-import { Textarea } from "@/shared/components/ui/textarea";
-import { PriceInput } from "@/shared/components/PriceInput";
-import { CurrencySelector } from "@/shared/components/CurrencySelector";
-import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/shared/lib/format-currency";
-import { Calendar } from "@/shared/components/ui/calendar";
+import { Textarea } from "@/components/ui/textarea";
+import { PriceInput } from "@/components/common/PriceInput";
+import { CurrencySelector } from "@/components/common/CurrencySelector";
+import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/lib/format-currency";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/shared/components/ui/popover";
+} from "@/components/ui/popover";
 
 
 interface ExpenseFormProps {

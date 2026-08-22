@@ -1,5 +1,5 @@
-import { Skeleton } from "@/shared/components/ui/skeleton";
-import { Button } from "@/shared/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/common/button";
 import { ArrowLeft } from "lucide-react";
 
 interface PageHeaderSkeletonProps {

@@ -6,22 +6,22 @@ import {
   useWatch,
 } from "react-hook-form";
 
-import { Input } from "@/shared/components/ui/input";
-import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/common/button";
 import {
   Field,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "@/shared/components/ui/field";
-import { ErrorMessage } from "@/shared/components/ErrorMessage";
+} from "@/components/ui/field";
+import { ErrorMessage } from "@/components/common/ErrorMessage";
 import {
   budgetFormSchema,
   BudgetFormValues,
 } from "@/features/budgets/schemas/budget.schema";
-import { PriceInput } from "@/shared/components/PriceInput";
-import { CurrencySelector } from "@/shared/components/CurrencySelector";
-import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/shared/lib/format-currency";
+import { PriceInput } from "@/components/common/PriceInput";
+import { CurrencySelector } from "@/components/common/CurrencySelector";
+import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/lib/format-currency";
 
 interface BudgetFormProps {
   defaultValues?: Partial<BudgetFormValues>;

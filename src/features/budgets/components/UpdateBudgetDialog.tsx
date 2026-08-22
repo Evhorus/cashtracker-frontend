@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/components/common/button";
 import {
   Dialog,
   DialogContent,
@@ -7,11 +7,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/shared/components/ui/dialog";
+} from "@/components/ui/dialog";
 import { Edit } from "lucide-react";
 import { useState } from "react";
 import { BudgetForm } from "./BudgetForm";
-import { useActionDialog } from "@/shared/hooks/useActionDialog";
+import { useActionDialog } from "@/hooks/useActionDialog";
 import { BudgetFormValues } from "@/features/budgets/schemas/budget.schema";
 import { Budget } from "@/features/budgets/types";
 import { updateBudgetAction } from "@/features/budgets/actions/update-budget.action";

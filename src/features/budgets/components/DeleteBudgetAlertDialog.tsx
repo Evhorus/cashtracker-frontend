@@ -11,10 +11,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/shared/components/ui/alert-dialog";
-import { Input } from "@/shared/components/ui/input";
-import { Button } from "@/shared/components/ui/button";
-import { useActionDialog } from "@/shared/hooks/useActionDialog";
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/common/button";
+import { useActionDialog } from "@/hooks/useActionDialog";
 import { Loader2, Trash2 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";

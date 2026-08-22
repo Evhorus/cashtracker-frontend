@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { parseDateInput } from "@/shared/lib/date-helpers";
+import { parseDateInput } from "@/lib/date-helpers";
 import { Edit } from "lucide-react";
 import {
   Dialog,
@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/shared/components/ui/dialog";
-import { Button } from "@/shared/components/ui/button";
-import { useActionDialog } from "@/shared/hooks/useActionDialog";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/common/button";
+import { useActionDialog } from "@/hooks/useActionDialog";
 import { ExpenseForm } from "./ExpenseForm";
 import { Expense } from "@/features/expenses/types";
 import { updateExpenseAction } from "@/features/expenses/actions/update-expense.action";

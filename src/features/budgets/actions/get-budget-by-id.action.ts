@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
 import { Budget } from "@/features/budgets/types";
-import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
+import { authenticatedFetch } from "@/lib/authenticated-fetch";
 import { redirect } from "next/navigation";
 
 export const getBudgetByIdAction = async (id: string) => {

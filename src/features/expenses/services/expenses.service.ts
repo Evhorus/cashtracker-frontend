@@ -1,4 +1,4 @@
-import { fetchApi } from '@/shared/lib/api-client';
+import { fetchApi } from '@/lib/api-client';
 import { Expense } from "@/features/expenses/types";
 import { ExpenseFormValues, ExpenseAPIResponseSchema, ExpensesAPIResponseSchema, ExpenseApi, ExpensesResponseApi } from '../schemas/expense.schema';
 import { ExpenseMapper } from '../mappers/expense.mapper';

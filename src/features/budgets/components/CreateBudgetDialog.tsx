@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/components/common/button";
 import {
   Dialog,
   DialogContent,
@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/shared/components/ui/dialog";
-import { useActionDialog } from "@/shared/hooks/useActionDialog";
+} from "@/components/ui/dialog";
+import { useActionDialog } from "@/hooks/useActionDialog";
 import { BudgetForm } from "./BudgetForm";
 import { BudgetFormValues } from "@/features/budgets/schemas/budget.schema";
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
+import { authenticatedFetch } from "@/lib/authenticated-fetch";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 type DeleteBudgetActionState = {

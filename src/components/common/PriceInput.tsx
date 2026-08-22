@@ -5,8 +5,8 @@ import {
   type InputHTMLAttributes,
 } from "react";
 import type { ControllerRenderProps, FieldValues } from "react-hook-form";
-import { Input } from "./ui/input";
-import { formatNumber, parseNumericValue, DEFAULT_CURRENCY_CONFIG, type CurrencyConfig } from "@/shared/lib/format-currency";
+import { Input } from "@/components/ui/input";
+import { formatNumber, parseNumericValue, DEFAULT_CURRENCY_CONFIG, type CurrencyConfig } from "@/lib/format-currency";
 
 export interface PriceInputProps<T extends FieldValues>
   extends Omit<

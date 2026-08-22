@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { Expense } from "@/features/expenses/types";
-import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
+import { authenticatedFetch } from "@/lib/authenticated-fetch";
 
 interface GetExpensesFilters {
   startDate?: string;

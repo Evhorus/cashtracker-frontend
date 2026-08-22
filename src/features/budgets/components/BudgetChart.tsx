@@ -5,7 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/components/ui/card";
+} from "@/components/common/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -13,7 +13,7 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/shared/components/ui/chart";
+} from "@/components/ui/chart";
 
 interface BudgetChartProps {
   spent: number;

@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
 import { BudgetsResponse } from "@/features/budgets/types";
-import { authenticatedFetch } from "@/shared/lib/authenticated-fetch";
+import { authenticatedFetch } from "@/lib/authenticated-fetch";
 
 export const getBudgetsAction = async () => {
   await auth.protect();

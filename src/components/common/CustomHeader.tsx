@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { buttonVariants } from "./ui/button";
+import { buttonVariants } from "@/components/common/button";
 import { Show, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
 import { ModeToggle } from "./mode-toggle";
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 
 export const CustomHeader = () => {
   const { isLoaded, user } = useUser();
