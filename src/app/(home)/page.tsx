@@ -66,18 +66,18 @@ export default async function Home() {
       <CustomHeader />
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 md:py-32 text-center">
-        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
-          <h2 className="text-4xl md:text-6xl font-bold text-foreground leading-tight">
+      <section className="container mx-auto px-4 py-20 text-center md:py-32">
+        <div className="animate-fade-in mx-auto max-w-4xl space-y-8">
+          <h2 className="text-4xl leading-tight font-bold text-foreground md:text-6xl">
             Toma el control de tus{" "}
             <span className="text-primary">finanzas personales</span>
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
             CashTracker te ayuda a gestionar tus gastos, crear presupuestos
             inteligentes y alcanzar tus metas financieras con una interfaz
             moderna y fácil de usar.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+          <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
             <Link href="/sign-in">
               <Button size="lg" className="w-full sm:w-auto">
                 Comenzar Gratis
@@ -94,25 +94,25 @@ export default async function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-20 bg-muted/30">
-        <div className="text-center mb-16">
-          <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+      <section className="container mx-auto bg-muted/30 px-4 py-20">
+        <div className="mb-16 text-center">
+          <h3 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
             Todo lo que necesitas para gestionar tu dinero
           </h3>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Herramientas poderosas diseñadas para simplificar tu vida financiera
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <Card
               key={index}
-              className="border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg animate-fade-in"
+              className="animate-fade-in border-border/50 transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                   <feature.icon className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -127,19 +127,19 @@ export default async function Home() {
 
       {/* Benefits Section */}
       <section className="container mx-auto px-4 py-20">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="mx-auto max-w-4xl">
+          <div className="grid items-center gap-12 md:grid-cols-2">
             <div className="space-y-6">
-              <h3 className="text-3xl md:text-4xl font-bold text-foreground">
+              <h3 className="text-3xl font-bold text-foreground md:text-4xl">
                 Simplifica tu economía personal
               </h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+                  <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
                     <span className="text-success text-sm font-bold">✓</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground mb-1">
+                    <h4 className="mb-1 font-semibold text-foreground">
                       Sin complicaciones
                     </h4>
                     <p className="text-muted-foreground">
@@ -149,11 +149,11 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center ">
+                  <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
                     <span className="text-success text-sm font-bold">✓</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground mb-1">
+                    <h4 className="mb-1 font-semibold text-foreground">
                       Acceso multiplataforma
                     </h4>
                     <p className="text-muted-foreground">
@@ -163,11 +163,11 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center ">
+                  <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
                     <span className="text-success text-sm font-bold">✓</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground mb-1">
+                    <h4 className="mb-1 font-semibold text-foreground">
                       Resultados inmediatos
                     </h4>
                     <p className="text-muted-foreground">
@@ -178,17 +178,17 @@ export default async function Home() {
                 </div>
               </div>
             </div>
-            <div className="bg-primary rounded-2xl p-8 text-center text-white shadow-xl">
+            <div className="rounded-2xl bg-primary p-8 text-center text-white shadow-xl">
               <div className="space-y-6">
                 <div>
                   <p className="text-5xl font-bold">100%</p>
-                  <p className="text-white/80 mt-2">Gratis para empezar</p>
+                  <p className="mt-2 text-white/80">Gratis para empezar</p>
                 </div>
                 <div className="border-t border-white/20 pt-6">
-                  <p className="text-lg font-semibold mb-2">
+                  <p className="mb-2 text-lg font-semibold">
                     ¿Listo para comenzar?
                   </p>
-                  <p className="text-white/80 mb-6">
+                  <p className="mb-6 text-white/80">
                     Únete a miles de personas que ya controlan sus finanzas
                   </p>
                   <Link href="/sign-in">
@@ -204,9 +204,9 @@ export default async function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-20 bg-muted/30">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h3 className="text-3xl md:text-4xl font-bold text-foreground">
+      <section className="container mx-auto bg-muted/30 px-4 py-20">
+        <div className="mx-auto max-w-3xl space-y-6 text-center">
+          <h3 className="text-3xl font-bold text-foreground md:text-4xl">
             Empieza a gestionar tu dinero hoy mismo
           </h3>
           <p className="text-lg text-muted-foreground">

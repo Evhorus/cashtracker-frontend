@@ -85,7 +85,7 @@ export const ActionsDrawer = ({
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
         </DrawerHeader>
-        <div className="p-4 space-y-2">
+        <div className="space-y-2 p-4">
           {actions.map((action, index) => {
             const Icon = action.icon;
             return (
@@ -94,7 +94,7 @@ export const ActionsDrawer = ({
                 variant="ghost"
                 className={`w-full justify-start ${
                   action.variant === "destructive"
-                    ? "text-destructive hover:text-destructive hover:bg-destructive/10"
+                    ? "text-destructive hover:bg-destructive/10 hover:text-destructive"
                     : ""
                 }`}
                 onClick={() => {

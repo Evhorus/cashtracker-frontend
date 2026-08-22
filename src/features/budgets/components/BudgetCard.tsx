@@ -35,25 +35,25 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
   );
 
   return (
-    <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0 shadow-sm hover:bg-card">
-      <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/60 group-hover:bg-primary transition-colors duration-300" />
+    <Card className="group relative overflow-hidden border-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
+      <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/60 transition-colors duration-300 group-hover:bg-primary" />
 
-      <div className="absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      <CardHeader className="pb-3 relative z-10 flex flex-row items-start justify-between space-y-0">
-        <div className="flex gap-4 items-center">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-300">
+      <CardHeader className="relative z-10 flex flex-row items-start justify-between space-y-0 pb-3">
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
             <Wallet className="h-5 w-5" />
           </div>
 
           <div className="space-y-1">
-            <CardTitle className="text-lg font-bold leading-none tracking-tight group-hover:text-primary transition-colors duration-200">
-              <span className="truncate block max-w-37.5 sm:max-w-50">
+            <CardTitle className="text-lg leading-none font-bold tracking-tight transition-colors duration-200 group-hover:text-primary">
+              <span className="block max-w-37.5 truncate sm:max-w-50">
                 {budget.name}
               </span>
             </CardTitle>
             {budget.category && (
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+              <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                 {budget.category}
               </p>
             )}
@@ -63,7 +63,7 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
         {/* Actions */}
         <div className="flex items-center">
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
+          <div className="hidden translate-x-2 items-center gap-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 md:flex">
             <UpdateBudgetDialog budget={budget} />
             <DeleteBudgetAlertDialog id={budget.id} name={budget.name} />
           </div>
@@ -77,9 +77,9 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-5 relative z-10">
+      <CardContent className="relative z-10 space-y-5">
         <div className="space-y-2">
-          <div className="flex justify-between items-end">
+          <div className="flex items-end justify-between">
             <span className="text-sm font-medium text-muted-foreground">
               Progreso
             </span>
@@ -103,7 +103,7 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground font-medium">Gastado</p>
+            <p className="text-xs font-medium text-muted-foreground">Gastado</p>
             <p
               className={`text-sm font-bold ${
                 calculations.isOverBudget
@@ -115,7 +115,7 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
             </p>
           </div>
           <div className="space-y-1 text-right">
-            <p className="text-xs text-muted-foreground font-medium">
+            <p className="text-xs font-medium text-muted-foreground">
               Disponible
             </p>
             <p
@@ -131,11 +131,11 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
         <Button
           asChild
           variant="ghost"
-          className="w-full group/btn justify-between hover:bg-primary/5 hover:text-primary h-auto py-2 px-0 font-medium"
+          className="group/btn h-auto w-full justify-between px-0 py-2 font-medium hover:bg-primary/5 hover:text-primary"
         >
           <Link href={`/dashboard/budget/${budgetId}`}>
             <span className="ml-1">Ver detalles</span>
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover/btn:bg-primary group-hover/btn:text-primary-foreground transition-all duration-300">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover/btn:bg-primary group-hover/btn:text-primary-foreground">
               <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
             </div>
           </Link>
@@ -144,7 +144,7 @@ export const BudgetCard = React.memo(({ budget }: BudgetCardProps) => {
 
       {/* Status Badge */}
       {calculations.isOverBudget && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-destructive/50" />
+        <div className="absolute right-0 bottom-0 left-0 h-1 bg-destructive/50" />
       )}
     </Card>
   );

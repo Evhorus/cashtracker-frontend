@@ -1,4 +1,4 @@
-import { Expense } from '@/features/expenses/types';
+import { Expense } from "@/features/expenses/types";
 
 export interface BudgetsResponse {
   count: number;
@@ -16,4 +16,3 @@ export interface Budget {
   createdAt: Date;
   updatedAt: Date;
 }
-

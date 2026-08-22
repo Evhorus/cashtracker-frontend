@@ -1,8 +1,8 @@
 import {
   authenticatedFetch,
   AuthenticatedFetchOptions,
-} from './authenticated-fetch';
-import { z } from 'zod';
+} from "./authenticated-fetch";
+import { z } from "zod";
 
 export class ApiError extends Error {
   constructor(
@@ -11,7 +11,7 @@ export class ApiError extends Error {
     public data?: unknown,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -30,9 +30,9 @@ export async function fetchApi<T>(
   const response = await authenticatedFetch(path, options);
 
   let data: unknown;
-  const contentType = response.headers.get('content-type');
+  const contentType = response.headers.get("content-type");
 
-  if (contentType?.includes('application/json')) {
+  if (contentType?.includes("application/json")) {
     data = await response.json().catch(() => null);
   } else {
     data = await response.text().catch(() => null);
@@ -41,7 +41,9 @@ export async function fetchApi<T>(
   if (!response.ok) {
     throw new ApiError(
       response.status,
-      (data as Record<string, unknown>)?.message as string || response.statusText || 'API request error',
+      ((data as Record<string, unknown>)?.message as string) ||
+        response.statusText ||
+        "API request error",
       data,
     );
   }

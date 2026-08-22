@@ -36,27 +36,31 @@ export const DeleteBudgetAlertDialog = ({
   const pathname = usePathname();
   const [internalOpen, setInternalOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const { dispatch, isPending } = useActionDialog(deleteBudgetAction, {
-    errors: [],
-    success: "",
-  }, {
-    setOpen: (open) => {
-      if (controlledOpen === undefined) {
-        setInternalOpen(open);
-      } else {
-        setControlledOpen?.(open);
-      }
+  const { dispatch, isPending } = useActionDialog(
+    deleteBudgetAction,
+    {
+      errors: [],
+      success: "",
     },
-    onSuccess: () => {
-      setInputValue("");
+    {
+      setOpen: (open) => {
+        if (controlledOpen === undefined) {
+          setInternalOpen(open);
+        } else {
+          setControlledOpen?.(open);
+        }
+      },
+      onSuccess: () => {
+        setInputValue("");
 
-      if (pathname.startsWith("/dashboard/budget/")) {
-        router.replace("/dashboard/budgets");
-      } else {
-        router.refresh();
-      }
+        if (pathname.startsWith("/dashboard/budget/")) {
+          router.replace("/dashboard/budgets");
+        } else {
+          router.refresh();
+        }
+      },
     },
-  });
+  );
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -87,7 +91,7 @@ export const DeleteBudgetAlertDialog = ({
       {!isControlled && (
         <AlertDialogTrigger asChild>
           <Button variant="ghost" size="icon">
-            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive transition-colors" />
+            <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
           </Button>
         </AlertDialogTrigger>
       )}
@@ -103,7 +107,7 @@ export const DeleteBudgetAlertDialog = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
+            className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 sm:w-auto"
             onClick={(e) => {
               e.preventDefault();
               handleDeleteBudget();

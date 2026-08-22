@@ -13,7 +13,7 @@ interface UseActionWithToastOptions {
 
 export const useActionWithToast = (
   state: ActionState,
-  options?: UseActionWithToastOptions
+  options?: UseActionWithToastOptions,
 ) => {
   const prevStateRef = useRef<ActionState>(state);
   const onSuccessRef = useRef(options?.onSuccess);

@@ -1,11 +1,11 @@
-'use client';
-import Link from 'next/link';
-import { Wallet } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
+"use client";
+import Link from "next/link";
+import { Wallet } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 export const Logo = () => {
   const { isSignedIn } = useUser();
-  const href = isSignedIn ? '/dashboard' : '/';
+  const href = isSignedIn ? "/dashboard" : "/";
 
   return (
     <Link href={href}>

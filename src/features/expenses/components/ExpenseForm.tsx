@@ -1,25 +1,15 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Controller,
-  useForm,
-  useWatch,
-} from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { useState } from "react";
 import { formatDate, getToday } from "@/lib/date-helpers";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/common/button";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
 
 import {
@@ -36,7 +26,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
 
 interface ExpenseFormProps {
   defaultValues?: Partial<ExpenseFormValues>;
@@ -100,12 +89,12 @@ export const ExpenseForm = ({
               )}
             />
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row">
               <Controller
                 control={control}
                 name="currency"
                 render={({ field }) => (
-                  <Field >
+                  <Field>
                     <FieldLabel htmlFor="currency">Moneda</FieldLabel>
                     <CurrencySelector
                       {...field}
@@ -129,7 +118,9 @@ export const ExpenseForm = ({
                       {...field}
                       disabled={isLoading}
                       currencyConfig={
-                        selectedCurrency ? CURRENCY_MAP[selectedCurrency] : DEFAULT_CURRENCY_CONFIG
+                        selectedCurrency
+                          ? CURRENCY_MAP[selectedCurrency]
+                          : DEFAULT_CURRENCY_CONFIG
                       }
                     />
                     {errors.amount?.message && (
@@ -138,7 +129,6 @@ export const ExpenseForm = ({
                   </Field>
                 )}
               />
-
             </div>
 
             <Controller

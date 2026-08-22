@@ -1,4 +1,4 @@
 allowBuilds:
-  '@clerk/shared': true
+  "@clerk/shared": true
   sharp: true
   unrs-resolver: true

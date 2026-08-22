@@ -59,28 +59,28 @@ export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
   return (
     <>
       <Card
-        className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0 shadow-sm hover:bg-card"
+        className="group relative overflow-hidden border-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg"
         onClick={handleCardClick}
       >
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/60 group-hover:bg-primary transition-colors duration-300" />
+        <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/60 transition-colors duration-300 group-hover:bg-primary" />
 
         <CardContent className="p-5">
           <div className="flex items-center gap-4">
             {/* Icon Container */}
             <div className="shrink-0">
-              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform duration-300 group-hover:scale-110">
                 <Receipt className="h-6 w-6" />
               </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+            <div className="grid min-w-0 flex-1 grid-cols-1 items-center gap-4 md:grid-cols-2">
               <div className="space-y-1">
-                <h4 className="font-bold text-lg truncate group-hover:text-primary transition-colors">
+                <h4 className="truncate text-lg font-bold transition-colors group-hover:text-primary">
                   {expense.name}
                 </h4>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1.5 bg-secondary/50 px-2 py-0.5 rounded-md">
+                  <div className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-0.5">
                     <Calendar className="h-3.5 w-3.5" />
                     <span className="font-medium">
                       {formatDate(expense.date)}
@@ -90,17 +90,17 @@ export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
               </div>
 
               {/* Amount and Actions */}
-              <div className="flex items-center justify-between md:justify-end gap-6">
-                <span className="text-xl md:text-2xl font-bold tracking-tight text-primary">
+              <div className="flex items-center justify-between gap-6 md:justify-end">
+                <span className="text-xl font-bold tracking-tight text-primary md:text-2xl">
                   {formatCurrency(+expense.amount)}
                 </span>
 
                 {/* Desktop Actions */}
-                <div className="hidden md:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
+                <div className="hidden translate-x-2 items-center gap-2 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 md:flex">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                    className="h-9 w-9 text-muted-foreground hover:bg-primary/10 hover:text-primary"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowEditDialog(true);
@@ -111,7 +111,7 @@ export const ExpenseCard = ({ expense, budgetId }: ExpenseCardProps) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    className="h-9 w-9 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowDeleteDialog(true);

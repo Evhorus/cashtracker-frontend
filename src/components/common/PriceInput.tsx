@@ -6,13 +6,17 @@ import {
 } from "react";
 import type { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { formatNumber, parseNumericValue, DEFAULT_CURRENCY_CONFIG, type CurrencyConfig } from "@/lib/format-currency";
+import {
+  formatNumber,
+  parseNumericValue,
+  DEFAULT_CURRENCY_CONFIG,
+  type CurrencyConfig,
+} from "@/lib/format-currency";
 
-export interface PriceInputProps<T extends FieldValues>
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    "value" | "onChange" | "disabled" | "type"
-  > {
+export interface PriceInputProps<T extends FieldValues> extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "value" | "onChange" | "disabled" | "type"
+> {
   value: string | undefined;
   onChange: ControllerRenderProps<T>["onChange"];
   disabled?: boolean;
@@ -49,7 +53,10 @@ export function PriceInput<T extends FieldValues>({
     const thousandSeparator = config.locale.startsWith("en") ? "," : ".";
 
     // 1. Clean the input: allow only digits and one decimal separator
-    let cleaned = rawValue.replace(new RegExp(`\\${thousandSeparator}`, "g"), "");
+    let cleaned = rawValue.replace(
+      new RegExp(`\\${thousandSeparator}`, "g"),
+      "",
+    );
 
     // Handle decimal separator: only allow the first occurrence
     const parts = cleaned.split(decimalSeparator);
@@ -72,9 +79,10 @@ export function PriceInput<T extends FieldValues>({
     // 3. Format for display
     const [integerPart, fractionalPart] = normalizedValue.split(".");
     const formattedInteger = formatNumber(Number(integerPart || 0), config);
-    const formatted = fractionalPart !== undefined
-      ? `${formattedInteger}${decimalSeparator}${fractionalPart}`
-      : formattedInteger;
+    const formatted =
+      fractionalPart !== undefined
+        ? `${formattedInteger}${decimalSeparator}${fractionalPart}`
+        : formattedInteger;
 
     // 4. Calculate new cursor position
     // Count how many "significant" characters (digits + decimal) were before the cursor
@@ -112,7 +120,7 @@ export function PriceInput<T extends FieldValues>({
 
   return (
     <div className="relative">
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
+      <span className="absolute top-1/2 left-3 -translate-y-1/2 font-medium text-muted-foreground">
         {currencyConfig.symbol}
       </span>
       <Input
