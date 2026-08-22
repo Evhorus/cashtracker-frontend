@@ -33,16 +33,22 @@ export default function DashboardLoadingSkeleton() {
       {/* Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>Resumen de Sobres</CardTitle>
+          <CardTitle>Gastos por Mes</CardTitle>
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-80 w-full" />
+          <Skeleton className="h-64 w-full sm:h-80" />
         </CardContent>
       </Card>
 
       {/* Envelopes Grid */}
-      <div>
-        <Skeleton className="mb-4 h-7 w-full max-w-48" />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-7 w-32" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-10 w-10 md:w-32" />
+          </div>
+        </div>
         <EnvelopesListSkeleton />
       </div>
     </div>
