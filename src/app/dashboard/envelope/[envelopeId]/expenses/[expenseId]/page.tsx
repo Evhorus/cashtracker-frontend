@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/common/page-header";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { formatCurrency } from "@/lib/format-currency";
+import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { formatDate } from "@/lib/date-helpers";
 import {
   Calendar,
@@ -36,6 +36,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   const envelopeAmount = envelope.amount === null ? null : +envelope.amount;
   const envelopeSpent = +envelope.spent;
   const expenseAmount = +expense.amount;
+  const currencyConfig = CURRENCY_MAP[envelope.currency];
   const impactPercentage =
     envelopeAmount === null ? null : (expenseAmount / envelopeAmount) * 100;
 
@@ -118,7 +119,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     Monto Total
                   </p>
                   <p className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
-                    {formatCurrency(expenseAmount)}
+                    {formatCurrency(expenseAmount, currencyConfig)}
                   </p>
                 </div>
               </div>
@@ -191,7 +192,8 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     />
                   </div>
                   <p className="mt-2 text-right text-xs text-muted-foreground">
-                    del total asignado ({formatCurrency(envelopeAmount ?? 0)})
+                    del total asignado (
+                    {formatCurrency(envelopeAmount ?? 0, currencyConfig)})
                   </p>
                 </div>
               )}
@@ -215,7 +217,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Gastado Total</span>
                     <span className="font-semibold">
-                      {formatCurrency(envelopeSpent)}
+                      {formatCurrency(envelopeSpent, currencyConfig)}
                     </span>
                   </div>
                 </div>

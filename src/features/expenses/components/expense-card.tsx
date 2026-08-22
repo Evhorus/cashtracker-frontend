@@ -5,7 +5,7 @@ import { Calendar, Edit, Receipt, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/date-helpers";
-import { formatCurrency } from "@/lib/format-currency";
+import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { Card, CardContent } from "@/components/ui/card";
 import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
 import { useState } from "react";
@@ -98,7 +98,7 @@ export const ExpenseCard = ({
               {/* Amount and Actions */}
               <div className="flex items-center justify-between gap-6 md:justify-end">
                 <span className="text-xl font-bold tracking-tight text-primary md:text-2xl">
-                  {formatCurrency(+expense.amount)}
+                  {formatCurrency(+expense.amount, CURRENCY_MAP[currency])}
                 </span>
 
                 {/* Desktop Actions */}

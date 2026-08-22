@@ -20,7 +20,11 @@
   --destructive: oklch(0.6368 0.2078 25.3259);
   --destructive-foreground: oklch(0.9899 0.0049 12.1788);
   --border: oklch(0.929 0.0126 255.5317);
-  --input: oklch(0.929 0.0126 255.5317);
+  /* Deliberately darker than --border: this is the color of anything the
+     user can type into (Input, Select, Textarea, CurrencySelector). It
+     needs to read as a distinct, clickable boundary, not blend in with
+     --card's near-white background the way --border does. */
+  --input: oklch(0.82 0.015 255.5317);
   --ring: oklch(0.6273 0.17 149.2005);
   --chart-1: oklch(0.6273 0.17 149.2005);
   --chart-2: oklch(0.546 0.2153 262.8719);
@@ -91,7 +95,11 @@
   --destructive: oklch(0.6368 0.2078 25.3259);
   --destructive-foreground: oklch(0.9838 0.0035 247.8583);
   --border: oklch(0.28 0.0369 259.974);
-  --input: oklch(0.28 0.0369 259.974);
+  /* Same reasoning as the light-mode --input above, inverted: in dark
+     mode --border matches --card exactly (0.28), so a field border using
+     it disappears against the card. Lighten --input well past --card and
+     --background so editable fields stay visible on both. */
+  --input: oklch(0.42 0.04 259.974);
   --ring: oklch(0.7229 0.1921 149.5827);
   --chart-1: oklch(0.7229 0.1921 149.5827);
   --chart-2: oklch(0.546 0.2153 262.8719);

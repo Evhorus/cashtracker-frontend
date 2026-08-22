@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react";
+import { CalendarArrowDown, CalendarArrowUp, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +85,7 @@ export const ExpensesFilter = () => {
           <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nombre..."
+            aria-label="Buscar gastos por nombre"
             className="pl-8"
             value={search}
             onChange={handleSearchChange}
@@ -95,29 +96,33 @@ export const ExpensesFilter = () => {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <Button variant="outline" className="w-45 justify-start">
+              <Button
+                variant="outline"
+                className="w-52 justify-start"
+                aria-label="Ordenar gastos por fecha"
+              >
                 {sort === "ASC" ? (
                   <>
-                    <ArrowUpAZ className="mr-2 h-4 w-4" />
-                    Fecha Ascendente
+                    <CalendarArrowUp className="mr-2 h-4 w-4" />
+                    Más antiguos primero
                   </>
                 ) : (
                   <>
-                    <ArrowDownAZ className="mr-2 h-4 w-4" />
-                    Fecha Descendente
+                    <CalendarArrowDown className="mr-2 h-4 w-4" />
+                    Más recientes primero
                   </>
                 )}
               </Button>
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => handleSortChange("ASC")}>
-              <ArrowUpAZ className="mr-2 h-4 w-4" />
-              Fecha Ascendente
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSortChange("DESC")}>
-              <ArrowDownAZ className="mr-2 h-4 w-4" />
-              Fecha Descendente
+              <CalendarArrowDown className="mr-2 h-4 w-4" />
+              Más recientes primero
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSortChange("ASC")}>
+              <CalendarArrowUp className="mr-2 h-4 w-4" />
+              Más antiguos primero
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
