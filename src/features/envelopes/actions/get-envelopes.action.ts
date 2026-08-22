@@ -7,7 +7,7 @@ export const getEnvelopesAction = async () => {
   await auth.protect();
 
   try {
-    const req = await authenticatedFetch("/budgets", {
+    const req = await authenticatedFetch("/envelopes", {
       next: {
         tags: ["all-envelopes"],
         revalidate: 60, // Revalidate every 60 seconds

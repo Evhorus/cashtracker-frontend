@@ -20,7 +20,7 @@ export const deleteExpenseAction = async (
 
   try {
     const req = await authenticatedFetch(
-      `/budgets/${envelopeId}/expenses/${expenseId}`,
+      `/envelopes/${envelopeId}/expenses/${expenseId}`,
       {
         method: "DELETE",
         next: {

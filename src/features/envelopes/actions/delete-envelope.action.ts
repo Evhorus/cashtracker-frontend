@@ -16,7 +16,7 @@ export const deleteEnvelopeAction = async (
   await auth.protect();
 
   try {
-    const req = await authenticatedFetch(`/budgets/${envelopeId}`, {
+    const req = await authenticatedFetch(`/envelopes/${envelopeId}`, {
       method: "DELETE",
       next: {
         tags: ["all-envelopes"],

@@ -9,7 +9,7 @@ export type AuthenticatedFetchOptions = Omit<RequestInit, "headers"> & {
 /**
  * Wrapper around fetch that automatically adds authentication token from Clerk
  * and builds the full API URL from a relative path
- * @param path - Relative API path (e.g., '/budgets' or '/budgets/123') or full URL
+ * @param path - Relative API path (e.g., '/envelopes' or '/envelopes/123') or full URL
  * @param options - Fetch options (headers will be merged with auth header)
  * @returns Promise with the fetch response
  */

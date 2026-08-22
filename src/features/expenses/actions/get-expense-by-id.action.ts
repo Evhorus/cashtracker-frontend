@@ -13,7 +13,7 @@ export const getExpenseByIdAction = async (
 
   try {
     const req = await authenticatedFetch(
-      `/budgets/${envelopeId}/expenses/${expenseId}`,
+      `/envelopes/${envelopeId}/expenses/${expenseId}`,
       {
         next: {
           tags: ["expense"],
