@@ -1,9 +1,11 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
-import { EnvelopesService } from "@/features/envelopes/services/envelopes.service";
-import type { PaginationParams } from "@/lib/pagination";
+import {
+  EnvelopesService,
+  type GetEnvelopesParams,
+} from "@/features/envelopes/services/envelopes.service";
 
-export const getEnvelopesAction = async (params?: PaginationParams) => {
+export const getEnvelopesAction = async (params?: GetEnvelopesParams) => {
   await auth.protect();
 
   try {

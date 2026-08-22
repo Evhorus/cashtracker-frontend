@@ -13,9 +13,18 @@ import {
 import { Envelope, EnvelopesResponse } from "../types";
 import { EnvelopeMapper } from "../mappers/envelope.mapper";
 
+// Mirrors GetExpensesParams (expenses.service.ts): the backend has no sort
+// or date range for envelopes (they have no date of their own), just search.
+export interface GetEnvelopesParams extends PaginationParams {
+  search?: string;
+}
+
 export const EnvelopesService = {
-  getAll: async (params?: PaginationParams): Promise<EnvelopesResponse> => {
+  getAll: async (
+    params?: GetEnvelopesParams,
+  ): Promise<EnvelopesResponse> => {
     const query = new URLSearchParams();
+    if (params?.search) query.set("search", params.search);
     if (params) appendPaginationParams(query, params);
     const qs = query.toString();
 
