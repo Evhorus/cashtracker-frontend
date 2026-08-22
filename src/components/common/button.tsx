@@ -33,11 +33,7 @@ function Button({
   // one passing through exactly the children it received.
   if (isLoading) {
     return (
-      <UiButton
-        className={cn("cursor-pointer", className)}
-        disabled
-        {...props}
-      >
+      <UiButton className={cn("cursor-pointer", className)} disabled {...props}>
         <Loader2 aria-hidden className="mr-2 size-4 animate-spin" />
         {children}
       </UiButton>
