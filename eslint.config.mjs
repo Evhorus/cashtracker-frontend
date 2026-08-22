@@ -2,6 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import clerkNext from "@clerk/eslint-plugin/next";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -47,6 +48,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     ".agents/**",
   ]),
+  // Must stay last: only turns off formatting-related rules that would
+  // conflict with Prettier, doesn't touch correctness rules.
+  eslintConfigPrettier,
 ]);
 
 export default eslintConfig;
