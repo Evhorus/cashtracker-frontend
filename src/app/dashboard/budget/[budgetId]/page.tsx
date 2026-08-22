@@ -18,7 +18,21 @@ import {
 import { formatCurrency } from "@/lib/format-currency";
 
 import { CreditCard, DollarSign, PiggyBank, Wallet } from "lucide-react";
-import { BudgetChart } from "@/features/budgets/components/BudgetChart";
+import nextDynamic from "next/dynamic";
+import { BudgetChartSkeleton } from "@/features/budgets/components/BudgetChartSkeleton";
+
+// recharts is a heavy dependency - code-split it into its own chunk,
+// only needed once this section of the budget detail page renders.
+// Aliased to `nextDynamic`: this file also exports the route segment
+// config `dynamic = "force-dynamic"` below, which would otherwise
+// collide with next/dynamic's default export name.
+const BudgetChart = nextDynamic(
+  () =>
+    import("@/features/budgets/components/BudgetChart").then(
+      (mod) => mod.BudgetChart
+    ),
+  { loading: () => <BudgetChartSkeleton /> }
+);
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";

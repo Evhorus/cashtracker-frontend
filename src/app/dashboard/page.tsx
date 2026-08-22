@@ -3,9 +3,20 @@ import { auth } from "@clerk/nextjs/server";
 import { getBudgetsAction } from "@/features/budgets/actions/get-budgets.action";
 import { BudgetsGrid } from "@/features/budgets/components/BudgetsGrid";
 import { Button } from "@/components/common/button";
-import { Chart } from "@/components/common/Chart";
+import nextDynamic from "next/dynamic";
+import { ChartSkeleton } from "@/components/common/ChartSkeleton";
 import { StatsCards } from "@/components/common/StatsCards";
 import { DashboardHelpers } from "@/lib/dashboard-helpers";
+
+// recharts is a heavy dependency - code-split it into its own chunk,
+// only needed once this section of the dashboard renders.
+// Aliased to `nextDynamic`: this file also exports the route segment
+// config `dynamic = "force-dynamic"` below, which would otherwise
+// collide with next/dynamic's default export name.
+const Chart = nextDynamic(
+  () => import("@/components/common/Chart").then((mod) => mod.Chart),
+  { loading: () => <ChartSkeleton /> }
+);
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
