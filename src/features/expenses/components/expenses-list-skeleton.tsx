@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent } from "@/components/common/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const ExpenseCardSkeleton = () => {
   return (

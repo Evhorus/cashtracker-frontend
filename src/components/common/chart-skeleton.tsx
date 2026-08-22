@@ -1,10 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const ChartSkeleton = () => {
   return (

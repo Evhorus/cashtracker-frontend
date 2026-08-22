@@ -1,5 +1,5 @@
-import { CustomHeader } from "@/components/common/CustomHeader";
-import { MobileNav } from "@/components/common/MobileNav";
+import { CustomHeader } from "@/components/common/custom-header";
+import { MobileNav } from "@/components/common/mobile-nav";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function DashboardLayout({

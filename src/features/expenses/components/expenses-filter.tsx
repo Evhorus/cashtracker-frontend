@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react";
 
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -89,21 +89,23 @@ export const ExpensesFilter = () => {
       </div>
       <div className="flex gap-2">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-45 justify-start">
-              {sort === "ASC" ? (
-                <>
-                  <ArrowUpAZ className="mr-2 h-4 w-4" />
-                  Fecha Ascendente
-                </>
-              ) : (
-                <>
-                  <ArrowDownAZ className="mr-2 h-4 w-4" />
-                  Fecha Descendente
-                </>
-              )}
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="outline" className="w-45 justify-start">
+                {sort === "ASC" ? (
+                  <>
+                    <ArrowUpAZ className="mr-2 h-4 w-4" />
+                    Fecha Ascendente
+                  </>
+                ) : (
+                  <>
+                    <ArrowDownAZ className="mr-2 h-4 w-4" />
+                    Fecha Descendente
+                  </>
+                )}
+              </Button>
+            }
+          />
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => handleSortChange("ASC")}>
               <ArrowUpAZ className="mr-2 h-4 w-4" />

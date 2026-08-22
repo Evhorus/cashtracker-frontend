@@ -1,10 +1,5 @@
-import { Button } from "@/components/common/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from "@/lib/format-currency";
 import { ArrowRight, Infinity as InfinityIcon, Wallet } from "lucide-react";
@@ -14,9 +9,9 @@ import { useMemo } from "react";
 import React from "react";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { Envelope } from "@/features/envelopes/types";
-import { UpdateEnvelopeDialog } from "./UpdateEnvelopeDialog";
-import { DeleteEnvelopeAlertDialog } from "./DeleteEnvelopeAlertDialog";
-import { EnvelopeActionsMenu } from "./EnvelopeActionsMenu";
+import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
+import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
+import { EnvelopeActionsMenu } from "./envelope-actions-menu";
 
 interface EnvelopeCardProps {
   envelope: Envelope;
@@ -50,7 +45,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
       : "text-primary";
 
   return (
-    <Card className="group relative overflow-hidden border-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
+    <Card className="group relative overflow-hidden border-0 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
       <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/60 transition-colors duration-300 group-hover:bg-primary" />
 
       <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -146,17 +141,18 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
         </div>
 
         <Button
-          asChild
           variant="ghost"
+          nativeButton={false}
           className="group/btn h-auto w-full justify-between px-0 py-2 font-medium hover:bg-primary/5 hover:text-primary"
-        >
-          <Link href={`/dashboard/envelope/${envelopeId}`}>
-            <span className="ml-1">Ver detalles</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover/btn:bg-primary group-hover/btn:text-primary-foreground">
-              <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
-            </div>
-          </Link>
-        </Button>
+          render={
+            <Link href={`/dashboard/envelope/${envelopeId}`}>
+              <span className="ml-1">Ver detalles</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover/btn:bg-primary group-hover/btn:text-primary-foreground">
+                <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
+              </div>
+            </Link>
+          }
+        />
       </CardContent>
 
       {/* Status Badge */}

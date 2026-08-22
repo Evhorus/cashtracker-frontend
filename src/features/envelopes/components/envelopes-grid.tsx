@@ -1,9 +1,9 @@
 import React from "react";
 import { Envelope } from "@/features/envelopes/types";
-import { Card } from "@/components/common/card";
+import { Card } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
-import { CreateEnvelopeDialog } from "./CreateEnvelopeDialog";
-import { EnvelopeCard } from "./EnvelopeCard";
+import { CreateEnvelopeDialog } from "./create-envelope-dialog";
+import { EnvelopeCard } from "./envelope-card";
 
 interface EnvelopesGridProps {
   envelopes: Envelope[];

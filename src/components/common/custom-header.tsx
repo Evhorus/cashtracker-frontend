@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { buttonVariants } from "@/components/common/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Show, SignInButton, UserButton, useUser } from "@clerk/nextjs";
 
 import { usePathname } from "next/navigation";
-import { Logo } from "./Logo";
+import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
 
 import { cn } from "@/lib/utils";

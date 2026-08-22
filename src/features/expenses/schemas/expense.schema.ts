@@ -7,7 +7,9 @@ export const ExpenseAPIResponseSchema = z.object({
   amount: z.string(),
   currency: z.string().default("COP"),
   date: z.string(),
-  description: z.string().optional(),
+  // The API can send explicit `null` (not just an absent key) - needs
+  // `.nullable()` alongside `.optional()`, same as EnvelopeAPIResponseSchema.
+  description: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

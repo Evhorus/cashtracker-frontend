@@ -1,17 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopeByIdAction } from "@/features/envelopes/actions/get-envelope-by-id.action";
 import { getExpenseByIdAction } from "@/features/expenses/actions/get-expense-by-id.action";
-import { DeleteExpenseAlertDialog } from "@/features/expenses/components/DeleteExpenseAlertDialog";
-import { UpdateExpenseDialog } from "@/features/expenses/components/UpdateExpenseDialog";
-import { ExpenseActionsMenu } from "@/features/expenses/components/ExpenseActionsMenu";
-import { PageHeader } from "@/components/common/PageHeader";
+import { DeleteExpenseAlertDialog } from "@/features/expenses/components/delete-expense-alert-dialog";
+import { UpdateExpenseDialog } from "@/features/expenses/components/update-expense-dialog";
+import { ExpenseActionsMenu } from "@/features/expenses/components/expense-actions-menu";
+import { PageHeader } from "@/components/common/page-header";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { formatCurrency } from "@/lib/format-currency";
 import { formatDate } from "@/lib/date-helpers";

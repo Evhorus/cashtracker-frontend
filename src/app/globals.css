@@ -1,11 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.9843 0.0017 247.8393);
-  --foreground: oklch(0.2079 0.0399 265.7275);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.2079 0.0399 265.7275);
   --popover: oklch(1 0 0);
@@ -68,6 +67,8 @@
   --shadow-2xl: 0px 2px 8px 0px hsl(220 30% 10% / 0.25);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
+  --background: oklch(0.9843 0.0017 247.8393);
+  --foreground: oklch(0.2079 0.0399 265.7275);
 }
 
 .dark {
@@ -108,7 +109,6 @@
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono,
     Courier New, monospace;
-  --radius: 0.5rem;
   --shadow-x: 0px;
   --shadow-y: 4px;
   --shadow-blur: 10px;
@@ -186,6 +186,10 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --font-heading: var(--font-sans);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 @layer base {
@@ -195,5 +199,8 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }

@@ -8,16 +8,17 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/common/submit-button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { ErrorMessage } from "@/components/common/ErrorMessage";
+import { ErrorMessage } from "@/components/common/error-message";
 
 import {
   ExpenseFormValues,
   buildExpenseSchema,
 } from "@/features/expenses/schemas/expense.schema";
 import { Textarea } from "@/components/ui/textarea";
-import { PriceInput } from "@/components/common/PriceInput";
+import { PriceInput } from "@/components/common/price-input";
 import { CURRENCY_MAP, type CurrencyCode } from "@/lib/format-currency";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -134,24 +135,26 @@ export const ExpenseForm = ({
                     open={isCalendarOpen}
                     onOpenChange={setIsCalendarOpen}
                   >
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="expense-date"
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground",
-                        )}
-                        disabled={isLoading}
-                      >
-                        {field.value ? (
-                          formatDate(field.value)
-                        ) : (
-                          <span>Seleccionar fecha</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          id="expense-date"
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                          disabled={isLoading}
+                        >
+                          {field.value ? (
+                            formatDate(field.value)
+                          ) : (
+                            <span>Seleccionar fecha</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      }
+                    />
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
@@ -198,9 +201,9 @@ export const ExpenseForm = ({
         </FieldSet>
 
         <Field orientation="responsive">
-          <Button isLoading={isLoading} type="submit">
+          <SubmitButton isLoading={isLoading} type="submit">
             Guardar
-          </Button>
+          </SubmitButton>
           <Button
             type="button"
             variant="outline"

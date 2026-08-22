@@ -1,12 +1,7 @@
-import { PageHeaderSkeleton } from "@/components/common/PageHeaderSkeleton";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/common/card";
+import { PageHeaderSkeleton } from "@/components/common/page-header-skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ExpensesListSkeleton } from "@/features/expenses/components/ExpensesListSkeleton";
+import { ExpensesListSkeleton } from "@/features/expenses/components/expenses-list-skeleton";
 
 export default function EnvelopeDetailLoading() {
   return (

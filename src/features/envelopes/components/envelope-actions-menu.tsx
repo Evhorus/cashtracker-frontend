@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 import { Envelope } from "@/features/envelopes/types";
-import { UpdateEnvelopeDialog } from "./UpdateEnvelopeDialog";
-import { DeleteEnvelopeAlertDialog } from "./DeleteEnvelopeAlertDialog";
-import { ActionsDrawer, ActionItem } from "@/components/common/ActionsDrawer";
+import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
+import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
+import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
 
 interface EnvelopeActionsMenuProps {
   envelope: Envelope;

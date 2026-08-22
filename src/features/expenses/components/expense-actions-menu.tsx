@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 import { Expense } from "@/features/expenses/types";
-import { UpdateExpenseDialog } from "./UpdateExpenseDialog";
-import { DeleteExpenseAlertDialog } from "./DeleteExpenseAlertDialog";
-import { ActionsDrawer, ActionItem } from "@/components/common/ActionsDrawer";
+import { UpdateExpenseDialog } from "./update-expense-dialog";
+import { DeleteExpenseAlertDialog } from "./delete-expense-alert-dialog";
+import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
 import type { CurrencyCode } from "@/lib/format-currency";
 
 interface ExpenseActionsMenuProps {
