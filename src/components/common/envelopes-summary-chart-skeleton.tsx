@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const ChartSkeleton = () => {
+export const EnvelopesSummaryChartSkeleton = () => {
   return (
     <Card>
       <CardHeader>
