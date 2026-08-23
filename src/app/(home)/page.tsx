@@ -1,7 +1,6 @@
 import { features } from "./_data/features";
-import { CustomHeader } from "@/components/common/custom-header";
+import { LandingHeader } from "@/components/common/landing-header";
 import { Button } from "@/components/ui/button";
-import { currentUser } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import { Check, Sparkles, Wallet } from "lucide-react";
 
@@ -11,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -57,14 +55,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Home() {
-  const user = await currentUser();
-
-  if (user) redirect("/dashboard");
-
+// Signed-in visitors never reach this component - proxy.ts (Clerk
+// middleware) redirects them to /dashboard before this route renders,
+// so it stays a plain static component (no server-side Clerk lookup).
+export default function Home() {
   return (
     <div className="min-h-dvh bg-background">
-      <CustomHeader />
+      <LandingHeader />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden px-4 py-20 text-center md:py-32">
