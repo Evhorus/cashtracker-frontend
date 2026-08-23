@@ -25,10 +25,18 @@ export const PageHeader = ({
       <div className="flex min-w-0 flex-1 items-center gap-3">
         {backUrl && (
           <Link href={backUrl}>
+            {/* Same rounded/translucent-card/subtle-border treatment as
+                the nav-pill groups elsewhere (custom-header.tsx's
+                Dashboard/Sobres pills, account-view.tsx's settings
+                sidebar) - a plain neutral-outline circle read as
+                disconnected from the rest of the app's chrome. Hover
+                nudges toward the primary accent those pills use too,
+                instead of the generic gray hover every outline button
+                gets. */}
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              className="h-10 w-10 rounded-full border-muted-foreground/20"
+              className="h-10 w-10 shrink-0 rounded-full border border-border/60 bg-card/50 text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/10 dark:hover:text-primary"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
