@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
-import { Home, Loader2, Wallet } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { Show, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { Home, Wallet } from "lucide-react";
+import { AccountMenu } from "@/features/account/components/account-menu";
 
 import { usePathname } from "next/navigation";
 import { Logo } from "./logo";
@@ -18,8 +17,10 @@ const navItems = [
   { name: "Sobres", href: "/dashboard/envelopes", icon: Wallet },
 ];
 
+// Only ever rendered inside dashboard/layout.tsx, which already runs
+// auth.protect() before this mounts - so unlike the old version, there's
+// no "loading"/"signed-out" state to account for here.
 export const CustomHeader = () => {
-  const { isLoaded, user } = useUser();
   const pathname = usePathname();
 
   return (
@@ -27,64 +28,35 @@ export const CustomHeader = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo Section */}
         <div className="flex items-center">
-          <Logo href={user ? "/dashboard" : "/"} />
+          <Logo href="/dashboard" />
         </div>
 
         {/* Navigation Center */}
-        {isLoaded && user && (
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-border/60 bg-card/50 p-1 md:flex">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary/15 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
-        )}
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-border/60 bg-card/50 p-1 md:flex">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary/15 text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
 
         {/* User Actions */}
         <div className="flex items-center gap-4">
           <ModeToggle />
-
-          {!isLoaded ? (
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          ) : !user ? (
-            <Show when="signed-out">
-              <SignInButton>
-                <span
-                  className={buttonVariants({
-                    variant: "outline",
-                    size: "default",
-                    className: "bg-transparent",
-                  })}
-                >
-                  Iniciar sesión
-                </span>
-              </SignInButton>
-            </Show>
-          ) : (
-            <Show when="signed-in">
-              <UserButton
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "h-9 w-9",
-                  },
-                }}
-              />
-            </Show>
-          )}
+          <AccountMenu />
         </div>
       </div>
     </header>
