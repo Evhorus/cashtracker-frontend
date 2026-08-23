@@ -3,13 +3,21 @@ import Link from "next/link";
 
 import { ChevronLeft } from "lucide-react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { esMX } from "@clerk/localizations";
+import { redirect } from "next/navigation";
 
+// Covers /sign-in, /sign-up and /forgot-password (sso-callback lives
+// outside this group - see its own layout for why). Resource-level
+// check per Clerk's current guidance, not middleware - see proxy.ts.
 export default async function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isAuthenticated } = await auth();
+  if (isAuthenticated) redirect("/dashboard");
+
   return (
     <ClerkProvider localization={esMX}>
       <div className="grid min-h-dvh lg:grid-cols-2">

@@ -23,8 +23,9 @@ type OAuthProvider = "oauth_google" | "oauth_facebook";
 
 // Custom-built sign-up UI on top of Clerk's Core 3 useSignUp() hook -
 // see the sibling sign-in page for why (Elements is deprecated). The
-// signed-in redirect lives in proxy.ts (middleware), not here, so an
-// already-authenticated visitor never sees a blank flash of this page.
+// signed-in redirect lives in the parent (auth)/layout.tsx (a resource-
+// level check, not middleware), so an already-authenticated visitor
+// never sees a blank flash of this page.
 export default function SignUpPage() {
   const { signUp, errors, fetchStatus } = useSignUp();
   const router = useRouter();
@@ -97,6 +98,12 @@ export default function SignUpPage() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-y-4">
+        {/* Clerk's bot sign-up protection widget - required placeholder
+            for custom sign-up flows, must exist before signUp.password()/
+            .sso() runs or Clerk falls back to invisible CAPTCHA with a
+            console warning. Usually renders invisibly. */}
+        <div id="clerk-captcha" />
+
         {errors.global?.map((err, i) => (
           <ErrorMessage key={i}>{err.message}</ErrorMessage>
         ))}

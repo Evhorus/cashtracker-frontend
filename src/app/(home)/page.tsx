@@ -1,6 +1,7 @@
 import { features } from "./_data/features";
 import { LandingHeader } from "@/components/common/landing-header";
 import { Button } from "@/components/ui/button";
+import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import { Check, Sparkles, Wallet } from "lucide-react";
 
@@ -10,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -55,10 +57,15 @@ export const metadata: Metadata = {
   },
 };
 
-// Signed-in visitors never reach this component - proxy.ts (Clerk
-// middleware) redirects them to /dashboard before this route renders,
-// so it stays a plain static component (no server-side Clerk lookup).
-export default function Home() {
+// Resource-level check (not middleware - see proxy.ts) so a signed-in
+// visitor is redirected to /dashboard instead of seeing the marketing
+// page again. auth() reads the already-verified session (no network
+// call, unlike currentUser()), so this is cheap even though it does
+// mean the route can no longer prerender as fully static.
+export default async function Home() {
+  const { isAuthenticated } = await auth();
+  if (isAuthenticated) redirect("/dashboard");
+
   return (
     <div className="min-h-dvh bg-background">
       <LandingHeader />
