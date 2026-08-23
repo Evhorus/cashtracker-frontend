@@ -61,10 +61,25 @@ export const formatCurrency = (
   quantity: number,
   config: CurrencyConfig = DEFAULT_CURRENCY_CONFIG,
 ) => {
+  // A whole amount (no cents) shows with no decimals at all (COP reads
+  // as "$ 440.500", not "$ 440.500,00") - but the moment there ARE
+  // cents, every digit of them has to show, trailing zeros included.
+  // minimumFractionDigits pinned to 0 let Intl drop a trailing zero
+  // decimal whenever the value "fit" in fewer digits - e.g. 12.50 (USD)
+  // rendered as "$12.5", silently reading as a different amount.
+  // Rounding to decimalDigits first (rather than checking `quantity`
+  // itself) absorbs any float noise from upstream arithmetic (e.g.
+  // totalAssigned - totalSpent) before deciding whether it's a whole
+  // number.
+  const rounded = Number(quantity.toFixed(config.decimalDigits));
+  const minimumFractionDigits = Number.isInteger(rounded)
+    ? 0
+    : config.decimalDigits;
+
   return new Intl.NumberFormat(config.locale, {
     style: "currency",
     currency: config.currency,
-    minimumFractionDigits: 0,
+    minimumFractionDigits,
     maximumFractionDigits: config.decimalDigits,
   }).format(quantity);
 };
