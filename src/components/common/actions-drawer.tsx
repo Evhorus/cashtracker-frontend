@@ -8,15 +8,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { LucideIcon, MoreVertical } from "lucide-react";
-import { useMediaQuery } from "@/hooks/use-media-query";
 
 export interface ActionItem {
   label: string;
@@ -31,51 +24,22 @@ interface ActionsDrawerProps {
   triggerClassName?: string;
 }
 
+// Mobile-only by design: every caller already restricts this to mobile
+// (wrapped in `md:hidden`, or handed to PageHeader's mobileActions slot,
+// which does the same) - desktop already has its own action affordance,
+// CardHoverActions on list cards (envelope-card.tsx/expense-card.tsx) or
+// PageHeader's `actions` icon pair on detail pages. This used to also
+// render a DropdownMenu on desktop via its own useMediaQuery check, but
+// that branch was unreachable everywhere it's actually used - a "drawer"
+// component that silently became a dropdown depending on viewport was
+// more confusing to read than useful, so it's gone.
 export const ActionsDrawer = ({
   actions,
   title = "Acciones",
   triggerClassName,
 }: ActionsDrawerProps) => {
   const [open, setOpen] = useState(false);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  // Desktop: DropdownMenu
-  if (isDesktop) {
-    return (
-      <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger
-          render={
-            <Button variant="ghost" size="icon" className={triggerClassName}>
-              <MoreVertical className="h-5 w-5" />
-            </Button>
-          }
-        />
-        <DropdownMenuContent align="end">
-          {actions.map((action, index) => {
-            const Icon = action.icon;
-            return (
-              <DropdownMenuItem
-                key={index}
-                className={
-                  action.variant === "destructive"
-                    ? "text-destructive focus:text-destructive"
-                    : ""
-                }
-                onSelect={() => {
-                  action.onClick();
-                }}
-              >
-                <Icon className="mr-2 h-4 w-4" />
-                {action.label}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  }
-
-  // Mobile: Drawer
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger

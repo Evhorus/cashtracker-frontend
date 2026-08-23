@@ -31,7 +31,7 @@ export const EnvelopeActionsMenu = ({ envelope }: EnvelopeActionsMenuProps) => {
 
   return (
     <>
-      <ActionsDrawer actions={actions} />
+      <ActionsDrawer actions={actions} title="Opciones de Sobre" />
 
       <UpdateEnvelopeDialog
         envelope={envelope}

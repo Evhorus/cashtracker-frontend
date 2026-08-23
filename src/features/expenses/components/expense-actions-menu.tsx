@@ -12,12 +12,17 @@ interface ExpenseActionsMenuProps {
   envelopeId: string;
   currency: CurrencyCode;
   expense: Expense;
+  /** expense-card.tsx needs a smaller, muted trigger to fit its tighter
+   * row layout; left undefined (ActionsDrawer's own default) everywhere
+   * else, e.g. the expense detail page's header. */
+  triggerClassName?: string;
 }
 
 export const ExpenseActionsMenu = ({
   envelopeId,
   currency,
   expense,
+  triggerClassName,
 }: ExpenseActionsMenuProps) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -38,7 +43,11 @@ export const ExpenseActionsMenu = ({
 
   return (
     <>
-      <ActionsDrawer actions={actions} />
+      <ActionsDrawer
+        actions={actions}
+        title="Opciones de Gasto"
+        triggerClassName={triggerClassName}
+      />
 
       <UpdateExpenseDialog
         envelopeId={envelopeId}
