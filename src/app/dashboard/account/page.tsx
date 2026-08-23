@@ -10,10 +10,10 @@ export default async function AccountPage() {
   await auth.protect();
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6">
       <PageHeader
         title="Mi cuenta"
-        description="Gestiona tu perfil, contraseña y cuenta"
+        description="Gestiona tu perfil, seguridad y cuenta"
         backUrl="/dashboard"
       />
       <AccountView />

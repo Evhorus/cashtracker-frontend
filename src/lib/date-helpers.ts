@@ -1,4 +1,4 @@
-import { format, parseISO } from "date-fns";
+import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import { TZDate } from "@date-fns/tz";
 
@@ -30,6 +30,17 @@ export function formatDate(dateInput: Date | string | number): string {
 export function formatMonthYear(dateInput: Date | string | number): string {
   return format(toDeviceTimeZone(parseDateInput(dateInput)), "MMM yyyy", {
     locale: es,
+  });
+}
+
+/** Relative form (e.g. "hace 3 horas") - for activity timestamps (session
+ * last-active) where the exact date matters less than how recent it was.
+ * No timezone conversion needed, unlike the helpers above: the diff
+ * between two instants is timezone-independent. */
+export function formatRelativeTime(dateInput: Date | string | number): string {
+  return formatDistanceToNow(parseDateInput(dateInput), {
+    locale: es,
+    addSuffix: true,
   });
 }
 
