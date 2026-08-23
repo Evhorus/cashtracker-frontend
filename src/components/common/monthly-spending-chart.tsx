@@ -9,6 +9,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { CURRENCY_MAP, type CurrencyCode } from "@/lib/format-currency";
 
 type MonthlySpendingChartData = {
   label: string;
@@ -19,6 +20,15 @@ type MonthlySpendingChartData = {
 interface MonthlySpendingChartProps {
   totalEnvelopes: number;
   chartData: MonthlySpendingChartData[];
+  /** Which currency chartData's amounts are in - the backend scopes
+   * this chart to the user's most-used currency instead of summing
+   * every currency onto the same bars (see dashboard.repository.ts's
+   * getMonthlySpending doc comment on the backend). */
+  currency: CurrencyCode;
+  /** Only worth spelling out in the title when there's real ambiguity
+   * to resolve - a single-currency account doesn't need reminding
+   * which currency its own chart is in. */
+  hasOtherCurrencies: boolean;
 }
 
 // "Bar Chart - Stacked + Legend" pattern from ui.shadcn.com/charts/bar.
@@ -35,6 +45,8 @@ interface MonthlySpendingChartProps {
 export const MonthlySpendingChart = ({
   chartData,
   totalEnvelopes,
+  currency,
+  hasOtherCurrencies,
 }: MonthlySpendingChartProps) => {
   if (totalEnvelopes === 0) return null;
 
@@ -52,7 +64,14 @@ export const MonthlySpendingChart = ({
   return (
     <Card className="animate-fade-in [animation-delay:0.4s]">
       <CardHeader>
-        <CardTitle>Gastos por Mes</CardTitle>
+        <CardTitle>
+          Gastos por Mes
+          {hasOtherCurrencies && (
+            <span className="ml-2 text-sm font-normal text-muted-foreground">
+              ({CURRENCY_MAP[currency]?.label ?? currency})
+            </span>
+          )}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer

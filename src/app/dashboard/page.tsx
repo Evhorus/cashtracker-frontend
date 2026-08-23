@@ -53,6 +53,18 @@ export default async function DashboardPage({
     Disponible: entry.available,
   }));
 
+  // The API schema types currency as a loose string (z.string()); the
+  // domain side narrows it to the known currency codes, since it's the
+  // app's own form that ever writes this value - same convention as
+  // EnvelopeMapper.fromApi. Already sorted by envelope count DESC, so
+  // totals[0] is the "primary" currency both StatsCards and the chart
+  // (scoped to it on the backend - see dashboard.repository.ts) key off.
+  const totals = summary.totals.map((total) => ({
+    ...total,
+    currency: total.currency as CurrencyCode,
+  }));
+  const hasMultipleCurrencies = totals.length > 1;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -72,21 +84,13 @@ export default async function DashboardPage({
         )}
       </div>
 
-      <StatsCards
-        totalEnvelopes={summary.totalEnvelopes}
-        totals={summary.totals.map((total) => ({
-          ...total,
-          // The API schema types this as a loose string (z.string());
-          // the domain side narrows it to the known currency codes,
-          // since it's the app's own form that ever writes this value -
-          // same convention as EnvelopeMapper.fromApi.
-          currency: total.currency as CurrencyCode,
-        }))}
-      />
+      <StatsCards totalEnvelopes={summary.totalEnvelopes} totals={totals} />
 
       <MonthlySpendingChart
         chartData={chartData}
         totalEnvelopes={summary.totalEnvelopes}
+        currency={totals[0]?.currency ?? "COP"}
+        hasOtherCurrencies={hasMultipleCurrencies}
       />
 
       <div className="flex items-center justify-between">
