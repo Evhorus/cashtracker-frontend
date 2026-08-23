@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { Card, CardContent } from "@/components/ui/card";
-import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
 import { CardHoverActions } from "@/components/common/card-hover-actions";
 import { CardActionButton } from "@/components/common/card-action-button";
 import { useState } from "react";
 import { UpdateExpenseDialog } from "./update-expense-dialog";
 import { DeleteExpenseAlertDialog } from "./delete-expense-alert-dialog";
+import { ExpenseActionsMenu } from "./expense-actions-menu";
 import type { CurrencyCode } from "@/lib/format-currency";
 
 interface ExpenseCardProps {
@@ -48,20 +48,6 @@ export const ExpenseCard = ({
 
     router.push(`${envelopeId}/expenses/${expense.id}`);
   };
-
-  const actions: ActionItem[] = [
-    {
-      label: "Editar Gasto",
-      icon: Edit,
-      onClick: () => setShowEditDialog(true),
-    },
-    {
-      label: "Eliminar Gasto",
-      icon: Trash2,
-      onClick: () => setShowDeleteDialog(true),
-      variant: "destructive",
-    },
-  ];
 
   return (
     <>
@@ -123,12 +109,19 @@ export const ExpenseCard = ({
                   />
                 </CardHoverActions>
 
-                {/* Mobile Actions (Drawer) */}
+                {/* Mobile Actions (Drawer) - same ExpenseActionsMenu the
+                    expense detail page uses for its own mobile action
+                    trigger (see PageHeader's mobileActions there), just
+                    with a smaller/muted trigger to fit this tighter row.
+                    Owns its own edit/delete dialogs independently of the
+                    desktop ones above - harmless since only one of the
+                    two triggers is ever visible at a time. */}
                 <div className="md:hidden">
                   <div data-no-nav>
-                    <ActionsDrawer
-                      actions={actions}
-                      title="Opciones de Gasto"
+                    <ExpenseActionsMenu
+                      envelopeId={envelopeId}
+                      currency={currency}
+                      expense={expense}
                       triggerClassName="h-8 w-8 text-muted-foreground"
                     />
                   </div>
