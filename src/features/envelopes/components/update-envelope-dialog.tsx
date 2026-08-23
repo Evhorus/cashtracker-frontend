@@ -51,7 +51,9 @@ export const UpdateEnvelopeDialog = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isControlled && (
-        <DialogTrigger render={<CardActionButton icon={Edit} label="Editar sobre" />} />
+        <DialogTrigger
+          render={<CardActionButton icon={Edit} label="Editar sobre" />}
+        />
       )}
       <DialogContent>
         <DialogHeader>
@@ -63,6 +65,12 @@ export const UpdateEnvelopeDialog = ({
             name: envelope.name,
             hasLimit: envelope.amount !== null,
             amount: envelope.amount ?? "",
+            // Missing before: EnvelopeForm's own default is "COP", so
+            // editing any non-COP envelope silently pre-selected the
+            // wrong currency in the dropdown - saving without manually
+            // re-picking the right one would have overwritten the
+            // envelope's real currency with COP.
+            currency: envelope.currency,
             category: envelope.category || "",
           }}
           isLoading={isPending}
