@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,14 +21,28 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OAuthButtons } from "./oauth-buttons";
 import { useSignIn } from "../hooks/use-sign-in";
+import {
+  type CodeFormValues,
+  codeFormSchema,
+  type EmailFormValues,
+  emailFormSchema,
+  type SignInPasswordFormValues,
+  signInPasswordFormSchema,
+} from "../schemas/auth.schema";
 
 type Method = "password" | "code";
 
 // Custom-built sign-in UI on top of the useSignIn() hook (features/auth/
 // hooks/use-sign-in.ts) - that hook owns all provider-specific auth
-// state/validation; this component only ever calls its methods and
-// reads fieldErrors/globalErrors, same spirit as the rest of the app
-// leaving submission state to its own data layer.
+// state/validation; this component only ever calls its methods and reads
+// fieldErrors/globalErrors, same spirit as the rest of the app leaving
+// submission state to its own data layer. Client-side validation (schema-
+// driven, react-hook-form + zodResolver) follows the same pattern as
+// envelope-form.tsx/expense-form.tsx - it catches shape problems (empty
+// fields, malformed email) before ever calling Clerk; fieldErrors/
+// globalErrors below are what Clerk itself reports once a request is
+// actually made (wrong password, no such account, etc.), so both are
+// shown - they cover different failure points.
 export function SignInForm() {
   const {
     isSubmitting,
@@ -44,24 +60,35 @@ export function SignInForm() {
   const [codeSent, setCodeSent] = useState(false);
   const [sentTo, setSentTo] = useState("");
 
-  async function handlePasswordSubmit(formData: FormData) {
-    const emailAddress = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    await signInWithPassword(emailAddress, password);
+  const passwordForm = useForm<SignInPasswordFormValues>({
+    resolver: zodResolver(signInPasswordFormSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const codeRequestForm = useForm<EmailFormValues>({
+    resolver: zodResolver(emailFormSchema),
+    defaultValues: { email: "" },
+  });
+
+  const codeVerifyForm = useForm<CodeFormValues>({
+    resolver: zodResolver(codeFormSchema),
+    defaultValues: { code: "" },
+  });
+
+  async function onPasswordSubmit(values: SignInPasswordFormValues) {
+    await signInWithPassword(values.email, values.password);
   }
 
-  async function handleSendCode(formData: FormData) {
-    const emailAddress = formData.get("email") as string;
-    const { error } = await sendEmailCode(emailAddress);
+  async function onSendCode(values: EmailFormValues) {
+    const { error } = await sendEmailCode(values.email);
     if (error) return;
 
-    setSentTo(emailAddress);
+    setSentTo(values.email);
     setCodeSent(true);
   }
 
-  async function handleVerifyCode(formData: FormData) {
-    const code = formData.get("code") as string;
-    await verifyEmailCode(code);
+  async function onVerifyCode(values: CodeFormValues) {
+    await verifyEmailCode(values.code);
   }
 
   return (
@@ -87,6 +114,9 @@ export function SignInForm() {
             setMethod(value as Method);
             setCodeSent(false);
             void clearErrors();
+            passwordForm.reset();
+            codeRequestForm.reset();
+            codeVerifyForm.reset();
           }}
         >
           <TabsList className="w-full">
@@ -99,43 +129,62 @@ export function SignInForm() {
           </TabsList>
 
           <TabsContent value="password">
-            <form action={handlePasswordSubmit} className="grid gap-y-4">
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="tucorreo@ejemplo.com"
-                  required
-                  autoComplete="email"
-                />
-                {fieldErrors.identifier && (
-                  <ErrorMessage>{fieldErrors.identifier}</ErrorMessage>
+            <form
+              onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
+              className="grid gap-y-4"
+            >
+              <Controller
+                control={passwordForm.control}
+                name="email"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="tucorreo@ejemplo.com"
+                      autoComplete="email"
+                      {...field}
+                      disabled={isSubmitting}
+                    />
+                    {(fieldState.error?.message || fieldErrors.identifier) && (
+                      <ErrorMessage>
+                        {fieldState.error?.message ?? fieldErrors.identifier}
+                      </ErrorMessage>
+                    )}
+                  </Field>
                 )}
-              </Field>
-              <Field>
-                <div className="flex items-center justify-between">
-                  <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                  <Link
-                    href="/forgot-password"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  autoComplete="current-password"
-                />
-                {fieldErrors.password && (
-                  <ErrorMessage>{fieldErrors.password}</ErrorMessage>
+              />
+              <Controller
+                control={passwordForm.control}
+                name="password"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <div className="flex items-center justify-between">
+                      <FieldLabel htmlFor="password">Contraseña</FieldLabel>
+                      <Link
+                        href="/forgot-password"
+                        className="text-sm text-primary hover:underline"
+                      >
+                        ¿Olvidaste tu contraseña?
+                      </Link>
+                    </div>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      {...field}
+                      disabled={isSubmitting}
+                    />
+                    {(fieldState.error?.message || fieldErrors.password) && (
+                      <ErrorMessage>
+                        {fieldState.error?.message ?? fieldErrors.password}
+                      </ErrorMessage>
+                    )}
+                  </Field>
                 )}
-              </Field>
+              />
               <SubmitButton
                 type="submit"
                 isLoading={isSubmitting}
@@ -148,21 +197,34 @@ export function SignInForm() {
 
           <TabsContent value="code">
             {!codeSent ? (
-              <form action={handleSendCode} className="grid gap-y-4">
-                <Field>
-                  <FieldLabel htmlFor="code-email">Email</FieldLabel>
-                  <Input
-                    id="code-email"
-                    name="email"
-                    type="email"
-                    placeholder="tucorreo@ejemplo.com"
-                    required
-                    autoComplete="email"
-                  />
-                  {fieldErrors.identifier && (
-                    <ErrorMessage>{fieldErrors.identifier}</ErrorMessage>
+              <form
+                onSubmit={codeRequestForm.handleSubmit(onSendCode)}
+                className="grid gap-y-4"
+              >
+                <Controller
+                  control={codeRequestForm.control}
+                  name="email"
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel htmlFor="code-email">Email</FieldLabel>
+                      <Input
+                        id="code-email"
+                        type="email"
+                        placeholder="tucorreo@ejemplo.com"
+                        autoComplete="email"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                      {(fieldState.error?.message ||
+                        fieldErrors.identifier) && (
+                        <ErrorMessage>
+                          {fieldState.error?.message ??
+                            fieldErrors.identifier}
+                        </ErrorMessage>
+                      )}
+                    </Field>
                   )}
-                </Field>
+                />
                 <SubmitButton
                   type="submit"
                   isLoading={isSubmitting}
@@ -172,26 +234,37 @@ export function SignInForm() {
                 </SubmitButton>
               </form>
             ) : (
-              <form action={handleVerifyCode} className="grid gap-y-4">
+              <form
+                onSubmit={codeVerifyForm.handleSubmit(onVerifyCode)}
+                className="grid gap-y-4"
+              >
                 <p className="text-sm text-muted-foreground">
                   Enviamos un código a{" "}
                   <span className="font-medium text-foreground">
                     {sentTo}
                   </span>
                 </p>
-                <Field>
-                  <FieldLabel htmlFor="code">Código</FieldLabel>
-                  <Input
-                    id="code"
-                    name="code"
-                    placeholder="123456"
-                    required
-                    autoComplete="one-time-code"
-                  />
-                  {fieldErrors.code && (
-                    <ErrorMessage>{fieldErrors.code}</ErrorMessage>
+                <Controller
+                  control={codeVerifyForm.control}
+                  name="code"
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel htmlFor="code">Código</FieldLabel>
+                      <Input
+                        id="code"
+                        placeholder="123456"
+                        autoComplete="one-time-code"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                      {(fieldState.error?.message || fieldErrors.code) && (
+                        <ErrorMessage>
+                          {fieldState.error?.message ?? fieldErrors.code}
+                        </ErrorMessage>
+                      )}
+                    </Field>
                   )}
-                </Field>
+                />
                 <SubmitButton
                   type="submit"
                   isLoading={isSubmitting}

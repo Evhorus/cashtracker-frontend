@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,12 +19,20 @@ import {
 } from "@/components/ui/card";
 import { OAuthButtons } from "./oauth-buttons";
 import { useSignUp } from "../hooks/use-sign-up";
+import {
+  type CodeFormValues,
+  codeFormSchema,
+  type SignUpFormValues,
+  signUpFormSchema,
+} from "../schemas/auth.schema";
 
 // Custom-built sign-up UI on top of the useSignUp() hook (features/auth/
 // hooks/use-sign-up.ts) - see the sibling sign-in form for the full
-// reasoning. The signed-in redirect lives in the parent (auth)/
-// layout.tsx (a resource-level check, not middleware), so an already-
-// authenticated visitor never sees a blank flash of this page.
+// reasoning, including why both react-hook-form's client errors and the
+// hook's fieldErrors/globalErrors show up side by side. The signed-in
+// redirect lives in the parent (auth)/layout.tsx (a resource-level
+// check, not middleware), so an already-authenticated visitor never sees
+// a blank flash of this page.
 export function SignUpForm() {
   const {
     isSubmitting,
@@ -36,18 +46,33 @@ export function SignUpForm() {
     signUpWithOAuth,
   } = useSignUp();
 
-  async function handleSubmit(formData: FormData) {
+  const signUpForm = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpFormSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const codeVerifyForm = useForm<CodeFormValues>({
+    resolver: zodResolver(codeFormSchema),
+    defaultValues: { code: "" },
+  });
+
+  async function onSubmit(values: SignUpFormValues) {
     await signUpWithPassword({
-      firstName: formData.get("firstName") as string,
-      lastName: formData.get("lastName") as string,
-      emailAddress: formData.get("email") as string,
-      password: formData.get("password") as string,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      emailAddress: values.email,
+      password: values.password,
     });
   }
 
-  async function handleVerify(formData: FormData) {
-    const code = formData.get("code") as string;
-    await verifyEmailCode(code);
+  async function onVerify(values: CodeFormValues) {
+    await verifyEmailCode(values.code);
   }
 
   if (isComplete) return null;
@@ -83,63 +108,124 @@ export function SignUpForm() {
               o
             </p>
 
-            <form action={handleSubmit} className="grid gap-y-4">
+            <form
+              onSubmit={signUpForm.handleSubmit(onSubmit)}
+              className="grid gap-y-4"
+            >
               <div className="grid grid-cols-2 gap-x-3">
-                <Field>
-                  <FieldLabel htmlFor="firstName">Nombre</FieldLabel>
-                  <Input
-                    id="firstName"
-                    name="firstName"
-                    placeholder="Juan"
-                    required
-                    autoComplete="given-name"
-                  />
-                  {fieldErrors.firstName && (
-                    <ErrorMessage>{fieldErrors.firstName}</ErrorMessage>
+                <Controller
+                  control={signUpForm.control}
+                  name="firstName"
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel htmlFor="firstName">Nombre</FieldLabel>
+                      <Input
+                        id="firstName"
+                        placeholder="Juan"
+                        autoComplete="given-name"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                      {(fieldState.error?.message ||
+                        fieldErrors.firstName) && (
+                        <ErrorMessage>
+                          {fieldState.error?.message ?? fieldErrors.firstName}
+                        </ErrorMessage>
+                      )}
+                    </Field>
                   )}
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
-                  <Input
-                    id="lastName"
-                    name="lastName"
-                    placeholder="Pérez"
-                    required
-                    autoComplete="family-name"
-                  />
-                  {fieldErrors.lastName && (
-                    <ErrorMessage>{fieldErrors.lastName}</ErrorMessage>
+                />
+                <Controller
+                  control={signUpForm.control}
+                  name="lastName"
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
+                      <Input
+                        id="lastName"
+                        placeholder="Pérez"
+                        autoComplete="family-name"
+                        {...field}
+                        disabled={isSubmitting}
+                      />
+                      {(fieldState.error?.message ||
+                        fieldErrors.lastName) && (
+                        <ErrorMessage>
+                          {fieldState.error?.message ?? fieldErrors.lastName}
+                        </ErrorMessage>
+                      )}
+                    </Field>
                   )}
-                </Field>
+                />
               </div>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="tucorreo@ejemplo.com"
-                  required
-                  autoComplete="email"
-                />
-                {fieldErrors.emailAddress && (
-                  <ErrorMessage>{fieldErrors.emailAddress}</ErrorMessage>
+              <Controller
+                control={signUpForm.control}
+                name="email"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="tucorreo@ejemplo.com"
+                      autoComplete="email"
+                      {...field}
+                      disabled={isSubmitting}
+                    />
+                    {(fieldState.error?.message ||
+                      fieldErrors.emailAddress) && (
+                      <ErrorMessage>
+                        {fieldState.error?.message ??
+                          fieldErrors.emailAddress}
+                      </ErrorMessage>
+                    )}
+                  </Field>
                 )}
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  autoComplete="new-password"
-                />
-                {fieldErrors.password && (
-                  <ErrorMessage>{fieldErrors.password}</ErrorMessage>
+              />
+              <Controller
+                control={signUpForm.control}
+                name="password"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel htmlFor="password">Contraseña</FieldLabel>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      autoComplete="new-password"
+                      {...field}
+                      disabled={isSubmitting}
+                    />
+                    {(fieldState.error?.message || fieldErrors.password) && (
+                      <ErrorMessage>
+                        {fieldState.error?.message ?? fieldErrors.password}
+                      </ErrorMessage>
+                    )}
+                  </Field>
                 )}
-              </Field>
+              />
+              <Controller
+                control={signUpForm.control}
+                name="confirmPassword"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel htmlFor="confirmPassword">
+                      Confirma tu contraseña
+                    </FieldLabel>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      autoComplete="new-password"
+                      {...field}
+                      disabled={isSubmitting}
+                    />
+                    {fieldState.error?.message && (
+                      <ErrorMessage>{fieldState.error.message}</ErrorMessage>
+                    )}
+                  </Field>
+                )}
+              />
               <SubmitButton
                 type="submit"
                 isLoading={isSubmitting}
@@ -150,20 +236,31 @@ export function SignUpForm() {
             </form>
           </>
         ) : (
-          <form action={handleVerify} className="grid gap-y-4">
-            <Field>
-              <FieldLabel htmlFor="code">Código</FieldLabel>
-              <Input
-                id="code"
-                name="code"
-                placeholder="123456"
-                required
-                autoComplete="one-time-code"
-              />
-              {fieldErrors.code && (
-                <ErrorMessage>{fieldErrors.code}</ErrorMessage>
+          <form
+            onSubmit={codeVerifyForm.handleSubmit(onVerify)}
+            className="grid gap-y-4"
+          >
+            <Controller
+              control={codeVerifyForm.control}
+              name="code"
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel htmlFor="code">Código</FieldLabel>
+                  <Input
+                    id="code"
+                    placeholder="123456"
+                    autoComplete="one-time-code"
+                    {...field}
+                    disabled={isSubmitting}
+                  />
+                  {(fieldState.error?.message || fieldErrors.code) && (
+                    <ErrorMessage>
+                      {fieldState.error?.message ?? fieldErrors.code}
+                    </ErrorMessage>
+                  )}
+                </Field>
               )}
-            </Field>
+            />
             <SubmitButton
               type="submit"
               isLoading={isSubmitting}
