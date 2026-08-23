@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import nextDynamic from "next/dynamic";
 import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
 import { StatsCards } from "@/components/common/stats-cards";
+import type { CurrencyCode } from "@/lib/format-currency";
 
 // recharts is a heavy dependency - code-split it into its own chunk,
 // only needed once this section of the dashboard renders.
@@ -72,10 +73,15 @@ export default async function DashboardPage({
       </div>
 
       <StatsCards
-        totalAmount={summary.totalAssigned}
-        totalCount={summary.totalEnvelopes}
-        totalSpent={summary.totalSpent}
-        totalRemaining={summary.totalAvailable}
+        totalEnvelopes={summary.totalEnvelopes}
+        totals={summary.totals.map((total) => ({
+          ...total,
+          // The API schema types this as a loose string (z.string());
+          // the domain side narrows it to the known currency codes,
+          // since it's the app's own form that ever writes this value -
+          // same convention as EnvelopeMapper.fromApi.
+          currency: total.currency as CurrencyCode,
+        }))}
       />
 
       <MonthlySpendingChart
