@@ -82,72 +82,46 @@ bun start
 
 ## Estructura del Proyecto
 
+La app sigue una arquitectura orientada a dominios (domain-driven). En vez de mantener aquí un
+árbol literal de carpetas (que se desactualiza cada vez que se agrega una feature), esto es el
+patrón que se replica por cada dominio de negocio — hoy `envelopes`, `expenses`, `dashboard`,
+`auth`, y así con lo que se agregue después:
+
 ```
-cashtracker-frontend/
-├── src/
-│   ├── app/                          # Next.js App Router
-│   │   ├── (auth)/                   # Rutas de autenticación (Clerk)
-│   │   │   ├── sign-in/              # Página de inicio de sesión
-│   │   │   │   └── [[...sign-in]]
-│   │   │   └── sign-up/              # Página de registro
-│   │   │       └── [[...sign-up]]
-│   │   ├── (home)/                   # Rutas públicas (Landing page)
-│   │   │   └── page.tsx
-│   │   ├── dashboard/                # Panel principal (Rutas protegidas)
-│   │   │   ├── budgets/              # Listado de presupuestos
-│   │   │   ├── budget/               # Rutas de detalle de presupuesto
-│   │   │   │   └── [budgetId]/
-│   │   │   ├── layout.tsx
-│   │   │   ├── loading.tsx
-│   │   │   └── page.tsx
-│   │   ├── layout.tsx                # Layout principal
-│   │   ├── globals.css               # Estilos globales
-│   │   └── not-found.tsx             # Página 404
-│   ├── features/                     # Lógica de negocio organizada por dominio
-│   │   ├── budgets/                  # Módulo de presupuestos
-│   │   │   ├── actions/              # Server Actions (CRUD)
-│   │   │   ├── components/           # Componentes específicos
-│   │   │   ├── lib/                  # Helpers y utilidades del dominio
-│   │   │   ├── mappers/              # Transformadores de datos
-│   │   │   ├── schemas/              # Validaciones con Zod
-│   │   │   ├── services/             # Llamadas a API externa / servicios
-│   │   │   └── types/                # Tipos TypeScript del dominio
-│   │   └── expenses/                 # Módulo de gastos
-│   │       ├── actions/              # Server Actions (CRUD)
-│   │       ├── components/           # Componentes específicos
-│   │       ├── schemas/              # Validaciones con Zod
-│   │       ├── services/             # Llamadas a API externa / servicios
-│   │       └── types/                # Tipos TypeScript del dominio
-│   ├── shared/                       # Código compartido y utilidades
-│   │   ├── components/               # Componentes reutilizables
-│   │   │   └── ui/                   # Componentes base (shadcn/ui)
-│   │   ├── constants/                # Constantes globales
-│   │   ├── fonts/                    # Definición de fuentes compartidas
-│   │   ├── hooks/                    # Custom hooks compartidos
-│   │   ├── lib/                      # Utilidades generales (api, formatos, etc.)
-│   │   ├── providers/                # Context Providers y ThemeProvider
-│   │   └── types/                    # Tipos compartidos
-│   └── proxy.ts                      # Proxy para autenticación y rutas
-├── public/                           # Archivos estáticos (imágenes, fuentes, favicon)
-├── .env.template                     # Plantilla de variables de entorno necesarias
-├── .gitignore                        # Archivos y carpetas excluidos del control de versiones
-├── CLAUDE.md                         # Guía de estilo y reglas para asistentes de IA
-├── components.json                   # Configuración de componentes shadcn/ui
-├── eslint.config.mjs                 # Configuración de reglas de linting (ESLint)
-├── next.config.ts                    # Configuración avanzada de Next.js
-├── package.json                      # Scripts, dependencias y metadatos del proyecto
-├── pnpm-lock.yaml                    # Bloqueo de versiones exactas de dependencias
-├── postcss.config.mjs                # Configuración de PostCSS para el procesamiento de CSS
-├── skills-lock.json                  # Estado y sincronización de herramientas de IA
-└── tsconfig.json                     # Configuración del compilador de TypeScript
+src/
+├── app/                    # Next.js App Router: rutas, layouts, route groups
+│   ├── (auth)/             # Rutas públicas de autenticación
+│   ├── (home)/             # Landing page pública
+│   └── dashboard/          # Rutas protegidas (auth.protect() a nivel de layout/page)
+├── features/
+│   └── <dominio>/          # Un módulo por dominio de negocio, mismo patrón siempre:
+│       ├── actions/        # Server Actions (orquestación)
+│       ├── components/     # Componentes propios del dominio
+│       ├── schemas/        # Validación con Zod
+│       ├── services/       # Llamadas a la API / lógica externa
+│       │                   #   (features como `auth`, atadas a un provider con hooks
+│       │                   #   de React en vez de funciones planas, usan hooks/ aquí)
+│       ├── mappers/        # Transformación API <-> modelo de dominio
+│       └── types/          # Tipos TypeScript del dominio
+├── components/
+│   ├── ui/                 # Primitivas base estilo shadcn (sobre Base UI)
+│   └── common/             # Componentes compuestos reutilizables entre features
+├── hooks/                  # Hooks compartidos
+├── lib/                    # Utilidades generales (cliente API, fetch autenticado, formatos...)
+├── providers/              # Context providers de la app (tema, etc.)
+└── proxy.ts                # Middleware de Clerk (solo routing, la protección de sesión
+                             # vive en cada layout/page, no aquí)
 ```
+
+Detalle completo de convenciones (qué va en cada carpeta, patrones de forms, manejo de
+errores, etc.) en [`CLAUDE.md`](./CLAUDE.md).
 
 ## Tecnologías
 
 - **Framework:** Next.js 16
 - **React:** 19
 - **Autenticación:** Clerk
-- **UI Components:** Radix UI
+- **UI Components:** Base UI (vía shadcn/ui)
 - **Estilos:** Tailwind CSS
 - **Validación:** Zod
 - **Forms:** React Hook Form
