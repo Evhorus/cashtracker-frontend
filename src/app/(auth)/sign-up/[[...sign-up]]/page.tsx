@@ -65,9 +65,21 @@ export default function SignUpPage() {
       // so the follow-up sso() call actually redirects.
       await signUp.create({ strategy });
     }
+    // Both params point at /sso-callback (not straight to /dashboard):
+    // on Clerk dev instances the session is synced back via a
+    // __clerk_db_jwt query param that client-side JS has to process
+    // before the server recognizes the session. A short flow (one
+    // already-authorized Google account) completes that fast enough that
+    // redirecting straight to a server-protected route mostly gets away
+    // with it; a longer one (choosing between multiple Google accounts,
+    // re-confirming consent) takes longer and loses that race more often
+    // - lands on /dashboard before the sync lands, bounces back to
+    // /sign-in, needs a manual reload. <AuthenticateWithRedirectCallback/>
+    // on /sso-callback (see its signInUrl/signUpUrl props) finishes that
+    // sync client-side first and only then navigates on its own.
     await signUp.sso({
       strategy,
-      redirectUrl: "/dashboard",
+      redirectUrl: "/sso-callback",
       redirectCallbackUrl: "/sso-callback",
     });
   }
