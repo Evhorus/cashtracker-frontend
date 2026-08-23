@@ -57,17 +57,21 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
 
       <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      <CardHeader className="relative z-10 flex flex-row items-start justify-between space-y-0 pb-3">
-        <div className="flex items-center gap-4">
+      <CardHeader className="relative z-10 flex flex-row items-start justify-between gap-2 space-y-0 pb-3">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
             <Wallet className="h-5 w-5" />
           </div>
 
-          <div className="space-y-1">
+          <div className="min-w-0 space-y-1">
+            {/* No fixed max-w here on purpose - min-w-0 on this and the
+                two ancestors above is what actually lets `truncate` cut
+                the name off against whatever space the actions on the
+                right leave, instead of a magic pixel value that either
+                truncated names way earlier than it had to or (on a
+                wider card) left space unused. */}
             <CardTitle className="text-lg leading-none font-bold tracking-tight transition-colors duration-200 group-hover:text-primary">
-              <span className="block max-w-37.5 truncate sm:max-w-50">
-                {envelope.name}
-              </span>
+              <span className="block truncate">{envelope.name}</span>
             </CardTitle>
             {/* Always shows the creation month/year, not just when a
                 category is set - envelope names are free text and
@@ -82,17 +86,21 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                   <span>{envelope.category}</span>
                 </>
               )}
-              {envelope.currency !== "COP" && (
-                <span className="rounded-sm bg-secondary px-1 py-0.5 text-secondary-foreground">
-                  {envelope.currency}
-                </span>
-              )}
+              {/* Shown for every currency, COP included - treating COP
+                  as an unlabeled "default" only reads fine when it's the
+                  only currency around. The moment a second one shows up,
+                  an unlabeled amount is ambiguous - popular multi-
+                  currency apps (Wise, Revolut) always tag the currency
+                  on every balance, never just the "other" ones. */}
+              <span className="rounded-sm bg-secondary px-1 py-0.5 text-secondary-foreground">
+                {envelope.currency}
+              </span>
             </p>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center">
+        <div className="flex shrink-0 items-center">
           <CardHoverActions>
             <UpdateEnvelopeDialog envelope={envelope} />
             <DeleteEnvelopeAlertDialog id={envelope.id} name={envelope.name} />
@@ -145,9 +153,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
             capped variant's two cells (both are label+value pairs). */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground">
-              Gastado
-            </p>
+            <p className="text-xs font-medium text-muted-foreground">Gastado</p>
             <p className={`text-sm font-bold ${amountTextColorClass}`}>
               {formatCurrency(+envelope.spent, currencyConfig)}
             </p>

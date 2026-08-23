@@ -99,42 +99,64 @@ const ZERO_TOTALS: CurrencyTotals = {
   totalAvailable: 0,
 };
 
+function CurrencyLabel({ currency }: { currency: CurrencyCode }) {
+  return (
+    <p className="text-sm font-medium text-muted-foreground">
+      {CURRENCY_MAP[currency]?.label ?? currency}
+    </p>
+  );
+}
+
 export const StatsCards = ({ totalEnvelopes, totals }: StatsCardsProps) => {
   // No envelopes yet - still show the money cards at $0 (COP, the app's
   // default) rather than dropping them, so a brand-new account doesn't
   // suddenly show a 1-card row.
-  const [primary, ...rest] = totals.length > 0 ? totals : [ZERO_TOTALS];
+  const resolvedTotals = totals.length > 0 ? totals : [ZERO_TOTALS];
+  const hasMultipleCurrencies = resolvedTotals.length > 1;
 
+  const sobresActivosCard = (
+    <Card className="animate-fade-in border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          Sobres Activos
+        </CardTitle>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Wallet className="h-4 w-4" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{totalEnvelopes}</div>
+      </CardContent>
+    </Card>
+  );
+
+  // Single currency (the overwhelming common case): unchanged from
+  // before the per-currency split - one row, Sobres Activos plus that
+  // currency's three cards, no label needed since there's nothing to
+  // disambiguate.
+  if (!hasMultipleCurrencies) {
+    return (
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {sobresActivosCard}
+        <CurrencyStatCards totals={resolvedTotals[0]} />
+      </div>
+    );
+  }
+
+  // Multiple currencies: every currency gets its own labeled row,
+  // including what would otherwise be the unlabeled "primary" one -
+  // once there's more than one, leaving any of them unlabeled is
+  // exactly the ambiguity this is supposed to resolve. Sobres Activos
+  // stands on its own above them since it isn't tied to a currency.
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="animate-fade-in border-0 bg-card/50 shadow-sm transition-colors duration-300 hover:bg-card">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Sobres Activos
-            </CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Wallet className="h-4 w-4" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalEnvelopes}</div>
-          </CardContent>
-        </Card>
-
-        <CurrencyStatCards totals={primary} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {sobresActivosCard}
       </div>
 
-      {/* Multi-currency is rare (most accounts only ever use one) - only
-          when it actually happens do the other currencies get their own
-          labeled row, instead of cramming every currency into one grid
-          where nothing says which card belongs to which. */}
-      {rest.map((currencyTotals) => (
+      {resolvedTotals.map((currencyTotals) => (
         <div key={currencyTotals.currency} className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">
-            {CURRENCY_MAP[currencyTotals.currency]?.label ??
-              currencyTotals.currency}
-          </p>
+          <CurrencyLabel currency={currencyTotals.currency} />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <CurrencyStatCards totals={currencyTotals} />
           </div>
