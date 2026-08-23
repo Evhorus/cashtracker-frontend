@@ -1,12 +1,10 @@
-"use client";
 import Link from "next/link";
 import { Wallet } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 
-export const Logo = () => {
-  const { isSignedIn } = useUser();
-  const href = isSignedIn ? "/dashboard" : "/";
-
+// Presentational only - no Clerk dependency, so it can render on the
+// public marketing pages without pulling in Clerk's client bundle.
+// Callers that know the auth state (e.g. CustomHeader) pass `href`.
+export const Logo = ({ href = "/" }: { href?: string }) => {
   return (
     <Link href={href}>
       <div className="flex items-center gap-2">
@@ -16,16 +14,3 @@ export const Logo = () => {
     </Link>
   );
 };
-
-// export const Logo: React.FC = () => {
-//   return (
-//     <Image
-//       src="/logo.svg"
-//       alt="Logo CashTracker"
-//       width={0}
-//       height={0}
-//       className="w-full"
-//       priority
-//     />
-//   );
-// };

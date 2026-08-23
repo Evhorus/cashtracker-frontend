@@ -27,7 +27,7 @@ export const CustomHeader = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo Section */}
         <div className="flex items-center">
-          <Logo />
+          <Logo href={user ? "/dashboard" : "/"} />
         </div>
 
         {/* Navigation Center */}
