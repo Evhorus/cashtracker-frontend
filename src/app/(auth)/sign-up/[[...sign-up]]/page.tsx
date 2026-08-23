@@ -1,9 +1,245 @@
-import { SignUp } from "@clerk/nextjs";
+"use client";
 
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useSignUp } from "@clerk/nextjs";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SubmitButton } from "@/components/common/submit-button";
+import { ErrorMessage } from "@/components/common/error-message";
+import { Field, FieldLabel } from "@/components/ui/field";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FacebookIcon, GoogleIcon } from "@/components/common/icons";
+
+type OAuthProvider = "oauth_google" | "oauth_facebook";
+
+// Custom-built sign-up UI on top of Clerk's Core 3 useSignUp() hook -
+// see the sibling sign-in page for why (Elements is deprecated). The
+// signed-in redirect lives in proxy.ts (middleware), not here, so an
+// already-authenticated visitor never sees a blank flash of this page.
 export default function SignUpPage() {
+  const { signUp, errors, fetchStatus } = useSignUp();
+  const router = useRouter();
+
+  const isFetching = fetchStatus === "fetching";
+
+  const awaitingVerification =
+    signUp.status === "missing_requirements" &&
+    signUp.unverifiedFields.includes("email_address") &&
+    signUp.missingFields.length === 0;
+
+  async function finalize() {
+    await signUp.finalize({
+      navigate: ({ session, decorateUrl }) => {
+        if (session?.currentTask) return;
+        const url = decorateUrl("/dashboard");
+        if (url.startsWith("http")) {
+          window.location.href = url;
+        } else {
+          router.push(url);
+        }
+      },
+    });
+  }
+
+  async function handleSSO(strategy: OAuthProvider) {
+    await signUp.sso({
+      strategy,
+      redirectUrl: "/dashboard",
+      redirectCallbackUrl: "/sso-callback",
+    });
+  }
+
+  async function handleSubmit(formData: FormData) {
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const emailAddress = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const { error } = await signUp.password({
+      firstName,
+      lastName,
+      emailAddress,
+      password,
+    });
+    if (error) return;
+
+    await signUp.verifications.sendEmailCode();
+  }
+
+  async function handleVerify(formData: FormData) {
+    const code = formData.get("code") as string;
+
+    const { error } = await signUp.verifications.verifyEmailCode({ code });
+    if (!error && signUp.status === "complete") await finalize();
+  }
+
+  if (signUp.status === "complete") return null;
+
   return (
-    <div className="flex items-center justify-center">
-      <SignUp />
-    </div>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>
+          {awaitingVerification ? "Verifica tu email" : "Crea tu cuenta"}
+        </CardTitle>
+        <CardDescription>
+          {awaitingVerification
+            ? "Ingresa el código que enviamos a tu correo"
+            : "Empieza a controlar tus finanzas gratis"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-y-4">
+        {errors.global?.map((err, i) => (
+          <ErrorMessage key={i}>{err.message}</ErrorMessage>
+        ))}
+
+        {!awaitingVerification ? (
+          <>
+            <div className="grid grid-cols-2 gap-x-3">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isFetching}
+                onClick={() => handleSSO("oauth_google")}
+              >
+                <GoogleIcon className="size-4" />
+                Google
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isFetching}
+                onClick={() => handleSSO("oauth_facebook")}
+              >
+                <FacebookIcon className="size-4" />
+                Facebook
+              </Button>
+            </div>
+
+            <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+              o
+            </p>
+
+            <form action={handleSubmit} className="grid gap-y-4">
+              <div className="grid grid-cols-2 gap-x-3">
+                <Field>
+                  <FieldLabel htmlFor="firstName">Nombre</FieldLabel>
+                  <Input
+                    id="firstName"
+                    name="firstName"
+                    required
+                    autoComplete="given-name"
+                  />
+                  {errors.fields.firstName?.message && (
+                    <ErrorMessage>
+                      {errors.fields.firstName.message}
+                    </ErrorMessage>
+                  )}
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    required
+                    autoComplete="family-name"
+                  />
+                  {errors.fields.lastName?.message && (
+                    <ErrorMessage>
+                      {errors.fields.lastName.message}
+                    </ErrorMessage>
+                  )}
+                </Field>
+              </div>
+              <Field>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                />
+                {errors.fields.emailAddress?.message && (
+                  <ErrorMessage>
+                    {errors.fields.emailAddress.message}
+                  </ErrorMessage>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="password">Contraseña</FieldLabel>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  autoComplete="new-password"
+                />
+                {errors.fields.password?.message && (
+                  <ErrorMessage>{errors.fields.password.message}</ErrorMessage>
+                )}
+              </Field>
+              <SubmitButton
+                type="submit"
+                isLoading={isFetching}
+                className="w-full"
+              >
+                Crear cuenta
+              </SubmitButton>
+            </form>
+          </>
+        ) : (
+          <form action={handleVerify} className="grid gap-y-4">
+            <Field>
+              <FieldLabel htmlFor="code">Código</FieldLabel>
+              <Input
+                id="code"
+                name="code"
+                required
+                autoComplete="one-time-code"
+              />
+              {errors.fields.code?.message && (
+                <ErrorMessage>{errors.fields.code.message}</ErrorMessage>
+              )}
+            </Field>
+            <SubmitButton
+              type="submit"
+              isLoading={isFetching}
+              className="w-full"
+            >
+              Verificar y crear cuenta
+            </SubmitButton>
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              disabled={isFetching}
+              onClick={() => signUp.verifications.sendEmailCode()}
+            >
+              Reenviar código
+            </Button>
+          </form>
+        )}
+      </CardContent>
+      <CardFooter>
+        <p className="w-full text-center text-sm text-muted-foreground">
+          ¿Ya tienes cuenta?{" "}
+          <Link
+            href="/sign-in"
+            className="font-medium text-primary hover:underline"
+          >
+            Inicia sesión
+          </Link>
+        </p>
+      </CardFooter>
+    </Card>
   );
 }
