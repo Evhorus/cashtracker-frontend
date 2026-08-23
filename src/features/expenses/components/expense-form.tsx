@@ -7,11 +7,16 @@ import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/components/common/submit-button";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { ErrorMessage } from "@/components/common/error-message";
+import { FormInput } from "@/components/common/form-input";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field";
 
 import {
   ExpenseFormValues,
@@ -50,11 +55,7 @@ export const ExpenseForm = ({
   const expenseSchema = useMemo(() => buildExpenseSchema(currency), [currency]);
   const currencyConfig = CURRENCY_MAP[currency];
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<ExpenseFormValues>({
+  const { handleSubmit, control } = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       name: "",
@@ -73,32 +74,21 @@ export const ExpenseForm = ({
       <FieldGroup>
         <FieldSet>
           <FieldGroup>
-            <Controller
+            <FormInput
               control={control}
               name="name"
-              render={({ field }) => (
-                <Field>
-                  <FieldLabel htmlFor="name">Nombre del gasto</FieldLabel>
-                  <Input
-                    {...field}
-                    id="name"
-                    placeholder="Ej: Compra supermercado"
-                    autoComplete="off"
-                    autoFocus
-                    disabled={isLoading}
-                  />
-                  {errors.name?.message && (
-                    <ErrorMessage>{errors.name.message}</ErrorMessage>
-                  )}
-                </Field>
-              )}
+              label="Nombre del gasto"
+              placeholder="Ej: Compra supermercado"
+              autoComplete="off"
+              autoFocus
+              disabled={isLoading}
             />
 
             <div className="flex flex-col gap-4 sm:flex-row">
               <Controller
                 control={control}
                 name="amount"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <Field className="flex-1">
                     <FieldLabel htmlFor="amount" className="items-center">
                       Monto
@@ -112,12 +102,11 @@ export const ExpenseForm = ({
                     <PriceInput
                       id="amount"
                       {...field}
+                      aria-invalid={fieldState.invalid}
                       disabled={isLoading}
                       currencyConfig={currencyConfig}
                     />
-                    {errors.amount?.message && (
-                      <ErrorMessage>{errors.amount.message}</ErrorMessage>
-                    )}
+                    <FieldError errors={[fieldState.error]} />
                   </Field>
                 )}
               />
@@ -125,7 +114,7 @@ export const ExpenseForm = ({
               <Controller
                 control={control}
                 name="date"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <Field className="flex-1">
                     <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
                     <Popover
@@ -137,6 +126,7 @@ export const ExpenseForm = ({
                           <Button
                             id="expense-date"
                             variant={"outline"}
+                            aria-invalid={fieldState.invalid}
                             className={cn(
                               "w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground",
@@ -166,9 +156,7 @@ export const ExpenseForm = ({
                         />
                       </PopoverContent>
                     </Popover>
-                    {errors.date?.message && (
-                      <ErrorMessage>{errors.date.message}</ErrorMessage>
-                    )}
+                    <FieldError errors={[fieldState.error]} />
                   </Field>
                 )}
               />
@@ -178,7 +166,7 @@ export const ExpenseForm = ({
           <Controller
             control={control}
             name="description"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <Field>
                 <FieldLabel htmlFor="expense-description">
                   Descripción (opcional)
@@ -188,11 +176,10 @@ export const ExpenseForm = ({
                   id="expense-description"
                   placeholder="Añade detalles del gasto..."
                   rows={3}
+                  aria-invalid={fieldState.invalid}
                   disabled={isLoading}
                 />
-                {errors.description?.message && (
-                  <ErrorMessage>{errors.description.message}</ErrorMessage>
-                )}
+                <FieldError errors={[fieldState.error]} />
               </Field>
             )}
           />

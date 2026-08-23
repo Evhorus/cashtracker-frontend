@@ -2,12 +2,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/components/common/submit-button";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { ErrorMessage } from "@/components/common/error-message";
+import { FormInput } from "@/components/common/form-input";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field";
 import {
   envelopeFormSchema,
   EnvelopeFormValues,
@@ -29,11 +34,7 @@ export const EnvelopeForm = ({
   onSubmit,
   onCloseDialog,
 }: EnvelopeFormProps) => {
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<EnvelopeFormValues>({
+  const { handleSubmit, control } = useForm<EnvelopeFormValues>({
     resolver: zodResolver(envelopeFormSchema),
     defaultValues: {
       name: "",
@@ -61,42 +62,30 @@ export const EnvelopeForm = ({
         <FieldSet>
           <FieldSet>
             <div className="flex flex-col gap-6">
-              <Controller
+              <FormInput
                 control={control}
                 name="name"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel htmlFor="name">Nombre del sobre</FieldLabel>
-                    <Input
-                      id="name"
-                      placeholder="Ej: Gastos del hogar"
-                      autoComplete="off"
-                      autoFocus
-                      {...field}
-                      disabled={isLoading}
-                    />
-                    {errors.name?.message && (
-                      <ErrorMessage>{errors.name.message}</ErrorMessage>
-                    )}
-                  </Field>
-                )}
+                label="Nombre del sobre"
+                placeholder="Ej: Gastos del hogar"
+                autoComplete="off"
+                autoFocus
+                disabled={isLoading}
               />
 
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Controller
                   control={control}
                   name="currency"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <Field>
                       <FieldLabel htmlFor="currency">Moneda</FieldLabel>
                       <CurrencySelector
                         {...field}
                         id="currency"
+                        aria-invalid={fieldState.invalid}
                         disabled={isLoading}
                       />
-                      {errors.currency?.message && (
-                        <ErrorMessage>{errors.currency.message}</ErrorMessage>
-                      )}
+                      <FieldError errors={[fieldState.error]} />
                     </Field>
                   )}
                 />
@@ -126,12 +115,13 @@ export const EnvelopeForm = ({
                 <Controller
                   control={control}
                   name="amount"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <Field>
                       <FieldLabel htmlFor="amount">Monto</FieldLabel>
                       <PriceInput
                         id="amount"
                         {...field}
+                        aria-invalid={fieldState.invalid}
                         disabled={isLoading}
                         currencyConfig={
                           selectedCurrency
@@ -139,32 +129,20 @@ export const EnvelopeForm = ({
                             : DEFAULT_CURRENCY_CONFIG
                         }
                       />
-                      {errors.amount?.message && (
-                        <ErrorMessage>{errors.amount.message}</ErrorMessage>
-                      )}
+                      <FieldError errors={[fieldState.error]} />
                     </Field>
                   )}
                 />
               )}
             </div>
-            <Controller
+            <FormInput
               control={control}
               name="category"
-              render={({ field }) => (
-                <Field className="md:col-span-4">
-                  <FieldLabel htmlFor="category">
-                    Categoría (opcional)
-                  </FieldLabel>
-                  <Input
-                    id="category"
-                    placeholder="Ej: Hogar, Entretenimiento"
-                    type="text"
-                    autoComplete="off"
-                    {...field}
-                    disabled={isLoading}
-                  />
-                </Field>
-              )}
+              label="Categoría (opcional)"
+              placeholder="Ej: Hogar, Entretenimiento"
+              autoComplete="off"
+              disabled={isLoading}
+              fieldClassName="md:col-span-4"
             />
           </FieldSet>
         </FieldSet>
