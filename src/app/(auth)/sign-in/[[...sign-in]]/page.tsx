@@ -36,6 +36,10 @@ export default function SignInPage() {
   const [method, setMethod] = useState<Method>("password");
   const [codeSent, setCodeSent] = useState(false);
   const [sentTo, setSentTo] = useState("");
+  // Whether a password/email-code attempt was already started on this
+  // signIn resource (signIn.create() or .password() called). See
+  // handleSSO for why this matters.
+  const [attemptStarted, setAttemptStarted] = useState(false);
 
   const isFetching = fetchStatus === "fetching";
 
@@ -54,6 +58,19 @@ export default function SignInPage() {
   }
 
   async function handleSSO(strategy: OAuthProvider) {
+    if (attemptStarted) {
+      // Known rough edge in Clerk's current hooks: signIn.sso() silently
+      // no-ops (resolves with no error, no redirect - and no, reset()
+      // doesn't fix it either) when the signIn already has a pending
+      // password/email-code attempt on it. Calling create() with the new
+      // strategy first properly transitions that attempt server-side, so
+      // the follow-up sso() call actually redirects.
+      await signIn.create({
+        strategy,
+        redirectUrl: "/sso-callback",
+        actionCompleteRedirectUrl: "/dashboard",
+      });
+    }
     await signIn.sso({
       strategy,
       redirectUrl: "/dashboard",
@@ -65,6 +82,7 @@ export default function SignInPage() {
     const emailAddress = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    setAttemptStarted(true);
     const { error } = await signIn.password({ emailAddress, password });
     if (!error && signIn.status === "complete") await finalize();
     // needs_second_factor / needs_client_trust aren't handled by this UI
@@ -75,6 +93,7 @@ export default function SignInPage() {
   async function handleSendCode(formData: FormData) {
     const emailAddress = formData.get("email") as string;
 
+    setAttemptStarted(true);
     const { error } = await signIn.create({ identifier: emailAddress });
     if (error) return;
 

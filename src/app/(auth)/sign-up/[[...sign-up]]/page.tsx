@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSignUp } from "@clerk/nextjs";
@@ -30,6 +31,10 @@ export default function SignUpPage() {
   const { signUp, errors, fetchStatus } = useSignUp();
   const router = useRouter();
 
+  // Whether a password sign-up attempt was already started (even if it
+  // failed validation). See handleSSO for why this matters.
+  const [attemptStarted, setAttemptStarted] = useState(false);
+
   const isFetching = fetchStatus === "fetching";
 
   const awaitingVerification =
@@ -52,6 +57,15 @@ export default function SignUpPage() {
   }
 
   async function handleSSO(strategy: OAuthProvider) {
+    if (attemptStarted) {
+      // Known rough edge in Clerk's current hooks: signUp.sso() silently
+      // no-ops (resolves with no error, no redirect - and no, reset()
+      // doesn't fix it either) when the signUp already has a pending
+      // password attempt on it (even a failed one). Calling create()
+      // with the new strategy first properly transitions that attempt
+      // server-side, so the follow-up sso() call actually redirects.
+      await signUp.create({ strategy });
+    }
     await signUp.sso({
       strategy,
       redirectUrl: "/dashboard",
@@ -65,6 +79,7 @@ export default function SignUpPage() {
     const emailAddress = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    setAttemptStarted(true);
     const { error } = await signUp.password({
       firstName,
       lastName,
