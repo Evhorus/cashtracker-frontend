@@ -120,7 +120,9 @@ export function PriceInput<T extends FieldValues>({
     // enter a fraction with the only decimal key most people actually
     // have. Whichever of the two was typed last is the real one; with
     // nothing ever auto-inserted into this text (see the component doc
-    // comment), there's no grouping separator it could be confused with.
+    // comment), there's no grouping separator it could be confused with
+    // *by this input* - but the user can still type one themselves, out
+    // of habit (see below).
     //
     // decimalDigits === 0 (no currency today, but a future one might be)
     // disables this outright: there's no fraction to accept, so a "."
@@ -129,15 +131,36 @@ export function PriceInput<T extends FieldValues>({
       ? Math.max(raw.lastIndexOf("."), raw.lastIndexOf(","))
       : -1;
 
-    const integerSegment =
-      decimalIndex === -1 ? raw : raw.slice(0, decimalIndex);
-    const fractionalSegment =
-      decimalIndex === -1 ? undefined : raw.slice(decimalIndex + 1);
+    let integerDigits: string;
+    let fractionalDigits: string | undefined;
 
-    const integerDigits = integerSegment.replace(/[^0-9]/g, "");
-    const fractionalDigits = fractionalSegment
-      ?.replace(/[^0-9]/g, "")
-      .slice(0, currencyConfig.decimalDigits);
+    if (decimalIndex === -1) {
+      integerDigits = raw.replace(/[^0-9]/g, "");
+      fractionalDigits = undefined;
+    } else {
+      const tailDigits = raw.slice(decimalIndex + 1).replace(/[^0-9]/g, "");
+
+      // A real fraction can never have more digits than this currency's
+      // own decimalDigits - so if more than that follow the last "." or
+      // ",", that character was never a decimal point to begin with. It's
+      // a thousands separator typed the way people actually write money
+      // (e.g. a COP user typing "12.000" for twelve thousand pesos, the
+      // same habit as writing "12.000.000" for twelve million) - without
+      // this, that "." would get read as a decimal point instead, and
+      // "12.000" would silently become "12,00" (twelve pesos) with the
+      // extra zero dropped, no error, nothing telling the user their
+      // amount is now wrong by three orders of magnitude. Once this
+      // fires, every separator in the string is treated as grouping and
+      // discarded - not just the last one - so "12.000.000" resolves in
+      // one shot to 12000000 rather than needing per-group handling.
+      if (tailDigits.length > currencyConfig.decimalDigits) {
+        integerDigits = raw.replace(/[^0-9]/g, "");
+        fractionalDigits = undefined;
+      } else {
+        integerDigits = raw.slice(0, decimalIndex).replace(/[^0-9]/g, "");
+        fractionalDigits = tailDigits;
+      }
+    }
 
     if (integerDigits === "" && !fractionalDigits) {
       setEditableText("");
