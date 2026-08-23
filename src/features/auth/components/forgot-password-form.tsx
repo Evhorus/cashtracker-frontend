@@ -3,12 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/common/submit-button";
 import { ErrorMessage } from "@/components/common/error-message";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { FormInput } from "@/components/common/form-input";
 import {
   Card,
   CardContent,
@@ -30,10 +29,10 @@ import {
 // Three-step reset flow (send code -> verify code -> set new password) on
 // top of the useForgotPassword() hook (features/auth/hooks/
 // use-forgot-password.ts) - see sign-in-form.tsx for the full reasoning
-// behind keeping provider specifics out of this component. The last step
-// asks for the new password twice (schema-enforced match via
-// newPasswordFormSchema) so a mistyped password doesn't lock the user out
-// of the account they're actively trying to recover.
+// behind FormInput/serverError. The last step asks for the new password
+// twice (schema-enforced match via newPasswordFormSchema) so a mistyped
+// password doesn't lock the user out of the account they're actively
+// trying to recover.
 export function ForgotPasswordForm() {
   const {
     isSubmitting,
@@ -99,27 +98,15 @@ export function ForgotPasswordForm() {
             onSubmit={emailForm.handleSubmit(onSendCode)}
             className="grid gap-y-4"
           >
-            <Controller
+            <FormInput
               control={emailForm.control}
               name="email"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="tucorreo@ejemplo.com"
-                    autoComplete="email"
-                    {...field}
-                    disabled={isSubmitting}
-                  />
-                  {(fieldState.error?.message || fieldErrors.identifier) && (
-                    <ErrorMessage>
-                      {fieldState.error?.message ?? fieldErrors.identifier}
-                    </ErrorMessage>
-                  )}
-                </Field>
-              )}
+              label="Email"
+              type="email"
+              placeholder="tucorreo@ejemplo.com"
+              autoComplete="email"
+              disabled={isSubmitting}
+              serverError={fieldErrors.identifier}
             />
             <SubmitButton
               type="submit"
@@ -136,26 +123,14 @@ export function ForgotPasswordForm() {
             onSubmit={codeForm.handleSubmit(onVerifyCode)}
             className="grid gap-y-4"
           >
-            <Controller
+            <FormInput
               control={codeForm.control}
               name="code"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="code">Código</FieldLabel>
-                  <Input
-                    id="code"
-                    placeholder="123456"
-                    autoComplete="one-time-code"
-                    {...field}
-                    disabled={isSubmitting}
-                  />
-                  {(fieldState.error?.message || fieldErrors.code) && (
-                    <ErrorMessage>
-                      {fieldState.error?.message ?? fieldErrors.code}
-                    </ErrorMessage>
-                  )}
-                </Field>
-              )}
+              label="Código"
+              placeholder="123456"
+              autoComplete="one-time-code"
+              disabled={isSubmitting}
+              serverError={fieldErrors.code}
             />
             <SubmitButton
               type="submit"
@@ -172,49 +147,24 @@ export function ForgotPasswordForm() {
             onSubmit={newPasswordForm.handleSubmit(onSubmitNewPassword)}
             className="grid gap-y-4"
           >
-            <Controller
+            <FormInput
               control={newPasswordForm.control}
               name="password"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="password">Nueva contraseña</FieldLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                    {...field}
-                    disabled={isSubmitting}
-                  />
-                  {(fieldState.error?.message || fieldErrors.password) && (
-                    <ErrorMessage>
-                      {fieldState.error?.message ?? fieldErrors.password}
-                    </ErrorMessage>
-                  )}
-                </Field>
-              )}
+              label="Nueva contraseña"
+              type="password"
+              placeholder="••••••••"
+              autoComplete="new-password"
+              disabled={isSubmitting}
+              serverError={fieldErrors.password}
             />
-            <Controller
+            <FormInput
               control={newPasswordForm.control}
               name="confirmPassword"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="confirmPassword">
-                    Confirma tu nueva contraseña
-                  </FieldLabel>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                    {...field}
-                    disabled={isSubmitting}
-                  />
-                  {fieldState.error?.message && (
-                    <ErrorMessage>{fieldState.error.message}</ErrorMessage>
-                  )}
-                </Field>
-              )}
+              label="Confirma tu nueva contraseña"
+              type="password"
+              placeholder="••••••••"
+              autoComplete="new-password"
+              disabled={isSubmitting}
             />
             <SubmitButton
               type="submit"
