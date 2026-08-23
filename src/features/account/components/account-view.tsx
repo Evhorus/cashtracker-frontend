@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import {
+  KeyRound,
+  Laptop,
+  Link2,
+  Loader2,
+  Trash2,
+  UserRound,
+} from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -19,11 +27,11 @@ import { ConnectedAccountsSection } from "./connected-accounts-section";
 import { DeleteAccountSection } from "./delete-account-section";
 
 const SECTIONS = [
-  { value: "profile", label: "Perfil" },
-  { value: "password", label: "Contraseña" },
-  { value: "sessions", label: "Sesiones" },
-  { value: "connected", label: "Cuentas conectadas" },
-  { value: "danger", label: "Eliminar cuenta" },
+  { value: "profile", label: "Perfil", icon: UserRound },
+  { value: "password", label: "Contraseña", icon: KeyRound },
+  { value: "sessions", label: "Sesiones", icon: Laptop },
+  { value: "connected", label: "Cuentas conectadas", icon: Link2 },
+  { value: "danger", label: "Eliminar cuenta", icon: Trash2 },
 ] as const;
 
 type SectionValue = (typeof SECTIONS)[number]["value"];
@@ -64,9 +72,16 @@ export function AccountView() {
         >
           <SelectTrigger className="w-full">
             <SelectValue>
-              {(value: string) =>
-                SECTIONS.find((s) => s.value === value)?.label
-              }
+              {(value: string) => {
+                const current = SECTIONS.find((s) => s.value === value);
+                if (!current) return null;
+                return (
+                  <>
+                    <current.icon className="size-4 text-muted-foreground" />
+                    {current.label}
+                  </>
+                );
+              }}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -78,6 +93,7 @@ export function AccountView() {
                   s.value === "danger" ? "text-destructive" : undefined
                 }
               >
+                <s.icon className="size-4" />
                 {s.label}
               </SelectItem>
             ))}
@@ -85,24 +101,35 @@ export function AccountView() {
         </Select>
       </div>
 
-      <TabsList
-        variant="line"
-        className="hidden md:flex md:w-52 md:shrink-0 md:items-stretch"
-      >
+      {/* Neither of Tabs' built-in looks fit a settings sidebar: "line"
+          marks the active item with a thin sliding bar that reads as a
+          scrollbar thumb in a vertical list, "default" is a flat gray
+          pill that looks like generic component chrome next to the rest
+          of the app. Instead this borrows the app's own nav language -
+          the same rounded pill-group / bg-primary/15-active-pill treatment
+          custom-header.tsx already uses for Dashboard/Sobres - so the
+          account page's own nav reads as this app's, not a library
+          default. */}
+      <TabsList className="hidden shrink-0 flex-col items-stretch gap-1 rounded-2xl border border-border/60 bg-card/50 p-2 md:flex md:w-56">
         {SECTIONS.map((s) => (
           <TabsTrigger
             key={s.value}
             value={s.value}
-            // Both variants needed: TabsTrigger's own idle color is set
-            // via a dark: variant too (dark:text-muted-foreground), which
-            // only a same-variant override actually beats - see the
-            // app's dark-by-default theme in src/app/layout.tsx.
-            className={
-              s.value === "danger"
-                ? "text-destructive dark:text-destructive"
-                : undefined
-            }
+            className={cn(
+              "justify-start gap-2.5 rounded-full border-none px-3.5 py-2.5 text-sm font-medium text-muted-foreground shadow-none transition-colors",
+              "hover:bg-muted hover:text-foreground",
+              "data-active:bg-primary/15 data-active:text-primary dark:data-active:border-transparent dark:data-active:bg-primary/15 dark:data-active:text-primary",
+              // TabsTrigger's base idle/hover/active text colors are each
+              // set with their own dark: variant (4 combinations total) -
+              // rather than override every one, `!` wins the cascade
+              // outright regardless of which state's rule it's up
+              // against. Backgrounds stay state-specific since idle/
+              // hover/active each need a different one.
+              s.value === "danger" &&
+                "!text-destructive hover:!bg-destructive/10 data-active:!bg-destructive/10 dark:data-active:!border-transparent dark:data-active:!bg-destructive/20",
+            )}
           >
+            <s.icon className="size-4" />
             {s.label}
           </TabsTrigger>
         ))}
