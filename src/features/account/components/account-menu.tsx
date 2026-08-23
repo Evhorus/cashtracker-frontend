@@ -39,7 +39,12 @@ export function AccountMenu() {
           </button>
         }
       />
-      <DropdownMenuContent align="end">
+      {/* DropdownMenuContent defaults to w-(--anchor-width) - fine for a
+          menu anchored to a normal button, but the trigger here is just
+          the avatar, so left alone the popup would clamp to that same
+          tiny width and truncate the name/email/wrap "Cerrar sesión". An
+          explicit width overrides that. */}
+      <DropdownMenuContent align="end" className="w-64">
         {/* Base UI's GroupLabel throws outside a Menu.Group, unlike
             Radix's ungrouped Label - see dropdown-menu.tsx (base-vega
             style). Grouping the identity label with "Mi cuenta" reads
