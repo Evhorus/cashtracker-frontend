@@ -2,14 +2,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
 import { useActionDialog } from "@/hooks/useActionDialog";
 import { EnvelopeForm } from "./envelope-form";
 import { EnvelopeFormValues } from "@/features/envelopes/schemas/envelope.schema";
@@ -35,26 +28,23 @@ export const CreateEnvelopeDialog = () => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button variant="default" size="lg">
-            <Plus className="h-5 w-5" />
-            <span className="hidden md:inline">Nuevo Sobre</span>
-          </Button>
-        }
+    <ResponsiveFormSheet
+      open={open}
+      onOpenChange={setOpen}
+      title="Crear"
+      description="Aquí puedes crear un sobre"
+      trigger={
+        <Button variant="default" size="lg">
+          <Plus className="h-5 w-5" />
+          <span className="hidden md:inline">Nuevo Sobre</span>
+        </Button>
+      }
+    >
+      <EnvelopeForm
+        isLoading={isPending}
+        onSubmit={handleCreate}
+        onCloseDialog={() => setOpen(false)}
       />
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Crear</DialogTitle>
-          <DialogDescription>Aquí puedes crear un sobre</DialogDescription>
-        </DialogHeader>
-        <EnvelopeForm
-          isLoading={isPending}
-          onSubmit={handleCreate}
-          onCloseDialog={() => setOpen(false)}
-        />
-      </DialogContent>
-    </Dialog>
+    </ResponsiveFormSheet>
   );
 };

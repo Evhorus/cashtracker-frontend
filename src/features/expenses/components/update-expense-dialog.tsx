@@ -2,14 +2,7 @@
 import { useState } from "react";
 import { parseDateInput } from "@/lib/date-helpers";
 import { Edit } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
 import { Button } from "@/components/ui/button";
 import { useActionDialog } from "@/hooks/useActionDialog";
 import { ExpenseForm } from "./expense-form";
@@ -37,7 +30,7 @@ export const UpdateExpenseDialog = ({
 
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
-  const setOpen = isControlled ? setControlledOpen : setInternalOpen;
+  const setOpen = isControlled ? setControlledOpen! : setInternalOpen;
 
   const { dispatch, isPending } = useActionDialog(
     updateExpenseAction,
@@ -55,37 +48,32 @@ export const UpdateExpenseDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {!isControlled && (
-        <DialogTrigger
-          render={
-            <Button variant="ghost" size="icon">
-              <Edit className="h-4 w-4 text-muted-foreground transition-colors hover:text-primary" />
-            </Button>
-          }
-        />
-      )}
-      <DialogContent className="sm:max-w-125">
-        <DialogHeader>
-          <DialogTitle>Editar Gasto</DialogTitle>
-          <DialogDescription>
-            Modifica los datos del gasto seleccionado
-          </DialogDescription>
-        </DialogHeader>
-
-        <ExpenseForm
-          currency={currency}
-          defaultValues={{
-            name: expense.name,
-            amount: expense.amount,
-            description: expense.description || "",
-            date: parseDateInput(expense.date),
-          }}
-          onSubmit={handleCreate}
-          isLoading={isPending}
-          onCloseDialog={() => setOpen?.(false)}
-        />
-      </DialogContent>
-    </Dialog>
+    <ResponsiveFormSheet
+      open={open}
+      onOpenChange={setOpen}
+      title="Editar Gasto"
+      description="Modifica los datos del gasto seleccionado"
+      dialogClassName="sm:max-w-125"
+      trigger={
+        isControlled ? undefined : (
+          <Button variant="ghost" size="icon">
+            <Edit className="h-4 w-4 text-muted-foreground transition-colors hover:text-primary" />
+          </Button>
+        )
+      }
+    >
+      <ExpenseForm
+        currency={currency}
+        defaultValues={{
+          name: expense.name,
+          amount: expense.amount,
+          description: expense.description || "",
+          date: parseDateInput(expense.date),
+        }}
+        onSubmit={handleCreate}
+        isLoading={isPending}
+        onCloseDialog={() => setOpen(false)}
+      />
+    </ResponsiveFormSheet>
   );
 };
