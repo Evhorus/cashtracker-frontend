@@ -140,6 +140,8 @@ export default async function EnvelopePage({
             <CreateExpenseDialog
               envelopeId={envelope.id}
               currency={envelope.currency}
+              envelopeName={envelope.name}
+              envelopeCategory={envelope.category}
             />
           </div>
 

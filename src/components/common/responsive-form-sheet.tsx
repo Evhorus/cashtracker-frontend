@@ -28,7 +28,9 @@ interface ResponsiveFormSheetProps {
    * as the dialogs below - e.g. opened from a card's own actions menu). */
   trigger?: React.ReactElement;
   title: string;
-  description: string;
+  /** Usually a plain string, but accepts a richer node (e.g. an inline
+   * category icon + envelope name) - see create-expense-dialog.tsx. */
+  description: React.ReactNode;
   dialogClassName?: string;
   children: React.ReactNode;
 }
