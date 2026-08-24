@@ -194,7 +194,7 @@ export default async function DashboardPage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-semibold">Sobres en alerta</h2>
                 <Link
-                  href="/dashboard/envelopes"
+                  href="/dashboard/envelopes?status=alert"
                   className="text-xs font-medium text-primary hover:underline"
                 >
                   Ver todos →
