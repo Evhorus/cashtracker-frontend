@@ -26,6 +26,10 @@ export const DashboardSummaryAPIResponseSchema = z.object({
   // number the way it used to.
   totals: z.array(DashboardCurrencyTotalsSchema),
   chart: z.array(DashboardChartEntrySchema),
+  // Which currency `chart` is actually scoped to - null only when the
+  // user has no envelopes at all. Loose z.string() for the same reason
+  // as DashboardCurrencyTotalsSchema's currency above.
+  chartCurrency: z.string().nullable(),
   availableYears: z.array(z.number()),
 });
 

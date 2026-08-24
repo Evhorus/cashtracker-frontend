@@ -48,7 +48,14 @@ export const MonthlySpendingChart = ({
   currency,
   hasOtherCurrencies,
 }: MonthlySpendingChartProps) => {
-  if (totalEnvelopes === 0) return null;
+  // A single bar can't show a trend - it's the same Gastado/Disponible
+  // split the stat cards above already spell out in text, just redrawn
+  // as a ~320px-tall chart. That's not "no info", it's negative value
+  // (a lot of scroll for nothing new), so this only renders once there's
+  // an actual month-over-month comparison to show. Every envelope
+  // created the same day (a fresh account, or a bulk import) hits this
+  // exact case, since the backend buckets by envelope creation month.
+  if (totalEnvelopes === 0 || chartData.length < 2) return null;
 
   const chartConfig = {
     Gastado: {

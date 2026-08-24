@@ -10,8 +10,11 @@ export const DashboardService = {
    * chart, available years) - the backend does the math so the
    * frontend never has to reduce over a raw envelope list.
    */
-  getSummary: (year?: number): Promise<DashboardSummary> => {
-    const qs = year ? `?year=${year}` : "";
+  getSummary: (year?: number, currency?: string): Promise<DashboardSummary> => {
+    const params = new URLSearchParams();
+    if (year) params.set("year", String(year));
+    if (currency) params.set("currency", currency);
+    const qs = params.size > 0 ? `?${params.toString()}` : "";
 
     return fetchApi<DashboardSummary>(
       `/dashboard/summary${qs}`,
