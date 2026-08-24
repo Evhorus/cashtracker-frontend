@@ -1,0 +1,12 @@
+{
+  "common": {
+    "appName": "CashTracker",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading...",
+    "retry": "Retry"
+  }
+}
