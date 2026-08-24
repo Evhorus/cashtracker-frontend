@@ -1,12 +1,7 @@
-import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
-import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
 import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
 import { CurrencyFilterSelect } from "@/features/dashboard/components/currency-filter-select";
-import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
-import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
-import { Button } from "@/components/ui/button";
 import nextDynamic from "next/dynamic";
 import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
 import { StatsCards } from "@/components/common/stats-cards";
@@ -28,14 +23,19 @@ const MonthlySpendingChart = nextDynamic(
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
-// Recent envelopes preview on the dashboard - "see all" goes to the
-// full paginated list at /dashboard/envelopes.
-const RECENT_ENVELOPES_LIMIT = 6;
-
 interface DashboardPageProps {
   searchParams: Promise<{ year?: string; currency?: string }>;
 }
 
+// Pure "how am I doing" summary - counts, per-currency totals, the
+// monthly trend chart. Deliberately doesn't also preview envelope cards
+// here anymore: that was the same EnvelopesGrid the dedicated
+// /dashboard/envelopes page already renders in full, just truncated to
+// 6 and duplicated on this page too - the existing "Sobres" link in
+// custom-header.tsx's nav is the way there, not a second copy stacked
+// under a multi-currency account's already-long stat card section. Ties
+// back to a design pass on this page: too much content in one place,
+// especially once StatsCards repeats per currency.
 export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
@@ -43,10 +43,7 @@ export default async function DashboardPage({
   const { year: yearParam, currency: currencyParam } = await searchParams;
   const year = yearParam ? parseInt(yearParam, 10) || undefined : undefined;
 
-  const [summary, envelopes] = await Promise.all([
-    getDashboardSummaryAction(year, currencyParam),
-    getEnvelopesAction({ limit: RECENT_ENVELOPES_LIMIT }),
-  ]);
+  const summary = await getDashboardSummaryAction(year, currencyParam);
 
   const chartData = summary.chart.map((entry) => ({
     label: entry.label,
@@ -81,20 +78,22 @@ export default async function DashboardPage({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {summary.availableYears.length > 0 && (
-            <YearFilterSelect
-              years={summary.availableYears}
-              selectedYear={year}
-            />
-          )}
-          {hasMultipleCurrencies && (
-            <CurrencyFilterSelect
-              currencies={totals.map((total) => total.currency)}
-              selectedCurrency={chartCurrency}
-            />
-          )}
-        </div>
+        {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
+          <div className="flex items-center gap-2">
+            {summary.availableYears.length > 0 && (
+              <YearFilterSelect
+                years={summary.availableYears}
+                selectedYear={year}
+              />
+            )}
+            {hasMultipleCurrencies && (
+              <CurrencyFilterSelect
+                currencies={totals.map((total) => total.currency)}
+                selectedCurrency={chartCurrency}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       <StatsCards totalEnvelopes={summary.totalEnvelopes} totals={totals} />
@@ -105,18 +104,6 @@ export default async function DashboardPage({
         currency={chartCurrency}
         hasOtherCurrencies={hasMultipleCurrencies}
       />
-
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Mis Sobres</h2>
-        <div className="flex items-center gap-2">
-          <Link href="/dashboard/envelopes">
-            <Button variant="link">Ver todos</Button>
-          </Link>
-          <CreateEnvelopeDialog />
-        </div>
-      </div>
-
-      <EnvelopesGrid envelopes={envelopes.data} />
     </div>
   );
 }
