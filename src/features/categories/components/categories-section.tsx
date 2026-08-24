@@ -9,43 +9,62 @@ import {
 import { CATEGORIES } from "../lib/category-palette";
 import { withAlpha } from "../lib/with-alpha";
 
+interface CategoriesSectionProps {
+  /** Per-category envelope count, keyed by CategoryDef.id - computed in
+   * account/page.tsx from the real envelope list, not estimated. Missing
+   * keys just mean 0. */
+  categoryCounts: Record<string, number>;
+}
+
 // Read-only for now: categories are a fixed, predefined set (see
 // category-palette.ts) - there's no Category entity/CRUD on the backend
 // yet, so "create your own" is shown, explained, and disabled rather than
 // silently absent.
-export function CategoriesSection() {
+export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
+  const totalEnvelopesCategorized = Object.values(categoryCounts).reduce(
+    (sum, count) => sum + count,
+    0,
+  );
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Categorías</CardTitle>
         <CardDescription>
-          Categorías disponibles para tus sobres
+          {CATEGORIES.length} categorías · {totalEnvelopesCategorized} sobres
+          clasificados
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="divide-y divide-border/60">
-          {CATEGORIES.map((category) => (
-            <div
-              key={category.id}
-              className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
-            >
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                style={{
-                  background: withAlpha(category.color, 0.14),
-                  color: category.color,
-                }}
+          {CATEGORIES.map((category) => {
+            const count = categoryCounts[category.id] ?? 0;
+            return (
+              <div
+                key={category.id}
+                className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
               >
-                <category.Icon className="h-4 w-4" />
-              </span>
-              <span className="flex-1 text-sm font-medium">
-                {category.label}
-              </span>
-              <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
-                Predeterminada
-              </span>
-            </div>
-          ))}
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                  style={{
+                    background: withAlpha(category.color, 0.14),
+                    color: category.color,
+                  }}
+                >
+                  <category.Icon className="h-4 w-4" />
+                </span>
+                <span className="flex-1 text-sm font-medium">
+                  {category.label}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {count} {count === 1 ? "sobre" : "sobres"}
+                </span>
+                <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
+                  Predeterminada
+                </span>
+              </div>
+            );
+          })}
         </div>
 
         <div className="space-y-2">
