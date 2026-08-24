@@ -19,12 +19,24 @@ export const ENVELOPE_WARNING_THRESHOLD = 0.8;
 
 /**
  * The "Todos / Activos / Excedidos / Sin límite" tabs on the Sobres list
- * (mockup: MobileEnvelopes/DesktopEnvelopes). Distinct from
- * EnvelopeProgressStatus - "active" here merges "normal" and "warning"
- * (both are "a limited envelope that isn't over yet"), which is a courser
- * grouping than the 3-color progress indicator needs.
+ * (mockup: MobileEnvelopes/DesktopEnvelopes), plus "En alerta" (not in
+ * the mockup - added so the Resumen page's "Sobres en alerta" widget has
+ * somewhere real to deep-link its "Ver todos" to). Distinct from
+ * EnvelopeProgressStatus:
+ * - "active" merges "normal" and "warning" (both "a limited envelope
+ *   that isn't over yet"), a courser grouping than the 3-color progress
+ *   indicator needs.
+ * - "alert" merges "warning" and "exceeded" (both "needs your
+ *   attention") - it overlaps "active" and "exceeded" rather than
+ *   partitioning the list the way the other four tabs do, same as
+ *   Resumen's own "en alerta" count already does.
  */
-export type EnvelopeStatusFilter = "all" | "active" | "exceeded" | "unlimited";
+export type EnvelopeStatusFilter =
+  | "all"
+  | "active"
+  | "alert"
+  | "exceeded"
+  | "unlimited";
 
 export const ENVELOPE_STATUS_FILTERS: {
   value: EnvelopeStatusFilter;
@@ -32,6 +44,7 @@ export const ENVELOPE_STATUS_FILTERS: {
 }[] = [
   { value: "all", label: "Todos" },
   { value: "active", label: "Activos" },
+  { value: "alert", label: "En alerta" },
   { value: "exceeded", label: "Excedidos" },
   { value: "unlimited", label: "Sin límite" },
 ];
@@ -95,6 +108,9 @@ export const EnvelopeHelpers = {
     const status = EnvelopeHelpers.getProgressStatus(envelope);
     if (filter === "unlimited") return status === "unlimited";
     if (filter === "exceeded") return status === "exceeded";
+    // "alert": same warning-or-exceeded test the Resumen page's own "en
+    // alerta" count/widget use (dashboard/page.tsx's alertEnvelopes).
+    if (filter === "alert") return status === "warning" || status === "exceeded";
     // "active": has a limit and hasn't gone over it yet.
     return status === "normal" || status === "warning";
   },
