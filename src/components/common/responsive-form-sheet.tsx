@@ -1,6 +1,8 @@
 "use client";
 
+import { XIcon } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -67,9 +70,21 @@ export function ResponsiveFormSheet({
     <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
       {trigger && <DrawerTrigger render={trigger} />}
       <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>{title}</DrawerTitle>
+        <DrawerHeader className="relative text-left">
+          <DrawerTitle className="pr-8">{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
+          <DrawerClose
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="absolute top-4 right-4"
+              />
+            }
+          >
+            <XIcon />
+            <span className="sr-only">Cerrar</span>
+          </DrawerClose>
         </DrawerHeader>
         <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
       </DrawerContent>
