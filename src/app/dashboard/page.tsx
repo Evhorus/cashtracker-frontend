@@ -77,8 +77,18 @@ export default async function DashboardPage() {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {totals.map((total) => (
+      {/* 2-col only once there's more than one currency to actually fill
+          the second column - a lone card in a 2-col grid otherwise left
+          an empty half. With an odd count > 1 (3 currencies), the last
+          card spans both columns instead of sitting alone next to a
+          blank cell in its own row. */}
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-4",
+          totals.length > 1 && "md:grid-cols-2",
+        )}
+      >
+        {totals.map((total, index) => (
           <HeroBalanceCard
             key={total.currency}
             currency={total.currency}
@@ -89,6 +99,12 @@ export default async function DashboardPage() {
             deltaPercent={
               total.currency === summary.chartCurrency ? deltaPercent : null
             }
+            className={cn(
+              totals.length > 1 &&
+                totals.length % 2 === 1 &&
+                index === totals.length - 1 &&
+                "md:col-span-2",
+            )}
           />
         ))}
       </div>
