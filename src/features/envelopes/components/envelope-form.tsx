@@ -19,6 +19,7 @@ import {
 } from "@/features/envelopes/schemas/envelope.schema";
 import { PriceInput } from "@/components/common/price-input";
 import { CurrencySelector } from "@/components/common/currency-selector";
+import { CategoryPicker } from "@/features/categories/components/category-picker";
 import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/lib/format-currency";
 
 interface EnvelopeFormProps {
@@ -135,14 +136,23 @@ export const EnvelopeForm = ({
                 />
               )}
             </div>
-            <FormInput
+            <Controller
               control={control}
               name="category"
-              label="Categoría (opcional)"
-              placeholder="Ej: Hogar, Entretenimiento"
-              autoComplete="off"
-              disabled={isLoading}
-              fieldClassName="md:col-span-4"
+              render={({ field, fieldState }) => (
+                <Field className="md:col-span-4">
+                  <FieldLabel htmlFor="category">
+                    Categoría (opcional)
+                  </FieldLabel>
+                  <CategoryPicker
+                    {...field}
+                    id="category"
+                    aria-invalid={fieldState.invalid}
+                    disabled={isLoading}
+                  />
+                  <FieldError errors={[fieldState.error]} />
+                </Field>
+              )}
             />
           </FieldSet>
         </FieldSet>

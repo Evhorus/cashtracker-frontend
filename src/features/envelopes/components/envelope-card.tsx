@@ -3,7 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { formatMonthYear } from "@/lib/date-helpers";
-import { ArrowRight, Infinity as InfinityIcon, Wallet } from "lucide-react";
+import { ArrowRight, Infinity as InfinityIcon } from "lucide-react";
+import {
+  CategoryIcon,
+  CategoryLabel,
+} from "@/features/categories/components/category-badge";
 
 import Link from "next/link";
 import { useMemo } from "react";
@@ -59,9 +63,10 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
 
       <CardHeader className="relative z-10 flex flex-row items-start justify-between gap-2 space-y-0 pb-3">
         <div className="flex min-w-0 flex-1 items-center gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
-            <Wallet className="h-5 w-5" />
-          </div>
+          <CategoryIcon
+            category={envelope.category}
+            className="shadow-sm transition-transform duration-300 group-hover:scale-110"
+          />
 
           <div className="min-w-0 space-y-1">
             {/* No fixed max-w here on purpose - min-w-0 on this and the
@@ -83,7 +88,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
               {envelope.category && (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span>{envelope.category}</span>
+                  <CategoryLabel category={envelope.category} />
                 </>
               )}
               {/* Shown for every currency, COP included - treating COP

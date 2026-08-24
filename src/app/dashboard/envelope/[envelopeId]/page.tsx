@@ -16,6 +16,7 @@ import { formatMonthYear } from "@/lib/date-helpers";
 import { cn } from "@/lib/utils";
 
 import { DollarSign, Infinity as InfinityIcon } from "lucide-react";
+import { CategoryLabel } from "@/features/categories/components/category-badge";
 import nextDynamic from "next/dynamic";
 import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
@@ -101,9 +102,14 @@ export default async function EnvelopePage({
           // category is set - same reasoning as the envelope card: names
           // are free text and commonly reused across years, so this is
           // the one place that disambiguates which year's envelope this is.
-          <p className="truncate text-sm text-muted-foreground">
+          <p className="flex items-center gap-1.5 truncate text-sm text-muted-foreground">
             {formatMonthYear(envelope.createdAt)}
-            {envelope.category && ` · ${envelope.category}`}
+            {envelope.category && (
+              <>
+                <span aria-hidden="true">·</span>
+                <CategoryLabel category={envelope.category} />
+              </>
+            )}
           </p>
         }
         actions={
