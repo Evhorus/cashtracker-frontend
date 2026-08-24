@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import {
   Select,
@@ -30,13 +30,17 @@ export const CurrencyFilterSelect = ({
   selectedCurrency,
 }: CurrencyFilterSelectProps) => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   function handleChange(value: string | null) {
     if (!value) return;
     const params = new URLSearchParams(searchParams);
     params.set("currency", value);
-    router.push(`/dashboard?${params.toString()}`);
+    // Same route this control is actually rendered on (statistics/page.tsx
+    // today) - a hardcoded "/dashboard" here used to send the user to a
+    // different page instead of updating the chart in place.
+    router.push(`${pathname}?${params.toString()}`);
   }
 
   return (

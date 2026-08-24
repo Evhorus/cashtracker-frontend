@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -24,6 +24,7 @@ export const YearFilterSelect = ({
   selectedYear,
 }: YearFilterSelectProps) => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   function handleChange(value: string | null) {
@@ -38,7 +39,10 @@ export const YearFilterSelect = ({
       params.set("year", value);
     }
     const qs = params.toString();
-    router.push(qs ? `/dashboard?${qs}` : "/dashboard");
+    // Same route this control is actually rendered on (statistics/page.tsx
+    // today) - a hardcoded "/dashboard" here used to send the user to a
+    // different page instead of updating the chart in place.
+    router.push(qs ? `${pathname}?${qs}` : pathname);
   }
 
   return (
