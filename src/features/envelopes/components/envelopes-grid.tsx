@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { SearchX, Wallet } from "lucide-react";
 import { CreateEnvelopeDialog } from "./create-envelope-dialog";
 import { EnvelopeCard } from "./envelope-card";
+import { EnvelopesTable } from "./envelopes-table";
 
 interface EnvelopesGridProps {
   envelopes: Envelope[];
@@ -53,16 +54,22 @@ export const EnvelopesGrid = ({
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {envelopes.map((envelope, index) => (
-            <div
-              key={envelope.id}
-              style={{ animationDelay: `${0.5 + index * 0.1}s` }}
-            >
-              <EnvelopeCard envelope={envelope} />
-            </div>
-          ))}
-        </div>
+        <>
+          {/* Mobile: same card grid as before. Desktop: a dense table
+              instead of the same cards stretched wider - see
+              envelopes-table.tsx. */}
+          <div className="grid grid-cols-1 gap-4 md:hidden">
+            {envelopes.map((envelope, index) => (
+              <div
+                key={envelope.id}
+                style={{ animationDelay: `${0.5 + index * 0.1}s` }}
+              >
+                <EnvelopeCard envelope={envelope} />
+              </div>
+            ))}
+          </div>
+          <EnvelopesTable envelopes={envelopes} />
+        </>
       )}
     </>
   );
