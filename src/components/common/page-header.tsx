@@ -21,8 +21,12 @@ export const PageHeader = ({
   mobileActions,
 }: PageHeaderProps) => {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <div className="flex min-w-0 flex-1 items-center gap-3">
+    // items-start, not items-center: a title long enough to wrap (see the
+    // min-w-0 comment below) would otherwise center the back button and
+    // actions against the whole multi-line block, leaving them floating
+    // next to the middle line instead of lined up with the first one.
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex min-w-0 flex-1 items-start gap-3">
         {backUrl && (
           <Link href={backUrl}>
             {/* Same rounded/translucent-card/subtle-border treatment as
@@ -43,8 +47,17 @@ export const PageHeader = ({
           </Link>
         )}
 
-        <div>
-          <h1 className="truncate text-2xl font-bold tracking-tight md:text-3xl">
+        {/* min-w-0 is what actually lets this shrink below the title's
+            natural content width inside the flex row above - without it
+            the title just grows the row wide instead of wrapping,
+            pushing the actions off to the side (or under them, at long
+            enough names). No truncate here on purpose: an envelope name
+            long enough to hit this is still information the user typed
+            in and needs to read in full, not hide behind an ellipsis -
+            same criterion as sessions-section.tsx and
+            envelope-card.tsx's meta line. */}
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl font-bold tracking-tight break-words md:text-3xl">
             {title}
           </h1>
           {description && (
@@ -55,7 +68,7 @@ export const PageHeader = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-start gap-2">
         {actions && <div className="hidden gap-2 md:flex">{actions}</div>}
         {mobileActions && <div className="md:hidden">{mobileActions}</div>}
       </div>
