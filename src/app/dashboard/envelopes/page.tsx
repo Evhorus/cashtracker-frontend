@@ -28,11 +28,20 @@ export default async function EnvelopesPage({
     search,
   });
 
+  // meta.total is already scoped to `search` by the same query - a live
+  // count of whatever's actually showing, not a fixed page size, and
+  // correctly reads as "3 sobres" while filtering instead of a static
+  // subtitle that never moves. No budget total alongside it - envelopes
+  // span multiple currencies (COP/USD/EUR), and summing across them
+  // into one number would be meaningless, same reasoning as everywhere
+  // else in the app that keeps currency totals separate.
+  const total = envelopes.meta.total;
+
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Mis Sobres"
-        description="Gestiona todos tus sobres"
+        title="Sobres"
+        description={`${total} ${total === 1 ? "sobre" : "sobres"}`}
         backUrl="/dashboard"
         actions={<CreateEnvelopeDialog />}
         mobileActions={<CreateEnvelopeDialog />}

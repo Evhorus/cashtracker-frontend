@@ -35,9 +35,26 @@ const SECTIONS = [
   { value: "password", label: "Contraseña", icon: KeyRound },
   { value: "sessions", label: "Sesiones", icon: Laptop },
   { value: "connected", label: "Cuentas conectadas", icon: Link2 },
-  { value: "categories", label: "Categorías", icon: Tag },
+  { value: "categories", label: "Categorías", icon: Tag, isNew: true },
   { value: "danger", label: "Eliminar cuenta", icon: Trash2 },
 ] as const;
+
+// Small pill next to a just-added section (Categorías) in both the
+// mobile Select's item list and the desktop TabsList - not in the
+// Select's own collapsed trigger display, that's the current selection,
+// not a "look, new" moment.
+function NewBadge({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-primary uppercase",
+        className,
+      )}
+    >
+      Nuevo
+    </span>
+  );
+}
 
 type SectionValue = (typeof SECTIONS)[number]["value"];
 
@@ -121,12 +138,16 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
                 <SelectItem
                   key={s.value}
                   value={s.value}
-                  className={
-                    s.value === "danger" ? "text-destructive" : undefined
-                  }
+                  className={cn(
+                    "gap-2",
+                    s.value === "danger" && "text-destructive",
+                  )}
                 >
                   <s.icon className="size-4" />
                   {s.label}
+                  {"isNew" in s && s.isNew && (
+                    <NewBadge className="ml-auto" />
+                  )}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -163,6 +184,7 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
             >
               <s.icon className="size-4" />
               {s.label}
+              {"isNew" in s && s.isNew && <NewBadge className="ml-auto" />}
             </TabsTrigger>
           ))}
         </TabsList>
