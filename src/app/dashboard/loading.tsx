@@ -18,7 +18,10 @@ export default function DashboardLoadingSkeleton() {
         </div>
       </div>
 
-      <Skeleton className="h-16 w-full rounded-xl" />
+      <div className="grid grid-cols-2 gap-4">
+        <Skeleton className="h-16 w-full rounded-xl" />
+        <Skeleton className="h-16 w-full rounded-xl" />
+      </div>
     </div>
   );
 }

@@ -1,21 +1,32 @@
 import { auth } from "@clerk/nextjs/server";
-import { Wallet } from "lucide-react";
+import Link from "next/link";
+import { TriangleAlert, Wallet } from "lucide-react";
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
+import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { HeroBalanceCard } from "@/components/common/hero-balance-card";
-import type { CurrencyCode } from "@/lib/format-currency";
+import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
+import { CategoryIcon } from "@/features/categories/components/category-badge";
+import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
 // Resumen (glanceable overview): the hero balance card(s) - one per
-// currency in use - plus a quick envelope count. No year/currency
-// filters and no chart - those live on /dashboard/statistics, since
-// they're for digging into history rather than a quick "how am I doing".
-// Always the default/current period - see get-dashboard-summary.action.ts.
+// currency in use - a quick envelope/alert count, and (only when there
+// actually are any) a short list of envelopes in warning/exceeded status.
+// No year/currency filters and no chart - those live on
+// /dashboard/statistics, since they're for digging into history rather
+// than a quick "how am I doing". Always the default/current period.
 export default async function DashboardPage() {
   await auth.protect();
 
-  const summary = await getDashboardSummaryAction();
+  const [summary, envelopesResult] = await Promise.all([
+    getDashboardSummaryAction(),
+    // Only real envelope data available for computing "en alerta" - the
+    // summary endpoint doesn't return this, it's derived client-side the
+    // same way statistics/page.tsx derives its category breakdown.
+    getEnvelopesAction({ limit: 100 }),
+  ]);
 
   const totals = summary.totals.map((total) => ({
     ...total,
@@ -35,6 +46,15 @@ export default async function DashboardPage() {
           Math.abs(lastTwoMonths[0].available)) *
         100
       : null;
+
+  const alertEnvelopes = envelopesResult.data
+    .map((envelope) => ({
+      envelope,
+      status: EnvelopeHelpers.getProgressStatus(envelope),
+      percentage: EnvelopeHelpers.getPercentage(envelope) ?? 0,
+    }))
+    .filter(({ status }) => status === "warning" || status === "exceeded")
+    .sort((a, b) => b.percentage - a.percentage);
 
   return (
     <div className="space-y-6">
@@ -61,15 +81,91 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <Wallet className="h-4 w-4" />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Wallet className="h-4 w-4" />
+          </div>
+          <span className="text-sm text-muted-foreground">
+            Sobres activos
+          </span>
+          <span className="ml-auto font-mono text-lg font-semibold">
+            {summary.totalEnvelopes}
+          </span>
         </div>
-        <span className="text-sm text-muted-foreground">Sobres activos</span>
-        <span className="ml-auto font-mono text-lg font-semibold">
-          {summary.totalEnvelopes}
-        </span>
+
+        <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
+          <div
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+              alertEnvelopes.length > 0
+                ? "bg-amber-500/10 text-amber-500"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            <TriangleAlert className="h-4 w-4" />
+          </div>
+          <span className="text-sm text-muted-foreground">En alerta</span>
+          <span className="ml-auto font-mono text-lg font-semibold">
+            {alertEnvelopes.length}
+          </span>
+        </div>
       </div>
+
+      {alertEnvelopes.length > 0 && (
+        <div className="rounded-2xl border border-border/60 bg-card/50 p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold">Sobres en alerta</h2>
+            <Link
+              href="/dashboard/envelopes"
+              className="text-xs font-medium text-primary hover:underline"
+            >
+              Ver todos →
+            </Link>
+          </div>
+          <div className="mt-3 space-y-3">
+            {alertEnvelopes.slice(0, 3).map(({ envelope, status, percentage }) => {
+              const config = CURRENCY_MAP[envelope.currency];
+              const remaining = EnvelopeHelpers.getRemaining(envelope) ?? 0;
+              const barColorClass =
+                status === "exceeded" ? "bg-destructive" : "bg-amber-500";
+              return (
+                <Link
+                  key={envelope.id}
+                  href={`/dashboard/envelope/${envelope.id}`}
+                  className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-muted"
+                >
+                  <CategoryIcon
+                    category={envelope.category}
+                    className="h-8 w-8 rounded-lg"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="truncate font-medium">
+                        {envelope.name}
+                      </span>
+                      <span
+                        className={`ml-2 shrink-0 font-mono text-xs font-semibold ${
+                          status === "exceeded"
+                            ? "text-destructive"
+                            : "text-amber-500"
+                        }`}
+                      >
+                        {formatCurrency(remaining, config)}
+                      </span>
+                    </div>
+                    <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-secondary/60">
+                      <div
+                        className={`h-full rounded-full ${barColorClass}`}
+                        style={{ width: `${Math.min(percentage, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
