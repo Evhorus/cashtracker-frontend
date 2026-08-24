@@ -7,6 +7,7 @@ import {
   Laptop,
   Link2,
   Loader2,
+  Tag,
   Trash2,
   UserRound,
 } from "lucide-react";
@@ -27,12 +28,14 @@ import { SessionsSection } from "./sessions-section";
 import { ConnectedAccountsSection } from "./connected-accounts-section";
 import { DeleteAccountSection } from "./delete-account-section";
 import { ReverificationProvider } from "./reverification-provider";
+import { CategoriesSection } from "@/features/categories/components/categories-section";
 
 const SECTIONS = [
   { value: "profile", label: "Perfil", icon: UserRound },
   { value: "password", label: "Contraseña", icon: KeyRound },
   { value: "sessions", label: "Sesiones", icon: Laptop },
   { value: "connected", label: "Cuentas conectadas", icon: Link2 },
+  { value: "categories", label: "Categorías", icon: Tag },
   { value: "danger", label: "Eliminar cuenta", icon: Trash2 },
 ] as const;
 
@@ -169,6 +172,9 @@ export function AccountView() {
           </TabsContent>
           <TabsContent value="connected">
             <ConnectedAccountsSection />
+          </TabsContent>
+          <TabsContent value="categories">
+            <CategoriesSection />
           </TabsContent>
           <TabsContent value="danger">
             <DeleteAccountSection user={user} />
