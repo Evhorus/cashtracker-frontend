@@ -17,6 +17,25 @@ export type EnvelopeProgressStatus =
 // "normal" to "warning" (early heads-up before actually going over).
 export const ENVELOPE_WARNING_THRESHOLD = 0.8;
 
+/**
+ * The "Todos / Activos / Excedidos / Sin límite" tabs on the Sobres list
+ * (mockup: MobileEnvelopes/DesktopEnvelopes). Distinct from
+ * EnvelopeProgressStatus - "active" here merges "normal" and "warning"
+ * (both are "a limited envelope that isn't over yet"), which is a courser
+ * grouping than the 3-color progress indicator needs.
+ */
+export type EnvelopeStatusFilter = "all" | "active" | "exceeded" | "unlimited";
+
+export const ENVELOPE_STATUS_FILTERS: {
+  value: EnvelopeStatusFilter;
+  label: string;
+}[] = [
+  { value: "all", label: "Todos" },
+  { value: "active", label: "Activos" },
+  { value: "exceeded", label: "Excedidos" },
+  { value: "unlimited", label: "Sin límite" },
+];
+
 export const EnvelopeHelpers = {
   /**
    * Get envelope amount as a number, or null if this envelope has no
@@ -65,5 +84,18 @@ export const EnvelopeHelpers = {
     if (ratio > 1) return "exceeded";
     if (ratio >= ENVELOPE_WARNING_THRESHOLD) return "warning";
     return "normal";
+  },
+
+  /** Whether an envelope belongs under one of the status filter tabs. */
+  matchesStatusFilter: (
+    envelope: Envelope,
+    filter: EnvelopeStatusFilter,
+  ): boolean => {
+    if (filter === "all") return true;
+    const status = EnvelopeHelpers.getProgressStatus(envelope);
+    if (filter === "unlimited") return status === "unlimited";
+    if (filter === "exceeded") return status === "exceeded";
+    // "active": has a limit and hasn't gone over it yet.
+    return status === "normal" || status === "warning";
   },
 };
