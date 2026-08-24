@@ -10,6 +10,7 @@ import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { CategoryIcon } from "@/features/categories/components/category-badge";
 import { formatDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
+import { cn } from "@/lib/utils";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
@@ -123,63 +124,85 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {alertEnvelopes.length > 0 && (
-        <div className="rounded-2xl border border-border/60 bg-card/50 p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Sobres en alerta</h2>
-            <Link
-              href="/dashboard/envelopes"
-              className="text-xs font-medium text-primary hover:underline"
+      {(alertEnvelopes.length > 0 || recentExpenses.length > 0) && (
+        // Side by side on desktop instead of both stacked full-width -
+        // two short cards stretched edge to edge left a lot of dead
+        // horizontal space either side of their actual content. Whichever
+        // one is empty (either can be, independently) lets the other take
+        // the full row instead of leaving a blank column next to it.
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {alertEnvelopes.length > 0 && (
+            <div
+              className={cn(
+                "rounded-2xl border border-border/60 bg-card/50 p-5",
+                recentExpenses.length === 0 && "lg:col-span-2",
+              )}
             >
-              Ver todos →
-            </Link>
-          </div>
-          <div className="mt-3 space-y-3">
-            {alertEnvelopes.slice(0, 3).map(({ envelope, status, percentage }) => {
-              const config = CURRENCY_MAP[envelope.currency];
-              const remaining = EnvelopeHelpers.getRemaining(envelope) ?? 0;
-              const barColorClass =
-                status === "exceeded" ? "bg-destructive" : "bg-amber-500";
-              return (
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold">Sobres en alerta</h2>
                 <Link
-                  key={envelope.id}
-                  href={`/dashboard/envelope/${envelope.id}`}
-                  className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-muted"
+                  href="/dashboard/envelopes"
+                  className="text-xs font-medium text-primary hover:underline"
                 >
-                  <CategoryIcon
-                    category={envelope.category}
-                    className="h-8 w-8 rounded-lg"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="truncate font-medium">
-                        {envelope.name}
-                      </span>
-                      <span
-                        className={`ml-2 shrink-0 font-mono text-xs font-semibold ${
-                          status === "exceeded"
-                            ? "text-destructive"
-                            : "text-amber-500"
-                        }`}
-                      >
-                        {formatCurrency(remaining, config)}
-                      </span>
-                    </div>
-                    <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-secondary/60">
-                      <div
-                        className={`h-full rounded-full ${barColorClass}`}
-                        style={{ width: `${Math.min(percentage, 100)}%` }}
-                      />
-                    </div>
-                  </div>
+                  Ver todos →
                 </Link>
-              );
-            })}
-          </div>
+              </div>
+              <div className="mt-3 space-y-3">
+                {alertEnvelopes
+                  .slice(0, 3)
+                  .map(({ envelope, status, percentage }) => {
+                    const config = CURRENCY_MAP[envelope.currency];
+                    const remaining =
+                      EnvelopeHelpers.getRemaining(envelope) ?? 0;
+                    const barColorClass =
+                      status === "exceeded" ? "bg-destructive" : "bg-amber-500";
+                    return (
+                      <Link
+                        key={envelope.id}
+                        href={`/dashboard/envelope/${envelope.id}`}
+                        className="flex items-center gap-3 rounded-lg p-1.5 transition-colors hover:bg-muted"
+                      >
+                        <CategoryIcon
+                          category={envelope.category}
+                          className="h-8 w-8 rounded-lg"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="truncate font-medium">
+                              {envelope.name}
+                            </span>
+                            <span
+                              className={`ml-2 shrink-0 font-mono text-xs font-semibold ${
+                                status === "exceeded"
+                                  ? "text-destructive"
+                                  : "text-amber-500"
+                              }`}
+                            >
+                              {formatCurrency(remaining, config)}
+                            </span>
+                          </div>
+                          <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-secondary/60">
+                            <div
+                              className={`h-full rounded-full ${barColorClass}`}
+                              style={{ width: `${Math.min(percentage, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+
+          {recentExpenses.length > 0 && (
+            <RecentActivity
+              expenses={recentExpenses}
+              className={cn(alertEnvelopes.length === 0 && "lg:col-span-2")}
+            />
+          )}
         </div>
       )}
-
-      <RecentActivity expenses={recentExpenses} />
     </div>
   );
 }
