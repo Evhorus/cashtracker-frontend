@@ -48,7 +48,14 @@ function isSectionValue(value: string | null): value is SectionValue {
 // The single useAccountUser() call lives here so every section below
 // re-renders off the same Clerk-managed user object - see
 // profile-section.tsx for why that matters for the photo/name updates.
-export function AccountView() {
+interface AccountViewProps {
+  /** Per-category envelope counts for the Categorías tab - computed
+   * server-side in account/page.tsx (this component is "use client",
+   * can't fetch async itself). */
+  categoryCounts: Record<string, number>;
+}
+
+export function AccountView({ categoryCounts }: AccountViewProps) {
   const { isLoaded, user } = useAccountUser();
   // ?section= opens straight into a specific tab instead of always
   // Perfil - used by the OAuth-linking sso-callback route
@@ -174,7 +181,7 @@ export function AccountView() {
             <ConnectedAccountsSection />
           </TabsContent>
           <TabsContent value="categories">
-            <CategoriesSection />
+            <CategoriesSection categoryCounts={categoryCounts} />
           </TabsContent>
           <TabsContent value="danger">
             <DeleteAccountSection user={user} />
