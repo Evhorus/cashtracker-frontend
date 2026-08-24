@@ -14,7 +14,15 @@ export const DashboardCurrencyTotalsSchema = z.object({
   currency: z.string(),
   totalEnvelopes: z.number(),
   totalAssigned: z.number(),
+  // Every envelope in this currency, capped or not - not the number to
+  // compare against totalAssigned/totalAvailable (see totalSpentCapped).
   totalSpent: z.number(),
+  // The portion of totalSpent that actually counts against
+  // totalAssigned (capped envelopes only) - totalAvailable is derived
+  // from this, not totalSpent. Use this alongside totalAssigned/
+  // totalAvailable; totalSpent - totalSpentCapped is what an unlimited
+  // envelope spent, shown separately since it's not part of any budget.
+  totalSpentCapped: z.number(),
   totalAvailable: z.number(),
 });
 

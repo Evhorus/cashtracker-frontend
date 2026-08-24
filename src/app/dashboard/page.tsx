@@ -85,6 +85,7 @@ export default async function DashboardPage() {
             currency={total.currency}
             totalAssigned={total.totalAssigned}
             totalSpent={total.totalSpent}
+            totalSpentCapped={total.totalSpentCapped}
             totalAvailable={total.totalAvailable}
             showCurrencyLabel={hasMultipleCurrencies}
             deltaPercent={
