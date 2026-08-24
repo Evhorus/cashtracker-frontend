@@ -15,29 +15,40 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAccountUser } from "../hooks/use-account-user";
 
+interface AccountMenuProps {
+  /** Custom trigger content, e.g. dashboard-sidebar.tsx's full identity
+   * card (avatar + name + email). Defaults to the avatar-only button
+   * custom-header.tsx has always used - passing this doesn't change that
+   * call site. Must be a single element (DropdownMenuTrigger's `render`
+   * prop, like Base UI's elsewhere), not any ReactNode. */
+  trigger?: React.ReactElement;
+}
+
 // Replaces Clerk's <UserButton> in custom-header.tsx with a dropdown built
 // from our own primitives, "consuming" Clerk only through
 // use-account-user.ts - see docs/pending-account-management.md for the
 // full reasoning. Only ever rendered once dashboard/layout.tsx has already
 // confirmed a session via auth.protect(), but isLoaded still gates the
 // brief render before Clerk's client-side user data arrives.
-export function AccountMenu() {
+export function AccountMenu({ trigger }: AccountMenuProps = {}) {
   const { isLoaded, user, isSigningOut, signOut } = useAccountUser();
 
   if (!isLoaded || !user) return null;
+
+  const defaultTrigger = (
+    <button className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <Avatar>
+        <AvatarImage src={user.imageUrl} alt={user.fullName} />
+        <AvatarFallback>{user.initials}</AvatarFallback>
+      </Avatar>
+    </button>
+  );
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label="Menú de cuenta"
-        render={
-          <button className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-            <Avatar>
-              <AvatarImage src={user.imageUrl} alt={user.fullName} />
-              <AvatarFallback>{user.initials}</AvatarFallback>
-            </Avatar>
-          </button>
-        }
+        render={trigger ?? defaultTrigger}
       />
       {/* DropdownMenuContent defaults to w-(--anchor-width) - fine for a
           menu anchored to a normal button, but the trigger here is just
