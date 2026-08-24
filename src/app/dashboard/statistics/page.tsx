@@ -7,6 +7,8 @@ import nextDynamic from "next/dynamic";
 import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CategoryBreakdown } from "@/features/categories/components/category-breakdown";
+import { CurrencyBreakdown } from "@/features/dashboard/components/currency-breakdown";
+import { cn } from "@/lib/utils";
 import type { CurrencyCode } from "@/lib/format-currency";
 
 // recharts is a heavy dependency - code-split it into its own chunk, same
@@ -67,6 +69,14 @@ export default async function StatisticsPage({
     (envelope) => envelope.currency === chartCurrency,
   );
 
+  const envelopeCounts = envelopesResult.data.reduce<Record<string, number>>(
+    (counts, envelope) => {
+      counts[envelope.currency] = (counts[envelope.currency] ?? 0) + 1;
+      return counts;
+    },
+    {},
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -102,17 +112,42 @@ export default async function StatisticsPage({
         hasOtherCurrencies={hasMultipleCurrencies}
       />
 
-      <Card className="border-0 bg-card/50 shadow-sm">
-        <CardHeader>
-          <CardTitle>Gasto por categoría</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CategoryBreakdown
-            envelopes={envelopesInChartCurrency}
-            currency={chartCurrency}
-          />
-        </CardContent>
-      </Card>
+      <div
+        className={
+          hasMultipleCurrencies ? "grid grid-cols-1 gap-6 lg:grid-cols-3" : ""
+        }
+      >
+        <Card
+          className={cn(
+            hasMultipleCurrencies && "lg:col-span-2",
+            "border-0 bg-card/50 shadow-sm",
+          )}
+        >
+          <CardHeader>
+            <CardTitle>Gasto por categoría</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CategoryBreakdown
+              envelopes={envelopesInChartCurrency}
+              currency={chartCurrency}
+            />
+          </CardContent>
+        </Card>
+
+        {hasMultipleCurrencies && (
+          <Card className="border-0 bg-card/50 shadow-sm">
+            <CardHeader>
+              <CardTitle>Por moneda</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CurrencyBreakdown
+                totals={totals}
+                envelopeCounts={envelopeCounts}
+              />
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
