@@ -22,37 +22,47 @@ export const EnvelopesGrid = ({
   return (
     <>
       {envelopes.length === 0 ? (
-        <Card className="animate-fade-in border-0 bg-card/50 p-12 text-center shadow-sm">
-          <div className="mx-auto max-w-md space-y-4">
-            {/* bg-primary-light isn't a real token (no --color-primary-light
-                anywhere in globals.css) - this rendered iconless before. */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              {searchQuery ? (
+        searchQuery ? (
+          <Card className="animate-fade-in border-0 bg-card/50 p-12 text-center shadow-sm">
+            <div className="mx-auto max-w-md space-y-4">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                 <SearchX className="h-8 w-8 text-primary" />
-              ) : (
-                <Wallet className="h-8 w-8 text-primary" />
-              )}
+              </div>
+              <h3 className="text-xl font-semibold">
+                Sin resultados para &quot;{searchQuery}&quot;
+              </h3>
+              <p className="text-muted-foreground">
+                Prueba con otro nombre o categoría.
+              </p>
             </div>
-            {searchQuery ? (
-              <>
-                <h3 className="text-xl font-semibold">
-                  Sin resultados para &quot;{searchQuery}&quot;
+          </Card>
+        ) : (
+          // First-run state - bigger and more editorial than the "no
+          // search results" case above, since this is most people's
+          // actual first screen in the app.
+          <Card className="animate-fade-in border-0 bg-card/50 px-6 py-16 text-center shadow-sm">
+            <div className="mx-auto max-w-sm space-y-5">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                <Wallet className="h-9 w-9 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+                  CashTracker
+                </p>
+                <h3 className="font-serif text-2xl font-semibold text-balance">
+                  Organiza tus gastos por sobres
                 </h3>
-                <p className="text-muted-foreground">
-                  Prueba con otro nombre o categoría.
+                <p className="text-sm text-muted-foreground">
+                  Crea un sobre para cada categoría — mercado, transporte,
+                  ocio — y CashTracker te avisa antes de que te excedas.
                 </p>
-              </>
-            ) : (
-              <>
-                <h3 className="text-xl font-semibold">No tienes sobres aún</h3>
-                <p className="text-muted-foreground">
-                  Crea tu primer sobre para comenzar a controlar tus gastos
-                </p>
+              </div>
+              <div className="flex justify-center pt-1">
                 <CreateEnvelopeDialog />
-              </>
-            )}
-          </div>
-        </Card>
+              </div>
+            </div>
+          </Card>
+        )
       ) : (
         <>
           {/* Mobile: same card grid as before. Desktop: a dense table
