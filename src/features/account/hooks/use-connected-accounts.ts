@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useReverification, useUser } from "@clerk/nextjs";
 import { isReverificationCancelledError } from "@clerk/nextjs/errors";
 
@@ -24,22 +24,52 @@ export function useConnectedAccounts() {
 
   // externalAccounts is part of the reactive user object (like
   // emailAddresses) - no separate fetch needed, unlike use-sessions.ts.
-  const connectedAccounts: ConnectedAccount[] = (
-    user?.externalAccounts ?? []
-  ).map((account) => ({
-    id: account.id,
-    providerId: account.provider,
-    label: account.providerTitle(),
-    identifier: account.accountIdentifier() || account.emailAddress,
-    imageUrl: account.imageUrl,
-  }));
+  // Denying/cancelling the provider's consent screen doesn't stop Clerk
+  // from creating the ExternalAccount record - it just leaves it
+  // "unverified" with an error attached (e.g. oauth_access_denied) and
+  // no email/identifier ever filled in. Left in, that's a permanent
+  // broken entry that reads as "connected" with nothing to show, and
+  // blocks reconnecting that same provider since connected-accounts-
+  // section.tsx hides providers it already sees as linked. The cleanup
+  // effect below destroys these as soon as they show up; filtering them
+  // out here too means the broken entry never renders even in the one
+  // render before that destroy() resolves.
+  const connectedAccounts: ConnectedAccount[] = (user?.externalAccounts ?? [])
+    .filter((account) => account.verification?.status !== "unverified")
+    .map((account) => ({
+      id: account.id,
+      providerId: account.provider,
+      label: account.providerTitle(),
+      identifier: account.accountIdentifier() || account.emailAddress,
+      imageUrl: account.imageUrl,
+    }));
+
+  useEffect(() => {
+    const failed = (user?.externalAccounts ?? []).filter(
+      (account) => account.verification?.status === "unverified",
+    );
+    // Swallow errors - this is best-effort garbage collection, not a
+    // user-facing action, so a failed destroy() here shouldn't surface
+    // as this hook's `error`. Worst case the broken entry lingers
+    // (invisible either way, filtered out above) and this retries next
+    // time externalAccounts changes.
+    failed.forEach((account) => void account.destroy().catch(() => {}));
+  }, [user?.externalAccounts]);
 
   // Linking a new provider is a sensitive action per Clerk's own
   // guidance, same reasoning (and same onNeedsReverification gate) as
-  // use-update-password.ts.
+  // use-update-password.ts. redirectUrl points at the account-scoped
+  // callback route (dashboard/account/sso-callback/page.tsx), not the
+  // sign-in/up one at /sso-callback - that one falls back to the plain
+  // dashboard, which left the user stranded there with no sign the
+  // linking attempt happened at all if it failed or got cancelled on the
+  // provider's own screen.
   const createExternalAccountWithReverification = useReverification(
     (strategy: "oauth_google" | "oauth_facebook") =>
-      user?.createExternalAccount({ strategy, redirectUrl: "/sso-callback" }),
+      user?.createExternalAccount({
+        strategy,
+        redirectUrl: "/dashboard/account/sso-callback",
+      }),
     { onNeedsReverification },
   );
 
