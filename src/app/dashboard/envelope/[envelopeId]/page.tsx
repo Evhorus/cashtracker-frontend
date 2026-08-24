@@ -20,7 +20,10 @@ import {
   Infinity as InfinityIcon,
   TriangleAlert,
 } from "lucide-react";
-import { CategoryLabel } from "@/features/categories/components/category-badge";
+import {
+  CategoryIcon,
+  CategoryLabel,
+} from "@/features/categories/components/category-badge";
 import nextDynamic from "next/dynamic";
 import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
@@ -101,6 +104,12 @@ export default async function EnvelopePage({
       <PageHeader
         title={envelope.name}
         backUrl="/dashboard/envelopes"
+        icon={
+          <CategoryIcon
+            category={envelope.category}
+            className="h-11 w-11 rounded-xl"
+          />
+        }
         description={
           // Always shows the creation month/year, not just when a
           // category is set - same reasoning as the envelope card: names
@@ -114,6 +123,10 @@ export default async function EnvelopePage({
                 <CategoryLabel category={envelope.category} />
               </>
             )}
+            <span aria-hidden="true">·</span>
+            <span className="rounded-sm bg-secondary px-1 py-0.5 font-mono text-xs text-secondary-foreground">
+              {envelope.currency}
+            </span>
           </p>
         }
         actions={

@@ -11,6 +11,10 @@ interface PageHeaderProps {
   backUrl?: string;
   actions?: ReactNode;
   mobileActions?: ReactNode;
+  /** Optional leading visual before the title - e.g. the envelope's
+   * category icon on envelope/[envelopeId]/page.tsx. Most callers don't
+   * pass this. */
+  icon?: ReactNode;
 }
 
 export const PageHeader = ({
@@ -19,6 +23,7 @@ export const PageHeader = ({
   backUrl,
   actions,
   mobileActions,
+  icon,
 }: PageHeaderProps) => {
   return (
     // items-start, not items-center: a title long enough to wrap (see the
@@ -46,6 +51,8 @@ export const PageHeader = ({
             </Button>
           </Link>
         )}
+
+        {icon && <div className="shrink-0">{icon}</div>}
 
         {/* min-w-0 is what actually lets this shrink below the title's
             natural content width inside the flex row above - without it
