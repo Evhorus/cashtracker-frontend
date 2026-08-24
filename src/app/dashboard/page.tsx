@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
 import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
+import { CurrencyFilterSelect } from "@/features/dashboard/components/currency-filter-select";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
 import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
 import { Button } from "@/components/ui/button";
@@ -32,18 +33,18 @@ export const dynamic = "force-dynamic";
 const RECENT_ENVELOPES_LIMIT = 6;
 
 interface DashboardPageProps {
-  searchParams: Promise<{ year?: string }>;
+  searchParams: Promise<{ year?: string; currency?: string }>;
 }
 
 export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
   await auth.protect();
-  const { year: yearParam } = await searchParams;
+  const { year: yearParam, currency: currencyParam } = await searchParams;
   const year = yearParam ? parseInt(yearParam, 10) || undefined : undefined;
 
   const [summary, envelopes] = await Promise.all([
-    getDashboardSummaryAction(year),
+    getDashboardSummaryAction(year, currencyParam),
     getEnvelopesAction({ limit: RECENT_ENVELOPES_LIMIT }),
   ]);
 
@@ -56,14 +57,18 @@ export default async function DashboardPage({
   // The API schema types currency as a loose string (z.string()); the
   // domain side narrows it to the known currency codes, since it's the
   // app's own form that ever writes this value - same convention as
-  // EnvelopeMapper.fromApi. Already sorted by envelope count DESC, so
-  // totals[0] is the "primary" currency both StatsCards and the chart
-  // (scoped to it on the backend - see dashboard.repository.ts) key off.
+  // EnvelopeMapper.fromApi.
   const totals = summary.totals.map((total) => ({
     ...total,
     currency: total.currency as CurrencyCode,
   }));
   const hasMultipleCurrencies = totals.length > 1;
+  // chartCurrency is whichever currency the backend actually scoped the
+  // chart to (the requested one, if the user has envelopes in it -
+  // otherwise its own fallback - see dashboard.service.ts on the
+  // backend) - not necessarily totals[0], now that CurrencyFilterSelect
+  // lets the user ask for a different one.
+  const chartCurrency = (summary.chartCurrency ?? "COP") as CurrencyCode;
 
   return (
     <div className="space-y-6">
@@ -76,12 +81,20 @@ export default async function DashboardPage({
           </p>
         </div>
 
-        {summary.availableYears.length > 0 && (
-          <YearFilterSelect
-            years={summary.availableYears}
-            selectedYear={year}
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {summary.availableYears.length > 0 && (
+            <YearFilterSelect
+              years={summary.availableYears}
+              selectedYear={year}
+            />
+          )}
+          {hasMultipleCurrencies && (
+            <CurrencyFilterSelect
+              currencies={totals.map((total) => total.currency)}
+              selectedCurrency={chartCurrency}
+            />
+          )}
+        </div>
       </div>
 
       <StatsCards totalEnvelopes={summary.totalEnvelopes} totals={totals} />
@@ -89,7 +102,7 @@ export default async function DashboardPage({
       <MonthlySpendingChart
         chartData={chartData}
         totalEnvelopes={summary.totalEnvelopes}
-        currency={totals[0]?.currency ?? "COP"}
+        currency={chartCurrency}
         hasOtherCurrencies={hasMultipleCurrencies}
       />
 
