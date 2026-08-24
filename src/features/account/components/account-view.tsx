@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   KeyRound,
   Laptop,
@@ -37,12 +38,27 @@ const SECTIONS = [
 
 type SectionValue = (typeof SECTIONS)[number]["value"];
 
+function isSectionValue(value: string | null): value is SectionValue {
+  return SECTIONS.some((s) => s.value === value);
+}
+
 // The single useAccountUser() call lives here so every section below
 // re-renders off the same Clerk-managed user object - see
 // profile-section.tsx for why that matters for the photo/name updates.
 export function AccountView() {
   const { isLoaded, user } = useAccountUser();
-  const [section, setSection] = useState<SectionValue>("profile");
+  // ?section= opens straight into a specific tab instead of always
+  // Perfil - used by the OAuth-linking sso-callback route
+  // (dashboard/account/sso-callback/page.tsx) so connecting or
+  // cancelling a provider lands back on Cuentas conectadas, not a blank
+  // Perfil tab that gives no sign the linking attempt even happened.
+  // Read once as the initial tab, not kept in sync afterward - the user
+  // is free to switch tabs from there same as always.
+  const searchParams = useSearchParams();
+  const initialSection = searchParams.get("section");
+  const [section, setSection] = useState<SectionValue>(
+    isSectionValue(initialSection) ? initialSection : "profile",
+  );
 
   if (!isLoaded || !user) {
     return (
