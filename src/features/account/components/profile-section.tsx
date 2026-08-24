@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { Camera, Loader2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -81,32 +80,41 @@ export function ProfileSection({ user }: ProfileSectionProps) {
         {photoError && <ErrorMessage>{photoError}</ErrorMessage>}
 
         <div className="flex items-center gap-4">
-          <Avatar size="lg">
-            <AvatarImage src={user.imageUrl} alt={user.fullName} />
-            <AvatarFallback>{user.initials}</AvatarFallback>
-          </Avatar>
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={onPhotoSelected}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={isUpdatingPhoto}
-              onClick={() => fileInputRef.current?.click()}
-            >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onPhotoSelected}
+          />
+          {/* Camera-badge-overlay avatar (redesign): the whole avatar is
+              the click target, badge just signals that - same
+              onPhotoSelected/isUpdatingPhoto flow as the old separate
+              "Cambiar foto" button, not a new upload path. */}
+          <button
+            type="button"
+            disabled={isUpdatingPhoto}
+            onClick={() => fileInputRef.current?.click()}
+            aria-label="Cambiar foto de perfil"
+            className="group relative shrink-0 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-70"
+          >
+            <Avatar size="lg">
+              <AvatarImage src={user.imageUrl} alt={user.fullName} />
+              <AvatarFallback>{user.initials}</AvatarFallback>
+            </Avatar>
+            <span className="absolute right-0 bottom-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-card bg-primary text-primary-foreground transition-transform group-hover:scale-110">
               {isUpdatingPhoto ? (
-                <Loader2 className="animate-spin" />
+                <Loader2 className="h-3 w-3 animate-spin" />
               ) : (
-                <Camera />
+                <Camera className="h-3 w-3" />
               )}
-              Cambiar foto
-            </Button>
+            </span>
+          </button>
+          <div>
+            <p className="text-sm font-medium">{user.fullName}</p>
+            <p className="text-xs text-muted-foreground">
+              Haz clic en la foto para cambiarla
+            </p>
           </div>
         </div>
 
