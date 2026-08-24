@@ -74,7 +74,12 @@ export function SessionsSection() {
                     type="button"
                     variant="destructive"
                     size="sm"
-                    className="w-fit"
+                    // Full width once the row has stacked (below sm:) -
+                    // a small w-fit button left-aligned under a
+                    // full-width row read as misplaced, floating with
+                    // dead space beside it. Back to fitted once the row
+                    // is side-by-side again.
+                    className="w-full sm:w-fit"
                     disabled={revokingId === session.id}
                     onClick={() => revokeSession(session.id)}
                   >
