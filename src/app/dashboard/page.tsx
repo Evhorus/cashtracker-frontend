@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { TriangleAlert, Wallet } from "lucide-react";
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
@@ -6,6 +6,7 @@ import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.a
 import { HeroBalanceCard } from "@/components/common/hero-balance-card";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { CategoryIcon } from "@/features/categories/components/category-badge";
+import { formatDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -20,7 +21,10 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   await auth.protect();
 
-  const [summary, envelopesResult] = await Promise.all([
+  const [user, summary, envelopesResult] = await Promise.all([
+    // Only the first name, for the greeting below - real Clerk profile
+    // data, not a placeholder.
+    currentUser(),
     getDashboardSummaryAction(),
     // Only real envelope data available for computing "en alerta" - the
     // summary endpoint doesn't return this, it's derived client-side the
@@ -59,10 +63,12 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Resumen</h1>
-        <p className="mt-1 text-muted-foreground">
-          Cómo van tus finanzas hoy
+        <p className="font-mono text-xs font-medium tracking-wider text-muted-foreground uppercase">
+          {formatDate(new Date())}
         </p>
+        <h1 className="mt-0.5 text-3xl font-bold">
+          {user?.firstName ? `Hola, ${user.firstName}` : "Resumen"}
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
