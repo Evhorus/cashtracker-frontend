@@ -1,15 +1,28 @@
 import { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope, Source_Serif_4, IBM_Plex_Mono } from "next/font/google";
 
-export const geistSans = Geist({
-  variable: "--font-geist-sans",
+// UI/body font - buttons, labels, nav, everything that isn't a hero
+// number or a page title.
+export const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
   display: "swap",
 });
 
-export const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Display/serif font - hero balance numbers and page titles only. Variable
+// (opsz axis), so no weight array needed.
+export const sourceSerif = Source_Serif_4({
+  variable: "--font-source-serif",
   subsets: ["latin"],
+  display: "swap",
+});
+
+// Tabular data font - amounts, percentages, dates in lists/tables. Not a
+// variable font on Google Fonts, so the weights actually used need listing.
+export const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 

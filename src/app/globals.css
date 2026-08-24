@@ -9,7 +9,7 @@
   --card-foreground: oklch(0.2079 0.0399 265.7275);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2079 0.0399 265.7275);
-  --primary: oklch(0.6273 0.17 149.2005);
+  --primary: oklch(0.6273 0.17 155);
   --primary-foreground: oklch(0.9899 0.0049 12.1788);
   --secondary: oklch(0.9684 0.0068 247.8951);
   --secondary-foreground: oklch(0.2079 0.0399 265.7275);
@@ -25,25 +25,27 @@
      needs to read as a distinct, clickable boundary, not blend in with
      --card's near-white background the way --border does. */
   --input: oklch(0.82 0.015 255.5317);
-  --ring: oklch(0.6273 0.17 149.2005);
-  --chart-1: oklch(0.6273 0.17 149.2005);
+  --ring: oklch(0.6273 0.17 155);
+  --chart-1: oklch(0.6273 0.17 155);
   --chart-2: oklch(0.546 0.2153 262.8719);
   --chart-3: oklch(0.7263 0.1249 349.3142);
   --chart-4: oklch(0.8542 0.174 90.8129);
   --chart-5: oklch(0.7828 0.0764 230.6585);
   --sidebar: oklch(0.9686 0.0035 247.859);
   --sidebar-foreground: oklch(0.2079 0.0399 265.7275);
-  --sidebar-primary: oklch(0.6273 0.17 149.2005);
+  --sidebar-primary: oklch(0.6273 0.17 155);
   --sidebar-primary-foreground: oklch(0.9899 0.0049 12.1788);
   --sidebar-accent: oklch(0.9514 0.0105 247.937);
   --sidebar-accent-foreground: oklch(0.2079 0.0399 265.7275);
   --sidebar-border: oklch(0.9006 0.0177 255.5572);
-  --sidebar-ring: oklch(0.6273 0.17 149.2005);
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-serif: ui-serif, Georgia, Cambria, Times New Roman, Times, serif;
+  --sidebar-ring: oklch(0.6273 0.17 155);
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif:
+    var(--font-source-serif), ui-serif, Georgia, Cambria, Times New Roman,
+    Times, serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono,
-    Courier New, monospace;
+    var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, Liberation Mono, Courier New, monospace;
   --radius: 0.5rem;
   --shadow-x: 0px;
   --shadow-y: 2px;
@@ -78,37 +80,43 @@
 }
 
 .dark {
-  --background: oklch(0.2079 0.0399 265.7275);
-  --foreground: oklch(0.9838 0.0035 247.8583);
-  --card: oklch(0.28 0.0369 259.974);
-  --card-foreground: oklch(0.9838 0.0035 247.8583);
-  --popover: oklch(0.28 0.0369 259.974);
-  --popover-foreground: oklch(0.9838 0.0035 247.8583);
-  --primary: oklch(0.7229 0.1921 149.5827);
+  /* Refined for the premium-redesign "glass" dark system (see the
+     CashTracker Redesign canvas): a cooler, darker neutral base with
+     alpha-based hairline borders instead of a flat mid-gray, and a
+     calmer, less neon primary (0.1921 chroma read as too saturated next
+     to the new hairlines - dialed back to 0.14, hue nudged 149.6->155 to
+     match the light-mode nudge below). --destructive/--success and the
+     sidebar tokens are untouched here - no real sidebar exists yet
+     (that's a later phase), and destructive/success weren't part of this
+     pass. */
+  --background: oklch(0.14 0.016 260);
+  --foreground: oklch(0.96 0.004 260);
+  --card: oklch(0.175 0.017 260);
+  --card-foreground: oklch(0.96 0.004 260);
+  --popover: oklch(0.175 0.017 260);
+  --popover-foreground: oklch(0.96 0.004 260);
+  --primary: oklch(0.72 0.14 155);
   --primary-foreground: oklch(0.9827 0.0234 152.1196);
-  /* Light mode gives secondary/muted/accent a real gap below --card
-     (0.9684 vs 1.0) - dark mode had them at the exact same value as
-     --card/--popover (0.28), so any hover/focus state painted with them
-     (ghost buttons, dropdown items, select items...) on a card or popover
-     was invisible, and the whole UI read as one flat surface. Lightened
-     them to restore that same elevation gap, just inverted (lighter, not
-     darker, since dark-mode elevation goes the other way). */
-  --secondary: oklch(0.34 0.0369 259.974);
-  --secondary-foreground: oklch(0.9838 0.0035 247.8583);
-  --muted: oklch(0.34 0.0369 259.974);
-  --muted-foreground: oklch(0.7107 0.0351 256.7877);
-  --accent: oklch(0.34 0.0369 259.974);
-  --accent-foreground: oklch(0.9838 0.0035 247.8583);
+  /* Elevation step above --card (0.175), same "keep hover/focus visible
+     against a card or popover" reasoning as before, just recentered on
+     the new darker base. */
+  --secondary: oklch(0.22 0.02 260);
+  --secondary-foreground: oklch(0.96 0.004 260);
+  --muted: oklch(0.22 0.02 260);
+  --muted-foreground: oklch(0.65 0.02 260);
+  --accent: oklch(0.22 0.02 260);
+  --accent-foreground: oklch(0.96 0.004 260);
   --destructive: oklch(0.6368 0.2078 25.3259);
   --destructive-foreground: oklch(0.9838 0.0035 247.8583);
-  --border: oklch(0.28 0.0369 259.974);
-  /* Same reasoning as the light-mode --input above, inverted: in dark
-     mode --border matches --card exactly (0.28), so a field border using
-     it disappears against the card. Lighten --input well past --card and
-     --background so editable fields stay visible on both. */
-  --input: oklch(0.42 0.04 259.974);
-  --ring: oklch(0.7229 0.1921 149.5827);
-  --chart-1: oklch(0.7229 0.1921 149.5827);
+  /* Alpha-based hairline instead of a flat color - this is what gives
+     cards/inputs their "glass" edge over whatever surface they sit on,
+     matching the mockup. --input stays more opaque than --border so an
+     editable field still reads as a distinct, clickable boundary against
+     a card (same convention as the light-mode --input comment below). */
+  --border: oklch(1 0 0 / 0.08);
+  --input: oklch(1 0 0 / 0.14);
+  --ring: oklch(0.72 0.14 155);
+  --chart-1: oklch(0.72 0.14 155);
   --chart-2: oklch(0.546 0.2153 262.8719);
   --chart-3: oklch(0.7263 0.1249 349.3142);
   --chart-4: oklch(0.8542 0.174 90.8129);
@@ -121,11 +129,13 @@
   --sidebar-accent-foreground: oklch(0.9838 0.0035 247.8583);
   --sidebar-border: oklch(0.3037 0.0413 259.9592);
   --sidebar-ring: oklch(0.7229 0.1921 149.5827);
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-serif: ui-serif, Georgia, Cambria, Times New Roman, Times, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif:
+    var(--font-source-serif), ui-serif, Georgia, Cambria, Times New Roman,
+    Times, serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono,
-    Courier New, monospace;
+    var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, Liberation Mono, Courier New, monospace;
   --shadow-x: 0px;
   --shadow-y: 4px;
   --shadow-blur: 10px;
@@ -231,9 +241,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
+    @apply bg-background text-foreground font-sans;
   }
 }
