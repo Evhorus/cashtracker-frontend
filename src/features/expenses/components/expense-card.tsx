@@ -1,7 +1,7 @@
 "use client";
 
 import { Expense } from "@/features/expenses/types";
-import { Calendar, Edit, Receipt, Trash2 } from "lucide-react";
+import { Calendar, Edit, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
@@ -51,18 +51,24 @@ export const ExpenseCard = ({
 
   return (
     <>
+      {/* No left-border accent bar - same reasoning as envelope-card.tsx.
+          border/60 replaces border-0 as the "this card is its own
+          thing" cue instead. */}
       <Card
-        className="group relative overflow-hidden border-0 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg"
+        className="group relative overflow-hidden border-border/60 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg"
         onClick={handleCardClick}
       >
-        <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/60 transition-colors duration-300 group-hover:bg-primary" />
-
         <CardContent className="p-5">
           <div className="flex items-center gap-4">
-            {/* Icon Container */}
+            {/* First-letter avatar instead of a generic receipt icon
+                repeated identically on every row - lets a scanned list
+                of expense names actually be scannable by more than just
+                their text. */}
             <div className="shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform duration-300 group-hover:scale-110">
-                <Receipt className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform duration-300 group-hover:scale-110">
+                <span className="font-mono text-lg font-semibold">
+                  {expense.name.trim().charAt(0).toUpperCase() || "?"}
+                </span>
               </div>
             </div>
 
