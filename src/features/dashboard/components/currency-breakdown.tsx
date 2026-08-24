@@ -3,7 +3,14 @@ import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-cu
 interface CurrencyTotal {
   currency: CurrencyCode;
   totalAssigned: number;
+  /** Every envelope in this currency, capped or not - never used for the
+   * headline figure below (see totalSpentCapped, same reasoning as
+   * HeroBalanceCard). */
   totalSpent: number;
+  /** Spend within capped envelopes only - what "de X presupuestados"
+   * actually measures against, so this is the headline figure instead
+   * of totalSpent. */
+  totalSpentCapped: number;
 }
 
 interface CurrencyBreakdownProps {
@@ -25,6 +32,11 @@ export function CurrencyBreakdown({ totals, envelopeCounts }: CurrencyBreakdownP
       {totals.map((total) => {
         const config = CURRENCY_MAP[total.currency];
         const count = envelopeCounts[total.currency] ?? 0;
+        // Same reasoning as HeroBalanceCard's unlimitedSpent - money
+        // spent outside any budget, real but not part of "de X
+        // presupuestados" below, so it's called out on its own line
+        // instead of silently folded into the headline figure.
+        const unlimitedSpent = total.totalSpent - total.totalSpentCapped;
         return (
           <div
             key={total.currency}
@@ -39,11 +51,20 @@ export function CurrencyBreakdown({ totals, envelopeCounts }: CurrencyBreakdownP
               </span>
             </div>
             <p className="mt-2.5 font-mono text-lg font-semibold">
-              {formatCurrency(total.totalSpent, config)}
+              {formatCurrency(total.totalSpentCapped, config)}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
               de {formatCurrency(total.totalAssigned, config)} presupuestados
             </p>
+            {unlimitedSpent > 0 && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                +{" "}
+                <b className="font-mono font-semibold text-foreground">
+                  {formatCurrency(unlimitedSpent, config)}
+                </b>{" "}
+                en sobres sin límite
+              </p>
+            )}
           </div>
         );
       })}

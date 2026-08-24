@@ -6,7 +6,13 @@ import { cn } from "@/lib/utils";
 interface HeroBalanceCardProps {
   currency: CurrencyCode;
   totalAssigned: number;
+  /** Every envelope in this currency, capped or not - never used for
+   * the Gastado figure or the progress bar below (see totalSpentCapped). */
   totalSpent: number;
+  /** Spend within capped envelopes only - what totalAvailable is
+   * actually derived from, so this (not totalSpent) is what "Gastado"
+   * and the progress bar need to stay consistent with Disponible. */
+  totalSpentCapped: number;
   totalAvailable: number;
   /** Real month-over-month change in "disponible", derived from the last
    * two entries of the dashboard summary's monthly chart - only ever
@@ -27,6 +33,7 @@ export function HeroBalanceCard({
   currency,
   totalAssigned,
   totalSpent,
+  totalSpentCapped,
   totalAvailable,
   deltaPercent,
   showCurrencyLabel,
@@ -34,8 +41,13 @@ export function HeroBalanceCard({
   const config = CURRENCY_MAP[currency];
   const percentage =
     totalAssigned > 0
-      ? Math.min((totalSpent / totalAssigned) * 100, 100)
+      ? Math.min((totalSpentCapped / totalAssigned) * 100, 100)
       : 0;
+  // Spent in envelopes with no limit - real money, just not part of any
+  // budget, so it can't be folded into Gastado/percentage above without
+  // making them inconsistent with Disponible (see totalSpentCapped's
+  // doc comment). Surfaced as its own line instead of hidden.
+  const unlimitedSpent = totalSpent - totalSpentCapped;
 
   return (
     <div className="rounded-2xl border border-border/60 bg-card/50 p-6 shadow-sm">
@@ -79,12 +91,27 @@ export function HeroBalanceCard({
             <span>
               Gastado{" "}
               <b className="font-mono font-semibold text-foreground">
-                {formatCurrency(totalSpent, config)}
+                {formatCurrency(totalSpentCapped, config)}
               </b>
             </span>
             <span>{percentage.toFixed(0)}% del presupuesto</span>
           </div>
         </>
+      )}
+
+      {unlimitedSpent > 0 && (
+        <p
+          className={cn(
+            "text-xs text-muted-foreground",
+            totalAssigned > 0 ? "mt-1.5" : "mt-4",
+          )}
+        >
+          +{" "}
+          <b className="font-mono font-semibold text-foreground">
+            {formatCurrency(unlimitedSpent, config)}
+          </b>{" "}
+          en sobres sin límite
+        </p>
       )}
     </div>
   );
