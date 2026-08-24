@@ -2,8 +2,10 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { TriangleAlert, Wallet } from "lucide-react";
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dashboard-summary.action";
+import { getRecentExpensesAction } from "@/features/dashboard/actions/get-recent-expenses.action";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { HeroBalanceCard } from "@/components/common/hero-balance-card";
+import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { CategoryIcon } from "@/features/categories/components/category-badge";
 import { formatDate } from "@/lib/date-helpers";
@@ -21,7 +23,7 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   await auth.protect();
 
-  const [user, summary, envelopesResult] = await Promise.all([
+  const [user, summary, envelopesResult, recentExpenses] = await Promise.all([
     // Only the first name, for the greeting below - real Clerk profile
     // data, not a placeholder.
     currentUser(),
@@ -30,6 +32,10 @@ export default async function DashboardPage() {
     // summary endpoint doesn't return this, it's derived client-side the
     // same way statistics/page.tsx derives its category breakdown.
     getEnvelopesAction({ limit: 100 }),
+    // For the "Actividad reciente" widget below - the last few expenses
+    // across every envelope, own endpoint since it's cross-envelope data
+    // the summary/envelope-list responses don't carry.
+    getRecentExpensesAction(5),
   ]);
 
   const totals = summary.totals.map((total) => ({
@@ -172,6 +178,8 @@ export default async function DashboardPage() {
           </div>
         </div>
       )}
+
+      <RecentActivity expenses={recentExpenses} />
     </div>
   );
 }

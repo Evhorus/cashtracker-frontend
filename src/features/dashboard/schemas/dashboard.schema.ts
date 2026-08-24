@@ -36,3 +36,27 @@ export const DashboardSummaryAPIResponseSchema = z.object({
 export type DashboardSummary = z.infer<
   typeof DashboardSummaryAPIResponseSchema
 >;
+
+// The "Actividad reciente" widget on Resumen - most recent expenses
+// across every envelope, not scoped to one. Separate from
+// ExpenseAPIResponseSchema (expenses.schema.ts): this is a
+// cross-envelope reporting shape (envelopeId/envelopeName instead of a
+// route param), amount already a number (the backend's own aggregate,
+// not a pass-through of the decimal column's string form).
+export const DashboardRecentExpenseAPISchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  amount: z.number(),
+  currency: z.string(),
+  date: z.string(),
+  envelopeId: z.string(),
+  envelopeName: z.string(),
+});
+
+export const DashboardRecentExpensesAPIResponseSchema = z.array(
+  DashboardRecentExpenseAPISchema,
+);
+
+export type DashboardRecentExpenseApi = z.infer<
+  typeof DashboardRecentExpenseAPISchema
+>;

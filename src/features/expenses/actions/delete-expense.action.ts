@@ -43,6 +43,7 @@ export const deleteExpenseAction = async (
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
     revalidateTag("all-envelopes", "max");
     revalidateTag("dashboard-summary", "max");
+    revalidateTag("dashboard-recent-expenses", "max");
 
     return {
       success: "Gasto eliminado correctamente.",
