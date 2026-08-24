@@ -20,6 +20,20 @@ export default function StatisticsLoadingSkeleton() {
           <Skeleton className="h-64 w-full sm:h-80" />
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Gasto por categoría</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i}>
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="mt-1.5 h-1.5 w-full rounded-full" />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }
