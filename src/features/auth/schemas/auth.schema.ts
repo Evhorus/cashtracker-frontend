@@ -16,7 +16,10 @@ const confirmPasswordSchema = z
   .string()
   .min(1, { message: "Confirma tu contraseña" });
 
-const codeSchema = z
+// Exported - features/account/schemas/account.schema.ts reuses this for
+// the reverification dialog's email_code step, same 6-digit shape, one
+// definition instead of two.
+export const codeSchema = z
   .string()
   .min(1, { message: "Ingresa el código" })
   .regex(/^\d{6}$/, { message: "El código debe tener 6 dígitos" });
@@ -34,9 +37,7 @@ export const signInPasswordFormSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, { message: "Ingresa tu contraseña" }),
 });
-export type SignInPasswordFormValues = z.infer<
-  typeof signInPasswordFormSchema
->;
+export type SignInPasswordFormValues = z.infer<typeof signInPasswordFormSchema>;
 
 export const codeFormSchema = z.object({
   code: codeSchema,

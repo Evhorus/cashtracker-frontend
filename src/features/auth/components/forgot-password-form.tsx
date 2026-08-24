@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { SubmitButton } from "@/components/common/submit-button";
 import { ErrorMessage } from "@/components/common/error-message";
 import { FormInput } from "@/components/common/form-input";
+import { OtpInput } from "@/components/common/otp-input";
 import {
   Card,
   CardContent,
@@ -16,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { useForgotPassword } from "../hooks/use-forgot-password";
 import {
   type CodeFormValues,
@@ -123,14 +125,27 @@ export function ForgotPasswordForm() {
             onSubmit={codeForm.handleSubmit(onVerifyCode)}
             className="grid gap-y-4"
           >
-            <FormInput
+            <Controller
               control={codeForm.control}
               name="code"
-              label="Código"
-              placeholder="123456"
-              autoComplete="one-time-code"
-              disabled={isSubmitting}
-              serverError={fieldErrors.code}
+              render={({ field, fieldState }) => {
+                const message = fieldState.error?.message ?? fieldErrors.code;
+                return (
+                  <Field>
+                    <FieldLabel htmlFor="code">Código</FieldLabel>
+                    <OtpInput
+                      id="code"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      disabled={isSubmitting}
+                      autoFocus
+                      aria-invalid={fieldState.invalid || !!fieldErrors.code}
+                    />
+                    {message && <FieldError>{message}</FieldError>}
+                  </Field>
+                );
+              }}
             />
             <SubmitButton
               type="submit"

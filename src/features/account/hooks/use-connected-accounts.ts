@@ -8,6 +8,7 @@ import { toClerkStrategy } from "@/features/auth/lib/oauth-strategy";
 import type { OAuthProvider } from "@/features/auth/types";
 
 import type { ConnectedAccount } from "../types";
+import { useReverificationGate } from "./use-reverification-gate";
 
 // Reuses features/auth's OAuthProvider type and Clerk-strategy mapping -
 // "which OAuth providers this app offers" is one list, not two: the same
@@ -15,6 +16,7 @@ import type { ConnectedAccount } from "../types";
 // linking a provider to an already-signed-in user here instead.
 export function useConnectedAccounts() {
   const { user } = useUser();
+  const onNeedsReverification = useReverificationGate();
   const [connectingProvider, setConnectingProvider] =
     useState<OAuthProvider | null>(null);
   const [disconnectingId, setDisconnectingId] = useState<string | null>(null);
@@ -33,10 +35,12 @@ export function useConnectedAccounts() {
   }));
 
   // Linking a new provider is a sensitive action per Clerk's own
-  // guidance, same reasoning as use-update-password.ts.
+  // guidance, same reasoning (and same onNeedsReverification gate) as
+  // use-update-password.ts.
   const createExternalAccountWithReverification = useReverification(
     (strategy: "oauth_google" | "oauth_facebook") =>
       user?.createExternalAccount({ strategy, redirectUrl: "/sso-callback" }),
+    { onNeedsReverification },
   );
 
   async function connectProvider(provider: OAuthProvider) {

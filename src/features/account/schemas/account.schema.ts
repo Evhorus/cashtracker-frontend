@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { codeSchema } from "@/features/auth/schemas/auth.schema";
+
 // Mirrors the floor set in features/auth/schemas/auth.schema.ts - not
 // Clerk's actual password policy (server-side, configurable in the
 // Dashboard), just enough to stop an obviously-too-short password from
@@ -45,3 +47,21 @@ export const passwordFormSchema = z
     path: ["confirmPassword"],
   });
 export type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+
+/*
+ * Reverification (ReverificationDialog - see use-reverification-flow.ts)
+ */
+
+export const reverificationPasswordFormSchema = z.object({
+  password: z.string().min(1, { message: "Ingresa tu contraseña" }),
+});
+export type ReverificationPasswordFormValues = z.infer<
+  typeof reverificationPasswordFormSchema
+>;
+
+export const reverificationCodeFormSchema = z.object({
+  code: codeSchema,
+});
+export type ReverificationCodeFormValues = z.infer<
+  typeof reverificationCodeFormSchema
+>;

@@ -50,7 +50,11 @@ export function SessionsSection() {
                     <DeviceIcon className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="min-w-0">
-                    <p className="flex flex-wrap items-center gap-2 truncate text-sm font-medium">
+                    {/* No truncate here - identifying whether a session is
+                        suspicious depends on reading this in full, so it
+                        wraps to another line instead of hiding behind an
+                        ellipsis (same criterion as envelope-card.tsx). */}
+                    <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
                       {session.browser} · {session.device}
                       {session.isCurrent && (
                         <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
@@ -58,7 +62,7 @@ export function SessionsSection() {
                         </span>
                       )}
                     </p>
-                    <p className="truncate text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {session.location} · activo{" "}
                       {formatRelativeTime(session.lastActiveAt)}
                     </p>
@@ -68,7 +72,7 @@ export function SessionsSection() {
                 {!session.isCurrent && (
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
                     className="w-fit"
                     disabled={revokingId === session.id}

@@ -6,14 +6,17 @@ import { isReverificationCancelledError } from "@clerk/nextjs/errors";
 
 import type { AccountActionResult, PasswordFieldErrors } from "../types";
 import { mapClerkError } from "./map-clerk-error";
+import { useReverificationGate } from "./use-reverification-gate";
 
 // Password changes are a sensitive action per Clerk's own guidance
 // (https://clerk.com/docs/guides/secure/reverification), so the actual
-// updatePassword() call is wrapped in useReverification() - Clerk shows
-// its own modal asking the user to re-enter their password before the
-// call goes through, no custom UI needed here.
+// updatePassword() call is wrapped in useReverification(). Passing
+// onNeedsReverification opts out of Clerk's own reverification modal -
+// ReverificationDialog (our own UI, rendered by ReverificationProvider)
+// asks for it instead. See use-reverification-gate.ts.
 export function useUpdatePassword() {
   const { user } = useUser();
+  const onNeedsReverification = useReverificationGate();
   const [isUpdating, setIsUpdating] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<PasswordFieldErrors>({});
   const [globalErrors, setGlobalErrors] = useState<string[]>([]);
@@ -25,6 +28,7 @@ export function useUpdatePassword() {
         newPassword: params.newPassword,
         signOutOfOtherSessions: true,
       }),
+    { onNeedsReverification },
   );
 
   async function updatePassword(values: {
