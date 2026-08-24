@@ -66,6 +66,39 @@ export default async function DashboardPage() {
     .filter(({ status }) => status === "warning" || status === "exceeded")
     .sort((a, b) => b.percentage - a.percentage);
 
+  // Built once, reused in both layouts below - with one currency they
+  // move up alongside the lone hero card instead of sitting in their
+  // own full-width row (see the flex-wrap comment further down).
+  const sobresActivosTile = (
+    <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <Wallet className="h-4 w-4" />
+      </div>
+      <span className="text-sm text-muted-foreground">Sobres activos</span>
+      <span className="ml-auto font-mono text-lg font-semibold">
+        {summary.totalEnvelopes}
+      </span>
+    </div>
+  );
+
+  const enAlertaTile = (
+    <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
+      <div
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+          alertEnvelopes.length > 0
+            ? "bg-amber-500/10 text-amber-500"
+            : "bg-muted text-muted-foreground"
+        }`}
+      >
+        <TriangleAlert className="h-4 w-4" />
+      </div>
+      <span className="text-sm text-muted-foreground">En alerta</span>
+      <span className="ml-auto font-mono text-lg font-semibold">
+        {alertEnvelopes.length}
+      </span>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <div>
@@ -84,54 +117,60 @@ export default async function DashboardPage() {
           content just spread thinner (an odd count, e.g. 3 currencies)
           - neither looked right. Each card gets a fixed, content-sized
           width instead of a stretchy one, so it's the same size
-          regardless of how many there are; any leftover space in the
-          row is just page margin, not an implied "missing card". */}
-      <div className="flex flex-wrap gap-4">
-        {totals.map((total) => (
+          regardless of how many there are.
+          With exactly one currency, that leaves the other half of the
+          row empty - Sobres activos/En alerta move up into it instead
+          of sitting in their own full-width row below, so the space
+          left by the hero card actually gets used. items-start so that
+          shorter two-tile column doesn't get stretched to the hero
+          card's height. */}
+      {totals.length === 1 ? (
+        <div className="flex flex-wrap items-start gap-4">
           <HeroBalanceCard
-            key={total.currency}
-            currency={total.currency}
-            totalAssigned={total.totalAssigned}
-            totalSpent={total.totalSpent}
-            totalSpentCapped={total.totalSpentCapped}
-            totalAvailable={total.totalAvailable}
+            currency={totals[0].currency}
+            totalAssigned={totals[0].totalAssigned}
+            totalSpent={totals[0].totalSpent}
+            totalSpentCapped={totals[0].totalSpentCapped}
+            totalAvailable={totals[0].totalAvailable}
             deltaPercent={
-              total.currency === summary.chartCurrency ? deltaPercent : null
+              totals[0].currency === summary.chartCurrency
+                ? deltaPercent
+                : null
             }
             className="w-full md:w-[calc(50%-0.5rem)]"
           />
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Wallet className="h-4 w-4" />
+          <div className="flex w-full flex-col gap-4 md:w-[calc(50%-0.5rem)]">
+            {sobresActivosTile}
+            {enAlertaTile}
           </div>
-          <span className="text-sm text-muted-foreground">
-            Sobres activos
-          </span>
-          <span className="ml-auto font-mono text-lg font-semibold">
-            {summary.totalEnvelopes}
-          </span>
         </div>
-
-        <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
-          <div
-            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-              alertEnvelopes.length > 0
-                ? "bg-amber-500/10 text-amber-500"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            <TriangleAlert className="h-4 w-4" />
+      ) : (
+        <>
+          <div className="flex flex-wrap gap-4">
+            {totals.map((total) => (
+              <HeroBalanceCard
+                key={total.currency}
+                currency={total.currency}
+                totalAssigned={total.totalAssigned}
+                totalSpent={total.totalSpent}
+                totalSpentCapped={total.totalSpentCapped}
+                totalAvailable={total.totalAvailable}
+                deltaPercent={
+                  total.currency === summary.chartCurrency
+                    ? deltaPercent
+                    : null
+                }
+                className="w-full md:w-[calc(50%-0.5rem)]"
+              />
+            ))}
           </div>
-          <span className="text-sm text-muted-foreground">En alerta</span>
-          <span className="ml-auto font-mono text-lg font-semibold">
-            {alertEnvelopes.length}
-          </span>
-        </div>
-      </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {sobresActivosTile}
+            {enAlertaTile}
+          </div>
+        </>
+      )}
 
       {(alertEnvelopes.length > 0 || recentExpenses.length > 0) && (
         // Side by side on desktop instead of both stacked full-width -
