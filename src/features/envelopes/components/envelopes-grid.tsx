@@ -21,9 +21,11 @@ export const EnvelopesGrid = ({
   return (
     <>
       {envelopes.length === 0 ? (
-        <Card className="animate-fade-in p-12 text-center">
+        <Card className="animate-fade-in border-0 bg-card/50 p-12 text-center shadow-sm">
           <div className="mx-auto max-w-md space-y-4">
-            <div className="bg-primary-light mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+            {/* bg-primary-light isn't a real token (no --color-primary-light
+                anywhere in globals.css) - this rendered iconless before. */}
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               {searchQuery ? (
                 <SearchX className="h-8 w-8 text-primary" />
               ) : (

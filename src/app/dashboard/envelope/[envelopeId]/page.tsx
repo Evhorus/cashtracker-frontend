@@ -15,7 +15,11 @@ import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { formatMonthYear } from "@/lib/date-helpers";
 import { cn } from "@/lib/utils";
 
-import { DollarSign, Infinity as InfinityIcon } from "lucide-react";
+import {
+  DollarSign,
+  Infinity as InfinityIcon,
+  TriangleAlert,
+} from "lucide-react";
 import { CategoryLabel } from "@/features/categories/components/category-badge";
 import nextDynamic from "next/dynamic";
 import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
@@ -175,6 +179,17 @@ export default async function EnvelopePage({
                   spent={+envelope.spent}
                   total={+envelope.amount!}
                 />
+              )}
+
+              {status === "exceeded" && (
+                <div className="flex items-center gap-2.5 rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5">
+                  <TriangleAlert className="h-4 w-4 shrink-0 text-destructive" />
+                  <p className="text-sm font-medium text-destructive">
+                    Te excediste por{" "}
+                    {formatCurrency(Math.abs(remaining ?? 0), currencyConfig)}{" "}
+                    este mes
+                  </p>
+                </div>
               )}
 
               <dl className="divide-y divide-border/60">
