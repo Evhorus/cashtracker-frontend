@@ -20,9 +20,6 @@ interface HeroBalanceCardProps {
    * dashboard/page.tsx). Never fabricated for the others; omitted there
    * instead of showing a made-up number. */
   deltaPercent?: number | null;
-  /** Shown next to the label once there's more than one currency, so
-   * stacked hero cards don't read as duplicates of each other. */
-  showCurrencyLabel?: boolean;
 }
 
 // The redesign's "hero" treatment for the Resumen page - previously this
@@ -36,7 +33,6 @@ export function HeroBalanceCard({
   totalSpentCapped,
   totalAvailable,
   deltaPercent,
-  showCurrencyLabel,
 }: HeroBalanceCardProps) {
   const config = CURRENCY_MAP[currency];
   const percentage =
@@ -53,7 +49,11 @@ export function HeroBalanceCard({
     <div className="rounded-2xl border border-border/60 bg-card/50 p-6 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-          Disponible este mes{showCurrencyLabel ? ` · ${currency}` : ""}
+          {/* Always shown, even with a single currency in play - money
+              amounts read as ambiguous without it (is this pesos or
+              dollars?), and a user with one currency today may add a
+              second one later without this label suddenly appearing. */}
+          Disponible este mes · {currency}
         </span>
         {deltaPercent != null && (
           <span
