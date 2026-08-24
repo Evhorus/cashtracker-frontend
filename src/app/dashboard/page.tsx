@@ -130,7 +130,12 @@ export default async function DashboardPage() {
         // horizontal space either side of their actual content. Whichever
         // one is empty (either can be, independently) lets the other take
         // the full row instead of leaving a blank column next to it.
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        // items-start so the two cards size to their own content instead
+        // of Grid's default stretch - "Sobres en alerta" is capped at 3
+        // rows and "Actividad reciente" at 5, so they're rarely the same
+        // height, and stretching the shorter one to match just pads it
+        // with dead space instead of growing each independently.
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
           {alertEnvelopes.length > 0 && (
             <div
               className={cn(
