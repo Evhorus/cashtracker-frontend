@@ -20,6 +20,9 @@ interface HeroBalanceCardProps {
    * dashboard/page.tsx). Never fabricated for the others; omitted there
    * instead of showing a made-up number. */
   deltaPercent?: number | null;
+  /** Lets the parent grid span this card across both columns when it's
+   * the odd one out in its row - see dashboard/page.tsx. */
+  className?: string;
 }
 
 // The redesign's "hero" treatment for the Resumen page - previously this
@@ -33,6 +36,7 @@ export function HeroBalanceCard({
   totalSpentCapped,
   totalAvailable,
   deltaPercent,
+  className,
 }: HeroBalanceCardProps) {
   const config = CURRENCY_MAP[currency];
   const percentage =
@@ -46,7 +50,12 @@ export function HeroBalanceCard({
   const unlimitedSpent = totalSpent - totalSpentCapped;
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card/50 p-6 shadow-sm">
+    <div
+      className={cn(
+        "rounded-2xl border border-border/60 bg-card/50 p-6 shadow-sm",
+        className,
+      )}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
           {/* Always shown, even with a single currency in play - money
