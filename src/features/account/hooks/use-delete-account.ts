@@ -7,17 +7,22 @@ import { isReverificationCancelledError } from "@clerk/nextjs/errors";
 
 import type { AccountActionResult } from "../types";
 import { mapClerkError } from "./map-clerk-error";
+import { useReverificationGate } from "./use-reverification-gate";
 
 // Destructive and irreversible, so - like use-update-password.ts - the
 // actual delete() call goes through useReverification() rather than
-// trusting a still-fresh session alone.
+// trusting a still-fresh session alone. Same onNeedsReverification gate
+// as that hook - see use-reverification-gate.ts.
 export function useDeleteAccount() {
   const { user } = useUser();
   const router = useRouter();
+  const onNeedsReverification = useReverificationGate();
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deleteWithReverification = useReverification(() => user?.delete());
+  const deleteWithReverification = useReverification(() => user?.delete(), {
+    onNeedsReverification,
+  });
 
   async function deleteAccount(): Promise<AccountActionResult> {
     if (!user) return { error: "No hay una sesión activa" };
