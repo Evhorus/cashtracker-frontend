@@ -56,9 +56,12 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
       : "text-primary";
 
   return (
-    <Card className="group relative h-full overflow-hidden border-0 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
-      <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/60 transition-colors duration-300 group-hover:bg-primary" />
-
+    // No left-border accent bar - a flat color stripe down the side of
+    // every card read as generic template chrome, not something specific
+    // to this app (see the redesign notes on avoiding that pattern).
+    // border/60 (was border-0) does the "this card is its own thing"
+    // job instead, as a hairline all the way around.
+    <Card className="group relative h-full overflow-hidden border-border/60 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
       <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       <CardHeader className="relative z-10 flex flex-row items-start justify-between gap-2 space-y-0 pb-3">
