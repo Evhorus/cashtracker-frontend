@@ -77,18 +77,17 @@ export default async function DashboardPage() {
         </h1>
       </div>
 
-      {/* 2-col only once there's more than one currency to actually fill
-          the second column - a lone card in a 2-col grid otherwise left
-          an empty half. With an odd count > 1 (3 currencies), the last
-          card spans both columns instead of sitting alone next to a
-          blank cell in its own row. */}
-      <div
-        className={cn(
-          "grid grid-cols-1 gap-4",
-          totals.length > 1 && "md:grid-cols-2",
-        )}
-      >
-        {totals.map((total, index) => (
+      {/* flex-wrap instead of a fixed grid-cols-2: a CSS Grid track
+          stretches to fill its column no matter how little content is
+          in it, which either left a blank second column (1 currency)
+          or blew up a lone card to full width with the same sparse
+          content just spread thinner (an odd count, e.g. 3 currencies)
+          - neither looked right. Each card gets a fixed, content-sized
+          width instead of a stretchy one, so it's the same size
+          regardless of how many there are; any leftover space in the
+          row is just page margin, not an implied "missing card". */}
+      <div className="flex flex-wrap gap-4">
+        {totals.map((total) => (
           <HeroBalanceCard
             key={total.currency}
             currency={total.currency}
@@ -99,12 +98,7 @@ export default async function DashboardPage() {
             deltaPercent={
               total.currency === summary.chartCurrency ? deltaPercent : null
             }
-            className={cn(
-              totals.length > 1 &&
-                totals.length % 2 === 1 &&
-                index === totals.length - 1 &&
-                "md:col-span-2",
-            )}
+            className="w-full md:w-[calc(50%-0.5rem)]"
           />
         ))}
       </div>
