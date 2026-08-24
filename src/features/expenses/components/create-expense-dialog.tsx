@@ -1,14 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
 import { Button } from "@/components/ui/button";
 import { useActionDialog } from "@/hooks/useActionDialog";
 import { ExpenseForm } from "./expense-form";
@@ -43,29 +36,25 @@ export const CreateExpenseDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button variant="default" size="lg">
-            <Plus />
-            <span className="hidden sm:inline-block">Agregar Gasto</span>
-          </Button>
-        }
+    <ResponsiveFormSheet
+      open={open}
+      onOpenChange={setOpen}
+      title="Agregar Nuevo Gasto"
+      description="Completa el formulario para registrar un nuevo gasto en este sobre"
+      dialogClassName="sm:max-w-125"
+      trigger={
+        <Button variant="default" size="lg">
+          <Plus />
+          <span className="hidden sm:inline-block">Agregar Gasto</span>
+        </Button>
+      }
+    >
+      <ExpenseForm
+        currency={currency}
+        onSubmit={handleCreate}
+        isLoading={isPending}
+        onCloseDialog={() => setOpen(false)}
       />
-      <DialogContent className="sm:max-w-125">
-        <DialogHeader>
-          <DialogTitle>Agregar Nuevo Gasto</DialogTitle>
-          <DialogDescription>
-            Completa el formulario para registrar un nuevo gasto en este sobre
-          </DialogDescription>
-        </DialogHeader>
-        <ExpenseForm
-          currency={currency}
-          onSubmit={handleCreate}
-          isLoading={isPending}
-          onCloseDialog={() => setOpen(false)}
-        />
-      </DialogContent>
-    </Dialog>
+    </ResponsiveFormSheet>
   );
 };
