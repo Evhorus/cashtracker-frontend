@@ -33,6 +33,16 @@ export function formatMonthYear(dateInput: Date | string | number): string {
   });
 }
 
+/** Compact "d MMM" form (e.g. "12 ago") - for a dense list of dated rows
+ * (the dashboard's "Actividad reciente" widget), where even
+ * formatMonthYear's "mmm yyyy" is more than the row needs: same year is
+ * implied by context, the day is what actually varies row to row. */
+export function formatShortDate(dateInput: Date | string | number): string {
+  return format(toDeviceTimeZone(parseDateInput(dateInput)), "d MMM", {
+    locale: es,
+  });
+}
+
 /** Relative form (e.g. "hace 3 horas") - for activity timestamps (session
  * last-active) where the exact date matters less than how recent it was.
  * No timezone conversion needed, unlike the helpers above: the diff
