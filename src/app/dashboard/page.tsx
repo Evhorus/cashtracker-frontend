@@ -43,7 +43,6 @@ export default async function DashboardPage() {
     ...total,
     currency: total.currency as CurrencyCode,
   }));
-  const hasMultipleCurrencies = totals.length > 1;
 
   // Real month-over-month change, not a placeholder: the last two months
   // of the summary's own chart, for whichever currency that chart is
@@ -87,7 +86,6 @@ export default async function DashboardPage() {
             totalSpent={total.totalSpent}
             totalSpentCapped={total.totalSpentCapped}
             totalAvailable={total.totalAvailable}
-            showCurrencyLabel={hasMultipleCurrencies}
             deltaPercent={
               total.currency === summary.chartCurrency ? deltaPercent : null
             }
