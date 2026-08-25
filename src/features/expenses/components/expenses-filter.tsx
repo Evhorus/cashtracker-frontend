@@ -31,7 +31,10 @@ export const ExpensesFilter = () => {
   const [, startTransition] = useTransition();
   const searchTimeout = useRef<number | null>(null);
 
-  const sort = searchParams.get("sort") || "ASC";
+  // Most recent first by default - matches the backend's own default
+  // (expenses.repository.ts) now that it's DESC too, so the button
+  // label is right even when the URL carries no ?sort= at all.
+  const sort = searchParams.get("sort") || "DESC";
   const initialSearch = searchParams.get("search") || "";
   const [search, setSearch] = useState(initialSearch);
 
