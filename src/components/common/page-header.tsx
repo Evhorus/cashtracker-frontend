@@ -33,7 +33,14 @@ export const PageHeader = ({
     <div className="flex items-start justify-between gap-4">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         {backUrl && (
-          <Link href={backUrl}>
+          // md:hidden - desktop already has the persistent sidebar nav
+          // (dashboard-sidebar.tsx) to get anywhere else in the app, so a
+          // "go back" affordance here is redundant there. Mobile has no
+          // such persistent nav next to the content, just the bottom tab
+          // bar (Resumen/Sobres/Estadísticas/Cuenta, no "back" of its
+          // own), so it's the one place this button actually earns its
+          // spot.
+          <Link href={backUrl} className="md:hidden">
             {/* Same rounded/translucent-card/subtle-border treatment as
                 the nav-pill groups elsewhere (custom-header.tsx's
                 Dashboard/Sobres pills, account-view.tsx's settings
