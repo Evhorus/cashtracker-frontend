@@ -26,7 +26,14 @@ export default async function AccountPage() {
   );
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    // No mx-auto/max-w-* wrapper - every sibling page (Sobres,
+    // Estadísticas, Resumen) just fills the layout's own container at
+    // full width. This one used to cap itself narrower and center
+    // within that, which both wasted space on wide viewports and made
+    // the title visibly jump sideways when navigating here from any of
+    // them (their left edge lines up with the container's; this one's
+    // didn't, being centered inside it instead).
+    <div className="space-y-6">
       <PageHeader
         title="Mi cuenta"
         description="Gestiona tu perfil, seguridad y cuenta"
