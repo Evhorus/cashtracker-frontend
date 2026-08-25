@@ -27,6 +27,10 @@ import {
 import nextDynamic from "next/dynamic";
 import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
+import {
+  EXPENSES_DEFAULT_PAGE_SIZE,
+  EXPENSES_PAGE_SIZE_OPTIONS,
+} from "@/features/expenses/lib/expense-helpers";
 
 // recharts is a heavy dependency - code-split it into its own chunk,
 // only needed once this section of the envelope detail page renders.
@@ -44,8 +48,6 @@ const EnvelopeChart = nextDynamic(
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
-const EXPENSES_PER_PAGE = 10;
-
 interface EnvelopePageProps {
   params: Promise<{ envelopeId: string }>;
   searchParams: Promise<{
@@ -54,6 +56,7 @@ interface EnvelopePageProps {
     search?: string;
     sort?: string;
     page?: string;
+    limit?: string;
   }>;
 }
 
@@ -69,10 +72,20 @@ export default async function EnvelopePage({
     search,
     sort,
     page: pageParam,
+    limit: limitParam,
   } = await searchParams;
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
   const sortOrder =
     sort === "DESC" ? "DESC" : sort === "ASC" ? "ASC" : undefined;
+  // 10 / 20 / "Todo" (100, the backend's own hard cap) - see
+  // ExpensesFilter's page-size Select and expense-helpers.ts. Anything
+  // else in the URL (hand-edited, stale) falls back to the default
+  // rather than passing an arbitrary number through to the backend.
+  const limit = EXPENSES_PAGE_SIZE_OPTIONS.some(
+    (option) => String(option.value) === limitParam,
+  )
+    ? Number(limitParam)
+    : EXPENSES_DEFAULT_PAGE_SIZE;
 
   const [envelope, expensesResult] = await Promise.all([
     getEnvelopeByIdAction(envelopeId),
@@ -82,7 +95,7 @@ export default async function EnvelopePage({
       search,
       sort: sortOrder,
       page,
-      limit: EXPENSES_PER_PAGE,
+      limit,
     }),
   ]);
 
@@ -169,7 +182,16 @@ export default async function EnvelopePage({
             hasNextPage={expensesResult.meta.hasNextPage}
             hasPreviousPage={expensesResult.meta.hasPreviousPage}
             basePath={`/dashboard/envelope/${envelopeId}`}
-            searchParams={{ startDate, endDate, search, sort }}
+            searchParams={{
+              startDate,
+              endDate,
+              search,
+              sort,
+              limit:
+                limit === EXPENSES_DEFAULT_PAGE_SIZE
+                  ? undefined
+                  : String(limit),
+            }}
           />
         </div>
 
