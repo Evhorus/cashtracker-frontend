@@ -162,17 +162,17 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
           this orientation, and since that's a variant-scoped utility it
           sits in a later cascade position than a plain h-auto here
           regardless of class order (twMerge doesn't dedupe across
-          different variant scopes) - only `!` reliably wins. Same
-          reasoning for `!overflow-y-visible`: the CSS spec silently
-          turns an unset overflow-y into "auto" too whenever overflow-x
-          isn't "visible", and h-9 winning above made this row 1px
-          taller than its own fixed height, so uncorrected it drew a
-          vertical scrollbar (and its up/down arrow buttons) next to a
-          row that never actually needed to scroll. overflow-x-auto
-          itself is a deliberate fallback if a narrower desktop width
-          (or a longer label added later) doesn't fit all 6 in one row -
-          scrolls instead of wrapping into a second, misaligned row. */}
-        <TabsList className="hidden !h-auto w-fit max-w-full items-center gap-1.5 overflow-x-auto !overflow-y-visible rounded-2xl border border-border/60 bg-card/50 p-2.5 md:flex">
+          different variant scopes) - only `!` reliably wins.
+          flex-wrap instead of overflow-x-auto for the narrow end of
+          "desktop" (~768-1024px, where all 6 don't fit in one row):
+          Base UI's scroll-active-tab-into-view didn't position reliably
+          at that width - the exact reason the Select above exists for
+          mobile in the first place (see its own comment) - and it was
+          landing mid-scroll with Perfil clipped off the left edge even
+          after manually scrolling all the way there. Wrapping to a
+          second row has no such failure mode: every tab is always fully
+          in view, nothing to scroll. */}
+        <TabsList className="hidden !h-auto w-fit max-w-full flex-wrap items-center gap-1.5 rounded-2xl border border-border/60 bg-card/50 p-2.5 md:flex">
           {SECTIONS.map((s) => (
             <TabsTrigger
               key={s.value}
