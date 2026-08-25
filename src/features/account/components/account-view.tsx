@@ -104,16 +104,16 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
       <Tabs
         value={section}
         onValueChange={(value) => setSection(value as SectionValue)}
-        orientation="vertical"
-        className="flex-col gap-6 md:flex-row"
+        orientation="horizontal"
+        className="gap-6"
       >
         {/* Mobile: a Select reads unambiguously as "pick a section" - a
           horizontal-scrolling tab bar doesn't read as a menu at a glance,
           and Base UI's own scroll-active-tab-into-view behavior didn't
           position reliably at this width (the active tab rendered
-          partially off-screen to the left). Desktop keeps the sidebar;
-          both drive the same controlled `section` state, so either one
-          works regardless of which is visible. */}
+          partially off-screen to the left). Desktop keeps the top tab
+          row below; both drive the same controlled `section` state, so
+          either one works regardless of which is visible. */}
         <div className="md:hidden">
           <Select
             value={section}
@@ -154,24 +154,33 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
           </Select>
         </div>
 
-        {/* Neither of Tabs' built-in looks fit a settings sidebar: "line"
-          marks the active item with a thin sliding bar that reads as a
-          scrollbar thumb in a vertical list, "default" is a flat gray
-          pill that looks like generic component chrome next to the rest
-          of the app. Instead this borrows the app's own nav language -
-          the same rounded pill-group / bg-primary/15-active-pill treatment
-          custom-header.tsx already uses for Dashboard/Sobres - so the
-          account page's own nav reads as this app's, not a library
-          default. */}
-        <TabsList className="hidden shrink-0 flex-col items-stretch gap-1 rounded-2xl border border-border/60 bg-card/50 p-2 md:flex md:w-56">
+        {/* Desktop: a horizontal top-tab row instead of a vertical
+          sidebar - a settings *menu* reads as heavier chrome than this
+          page needs, and it capped the content at whatever width the
+          sidebar left over instead of using the row. `!h-auto`: the base
+          TabsList variant hardcodes group-data-horizontal/tabs:h-9 for
+          this orientation, and since that's a variant-scoped utility it
+          sits in a later cascade position than a plain h-auto here
+          regardless of class order (twMerge doesn't dedupe across
+          different variant scopes) - only `!` reliably wins. Same
+          reasoning for `!overflow-y-visible`: the CSS spec silently
+          turns an unset overflow-y into "auto" too whenever overflow-x
+          isn't "visible", and h-9 winning above made this row 1px
+          taller than its own fixed height, so uncorrected it drew a
+          vertical scrollbar (and its up/down arrow buttons) next to a
+          row that never actually needed to scroll. overflow-x-auto
+          itself is a deliberate fallback if a narrower desktop width
+          (or a longer label added later) doesn't fit all 6 in one row -
+          scrolls instead of wrapping into a second, misaligned row. */}
+        <TabsList className="hidden !h-auto w-fit max-w-full items-center gap-1.5 overflow-x-auto !overflow-y-visible rounded-2xl border border-border/60 bg-card/50 p-2.5 md:flex">
           {SECTIONS.map((s) => (
             <TabsTrigger
               key={s.value}
               value={s.value}
               className={cn(
-                "justify-start gap-2.5 rounded-full border-none px-3.5 py-2.5 text-sm font-medium text-muted-foreground shadow-none transition-colors",
+                "shrink-0 gap-2 rounded-full border-none px-4 py-2.5 text-sm font-medium text-muted-foreground shadow-none transition-colors",
                 "hover:bg-muted hover:text-foreground",
-                "data-active:bg-primary/15 data-active:text-primary dark:data-active:border-transparent dark:data-active:bg-primary/15 dark:data-active:text-primary",
+                "data-active:bg-primary/15 data-active:font-semibold data-active:text-primary data-active:shadow-sm dark:data-active:border-transparent dark:data-active:bg-primary/15 dark:data-active:text-primary",
                 // TabsTrigger's base idle/hover/active text colors are each
                 // set with their own dark: variant (4 combinations total) -
                 // rather than override every one, `!` wins the cascade
@@ -184,12 +193,12 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
             >
               <s.icon className="size-4" />
               {s.label}
-              {"isNew" in s && s.isNew && <NewBadge className="ml-auto" />}
+              {"isNew" in s && s.isNew && <NewBadge />}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <div className="min-w-0 flex-1">
+        <div>
           <TabsContent value="profile">
             <ProfileSection user={user} />
           </TabsContent>
