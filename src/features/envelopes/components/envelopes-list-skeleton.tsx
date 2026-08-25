@@ -118,3 +118,16 @@ export const EnvelopesListSkeleton = () => {
     </>
   );
 };
+
+// The "X sobres" count line + the list itself - shared between
+// envelopes/loading.tsx (full route navigation) and the Suspense
+// fallback envelopes/page.tsx shows on a filter/page change, so the two
+// stay in sync instead of drifting apart.
+export const EnvelopesResultsSkeleton = () => {
+  return (
+    <>
+      <Skeleton className="h-5 w-20" />
+      <EnvelopesListSkeleton />
+    </>
+  );
+};

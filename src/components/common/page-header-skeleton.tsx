@@ -2,6 +2,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface PageHeaderSkeletonProps {
   withBackButton?: boolean;
+  /** False on pages whose real PageHeader passes no `description` (e.g.
+   * /dashboard/envelopes, since its count moved out of the header - see
+   * that page's own comment) - otherwise this skeleton shows a subtitle
+   * line that then vanishes once real content mounts, an extra bit of
+   * layout shift the real page never actually has. */
+  withDescription?: boolean;
   /**
    * "single": one action, same on both breakpoints (e.g. CreateEnvelopeDialog
    * on /dashboard/envelopes - actions and mobileActions render the identical
@@ -18,6 +24,7 @@ interface PageHeaderSkeletonProps {
 // which doesn't match).
 export const PageHeaderSkeleton = ({
   withBackButton = true,
+  withDescription = true,
   actions = "single",
 }: PageHeaderSkeletonProps) => {
   return (
@@ -32,7 +39,7 @@ export const PageHeaderSkeleton = ({
 
         <div className="space-y-1.5">
           <Skeleton className="h-8 w-48 md:w-64" />
-          <Skeleton className="h-4 w-32" />
+          {withDescription && <Skeleton className="h-4 w-32" />}
         </div>
       </div>
 
