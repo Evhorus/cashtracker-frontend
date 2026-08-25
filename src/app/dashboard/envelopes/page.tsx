@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
@@ -5,6 +6,7 @@ import { EnvelopesFilter } from "@/features/envelopes/components/envelopes-filte
 import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
 import { PageHeader } from "@/components/common/page-header";
 import { PaginationControls } from "@/components/common/pagination-controls";
+import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
   ENVELOPE_STATUS_FILTERS,
   EnvelopeHelpers,
@@ -44,6 +46,62 @@ export default async function EnvelopesPage({
     ? (statusParam as EnvelopeStatusFilter)
     : "all";
 
+  return (
+    <div className="space-y-6">
+      {/* Static - no live count here anymore (see EnvelopesCount below).
+          Tying this to the fetch meant the whole header sat inside the
+          same Suspense boundary as the slow part, so clicking a status
+          tab froze the header along with it instead of reacting
+          instantly. */}
+      <PageHeader
+        title="Sobres"
+        backUrl="/dashboard"
+        actions={<CreateEnvelopeDialog />}
+        mobileActions={<CreateEnvelopeDialog />}
+      />
+
+      {/* Outside the Suspense boundary below on purpose - EnvelopesFilter
+          is pure client UI (its active tab/search value reads the URL
+          directly via useSearchParams), so it re-renders instantly on
+          click regardless of how slow the actual data fetch is. Without
+          this split, the entire page was one async Server Component, so
+          a transition had nothing to commit until the backend responded
+          - the tab click just sat there looking unresponsive. */}
+      <EnvelopesFilter />
+
+      {/* key remounts this boundary (and re-shows the fallback) on every
+          filter change instead of quietly swapping content once ready -
+          the visible "yes, that click registered" feedback the tabs
+          alone can't give while the new list is still loading. */}
+      <Suspense
+        key={`${page}-${search ?? ""}-${status}`}
+        fallback={
+          <div className="space-y-6">
+            <EnvelopesResultsSkeleton />
+          </div>
+        }
+      >
+        <EnvelopesResults
+          page={page}
+          search={search}
+          status={status}
+        />
+      </Suspense>
+    </div>
+  );
+}
+
+interface EnvelopesResultsProps {
+  page: number;
+  search?: string;
+  status: EnvelopeStatusFilter;
+}
+
+async function EnvelopesResults({
+  page,
+  search,
+  status,
+}: EnvelopesResultsProps) {
   let data;
   let meta;
 
@@ -92,15 +150,9 @@ export default async function EnvelopesPage({
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Sobres"
-        description={`${total} ${total === 1 ? "sobre" : "sobres"}`}
-        backUrl="/dashboard"
-        actions={<CreateEnvelopeDialog />}
-        mobileActions={<CreateEnvelopeDialog />}
-      />
-
-      <EnvelopesFilter />
+      <p className="text-sm text-muted-foreground">
+        {total} {total === 1 ? "sobre" : "sobres"}
+      </p>
 
       <EnvelopesGrid envelopes={data} searchQuery={search} statusFilter={status} />
 
