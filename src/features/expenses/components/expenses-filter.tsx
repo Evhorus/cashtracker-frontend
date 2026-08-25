@@ -12,6 +12,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  EXPENSES_DEFAULT_PAGE_SIZE,
+  EXPENSES_PAGE_SIZE_OPTIONS,
+} from "../lib/expense-helpers";
 
 export const ExpensesFilter = () => {
   const router = useRouter();
@@ -23,6 +34,13 @@ export const ExpensesFilter = () => {
   const sort = searchParams.get("sort") || "ASC";
   const initialSearch = searchParams.get("search") || "";
   const [search, setSearch] = useState(initialSearch);
+
+  const limitParam = Number(searchParams.get("limit"));
+  const pageSize = EXPENSES_PAGE_SIZE_OPTIONS.some(
+    (option) => option.value === limitParam,
+  )
+    ? limitParam
+    : EXPENSES_DEFAULT_PAGE_SIZE;
 
   const clearSearchTimeout = () => {
     if (searchTimeout.current) {
@@ -66,6 +84,27 @@ export const ExpensesFilter = () => {
     applyFilters(newSort, search);
   };
 
+  const handlePageSizeChange = (value: string | null) => {
+    if (!value) return;
+    const params = new URLSearchParams(searchParams);
+    const newLimit = Number(value);
+
+    if (newLimit === EXPENSES_DEFAULT_PAGE_SIZE) {
+      params.delete("limit");
+    } else {
+      params.set("limit", value);
+    }
+
+    // Same reasoning as applyFilters - a bigger/smaller page can put the
+    // current page out of range.
+    params.delete("page");
+
+    startTransition(() => {
+      const query = params.toString();
+      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+    });
+  };
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
@@ -93,6 +132,29 @@ export const ExpensesFilter = () => {
         </div>
       </div>
       <div className="flex gap-2">
+        <Select
+          value={String(pageSize)}
+          onValueChange={handlePageSizeChange}
+        >
+          <SelectTrigger className="w-28" aria-label="Gastos por página">
+            <SelectValue>
+              {(value: string) => {
+                const option = EXPENSES_PAGE_SIZE_OPTIONS.find(
+                  (o) => String(o.value) === value,
+                );
+                return option ? `${option.label} / pág.` : value;
+              }}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {EXPENSES_PAGE_SIZE_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={String(option.value)}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
