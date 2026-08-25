@@ -23,8 +23,11 @@ export const PageHeaderSkeleton = ({
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex min-w-0 flex-1 items-center gap-3">
+        {/* md:hidden - matches PageHeader itself: desktop has the
+            persistent sidebar nav, so the real back button never renders
+            there either. */}
         {withBackButton && (
-          <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
+          <Skeleton className="h-10 w-10 shrink-0 rounded-full md:hidden" />
         )}
 
         <div className="space-y-1.5">
