@@ -88,7 +88,9 @@ export function ResponsiveFormSheet({
             <span className="sr-only">Cerrar</span>
           </DrawerClose>
         </DrawerHeader>
-        <div className="flex-1 overflow-y-auto px-4 pb-4">{children}</div>
+        <div className="flex-1 overflow-y-auto px-4 pb-4" data-vaul-no-drag>
+          {children}
+        </div>
       </DrawerContent>
     </Drawer>
   );
