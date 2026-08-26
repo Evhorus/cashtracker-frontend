@@ -80,14 +80,14 @@ export default async function Home() {
         </div>
 
         <div className="container mx-auto max-w-4xl animate-fade-in space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
             <Sparkles className="h-4 w-4" />
             100% gratis para empezar
-          </div>
-          <h2 className="text-4xl leading-tight font-bold text-foreground md:text-6xl">
+          </span>
+          <h1 className="text-4xl leading-tight font-bold md:text-6xl">
             Toma el control de tus{" "}
             <span className="text-primary">finanzas personales</span>
-          </h2>
+          </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
             CashTracker te ayuda a gestionar tus gastos, crear sobres
             inteligentes y alcanzar tus metas financieras con una interfaz
@@ -112,9 +112,9 @@ export default async function Home() {
       {/* Features Section */}
       <section className="container mx-auto bg-muted/30 px-4 py-20">
         <div className="mb-16 text-center">
-          <h3 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
             Todo lo que necesitas para gestionar tu dinero
-          </h3>
+          </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Herramientas poderosas diseñadas para simplificar tu vida financiera
           </p>
@@ -146,18 +146,18 @@ export default async function Home() {
         <div className="mx-auto max-w-4xl">
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div className="space-y-6">
-              <h3 className="text-3xl font-bold text-foreground md:text-4xl">
+              <h2 className="text-3xl font-bold md:text-4xl">
                 Simplifica tu economía personal
-              </h3>
+              </h2>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success/20">
                     <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
-                    <h4 className="mb-1 font-semibold text-foreground">
+                    <h3 className="mb-1 font-semibold">
                       Sin complicaciones
-                    </h4>
+                    </h3>
                     <p className="text-muted-foreground">
                       Interfaz intuitiva que cualquiera puede usar desde el
                       primer día
@@ -169,9 +169,9 @@ export default async function Home() {
                     <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
-                    <h4 className="mb-1 font-semibold text-foreground">
+                    <h3 className="mb-1 font-semibold">
                       Acceso multiplataforma
-                    </h4>
+                    </h3>
                     <p className="text-muted-foreground">
                       Úsalo desde tu computadora, tablet o smartphone sin
                       problemas
@@ -183,9 +183,9 @@ export default async function Home() {
                     <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
-                    <h4 className="mb-1 font-semibold text-foreground">
+                    <h3 className="mb-1 font-semibold">
                       Resultados inmediatos
-                    </h4>
+                    </h3>
                     <p className="text-muted-foreground">
                       Comienza a ver patrones y optimizar tus gastos desde el
                       primer mes
@@ -222,9 +222,9 @@ export default async function Home() {
       {/* CTA Section */}
       <section className="container mx-auto bg-muted/30 px-4 py-20">
         <div className="mx-auto max-w-3xl space-y-6 text-center">
-          <h3 className="text-3xl font-bold text-foreground md:text-4xl">
+          <h2 className="text-3xl font-bold md:text-4xl">
             Empieza a gestionar tu dinero hoy mismo
-          </h3>
+          </h2>
           <p className="text-lg text-muted-foreground">
             No necesitas tarjeta de crédito. Comienza gratis en menos de 2
             minutos.
@@ -240,7 +240,7 @@ export default async function Home() {
       {/* Footer */}
       <footer className="border-t border-border/40 py-8">
         <div className="container mx-auto flex flex-col items-center gap-3 px-4 text-center text-muted-foreground">
-          <div className="flex items-center gap-2 text-foreground">
+          <div className="flex items-center gap-2">
             <Wallet className="h-5 w-5 text-primary" />
             <span className="font-semibold">CashTracker</span>
           </div>

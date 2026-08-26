@@ -6,11 +6,9 @@ import { Wallet } from "lucide-react";
 // Callers that know the auth state (e.g. CustomHeader) pass `href`.
 export const Logo = ({ href = "/" }: { href?: string }) => {
   return (
-    <Link href={href}>
-      <div className="flex items-center gap-2">
-        <Wallet className="h-6 w-6 text-primary" />
-        <h1 className="text-xl font-bold text-foreground">CashTracker</h1>
-      </div>
+    <Link href={href} className="flex items-center gap-2">
+      <Wallet className="h-6 w-6 text-primary" />
+      <span className="text-xl font-bold text-foreground">CashTracker</span>
     </Link>
   );
 };

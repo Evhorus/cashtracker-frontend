@@ -61,7 +61,6 @@ export const EnvelopeForm = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <FieldSet>
-          <FieldSet>
             <div className="flex flex-col gap-6">
               <FormInput
                 control={control}
@@ -155,7 +154,6 @@ export const EnvelopeForm = ({
               )}
             />
           </FieldSet>
-        </FieldSet>
 
         <Field orientation="responsive">
           <SubmitButton isLoading={isLoading} type="submit">
