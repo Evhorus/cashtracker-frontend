@@ -13,7 +13,7 @@ export default async function DashboardLayout({
   await auth.protect();
   return (
     <ClerkProvider localization={esMX}>
-      <div className="flex h-svh w-full overflow-hidden bg-background">
+      <div className="fixed inset-0 flex overflow-hidden bg-background">
         <DashboardSidebar />
         {/* min-w-0 so this column can actually shrink below its content's
             intrinsic width next to the sidebar - without it a wide child

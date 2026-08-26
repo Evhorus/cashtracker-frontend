@@ -112,7 +112,7 @@ export default async function EnvelopePage({
         : "text-primary";
 
   return (
-    <div className="space-y-8 pb-24">
+    <div className="space-y-8">
       {/* Header Section */}
       <PageHeader
         title={envelope.name}

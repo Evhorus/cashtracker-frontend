@@ -10,7 +10,7 @@ import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-
 // no longer matches since that page was consolidated into one panel.
 export default function EnvelopeDetailLoading() {
   return (
-    <div className="space-y-8 pb-24">
+    <div className="space-y-8">
       <PageHeaderSkeleton actions="icon-pair" />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
