@@ -13,13 +13,15 @@ export default async function DashboardLayout({
   await auth.protect();
   return (
     <ClerkProvider localization={esMX}>
-      <div className="min-h-dvh bg-background md:flex">
+      <div className="flex h-svh w-full overflow-hidden bg-background">
         <DashboardSidebar />
         {/* min-w-0 so this column can actually shrink below its content's
             intrinsic width next to the sidebar - without it a wide child
             (e.g. the envelopes table) pushes the whole flex row wider than
-            the viewport instead of scrolling internally. */}
-        <div className="min-w-0 flex-1">
+            the viewport instead of scrolling internally. overflow-y-auto
+            makes this column its own scroll container now that the shell
+            above is a fixed-height, overflow-hidden viewport. */}
+        <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
           <CustomHeader />
           <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
             {children}

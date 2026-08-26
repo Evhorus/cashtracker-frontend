@@ -67,7 +67,7 @@ export default async function Home() {
   if (isAuthenticated) redirect("/dashboard");
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="min-h-svh bg-background">
       <LandingHeader />
 
       {/* Hero Section */}

@@ -20,7 +20,7 @@ export default async function AuthLayout({
 
   return (
     <ClerkProvider localization={esMX}>
-      <div className="grid min-h-dvh lg:grid-cols-2">
+      <div className="grid min-h-svh lg:grid-cols-2">
         <div className="relative hidden items-center justify-center overflow-hidden bg-linear-to-br from-primary/90 via-primary to-primary/80 px-10 lg:flex">
           {/* Decorative elements */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]" />

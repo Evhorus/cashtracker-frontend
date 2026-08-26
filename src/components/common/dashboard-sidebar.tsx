@@ -33,7 +33,7 @@ export function DashboardSidebar() {
   const { isLoaded, user } = useAccountUser();
 
   return (
-    <aside className="sticky top-0 hidden h-dvh w-62 shrink-0 flex-col border-r border-border/60 bg-card/30 p-4 md:flex">
+    <aside className="hidden h-full w-62 shrink-0 flex-col border-r border-border/60 bg-card/30 p-4 md:flex">
       <div className="flex items-center justify-between px-2">
         <Logo href="/dashboard" />
         <ModeToggle />
