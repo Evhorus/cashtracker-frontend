@@ -15,11 +15,10 @@ export const MobileNav = () => {
   const pathname = usePathname();
 
   return (
-    <div
-      className="fixed inset-x-4 z-50 md:hidden"
+    <nav
+      className="fixed inset-x-4 z-50 flex h-16 items-stretch rounded-2xl border border-border/60 bg-background/90 shadow-lg backdrop-blur md:hidden"
       style={{ bottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
     >
-      <nav className="flex h-16 items-stretch rounded-2xl border border-border/60 bg-background/90 shadow-lg backdrop-blur">
         {navItems.map((item) => {
           const isActive =
             item.href === "/dashboard"
@@ -56,7 +55,6 @@ export const MobileNav = () => {
             </Link>
           );
         })}
-      </nav>
-    </div>
+    </nav>
   );
 };

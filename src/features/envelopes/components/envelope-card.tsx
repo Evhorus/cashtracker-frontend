@@ -115,10 +115,8 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
           </CardHoverActions>
 
           {/* Mobile Actions */}
-          <div className="md:hidden">
-            <div data-no-nav>
-              <EnvelopeActionsMenu envelope={envelope} />
-            </div>
+          <div className="md:hidden" data-no-nav>
+            <EnvelopeActionsMenu envelope={envelope} />
           </div>
         </div>
       </CardHeader>
