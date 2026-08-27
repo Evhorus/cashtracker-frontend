@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { CalendarArrowDown, CalendarArrowUp, Search } from "lucide-react";
+import { CalendarArrowDown, CalendarArrowUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/common/search-input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -108,8 +108,7 @@ export const ExpensesFilter = () => {
     });
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleSearchChange = (value: string) => {
     setSearch(value);
 
     clearSearchTimeout();
@@ -122,18 +121,13 @@ export const ExpensesFilter = () => {
 
   return (
     <div className="mb-6 flex flex-col gap-4 md:flex-row">
-      <div className="flex-1">
-        <div className="relative">
-          <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por nombre..."
-            aria-label="Buscar gastos por nombre"
-            className="pl-8"
-            value={search}
-            onChange={handleSearchChange}
-          />
-        </div>
-      </div>
+      <SearchInput
+        value={search}
+        onChange={handleSearchChange}
+        placeholder="Buscar por nombre..."
+        aria-label="Buscar gastos por nombre"
+        className="flex-1"
+      />
       <div className="flex gap-2">
         <Select
           value={String(pageSize)}
