@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChartNoAxesColumn, Home, Wallet } from "lucide-react";
+import { ChartNoAxesColumn, Home, Tag, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { name: "Resumen", href: "/dashboard", icon: Home },
   { name: "Sobres", href: "/dashboard/envelopes", icon: Wallet },
+  { name: "Categorías", href: "/dashboard/categories", icon: Tag },
   { name: "Estadísticas", href: "/dashboard/statistics", icon: ChartNoAxesColumn },
 ];
 

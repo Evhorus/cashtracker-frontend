@@ -7,7 +7,6 @@ import {
   Laptop,
   Link2,
   Loader2,
-  Tag,
   Trash2,
   UserRound,
 } from "lucide-react";
@@ -28,33 +27,14 @@ import { SessionsSection } from "./sessions-section";
 import { ConnectedAccountsSection } from "./connected-accounts-section";
 import { DeleteAccountSection } from "./delete-account-section";
 import { ReverificationProvider } from "./reverification-provider";
-import { CategoriesSection } from "@/features/categories/components/categories-section";
 
 const SECTIONS = [
   { value: "profile", label: "Perfil", icon: UserRound },
   { value: "password", label: "Contraseña", icon: KeyRound },
   { value: "sessions", label: "Sesiones", icon: Laptop },
   { value: "connected", label: "Cuentas conectadas", icon: Link2 },
-  { value: "categories", label: "Categorías", icon: Tag, isNew: true },
   { value: "danger", label: "Eliminar cuenta", icon: Trash2 },
 ] as const;
-
-// Small pill next to a just-added section (Categorías) in both the
-// mobile Select's item list and the desktop TabsList - not in the
-// Select's own collapsed trigger display, that's the current selection,
-// not a "look, new" moment.
-function NewBadge({ className }: { className?: string }) {
-  return (
-    <span
-      className={cn(
-        "rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-primary uppercase",
-        className,
-      )}
-    >
-      Nuevo
-    </span>
-  );
-}
 
 type SectionValue = (typeof SECTIONS)[number]["value"];
 
@@ -65,14 +45,7 @@ function isSectionValue(value: string | null): value is SectionValue {
 // The single useAccountUser() call lives here so every section below
 // re-renders off the same Clerk-managed user object - see
 // profile-section.tsx for why that matters for the photo/name updates.
-interface AccountViewProps {
-  /** Per-category envelope counts for the Categorías tab - computed
-   * server-side in account/page.tsx (this component is "use client",
-   * can't fetch async itself). */
-  categoryCounts: Record<string, number>;
-}
-
-export function AccountView({ categoryCounts }: AccountViewProps) {
+export function AccountView() {
   const { isLoaded, user } = useAccountUser();
   // ?section= opens straight into a specific tab instead of always
   // Perfil - used by the OAuth-linking sso-callback route
@@ -145,9 +118,6 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
                 >
                   <s.icon className="size-4" />
                   {s.label}
-                  {"isNew" in s && s.isNew && (
-                    <NewBadge className="ml-auto" />
-                  )}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -193,7 +163,6 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
             >
               <s.icon className="size-4" />
               {s.label}
-              {"isNew" in s && s.isNew && <NewBadge />}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -210,9 +179,6 @@ export function AccountView({ categoryCounts }: AccountViewProps) {
           </TabsContent>
           <TabsContent value="connected">
             <ConnectedAccountsSection />
-          </TabsContent>
-          <TabsContent value="categories">
-            <CategoriesSection categoryCounts={categoryCounts} />
           </TabsContent>
           <TabsContent value="danger">
             <DeleteAccountSection user={user} />

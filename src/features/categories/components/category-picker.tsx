@@ -9,8 +9,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CATEGORIES, resolveCategory } from "../lib/category-palette";
+import { resolveCategory } from "../lib/category-palette";
+import { resolveIcon } from "../lib/icon-registry";
 import { withAlpha } from "../lib/with-alpha";
+import { useCategories } from "@/providers/categories-provider";
+import { CreateCategoryDialog } from "./create-category-dialog";
 
 // Same minimal explicit prop shape as currency-selector.tsx (not the full
 // react-hook-form ControllerRenderProps) - envelope-form.tsx spreads
@@ -35,10 +38,12 @@ export function CategoryPicker({
 }: CategoryPickerProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
   const listboxId = useId();
+  const categories = useCategories();
 
-  const selected = resolveCategory(value);
-  const filtered = CATEGORIES.filter((category) =>
+  const selected = resolveCategory(value, categories);
+  const filtered = categories.filter((category) =>
     category.label.toLowerCase().includes(search.trim().toLowerCase()),
   );
 
@@ -120,6 +125,7 @@ export function CategoryPicker({
           {filtered.map((category) => {
             const isSelected =
               value?.trim().toLowerCase() === category.label.toLowerCase();
+            const Icon = resolveIcon(category.icon);
             return (
               <button
                 key={category.id}
@@ -134,7 +140,7 @@ export function CategoryPicker({
                     color: category.color,
                   }}
                 >
-                  <category.Icon className="h-3 w-3" />
+                  <Icon className="h-3 w-3" />
                 </span>
                 <span className="flex-1">{category.label}</span>
                 {isSelected && <Check className="h-4 w-4 shrink-0" />}
@@ -152,15 +158,23 @@ export function CategoryPicker({
         <div className="border-t border-border p-2">
           <button
             type="button"
-            disabled
-            title="Próximamente"
-            className="flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1.5 text-sm text-muted-foreground opacity-60"
+            onClick={() => {
+              setOpen(false);
+              setCreateOpen(true);
+            }}
+            className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <Plus className="h-3.5 w-3.5" />
             Crear categoría
           </button>
         </div>
       </PopoverContent>
+
+      <CreateCategoryDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={(label) => pick(label)}
+      />
     </Popover>
   );
 }

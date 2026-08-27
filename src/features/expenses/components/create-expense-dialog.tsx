@@ -9,6 +9,7 @@ import { createExpenseAction } from "@/features/expenses/actions/create-expense.
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
 import { resolveCategory } from "@/features/categories/lib/category-palette";
 import { withAlpha } from "@/features/categories/lib/with-alpha";
+import { useCategories } from "@/providers/categories-provider";
 import type { CurrencyCode } from "@/lib/format-currency";
 
 interface CreateExpenseDialogProps {
@@ -29,7 +30,8 @@ function ExpenseDialogSubtitle({
   envelopeName: string;
   envelopeCategory?: string;
 }) {
-  const def = resolveCategory(envelopeCategory);
+  const categories = useCategories();
+  const def = resolveCategory(envelopeCategory, categories);
   return (
     <span className="flex items-center gap-1.5">
       {def && (

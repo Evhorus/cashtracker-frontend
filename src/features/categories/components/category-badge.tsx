@@ -2,6 +2,7 @@ import { Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { resolveCategory } from "../lib/category-palette";
 import { withAlpha } from "../lib/with-alpha";
+import { getCategoriesCached } from "../lib/get-categories-cached";
 
 interface CategoryIconProps {
   category?: string | null;
@@ -13,8 +14,14 @@ interface CategoryIconProps {
 // category instead of always the primary accent. An envelope with no
 // category keeps exactly that old look (Wallet, primary tint) rather than
 // rendering nothing - this only changes envelopes that DO have a category.
-export function CategoryIcon({ category, className }: CategoryIconProps) {
-  const def = resolveCategory(category);
+//
+// Async Server Component: fetches the user's categories itself
+// (getCategoriesCached() dedupes per request) instead of requiring every
+// ancestor (EnvelopeCard, EnvelopesTable, the dashboard/statistics/detail
+// pages) to fetch and thread them down as a prop.
+export async function CategoryIcon({ category, className }: CategoryIconProps) {
+  const categories = await getCategoriesCached();
+  const def = resolveCategory(category, categories);
   const Icon = def?.Icon ?? Wallet;
   const color = def?.color ?? "var(--color-primary)";
 
@@ -41,8 +48,9 @@ interface CategoryLabelProps {
 // text (envelope-card.tsx's meta line, the envelope detail page's
 // subtitle) - same information, now legible at a glance instead of
 // competing with the surrounding text for attention.
-export function CategoryLabel({ category, className }: CategoryLabelProps) {
-  const def = resolveCategory(category);
+export async function CategoryLabel({ category, className }: CategoryLabelProps) {
+  const categories = await getCategoriesCached();
+  const def = resolveCategory(category, categories);
   if (!def) return null;
 
   return (
