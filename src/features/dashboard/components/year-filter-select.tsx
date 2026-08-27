@@ -50,7 +50,11 @@ export const YearFilterSelect = ({
       value={selectedYear ? String(selectedYear) : ALL_YEARS_VALUE}
       onValueChange={handleChange}
     >
-      <SelectTrigger className="w-40" aria-label="Filtrar por año">
+      <SelectTrigger
+        size="sm"
+        className="w-auto gap-1.5 font-medium"
+        aria-label="Filtrar por año"
+      >
         <SelectValue>
           {(value: string) =>
             value === ALL_YEARS_VALUE ? "Todos los años" : value
