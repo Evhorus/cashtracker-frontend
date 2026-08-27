@@ -1,23 +1,21 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { SearchInput } from "@/components/common/search-input";
 import { useCategoriesFilter } from "./categories-filter-context";
 
+// Plain local-state search, unlike envelopes-filter.tsx's debounced URL
+// param - the full category list already lives on the client
+// (useCategories()), no backend round-trip to debounce against.
 export function CategoriesSearch({ className }: { className?: string }) {
   const { search, setSearch } = useCategoriesFilter();
 
   return (
-    <div className={cn("relative", className)}>
-      <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-      <Input
-        placeholder="Buscar categoría..."
-        aria-label="Buscar categorías por nombre"
-        className="pl-8"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </div>
+    <SearchInput
+      value={search}
+      onChange={setSearch}
+      placeholder="Buscar categoría..."
+      aria-label="Buscar categorías por nombre"
+      className={className}
+    />
   );
 }
