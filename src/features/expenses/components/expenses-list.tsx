@@ -20,7 +20,7 @@ export const ExpensesList = ({ expenses, currency }: ExpensesGridProps) => {
           <p className="mt-1 text-sm">Comienza agregando tu primer gasto</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {expenses.map((expense) => (
             <ExpenseCard
               key={expense.id}

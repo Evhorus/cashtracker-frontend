@@ -1,30 +1,20 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 
+// Mirrors ExpenseCard's real (compact, single-row) shape - was a
+// taller two-row skeleton (stacked on mobile) that shrunk once real
+// content mounted, an extra bit of layout shift the real page never has.
 export const ExpenseCardSkeleton = () => {
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-4">
-        {/* Mobile: Vertical, Desktop: Horizontal */}
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          {/* Left: Icon + Name + Date */}
-          <div className="flex items-start gap-3">
-            <Skeleton className="h-12 w-12 shrink-0 rounded-xl" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-5 w-32 md:w-48" />
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-3 w-3" />
-                <Skeleton className="h-3 w-24" />
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Amount + Actions */}
-          <div className="mt-2 flex items-center justify-between gap-3 md:mt-0 md:justify-end">
-            <Skeleton className="h-7 w-24" />
-            <Skeleton className="h-8 w-8 rounded-md" />
-          </div>
+    <Card size="sm" className="overflow-hidden">
+      <CardContent className="flex items-center gap-3">
+        <Skeleton className="h-9 w-9 shrink-0 rounded-full" />
+        <div className="flex-1 space-y-1.5">
+          <Skeleton className="h-4 w-32 md:w-48" />
+          <Skeleton className="h-3 w-20" />
         </div>
+        <Skeleton className="h-4 w-16 shrink-0" />
+        <Skeleton className="h-8 w-8 shrink-0 rounded-md md:hidden" />
       </CardContent>
     </Card>
   );
@@ -32,7 +22,7 @@ export const ExpenseCardSkeleton = () => {
 
 export const ExpensesListSkeleton = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {[1, 2, 3, 4, 5].map((i) => (
         <ExpenseCardSkeleton key={i} />
       ))}

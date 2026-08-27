@@ -53,86 +53,77 @@ export const ExpenseCard = ({
     <>
       {/* No left-border accent bar - same reasoning as envelope-card.tsx.
           border/60 replaces border-0 as the "this card is its own
-          thing" cue instead. */}
+          thing" cue instead. size="sm" + a single row (was p-5 and a
+          grid-cols-1 md:grid-cols-2 that stacked name/date above
+          amount/actions on mobile, doubling the row's height there) -
+          a list of expenses is scanned many-at-once, so each row stays
+          this compact rather than paying full-card padding per line. */}
       <Card
-        className="group relative overflow-hidden border-border/60 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg"
+        size="sm"
+        className="group relative overflow-hidden border-border/60 bg-card/50 shadow-sm transition-colors duration-200 hover:bg-card"
         onClick={handleCardClick}
       >
-        <CardContent className="p-5">
-          <div className="flex items-center gap-4">
-            {/* First-letter avatar instead of a generic receipt icon
-                repeated identically on every row - lets a scanned list
-                of expense names actually be scannable by more than just
-                their text. */}
-            <div className="shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform duration-300 group-hover:scale-110">
-                <span className="font-mono text-lg font-semibold">
-                  {expense.name.trim().charAt(0).toUpperCase() || "?"}
-                </span>
-              </div>
+        <CardContent className="flex flex-row items-center gap-3">
+          {/* First-letter avatar instead of a generic receipt icon
+              repeated identically on every row - lets a scanned list
+              of expense names actually be scannable by more than just
+              their text. */}
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+            <span className="font-mono text-sm font-semibold">
+              {expense.name.trim().charAt(0).toUpperCase() || "?"}
+            </span>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <h4 className="truncate text-sm font-semibold transition-colors group-hover:text-primary">
+              {expense.name}
+            </h4>
+            <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              {formatDate(expense.date)}
             </div>
+          </div>
 
-            {/* Main Content */}
-            <div className="grid min-w-0 flex-1 grid-cols-1 items-center gap-4 md:grid-cols-2">
-              <div className="space-y-1">
-                <h4 className="truncate text-lg font-bold transition-colors group-hover:text-primary">
-                  {expense.name}
-                </h4>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-0.5">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <span className="font-medium">
-                      {formatDate(expense.date)}
-                    </span>
-                  </div>
-                </div>
-              </div>
+          <span className="shrink-0 font-mono text-sm font-bold text-primary">
+            {formatCurrency(+expense.amount, CURRENCY_MAP[currency])}
+          </span>
 
-              {/* Amount and Actions */}
-              <div className="flex items-center justify-between gap-6 md:justify-end">
-                <span className="text-xl font-bold tracking-tight text-primary md:text-2xl">
-                  {formatCurrency(+expense.amount, CURRENCY_MAP[currency])}
-                </span>
+          {/* Desktop Actions */}
+          <CardHoverActions>
+            <CardActionButton
+              icon={Edit}
+              label="Editar gasto"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowEditDialog(true);
+              }}
+            />
+            <CardActionButton
+              icon={Trash2}
+              label="Eliminar gasto"
+              tone="destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteDialog(true);
+              }}
+            />
+          </CardHoverActions>
 
-                {/* Desktop Actions */}
-                <CardHoverActions>
-                  <CardActionButton
-                    icon={Edit}
-                    label="Editar gasto"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowEditDialog(true);
-                    }}
-                  />
-                  <CardActionButton
-                    icon={Trash2}
-                    label="Eliminar gasto"
-                    tone="destructive"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowDeleteDialog(true);
-                    }}
-                  />
-                </CardHoverActions>
-
-                {/* Mobile Actions (Drawer) - same ExpenseActionsMenu the
-                    expense detail page uses for its own mobile action
-                    trigger (see PageHeader's mobileActions there), just
-                    with a smaller/muted trigger to fit this tighter row.
-                    Owns its own edit/delete dialogs independently of the
-                    desktop ones above - harmless since only one of the
-                    two triggers is ever visible at a time. */}
-                <div className="md:hidden">
-                  <div data-no-nav>
-                    <ExpenseActionsMenu
-                      envelopeId={envelopeId}
-                      currency={currency}
-                      expense={expense}
-                      triggerClassName="h-8 w-8 text-muted-foreground"
-                    />
-                  </div>
-                </div>
-              </div>
+          {/* Mobile Actions (Drawer) - same ExpenseActionsMenu the
+              expense detail page uses for its own mobile action
+              trigger (see PageHeader's mobileActions there), just
+              with a smaller/muted trigger to fit this tighter row.
+              Owns its own edit/delete dialogs independently of the
+              desktop ones above - harmless since only one of the
+              two triggers is ever visible at a time. */}
+          <div className="shrink-0 md:hidden">
+            <div data-no-nav>
+              <ExpenseActionsMenu
+                envelopeId={envelopeId}
+                currency={currency}
+                expense={expense}
+                triggerClassName="h-8 w-8 text-muted-foreground"
+              />
             </div>
           </div>
         </CardContent>
