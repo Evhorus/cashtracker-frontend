@@ -1,8 +1,8 @@
 "use client";
 
 import { Expense } from "@/features/expenses/types";
-import { Calendar, Edit, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Calendar, ChevronRight, Edit, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { formatDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,29 +25,8 @@ export const ExpenseCard = ({
   envelopeId,
   currency,
 }: ExpenseCardProps) => {
-  const router = useRouter();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
-  const handleCardClick = (e: React.MouseEvent) => {
-    const target = e.target as HTMLElement;
-
-    // Prevent navigation if click comes from a Portal (like Drawer/Menu overlay)
-    // The target is not a DOM descendant of the currentTarget (the card)
-    if (!e.currentTarget.contains(target)) return;
-
-    // Check if the click originated from an action element or standard interactables
-    if (
-      target.closest("[data-no-nav]") ||
-      target.closest("button") ||
-      target.closest("[role='menuitem']") ||
-      target.tagName === "A"
-    ) {
-      return;
-    }
-
-    router.push(`${envelopeId}/expenses/${expense.id}`);
-  };
 
   return (
     <>
@@ -57,11 +36,17 @@ export const ExpenseCard = ({
           grid-cols-1 md:grid-cols-2 that stacked name/date above
           amount/actions on mobile, doubling the row's height there) -
           a list of expenses is scanned many-at-once, so each row stays
-          this compact rather than paying full-card padding per line. */}
+          this compact rather than paying full-card padding per line.
+
+          Not a whole-card click into this expense's own detail page
+          anymore (was a Card onClick with exclusions for buttons/menus) -
+          that made every bit of text on the row, including the amount,
+          unselectable-without-navigating. The chevron below is the one
+          real click/nav target instead, same as EnvelopeCard's own
+          "Ver detalles" - name/date/amount stay plain, selectable text. */}
       <Card
         size="sm"
-        className="group relative overflow-hidden border-border/60 bg-card/50 shadow-sm transition-colors duration-200 hover:bg-card"
-        onClick={handleCardClick}
+        className="relative overflow-hidden border-border/60 bg-card/50 shadow-sm transition-colors duration-200 hover:bg-card"
       >
         <CardContent className="flex flex-row items-center gap-3">
           {/* First-letter avatar instead of a generic receipt icon
@@ -75,9 +60,7 @@ export const ExpenseCard = ({
           </div>
 
           <div className="min-w-0 flex-1">
-            <h4 className="truncate text-sm font-semibold transition-colors group-hover:text-primary">
-              {expense.name}
-            </h4>
+            <h4 className="truncate text-sm font-semibold">{expense.name}</h4>
             <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
               <Calendar className="h-3 w-3" />
               {formatDate(expense.date)}
@@ -87,6 +70,14 @@ export const ExpenseCard = ({
           <span className="shrink-0 font-mono text-sm font-bold text-primary">
             {formatCurrency(+expense.amount, CURRENCY_MAP[currency])}
           </span>
+
+          <Link
+            href={`/dashboard/envelope/${envelopeId}/expenses/${expense.id}`}
+            aria-label={`Ver detalle de ${expense.name}`}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Link>
 
           {/* Desktop Actions */}
           <CardHoverActions>
@@ -117,14 +108,12 @@ export const ExpenseCard = ({
               desktop ones above - harmless since only one of the
               two triggers is ever visible at a time. */}
           <div className="shrink-0 md:hidden">
-            <div data-no-nav>
-              <ExpenseActionsMenu
-                envelopeId={envelopeId}
-                currency={currency}
-                expense={expense}
-                triggerClassName="h-8 w-8 text-muted-foreground"
-              />
-            </div>
+            <ExpenseActionsMenu
+              envelopeId={envelopeId}
+              currency={currency}
+              expense={expense}
+              triggerClassName="h-8 w-8 text-muted-foreground"
+            />
           </div>
         </CardContent>
       </Card>
