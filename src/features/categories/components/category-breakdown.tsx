@@ -1,6 +1,7 @@
 import { Tag } from "lucide-react";
 import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
 import { resolveCategory, type CategoryDef } from "../lib/category-palette";
+import { getCategoriesCached } from "../lib/get-categories-cached";
 
 interface CategoryBreakdownProps {
   /** Only needs the two fields it actually groups/sums by - callers pass
@@ -19,7 +20,12 @@ const NO_CATEGORY: Pick<CategoryDef, "label" | "color" | "Icon"> = {
 // envelope with spend > 0 (in the given currency) by its category, sum
 // `spent` per group. Nothing here is estimated or sampled - it's exactly
 // what's on screen elsewhere (envelope cards/table), just reduced.
-export function CategoryBreakdown({ envelopes, currency }: CategoryBreakdownProps) {
+//
+// Async Server Component: fetches the user's categories itself
+// (getCategoriesCached() dedupes per request), same reasoning as
+// CategoryIcon/CategoryLabel in category-badge.tsx.
+export async function CategoryBreakdown({ envelopes, currency }: CategoryBreakdownProps) {
+  const categories = await getCategoriesCached();
   const config = CURRENCY_MAP[currency];
 
   const buckets = new Map<
@@ -31,7 +37,7 @@ export function CategoryBreakdown({ envelopes, currency }: CategoryBreakdownProp
     const spent = Number(envelope.spent);
     if (!spent || spent <= 0) continue;
 
-    const def = resolveCategory(envelope.category);
+    const def = resolveCategory(envelope.category, categories);
     const key = def ? def.label.toLowerCase() : "__none__";
     const existing = buckets.get(key);
     if (existing) {

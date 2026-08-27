@@ -6,6 +6,7 @@ import {
   ChartNoAxesColumn,
   ChevronRight,
   Home,
+  Tag,
   UserRound,
   Wallet,
 } from "lucide-react";
@@ -20,6 +21,7 @@ import { useAccountUser } from "@/features/account/hooks/use-account-user";
 const navItems = [
   { name: "Resumen", href: "/dashboard", icon: Home },
   { name: "Sobres", href: "/dashboard/envelopes", icon: Wallet },
+  { name: "Categorías", href: "/dashboard/categories", icon: Tag },
   { name: "Estadísticas", href: "/dashboard/statistics", icon: ChartNoAxesColumn },
   { name: "Cuenta", href: "/dashboard/account", icon: UserRound },
 ];
