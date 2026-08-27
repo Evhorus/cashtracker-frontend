@@ -80,7 +80,7 @@ export const ExpenseCard = ({
           </Link>
 
           {/* Desktop Actions */}
-          <CardHoverActions>
+          <CardHoverActions alwaysVisible>
             <CardActionButton
               icon={Edit}
               label="Editar gasto"
