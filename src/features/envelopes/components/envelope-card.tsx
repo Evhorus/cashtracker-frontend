@@ -61,24 +61,32 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
     // to this app (see the redesign notes on avoiding that pattern).
     // border/60 (was border-0) does the "this card is its own thing"
     // job instead, as a hairline all the way around.
-    <Card className="group relative h-full overflow-hidden border-border/60 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg">
+    //
+    // Compact single-glance shape (icon+name+percent row / thin bar /
+    // one-line totals) instead of a tall label-above-value stat block -
+    // matches the density of the mockup's own envelope list, and the
+    // grid can fit meaningfully more of a list without scrolling.
+    <Card
+      size="sm"
+      className="group relative h-full overflow-hidden border-border/60 bg-card/50 shadow-sm transition-all duration-300 hover:bg-card hover:shadow-lg"
+    >
       <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      <CardHeader className="relative z-10 flex flex-row items-start justify-between gap-2 space-y-0 pb-3">
-        <div className="flex min-w-0 flex-1 items-center gap-4">
+      <CardHeader className="relative z-10 flex flex-row items-center justify-between gap-2 space-y-0">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <CategoryIcon
             category={envelope.category}
-            className="shadow-sm transition-transform duration-300 group-hover:scale-110"
+            className="h-9 w-9 rounded-lg shadow-sm transition-transform duration-300 group-hover:scale-110"
           />
 
-          <div className="min-w-0 space-y-1">
+          <div className="min-w-0 space-y-0.5">
             {/* No fixed max-w here on purpose - min-w-0 on this and the
                 two ancestors above is what actually lets `truncate` cut
                 the name off against whatever space the actions on the
                 right leave, instead of a magic pixel value that either
                 truncated names way earlier than it had to or (on a
                 wider card) left space unused. */}
-            <CardTitle className="text-lg leading-none font-bold tracking-tight transition-colors duration-200 group-hover:text-primary">
+            <CardTitle className="text-sm leading-none font-bold tracking-tight transition-colors duration-200 group-hover:text-primary">
               <span className="block truncate">{envelope.name}</span>
             </CardTitle>
             {/* Always shows the creation month/year, not just when a
@@ -86,7 +94,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                 commonly reused across years (e.g. a recurring "Agosto
                 NUU" every year), so without this there'd be no way to
                 tell which year's card is which in the list. */}
-            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
               <span>{formatMonthYear(envelope.createdAt)}</span>
               {envelope.category && (
                 <>
@@ -100,12 +108,23 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                   an unlabeled amount is ambiguous - popular multi-
                   currency apps (Wise, Revolut) always tag the currency
                   on every balance, never just the "other" ones. */}
-              <span className="rounded-sm bg-secondary px-1 py-0.5 text-secondary-foreground">
+              <span className="rounded-sm bg-secondary px-1 py-0.5 font-mono text-[10px] text-secondary-foreground">
                 {envelope.currency}
               </span>
             </p>
           </div>
         </div>
+
+        {/* Percent (or the actions, on hover/desktop) sits where the
+            mockup's own trailing "64%" reads - front and center next to
+            the name, not buried below in a separate labeled row. */}
+        {!calculations.isUnlimited && (
+          <span
+            className={`shrink-0 font-mono text-sm font-bold ${amountTextColorClass}`}
+          >
+            {Math.min(calculations.percentage ?? 0, 100).toFixed(0)}%
+          </span>
+        )}
 
         {/* Actions */}
         <div className="flex shrink-0 items-center">
@@ -121,77 +140,56 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
         </div>
       </CardHeader>
 
-      {/* Both variants share the exact same two-row shape (status row +
-          2-column stats) so capped and unlimited cards come out the same
-          height in the grid - only the labels/values inside differ. */}
-      <CardContent className="relative z-10 space-y-5">
-        <div className="space-y-2">
-          <div className="flex items-end justify-between">
-            <span className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-              {calculations.isUnlimited && (
-                <InfinityIcon className="h-3.5 w-3.5" />
-              )}
-              {calculations.isUnlimited ? "Sin límite de gasto" : "Progreso"}
-            </span>
-            {!calculations.isUnlimited && (
-              <span className={`text-sm font-bold ${amountTextColorClass}`}>
-                {Math.min(calculations.percentage ?? 0, 100).toFixed(0)}%
-              </span>
-            )}
-          </div>
+      <CardContent className="relative z-10 space-y-2.5">
+        {!calculations.isUnlimited && (
           <Progress
-            value={
-              calculations.isUnlimited
-                ? 100
-                : Math.min(calculations.percentage ?? 0, 100)
-            }
-            className={`h-2.5 rounded-full bg-secondary/50 ${
-              calculations.isUnlimited
-                ? "[&_[data-slot=progress-indicator]]:bg-muted-foreground/30"
-                : progressColorClass
-            }`}
+            value={Math.min(calculations.percentage ?? 0, 100)}
+            className={`h-1.5 rounded-full bg-secondary/50 ${progressColorClass}`}
           />
-        </div>
+        )}
 
-        {/* The creation date now lives in the header (see above), so
-            unlimited envelopes don't need a "Desde" filler here anymore -
-            just the one Gastado cell. Still the same row height as the
-            capped variant's two cells (both are label+value pairs). */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground">Gastado</p>
-            <p className={`text-sm font-bold ${amountTextColorClass}`}>
+        {/* One line, ends split - the app's own equivalent of the
+            mockup's "$320.000 gastado ... $180.000 disp." footer,
+            instead of a label-above-value 2-column block that doubled
+            this section's height for the same two numbers. */}
+        <div className="flex items-center justify-between font-mono text-xs">
+          <span className={calculations.isUnlimited ? "font-bold" : ""}>
+            <span
+              className={
+                calculations.isUnlimited ? amountTextColorClass : undefined
+              }
+            >
               {formatCurrency(+envelope.spent, currencyConfig)}
-            </p>
-          </div>
-          {!calculations.isUnlimited && (
-            <div className="space-y-1 text-right">
-              <p className="text-xs font-medium text-muted-foreground">
-                Disponible
-              </p>
-              <p
-                className={`text-sm font-bold ${
-                  (calculations.remaining ?? 0) < 0
-                    ? "text-destructive"
-                    : "text-success"
-                }`}
-              >
-                {formatCurrency(calculations.remaining ?? 0, currencyConfig)}
-              </p>
-            </div>
+            </span>{" "}
+            <span className="text-muted-foreground">
+              {calculations.isUnlimited ? "sin límite" : "gastado"}
+            </span>
+          </span>
+          {calculations.isUnlimited ? (
+            <span className="flex items-center gap-1 text-muted-foreground">
+              <InfinityIcon className="h-3 w-3" />
+            </span>
+          ) : (
+            <span
+              className={
+                (calculations.remaining ?? 0) < 0
+                  ? "font-semibold text-destructive"
+                  : "font-semibold text-success"
+              }
+            >
+              {formatCurrency(calculations.remaining ?? 0, currencyConfig)} disp.
+            </span>
           )}
         </div>
 
         <Button
           variant="ghost"
           nativeButton={false}
-          className="group/btn h-auto w-full justify-between px-0 py-2 font-medium hover:bg-primary/5 hover:text-primary"
+          className="group/btn h-auto w-full justify-end gap-1 px-0 py-0 text-xs font-medium text-muted-foreground hover:bg-transparent hover:text-primary"
           render={
             <Link href={`/dashboard/envelope/${envelopeId}`}>
-              <span className="ml-1">Ver detalles</span>
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover/btn:bg-primary group-hover/btn:text-primary-foreground">
-                <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
-              </div>
+              Ver detalles
+              <ArrowRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-0.5" />
             </Link>
           }
         />

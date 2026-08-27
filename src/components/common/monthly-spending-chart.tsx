@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, XAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
@@ -31,17 +31,21 @@ interface MonthlySpendingChartProps {
   hasOtherCurrencies: boolean;
 }
 
-// "Bar Chart - Stacked + Legend" pattern from ui.shadcn.com/charts/bar.
 // Grouped by month (not by envelope) - envelopes in this app are always
 // "one account for one month" (e.g. "Marzo Rappi"), so a per-envelope
 // chart mixed accounts and months with no meaningful order. Per-month
 // is both meaningful on its own and naturally sorts chronologically -
 // the backend already returns entries oldest-to-newest.
 //
-// TODO(charts): this and EnvelopeChart (src/features/envelopes/components/
-// envelope-chart.tsx) still need a real design pass - colors, tooltip
-// content, empty/loading states - once the current pending work is done.
-// Revisit both together, not just this one.
+// Two side-by-side bars per month (not stacked) - Gastado and Disponible
+// don't sum to a meaningful third quantity, so stacking them into one bar
+// implied a relationship ("this is the budget") that isn't actually true
+// once an envelope is exceeded (Disponible goes negative, which a stack
+// can't render at all). Grouped bars compare the two directly instead.
+// Gastado reuses the app's own primary accent (the color spent amounts
+// already render in everywhere else - envelope cards, the detail page);
+// Disponible is muted-foreground, a status-style "this is the backdrop,
+// not a second category" pairing rather than a second competing hue.
 export const MonthlySpendingChart = ({
   chartData,
   totalEnvelopes,
@@ -60,11 +64,11 @@ export const MonthlySpendingChart = ({
   const chartConfig = {
     Gastado: {
       label: "Gastado",
-      color: "var(--chart-1)",
+      color: "var(--color-primary)",
     },
     Disponible: {
       label: "Disponible",
-      color: "var(--chart-4)",
+      color: "var(--color-muted-foreground)",
     },
   } satisfies ChartConfig;
 
@@ -85,8 +89,7 @@ export const MonthlySpendingChart = ({
           config={chartConfig}
           className="aspect-auto h-64 w-full sm:h-80"
         >
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
+          <BarChart accessibilityLayer data={chartData} barGap={4} barCategoryGap="30%">
             {/*
               Full labels ("Ago 2026") got shown-but-cramped: on narrow
               screens recharts starts skipping ticks to avoid overlap,
@@ -99,26 +102,33 @@ export const MonthlySpendingChart = ({
               the range spans more than one) still shows in the
               tooltip on hover (desktop) or tap (touch, recharts
               already treats a touch as a hover for this).
+
+              No CartesianGrid - a busy row of horizontal gridlines behind
+              two-bars-per-month reads as chart-template chrome, not this
+              app's own visual language elsewhere (thin hairline borders,
+              nothing else). The axis line itself (recessive, --border) is
+              the only baseline the bars need.
             */}
             <XAxis
               dataKey="label"
               tickLine={false}
-              axisLine={false}
+              axisLine={{ stroke: "var(--border)" }}
               tickFormatter={(value: string) => value.slice(0, 3)}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
             <Bar
               dataKey="Gastado"
-              stackId="month"
               fill="var(--color-Gastado)"
-              radius={[0, 0, 4, 4]}
+              radius={[4, 4, 0, 0]}
+              maxBarSize={28}
             />
             <Bar
               dataKey="Disponible"
-              stackId="month"
               fill="var(--color-Disponible)"
+              fillOpacity={0.6}
               radius={[4, 4, 0, 0]}
+              maxBarSize={28}
             />
           </BarChart>
         </ChartContainer>

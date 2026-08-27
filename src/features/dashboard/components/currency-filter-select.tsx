@@ -45,12 +45,17 @@ export const CurrencyFilterSelect = ({
 
   return (
     <Select value={selectedCurrency} onValueChange={handleChange}>
-      <SelectTrigger className="w-40" aria-label="Filtrar por moneda">
-        <SelectValue>
-          {(value: string) =>
-            CURRENCY_MAP[value as CurrencyCode]?.label ?? value
-          }
-        </SelectValue>
+      <SelectTrigger
+        size="sm"
+        className="w-auto gap-1.5 font-medium"
+        aria-label="Filtrar por moneda"
+      >
+        {/* Currency code only (COP, not "Peso Colombiano") - this is a
+            compact filter chip, not the place a full currency name earns
+            its space; the code is also what every amount in the app is
+            already tagged with elsewhere (envelope cards, the detail
+            page), so it stays the one consistent way currency shows up. */}
+        <SelectValue>{(value: string) => value}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         {currencies.map((currency) => (
