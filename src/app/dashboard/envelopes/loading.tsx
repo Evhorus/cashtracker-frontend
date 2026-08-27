@@ -10,12 +10,14 @@ export default function EnvelopesLoading() {
           below (see envelopes/page.tsx). */}
       <PageHeaderSkeleton withDescription={false} />
 
-      {/* Matches EnvelopesFilter: the search box, then the status
-          filter tabs row (Todos/Activos/En alerta/Excedidos/Sin
-          límite) - without this the whole filter bar would pop in
-          after the skeleton, shifting everything below it down. */}
+      {/* Matches EnvelopesFilter: the search box (mobile only - desktop's
+          copy lives in the header skeleton above, see
+          page-header-skeleton.tsx), then the status filter tabs row
+          (Todos/Activos/En alerta/Excedidos/Sin límite) - without this
+          the whole filter bar would pop in after the skeleton, shifting
+          everything below it down. */}
       <div className="space-y-3">
-        <Skeleton className="h-9 w-full" />
+        <Skeleton className="h-9 w-full md:hidden" />
         <Skeleton className="h-9 w-full sm:w-96" />
       </div>
 

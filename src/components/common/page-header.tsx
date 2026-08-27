@@ -83,7 +83,9 @@ export const PageHeader = ({
       </div>
 
       <div className="flex shrink-0 items-start gap-2">
-        {actions && <div className="hidden gap-2 md:flex">{actions}</div>}
+        {actions && (
+          <div className="hidden items-center gap-2 md:flex">{actions}</div>
+        )}
         {mobileActions && <div className="md:hidden">{mobileActions}</div>}
       </div>
     </div>
