@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { SearchX } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ListFilterBar } from "@/components/common/list-filter-bar";
 import { useCategories } from "@/providers/categories-provider";
 import { resolveIcon } from "../lib/icon-registry";
 import { CategoryCard } from "./category-card";
@@ -54,27 +55,29 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-3">
-        {/* Desktop renders this same state's search box inline in the
-            page header instead (see categories/page.tsx) - md:hidden
-            here avoids showing it twice. */}
-        <CategoriesSearch className="md:hidden" />
-
-        <Tabs
-          value={type}
-          onValueChange={(value) =>
-            setType(value as (typeof TYPE_FILTERS)[number]["value"])
-          }
-        >
-          <TabsList className="w-full sm:w-fit">
-            {TYPE_FILTERS.map((filter) => (
-              <TabsTrigger key={filter.value} value={filter.value}>
-                {filter.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      </div>
+      {/* Kept out of the page header (see categories/page.tsx) so the
+          search box isn't isolated top-right, far from both the title
+          and the table it filters, on a wide viewport - see
+          ListFilterBar. */}
+      <ListFilterBar
+        filters={
+          <Tabs
+            value={type}
+            onValueChange={(value) =>
+              setType(value as (typeof TYPE_FILTERS)[number]["value"])
+            }
+          >
+            <TabsList className="w-full sm:w-fit">
+              {TYPE_FILTERS.map((filter) => (
+                <TabsTrigger key={filter.value} value={filter.value}>
+                  {filter.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        }
+        renderSearch={(className) => <CategoriesSearch className={className} />}
+      />
 
       <p className="text-sm text-muted-foreground">
         {filtered.length} {filtered.length === 1 ? "categoría" : "categorías"}

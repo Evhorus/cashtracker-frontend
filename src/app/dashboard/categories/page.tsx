@@ -4,7 +4,6 @@ import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.a
 import { resolveCategory } from "@/features/categories/lib/category-palette";
 import { getCategoriesCached } from "@/features/categories/lib/get-categories-cached";
 import { CategoriesSection } from "@/features/categories/components/categories-section";
-import { CategoriesSearch } from "@/features/categories/components/categories-search";
 import { CategoriesFilterProvider } from "@/features/categories/components/categories-filter-context";
 import { CreateCategoryDialog } from "@/features/categories/components/create-category-dialog";
 
@@ -32,24 +31,25 @@ export default async function CategoriesPage() {
 
   return (
     // CategoriesFilterProvider holds the search/type state shared between
-    // the header's search box below and CategoriesSection further down -
-    // see that context file's comment for why a context instead of prop
-    // drilling through this server component.
+    // the search box (rendered inside CategoriesSection, next to the
+    // type tabs) and the filtering logic there - see that context file's
+    // comment for why a context instead of local state, now that the
+    // search box isn't a sibling of CategoriesSection anymore.
     <CategoriesFilterProvider>
       <div className="space-y-6">
         {/* Same convention as dashboard/envelopes/page.tsx: the create
-            action (and, on desktop, the search box) lives in PageHeader,
-            not in the content below - actions on desktop, mobileActions
-            (just the dialog, icon-only) on mobile. */}
+            action lives in PageHeader, not in the content below - actions
+            on desktop, mobileActions (just the dialog, icon-only) on
+            mobile. The search box lives in CategoriesSection, next to
+            the type tabs (Todas/Predeterminadas/Personalizadas), not
+            here - it used to render in this actions slot but that left
+            it isolated top-right with a lot of empty space around it on
+            a wide viewport, far from both the title and the table it
+            filters. */}
         <PageHeader
           title="Categorías"
           backUrl="/dashboard"
-          actions={
-            <>
-              <CategoriesSearch className="w-64" />
-              <CreateCategoryDialog />
-            </>
-          }
+          actions={<CreateCategoryDialog />}
           mobileActions={<CreateCategoryDialog />}
         />
 

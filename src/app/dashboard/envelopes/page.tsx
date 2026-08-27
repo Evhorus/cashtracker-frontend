@@ -2,10 +2,7 @@ import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
-import {
-  EnvelopesFilter,
-  EnvelopesSearch,
-} from "@/features/envelopes/components/envelopes-filter";
+import { EnvelopesFilter } from "@/features/envelopes/components/envelopes-filter";
 import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
 import { PageHeader } from "@/components/common/page-header";
 import { PaginationControls } from "@/components/common/pagination-controls";
@@ -59,18 +56,7 @@ export default async function EnvelopesPage({
       <PageHeader
         title="Sobres"
         backUrl="/dashboard"
-        actions={
-          <>
-            {/* Inline in the header row next to "Nuevo Sobre" on desktop
-                (matching the mockup's compact header), not the separate
-                full-width row below that mobile still uses (see
-                EnvelopesFilter) - md:hidden inside EnvelopesSearch itself
-                would fight this actions slot's own `hidden md:flex`, so
-                this instance stays plain and mobile gets its own below. */}
-            <EnvelopesSearch className="w-64" />
-            <CreateEnvelopeDialog />
-          </>
-        }
+        actions={<CreateEnvelopeDialog />}
         mobileActions={<CreateEnvelopeDialog />}
       />
 
