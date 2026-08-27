@@ -45,7 +45,14 @@ export const PageHeaderSkeleton = ({
 
       <div className="flex items-center gap-2">
         {actions === "single" ? (
-          <Skeleton className="h-10 w-10 md:w-36" />
+          <>
+            {/* Desktop: search box + the create button, inline - matches
+                envelopes/page.tsx and categories/page.tsx, both of which
+                render their search box in this actions slot instead of
+                the content column below it. */}
+            <Skeleton className="hidden h-9 w-64 md:block" />
+            <Skeleton className="h-10 w-10 md:w-36" />
+          </>
         ) : (
           <>
             <div className="hidden items-center gap-1 md:flex">

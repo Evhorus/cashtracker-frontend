@@ -1,13 +1,17 @@
 "use client";
-import { useMemo, useState } from "react";
-import { Search, SearchX } from "lucide-react";
+import { useMemo } from "react";
+import { SearchX } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCategories } from "@/providers/categories-provider";
 import { resolveIcon } from "../lib/icon-registry";
 import { CategoryCard } from "./category-card";
 import { CategoriesTable } from "./categories-table";
+import { CategoriesSearch } from "./categories-search";
+import {
+  CATEGORY_TYPE_FILTERS as TYPE_FILTERS,
+  useCategoriesFilter,
+} from "./categories-filter-context";
 
 interface CategoriesSectionProps {
   /** Per-category envelope count, keyed by CategoryDef.id - computed in
@@ -16,27 +20,17 @@ interface CategoriesSectionProps {
   categoryCounts: Record<string, number>;
 }
 
-const TYPE_FILTERS = [
-  { value: "all", label: "Todas" },
-  { value: "default", label: "Predeterminadas" },
-  { value: "custom", label: "Personalizadas" },
-] as const;
-
-type TypeFilter = (typeof TYPE_FILTERS)[number]["value"];
-
 // Same standard as EnvelopesGrid/EnvelopesFilter: a search box + status
-// tabs (mb-6 space-y-3 wrapper, same shape as EnvelopesFilter - just
-// "Predeterminada/Personalizada" instead of "Activos/Excedidos" since
-// that's the one dimension a category actually has), a count line, then
-// a mobile card list + desktop table. Search/type filtering is plain
-// local state instead of EnvelopesFilter's debounced URL-param
-// round-trip - the full category list already lives on the client
-// (useCategories()), no backend call needed to filter it, so instant is
-// both simpler and better UX here.
+// tabs, a count line, then a mobile card list + desktop table. Search/
+// type filtering reads CategoriesFilterProvider's context (search state
+// lives there, not here, so the search box itself can render inline in
+// the page header on desktop - see categories/page.tsx) rather than
+// EnvelopesFilter's debounced URL-param round-trip - the full category
+// list already lives on the client (useCategories()), no backend call
+// needed to filter it, so instant is both simpler and better UX here.
 export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
   const categories = useCategories();
-  const [search, setSearch] = useState("");
-  const [type, setType] = useState<TypeFilter>("all");
+  const { search, type, setType } = useCategoriesFilter();
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -60,19 +54,18 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
 
   return (
     <div className="space-y-6">
-      <div className="mb-6 space-y-3">
-        <div className="relative">
-          <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar categoría..."
-            aria-label="Buscar categorías por nombre"
-            className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+      <div className="space-y-3">
+        {/* Desktop renders this same state's search box inline in the
+            page header instead (see categories/page.tsx) - md:hidden
+            here avoids showing it twice. */}
+        <CategoriesSearch className="md:hidden" />
 
-        <Tabs value={type} onValueChange={(value) => setType(value as TypeFilter)}>
+        <Tabs
+          value={type}
+          onValueChange={(value) =>
+            setType(value as (typeof TYPE_FILTERS)[number]["value"])
+          }
+        >
           <TabsList className="w-full sm:w-fit">
             {TYPE_FILTERS.map((filter) => (
               <TabsTrigger key={filter.value} value={filter.value}>
