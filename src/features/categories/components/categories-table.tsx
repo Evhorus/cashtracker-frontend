@@ -80,7 +80,7 @@ export function CategoriesTable({ categories, categoryCounts }: CategoriesTableP
                       categories-section.tsx's mobile card for the same
                       reasoning), so no actions render for those rows. */}
                   {!category.isDefault && (
-                    <CardHoverActions className="justify-end">
+                    <CardHoverActions className="justify-end" alwaysVisible>
                       <UpdateCategoryDialog category={category} />
                       <DeleteCategoryAlertDialog
                         id={category.id}

@@ -159,7 +159,7 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
                   </span>
                 </TableCell>
                 <TableCell className="px-5 py-3.5">
-                  <CardHoverActions className="justify-end">
+                  <CardHoverActions className="justify-end" alwaysVisible>
                     <UpdateEnvelopeDialog envelope={envelope} />
                     <DeleteEnvelopeAlertDialog
                       id={envelope.id}
