@@ -71,19 +71,28 @@ export const PaginationControls = ({
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          {/* tabIndex={-1} alongside aria-disabled: pointer-events-none
-              only stops the mouse, so a disabled arrow was still
-              reachable with Tab and still activated with Enter, taking a
-              keyboard user to page 0 or past the last page. Spanish
-              text/labels because the shadcn primitive defaults to
-              English ("Previous"/"Next", "Go to previous page") and
+          {/* `inert`, not tabIndex, to take a disabled arrow out of the
+              tab order. pointer-events-none only stops the mouse, so
+              these were still reachable with Tab and still activated
+              with Enter, navigating to page 0 or past the last page.
+              tabIndex was the obvious fix and the wrong one: Base UI's
+              Button sets its own tabIndex when rendering as a non-native
+              element (nativeButton={false} + render={<a/>}), and which
+              value wins differs between the server render and hydration
+              - a real "tree hydrated but some attributes ... didn't
+              match" warning. `inert` is a plain DOM attribute Base UI
+              doesn't manage, so there is nothing to conflict with, and
+              it removes the element from the accessibility tree too -
+              which is what a disabled control should be.
+              Spanish text/labels because the shadcn primitive defaults
+              to English ("Previous"/"Next", "Go to previous page") and
               components/ui is generated code we don't hand-edit. */}
           <PaginationPrevious
             href={buildHref(basePath, Math.max(1, page - 1), searchParams)}
             text="Anterior"
             aria-label="Ir a la página anterior"
             aria-disabled={!hasPreviousPage}
-            tabIndex={hasPreviousPage ? undefined : -1}
+            inert={!hasPreviousPage}
             className={
               hasPreviousPage ? undefined : "pointer-events-none opacity-50"
             }
@@ -118,7 +127,7 @@ export const PaginationControls = ({
             text="Siguiente"
             aria-label="Ir a la página siguiente"
             aria-disabled={!hasNextPage}
-            tabIndex={hasNextPage ? undefined : -1}
+            inert={!hasNextPage}
             className={
               hasNextPage ? undefined : "pointer-events-none opacity-50"
             }
