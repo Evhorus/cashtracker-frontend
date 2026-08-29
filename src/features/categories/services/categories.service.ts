@@ -5,6 +5,8 @@ import {
   CategoriesResponseApi,
   CategoryOptionsAPIResponseSchema,
   CategoryOptionsApi,
+  CategoryUsageAPIResponseSchema,
+  CategoryUsageApi,
 } from "../schemas/category.schema";
 import { Category, CategoryOptions } from "../types";
 import { CategoryMapper } from "../mappers/category.mapper";
@@ -32,6 +34,23 @@ export const CategoriesService = {
         next: { tags: ["category-options"], revalidate: 3600 },
       },
       CategoryOptionsAPIResponseSchema,
+    );
+  },
+
+  /**
+   * Envelope counts per category. Its own request rather than a field on
+   * getAll(): that list is fetched by the dashboard layout on every page
+   * for the category picker, and only the categories page needs counts.
+   */
+  getUsage: async (): Promise<Record<string, number>> => {
+    const rows = await fetchApi<CategoryUsageApi>(
+      "/categories/usage",
+      { next: { tags: ["category-usage"], revalidate: 60 } },
+      CategoryUsageAPIResponseSchema,
+    );
+
+    return Object.fromEntries(
+      rows.map((row) => [row.categoryId, row.envelopeCount]),
     );
   },
 
