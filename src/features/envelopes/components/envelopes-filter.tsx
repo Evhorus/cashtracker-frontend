@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { SearchInput } from "@/components/common/search-input";
 import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
 import { ListFilterBar } from "@/components/common/list-filter-bar";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FilterSelect } from "@/components/common/filter-select";
 import {
   ENVELOPE_STATUS_TAB_VALUES,
   type EnvelopeStatusTab,
@@ -51,8 +51,9 @@ const EnvelopesSearch = ({ className }: { className?: string }) => {
   );
 };
 
-const EnvelopesStatusTabs = () => {
+export const EnvelopesStatusFilter = () => {
   const t = useTranslations("envelopes");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -65,13 +66,13 @@ const EnvelopesStatusTabs = () => {
     ? (statusParam as EnvelopeStatusTab)
     : "all";
 
-  const handleStatusChange = (value: unknown) => {
+  const handleStatusChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
 
     if (value === "all") {
       params.delete("status");
     } else {
-      params.set("status", value as string);
+      params.set("status", value);
     }
 
     // Same reasoning as the search handler above - a narrower filter can
@@ -85,28 +86,35 @@ const EnvelopesStatusTabs = () => {
   };
 
   return (
-    <Tabs value={status} onValueChange={handleStatusChange}>
-      {/* w-max, not w-full: the row is as wide as its tabs and
-            scrolls within ListFilterBar rather than stretching or
-            clipping them. */}
-      <TabsList className="w-max">
-        {ENVELOPE_STATUS_TAB_VALUES.map((filter) => (
-          <TabsTrigger key={filter} value={filter}>
-            {statusFilterLabel(t, filter)}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </Tabs>
+    <FilterSelect
+      label={tCommon("status")}
+      value={status}
+      onValueChange={handleStatusChange}
+      className="w-full sm:w-auto"
+      options={ENVELOPE_STATUS_TAB_VALUES.map((filter) => ({
+        value: filter,
+        label: statusFilterLabel(t, filter),
+        // The union sits below a divider - it is a saved view, not one
+        // more state, and the line says so without a word.
+        separatorBefore: filter === "alert",
+      }))}
+    />
   );
 };
 
 // Search full-width above the status tabs on mobile; the two sharing
 // one row on desktop, right above the table they filter - see
 // ListFilterBar for why this is a shared shell, not bespoke markup.
-export const EnvelopesFilter = () => {
+export const EnvelopesFilter = ({
+  actions,
+}: {
+  /** Right-aligned on the same row, desktop only - see ListFilterBar. */
+  actions?: React.ReactNode;
+}) => {
   return (
     <ListFilterBar
-      filters={<EnvelopesStatusTabs />}
+      actions={actions}
+      filters={<EnvelopesStatusFilter />}
       renderSearch={(className) => <EnvelopesSearch className={className} />}
     />
   );

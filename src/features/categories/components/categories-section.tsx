@@ -2,17 +2,14 @@
 import { useTranslations } from "next-intl";
 import { SearchX } from "lucide-react";
 import { EmptyState } from "@/components/common/empty-state";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CategoriesTypeFilter } from "./categories-type-filter";
 import { ListFilterBar } from "@/components/common/list-filter-bar";
 import { useCategories } from "@/providers/categories-provider";
 import { resolveIcon } from "../lib/icon-registry";
 import { CategoryCard } from "./category-card";
 import { CategoriesTable } from "./categories-table";
 import { CategoriesSearch } from "./categories-search";
-import {
-  CATEGORY_TYPE_FILTERS as TYPE_FILTERS,
-  useCategoriesFilter,
-} from "./categories-filter-context";
+import { useCategoriesFilter } from "./categories-filter-context";
 import { Text } from "@/components/common/typography";
 
 interface CategoriesSectionProps {
@@ -20,6 +17,9 @@ interface CategoriesSectionProps {
    * dashboard/categories/page.tsx from the real envelope list, not
    * estimated. Missing keys just mean 0. */
   categoryCounts: Record<string, number>;
+  /** Right-aligned on the same row as the search and filter, desktop
+   * only - see ListFilterBar. */
+  actions?: React.ReactNode;
 }
 
 // Same standard as EnvelopesGrid/EnvelopesFilter: a search box + status
@@ -30,10 +30,13 @@ interface CategoriesSectionProps {
 // EnvelopesFilter's debounced URL-param round-trip - the full category
 // list already lives on the client (useCategories()), no backend call
 // needed to filter it, so instant is both simpler and better UX here.
-export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
+export function CategoriesSection({
+  categoryCounts,
+  actions,
+}: CategoriesSectionProps) {
   const t = useTranslations("categories");
   const categories = useCategories();
-  const { search, type, setType } = useCategoriesFilter();
+  const { search, type } = useCategoriesFilter();
 
   // No useMemo: the React Compiler (reactCompiler: true in
   // next.config.ts) memoizes this on the same three dependencies.
@@ -62,22 +65,8 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
           and the table it filters, on a wide viewport - see
           ListFilterBar. */}
       <ListFilterBar
-        filters={
-          <Tabs
-            value={type}
-            onValueChange={(value) =>
-              setType(value as (typeof TYPE_FILTERS)[number])
-            }
-          >
-            <TabsList className="w-max">
-              {TYPE_FILTERS.map((filter) => (
-                <TabsTrigger key={filter} value={filter}>
-                  {t(`types.${filter}`)}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        }
+        actions={actions}
+        filters={<CategoriesTypeFilter />}
         renderSearch={(className) => <CategoriesSearch className={className} />}
       />
 

@@ -26,10 +26,13 @@ export default async function AccountPage() {
     // them (their left edge lines up with the container's; this one's
     // didn't, being centered inside it instead).
     <div className="space-y-6">
+      {/* The title is hidden above md - the app header shows it there -
+          but the subtitle stays, since the header carries no subtitle. */}
       <PageHeader
         title={t("title")}
         description={t("subtitle")}
         backUrl="/dashboard"
+        hideTitleOnDesktop
       />
       <AccountView />
     </div>

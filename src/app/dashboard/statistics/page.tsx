@@ -86,7 +86,10 @@ export default async function StatisticsPage({
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <Heading as="h1" size="lg">
+          {/* Hidden above md: the app header shows the section name
+              there. The subtitle below stays - it says something the
+              header does not. */}
+          <Heading as="h1" size="lg" className="md:hidden">
             {t("title")}
           </Heading>
           <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
