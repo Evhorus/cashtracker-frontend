@@ -1,3 +1,4 @@
+import { PageHeaderSkeleton } from "@/components/common/page-header-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -7,17 +8,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 export default function AccountLoading() {
   return (
     <div className="space-y-6">
-      {/* Header - no actions on this page, unlike PageHeaderSkeleton's
-          default shape (see envelopes/loading.tsx). md:hidden on the
-          back button - matches PageHeader itself, desktop has the
-          sidebar nav instead. */}
-      <div className="flex items-center gap-3">
-        <Skeleton className="h-10 w-10 shrink-0 rounded-full md:hidden" />
-        <div className="space-y-1.5">
-          <Skeleton className="h-8 w-32" />
-          <Skeleton className="h-4 w-56" />
-        </div>
-      </div>
+      {/* No actions on this page - the shared skeleton covers the rest,
+          including the breadcrumb, so this no longer hand-rolls a copy
+          of PageHeader's shape that has to be kept in step by hand. */}
+      <PageHeaderSkeleton actions="none" />
 
       <div className="space-y-6">
         {/* Mobile: one bar (the Select). */}

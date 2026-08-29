@@ -28,24 +28,26 @@ export const PageHeader = ({
   icon,
 }: PageHeaderProps) => {
   return (
-    // items-start, not items-center: a title long enough to wrap (see the
-    // min-w-0 comment below) would otherwise center the back button and
-    // actions against the whole multi-line block, leaving them floating
-    // next to the middle line instead of lined up with the first one.
-    <div className="flex items-start justify-between gap-4">
-      <div className="flex min-w-0 flex-1 items-start gap-3">
-        {backUrl && (
-          // md:hidden - desktop already has the persistent sidebar nav
-          // (dashboard-sidebar.tsx) to get anywhere else in the app, so a
-          // "go back" affordance here is redundant there. Mobile has no
-          // such persistent nav next to the content, just the bottom tab
-          // bar (Resumen/Sobres/Estadísticas/Cuenta, no "back" of its
-          // own), so it's the one place this button actually earns its
-          // spot. (Desktop's own "back" need - a nested detail view the
-          // sidebar has no direct link to - is met differently: see
-          // BackButton, placed in this header's `actions` instead.)
-          <Link href={backUrl} className="md:hidden">
-            {/* Same rounded/translucent-card/subtle-border treatment as
+    <div className="space-y-4">
+      {/* items-start, not items-center: a title long enough to wrap (see
+          the min-w-0 comment below) would otherwise center the back
+          button against the whole multi-line block, leaving it floating
+          next to the middle line instead of lined up with the first
+          one. */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          {backUrl && (
+            // md:hidden - desktop already has the persistent sidebar nav
+            // (dashboard-sidebar.tsx) to get anywhere else in the app, so a
+            // "go back" affordance here is redundant there. Mobile has no
+            // such persistent nav next to the content, just the bottom tab
+            // bar (Resumen/Sobres/Estadísticas/Cuenta, no "back" of its
+            // own), so it's the one place this button actually earns its
+            // spot. (Desktop's own "back" need - a nested detail view the
+            // sidebar has no direct link to - is met differently: see
+            // BackButton, placed in this header's `actions` instead.)
+            <Link href={backUrl} className="md:hidden">
+              {/* Same rounded/translucent-card/subtle-border treatment as
                 the nav-pill groups elsewhere (custom-header.tsx's
                 Dashboard/Sobres pills, account-view.tsx's settings
                 sidebar) - a plain neutral-outline circle read as
@@ -53,19 +55,19 @@ export const PageHeader = ({
                 nudges toward the primary accent those pills use too,
                 instead of the generic gray hover every outline button
                 gets. */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 shrink-0 rounded-full border border-border/60 bg-card/50 text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-        )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 shrink-0 rounded-full border border-border/60 bg-card/50 text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+          )}
 
-        {icon && <div className="shrink-0">{icon}</div>}
+          {icon && <div className="shrink-0">{icon}</div>}
 
-        {/* min-w-0 is what actually lets this shrink below the title's
+          {/* min-w-0 is what actually lets this shrink below the title's
             natural content width inside the flex row above - without it
             the title just grows the row wide instead of wrapping,
             pushing the actions off to the side (or under them, at long
@@ -74,30 +76,42 @@ export const PageHeader = ({
             in and needs to read in full, not hide behind an ellipsis -
             same criterion as sessions-section.tsx and
             envelope-card.tsx's meta line. */}
-        <div className="min-w-0 flex-1">
-          <Heading as="h1" size="lg">
-            {title}
-          </Heading>
-          {description && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              {description}
-            </div>
-          )}
+          <div className="min-w-0 flex-1">
+            <Heading as="h1" size="lg">
+              {title}
+            </Heading>
+            {description && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                {description}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-4">
+          {/* Opposite the title, and the only thing there - the shape
+              dashboard kits use. Desktop only: at 390px this row already
+              carries the back arrow, the title and the create action,
+              and that back arrow is the same affordance a breadcrumb
+              would offer. */}
+          <Breadcrumb current={title} className="hidden md:block" />
+
+          {/* Mobile's actions stay on this row: there is no breadcrumb
+              to share it with, and an icon-only button fits beside the
+              title where a labelled row would not. */}
+          {mobileActions && <div className="md:hidden">{mobileActions}</div>}
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-4">
-        {/* Opposite the title, the shape dashboard kits use. Desktop
-            only: at 390px this row already carries the back arrow, the
-            title and the create action, and that back arrow is the same
-            affordance a breadcrumb would offer. */}
-        <Breadcrumb current={title} className="hidden md:block" />
-
-        {actions && (
-          <div className="hidden items-center gap-2 md:flex">{actions}</div>
-        )}
-        {mobileActions && <div className="md:hidden">{mobileActions}</div>}
-      </div>
+      {/* Desktop's actions get their own row beneath, so the title row
+          holds only the title and the trail. Crowding them in beside the
+          breadcrumb is what this replaced - on the envelope detail page
+          that row carried a 3-level trail and three labelled buttons. */}
+      {actions && (
+        <div className="hidden items-center justify-end gap-2 md:flex">
+          {actions}
+        </div>
+      )}
     </div>
   );
 };
