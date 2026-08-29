@@ -99,6 +99,50 @@ export const EnvelopeHelpers = {
     return "normal";
   },
 
+  /**
+   * Text color for a progress status - envelope/page.tsx's "Gastado"
+   * figure, the expense detail page's envelope-health color, and
+   * envelope-card.tsx's amount all used to hand-roll this same 3-way
+   * (4-way counting "unlimited") ternary independently, which is how the
+   * expense detail page ended up using a different "healthy" color
+   * (emerald-500) than the other two (primary) - same status, different
+   * color, purely from copy-paste drift. One function now, so a new
+   * status color only ever needs to change here.
+   */
+  getStatusTextColorClass: (status: EnvelopeProgressStatus): string => {
+    switch (status) {
+      case "exceeded":
+        return "text-destructive";
+      case "warning":
+        return "text-amber-500";
+      case "unlimited":
+        return "text-muted-foreground";
+      case "normal":
+        return "text-primary";
+    }
+  },
+
+  /**
+   * Same status -> color mapping as `getStatusTextColorClass`, but
+   * targeting Progress's actual filled bar (Progress renders
+   * Root > Track > Indicator, so the indicator is a grandchild, not a
+   * direct child - a plain `[&>div]` only ever reaches the Track and
+   * never recolors the fill itself). A separate function because the
+   * output shape genuinely differs per consumer (a selector here vs. a
+   * bare text-color class there), not because the underlying 3-way
+   * status logic does.
+   */
+  getStatusProgressBarColorClass: (status: EnvelopeProgressStatus): string => {
+    switch (status) {
+      case "exceeded":
+        return "[&_[data-slot=progress-indicator]]:bg-destructive";
+      case "warning":
+        return "[&_[data-slot=progress-indicator]]:bg-amber-500";
+      default:
+        return "[&_[data-slot=progress-indicator]]:bg-primary";
+    }
+  },
+
   /** Whether an envelope belongs under one of the status filter tabs. */
   matchesStatusFilter: (
     envelope: Envelope,

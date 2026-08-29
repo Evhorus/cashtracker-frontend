@@ -12,7 +12,7 @@ import { Text } from "@/components/common/typography";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { formatDate } from "@/lib/date-helpers";
+import { formatDate, formatCalendarDate } from "@/lib/date-helpers";
 import {
   Calendar,
   FileText,
@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
+import { ExpenseHelpers } from "@/features/expenses/lib/expense-helpers";
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
@@ -37,24 +38,17 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   const envelope = await getEnvelopeByIdAction(envelopeId);
 
   const isUnlimited = envelope.amount === null;
-  const envelopeAmount = envelope.amount === null ? null : +envelope.amount;
-  const envelopeSpent = +envelope.spent;
-  const expenseAmount = +expense.amount;
+  const envelopeAmount = EnvelopeHelpers.getAmount(envelope);
+  const envelopeSpent = EnvelopeHelpers.getSpent(envelope);
+  const expenseAmount = ExpenseHelpers.getAmount(expense);
   const currencyConfig = CURRENCY_MAP[envelope.currency];
-  const impactPercentage =
-    envelopeAmount === null ? null : (expenseAmount / envelopeAmount) * 100;
+  const impactPercentage = ExpenseHelpers.getImpactPercentage(expense, envelope);
 
   // Determine envelope health color (soft limit - never blocks, just informs)
   const progressStatus = EnvelopeHelpers.getProgressStatus(envelope);
   const isOverLimit = progressStatus === "exceeded";
   const isHealthy = progressStatus === "normal";
-  const healthColor = isUnlimited
-    ? "text-muted-foreground"
-    : isOverLimit
-      ? "text-destructive"
-      : isHealthy
-        ? "text-emerald-500"
-        : "text-amber-500";
+  const healthColor = EnvelopeHelpers.getStatusTextColorClass(progressStatus);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-10">
@@ -131,7 +125,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     <div className="flex w-fit items-center gap-2 rounded-full bg-background/50 px-2.5 py-1 text-muted-foreground">
                       <Calendar className="h-3.5 w-3.5" />
                       <span className="text-xs font-medium sm:text-sm">
-                        {formatDate(expense.date)}
+                        {formatCalendarDate(expense.date)}
                       </span>
                     </div>
                   </div>

@@ -5,6 +5,7 @@ import {
   parseDateInput,
   parseCalendarDate,
   formatCalendarDateForApi,
+  toFormCalendarDate,
 } from "@/lib/date-helpers";
 import { z } from "zod";
 
@@ -41,4 +42,24 @@ export const ExpenseMapper = {
       updatedAt: parseDateInput(apiExpense.updatedAt),
     };
   },
+
+  /**
+   * Domain -> Form defaults (Outbound, edit flow)
+   * `expense.date` is UTC-anchored (see parseCalendarDate) - correct for
+   * display anywhere, wrong for the Calendar widget, which reads a
+   * Date's LOCAL getters to know what's selected. toFormCalendarDate
+   * bridges the two, always running client-side (this is only ever
+   * called from a "use client" dialog opening the edit form), so this
+   * lives here rather than in each dialog that needs it - same reasoning
+   * as toApiRequest/fromApi owning every other UI<->API/form shape
+   * change instead of leaving it to call sites.
+   */
+  toFormValues: (
+    expense: Expense,
+  ): Pick<ExpenseFormValues, "name" | "amount" | "description" | "date"> => ({
+    name: expense.name,
+    amount: expense.amount,
+    description: expense.description ?? "",
+    date: toFormCalendarDate(expense.date),
+  }),
 };

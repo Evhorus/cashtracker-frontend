@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Expense } from "@/features/expenses/types";
-import { formatDate } from "@/lib/date-helpers";
+import { formatCalendarDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import type { CurrencyCode } from "@/lib/format-currency";
 import {
@@ -75,7 +75,7 @@ export function ExpensesTable({
                 </Link>
               </TableCell>
               <TableCell className="px-5 py-3.5 text-muted-foreground">
-                {formatDate(expense.date)}
+                {formatCalendarDate(expense.date)}
               </TableCell>
               <TableCell className="px-5 py-3.5 text-right font-mono font-semibold text-primary">
                 {formatCurrency(+expense.amount, currencyConfig)}

@@ -1,6 +1,7 @@
 import type { DashboardRecentExpenseApi } from "../schemas/dashboard.schema";
 import type { DashboardRecentExpense } from "../types";
 import type { CurrencyCode } from "@/lib/format-currency";
+import { parseCalendarDate } from "@/lib/date-helpers";
 
 export const DashboardMapper = {
   /**
@@ -15,7 +16,7 @@ export const DashboardMapper = {
     name: apiExpense.name,
     amount: apiExpense.amount,
     currency: apiExpense.currency as CurrencyCode,
-    date: new Date(apiExpense.date),
+    date: parseCalendarDate(apiExpense.date),
     envelopeId: apiExpense.envelopeId,
     envelopeName: apiExpense.envelopeName,
   }),
