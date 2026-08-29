@@ -1,7 +1,7 @@
 import { Tag } from "lucide-react";
 import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
 import { resolveCategory, type CategoryDef } from "../lib/category-palette";
-import { getCategoriesCached } from "../lib/get-categories-cached";
+import { getCategories } from "../data/get-categories";
 import { Text } from "@/components/common/typography";
 
 interface CategoryBreakdownProps {
@@ -23,10 +23,10 @@ const NO_CATEGORY: Pick<CategoryDef, "label" | "color" | "Icon"> = {
 // what's on screen elsewhere (envelope cards/table), just reduced.
 //
 // Async Server Component: fetches the user's categories itself
-// (getCategoriesCached() dedupes per request), same reasoning as
+// (getCategories() dedupes per request), same reasoning as
 // CategoryIcon/CategoryLabel in category-badge.tsx.
 export async function CategoryBreakdown({ envelopes, currency }: CategoryBreakdownProps) {
-  const categories = await getCategoriesCached();
+  const categories = await getCategories();
   const config = CURRENCY_MAP[currency];
 
   const buckets = new Map<
@@ -78,7 +78,12 @@ export async function CategoryBreakdown({ envelopes, currency }: CategoryBreakdo
                 {formatCurrency(row.amount, config)} · {percentage.toFixed(0)}%
               </span>
             </div>
-            <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-secondary/60">
+            {/* Decorative - the percentage is already in the row's own
+                text above (see envelopes-table.tsx for the same call). */}
+            <div
+              aria-hidden="true"
+              className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-secondary/60"
+            >
               <div
                 className="h-full rounded-full"
                 style={{ width: `${percentage}%`, background: row.color }}

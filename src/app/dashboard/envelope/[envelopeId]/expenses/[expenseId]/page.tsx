@@ -1,7 +1,8 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
-import { getEnvelopeByIdAction } from "@/features/envelopes/actions/get-envelope-by-id.action";
-import { getExpenseByIdAction } from "@/features/expenses/actions/get-expense-by-id.action";
+import { getEnvelopeById } from "@/features/envelopes/data/get-envelope-by-id";
+import { getExpenseById } from "@/features/expenses/data/get-expense-by-id";
 import { DeleteExpenseAlertDialog } from "@/features/expenses/components/delete-expense-alert-dialog";
 import { UpdateExpenseDialog } from "@/features/expenses/components/update-expense-dialog";
 import { ExpenseActionsMenu } from "@/features/expenses/components/expense-actions-menu";
@@ -27,6 +28,17 @@ import { ExpenseHelpers } from "@/features/expenses/lib/expense-helpers";
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
+// Same shared-fetch trick as the envelope detail route
+// (dashboard/envelope/[envelopeId]/page.tsx): getExpenseById is
+// wrapped in React's cache(), so this shares the page body's fetch.
+export async function generateMetadata({
+  params,
+}: Pick<ExpensePageProps, "params">): Promise<Metadata> {
+  const { envelopeId, expenseId } = await params;
+  const expense = await getExpenseById(envelopeId, expenseId);
+  return { title: expense.name };
+}
+
 interface ExpensePageProps {
   params: Promise<{ envelopeId: string; expenseId: string }>;
 }
@@ -35,8 +47,13 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   await auth.protect();
   const t = await getTranslations("common");
   const { envelopeId, expenseId } = await params;
-  const expense = await getExpenseByIdAction(envelopeId, expenseId);
-  const envelope = await getEnvelopeByIdAction(envelopeId);
+  // In parallel, not one after the other: these two reads are
+  // independent, so awaiting them sequentially just added the slower
+  // one's latency on top of the faster one's for no reason.
+  const [expense, envelope] = await Promise.all([
+    getExpenseById(envelopeId, expenseId),
+    getEnvelopeById(envelopeId),
+  ]);
 
   const isUnlimited = envelope.amount === null;
   const envelopeAmount = EnvelopeHelpers.getAmount(envelope);
@@ -195,7 +212,12 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                       {(impactPercentage ?? 0).toFixed(1)}%
                     </span>
                   </div>
-                  <div className="h-3 w-full overflow-hidden rounded-full bg-secondary">
+                  {/* Decorative - "Representa el X%" is stated in the
+                      text directly above this bar. */}
+                  <div
+                    aria-hidden="true"
+                    className="h-3 w-full overflow-hidden rounded-full bg-secondary"
+                  >
                     <div
                       className="h-full rounded-full bg-primary transition-all duration-500"
                       style={{

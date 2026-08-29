@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { manrope, plexMono, sourceSerif } from "./fonts";
@@ -7,6 +8,25 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
 
 import "./globals.css";
+
+// App-wide defaults. Only (home)/page.tsx defined any metadata before,
+// so every other route - dashboard, sign-in, sign-up, the detail pages -
+// rendered with no <title> at all: browser tabs and bookmarks fell back
+// to the bare URL. `template` lets a route set just its own name and
+// still get the product name appended; `default` covers the routes that
+// set nothing.
+// metadataBase lives here rather than on the landing page so relative
+// OG/Twitter image URLs resolve on every route, not just "/".
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:3001"),
+  title: {
+    default: "CashTracker - Control de Finanzas Personales",
+    template: "%s | CashTracker",
+  },
+  description:
+    "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras con CashTracker.",
+  applicationName: "CashTracker",
+};
 
 // ClerkProvider intentionally lives in the (auth) and dashboard layouts
 // instead of here - the public marketing routes never render a signed-in

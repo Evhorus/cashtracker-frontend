@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { CategoryFormValues } from "../schemas/category.schema";
 import { CategoriesService } from "../services/categories.service";
 import { createSafeAction } from "@/lib/safe-action";
@@ -12,7 +12,9 @@ export const createCategoryAction = createSafeAction(
     await auth.protect();
     const data = await CategoriesService.create(formData);
 
-    revalidateTag("all-categories", "max");
+    // updateTag (not revalidateTag) - read-your-own-writes; see
+    // categories/actions/delete-category.action.ts for the why.
+    updateTag("all-categories");
 
     return { successMessage: data.message };
   },

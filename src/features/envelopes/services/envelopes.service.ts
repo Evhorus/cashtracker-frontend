@@ -46,6 +46,10 @@ export const EnvelopesService = {
     const envelope = await fetchApi<EnvelopeApi>(
       `/envelopes/${id}`,
       {
+        // NOTE: this tag is global, not per-id, so invalidating it on a
+        // mutation drops every cached envelope detail rather than just the
+        // one that changed. Correct but wasteful - should become
+        // `envelope-${id}`. Left as-is for now; see the audit follow-ups.
         next: { tags: ["envelope"], revalidate: 60 },
       },
       EnvelopeAPIResponseSchema,
@@ -68,8 +72,13 @@ export const EnvelopesService = {
     });
   },
 
+  // Returns the removed entity, not a `{ message }` envelope like
+  // create/update do (envelopes.service.ts's `remove()` in
+  // cashtracker-backend returns `envelopesRepository.remove(envelope)`).
+  // Typed `unknown` so no caller can read a `.message` off it that isn't
+  // there - the delete action supplies its own success wording.
   delete: (id: string) => {
-    return fetchApi<{ message: string }>(`/envelopes/${id}`, {
+    return fetchApi<unknown>(`/envelopes/${id}`, {
       method: "DELETE",
     });
   },

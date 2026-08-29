@@ -20,8 +20,8 @@ interface CategoriesProviderProps extends CategoriesContextValue {
  * available to client components that need them (CategoryPicker,
  * CreateExpenseDialog's subtitle, CategoriesSection, CategoryForm)
  * without prop-drilling through every intermediate component. Seeded
- * once in dashboard/layout.tsx from getCategoriesCached()/
- * getCategoryOptionsCached(), the same loaders Server Components
+ * once in dashboard/layout.tsx from getCategories()/
+ * getCategoryOptions(), the same loaders Server Components
  * (category-badge.tsx, category-breakdown.tsx) call directly themselves.
  *
  * `categories` carries the raw domain Category[] (icon as a string key),

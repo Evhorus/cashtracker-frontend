@@ -1,52 +1,39 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { authenticatedFetch } from "@/lib/authenticated-fetch";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { EnvelopesService } from "../services/envelopes.service";
+import { createSafeAction } from "@/lib/safe-action";
 
-type DeleteEnvelopeActionState = {
-  errors: string[];
-  success: string;
-};
-
-export const deleteEnvelopeAction = async (
-  prevState: DeleteEnvelopeActionState,
-  envelopeId: string,
-): Promise<DeleteEnvelopeActionState> => {
-  await auth.protect();
-
-  try {
-    const req = await authenticatedFetch(`/envelopes/${envelopeId}`, {
-      method: "DELETE",
-      next: {
-        tags: ["all-envelopes"],
-      },
-    });
-
-    const json = await req.json();
-
-    if (!req.ok) {
-      const errorMessage = json.message as string;
-      return {
-        success: "",
-        errors: [errorMessage],
-      };
-    }
+// Goes through EnvelopesService + createSafeAction like every other
+// mutation, instead of the raw authenticatedFetch + hand-rolled
+// try/catch this used to be - that bypass meant no ApiError, no
+// consistent error shape, and left EnvelopesService.delete dead code.
+//
+// The success message is hardcoded here rather than read off the
+// response: unlike create/update (which return `{ message }`), the
+// backend's DELETE returns the *removed entity* - see
+// envelopes.service.ts's `remove()` in cashtracker-backend, which
+// returns `envelopesRepository.remove(envelope)`. Reading a `.message`
+// off that would be `undefined`, which useActionWithToast treats as "no
+// success" - no toast, and the dialog never closes.
+// eslint-disable-next-line @clerk/next/require-auth-protection -- Protected inside createSafeAction wrapper by calling auth.protect() in the handler.
+export const deleteEnvelopeAction = createSafeAction(
+  async (envelopeId: string) => {
+    await auth.protect();
+    await EnvelopesService.delete(envelopeId);
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/envelopes");
-    revalidateTag("all-envelopes", "max");
-    revalidateTag("dashboard-summary", "max");
+    // updateTag (not revalidateTag) - read-your-own-writes; see
+    // categories/actions/delete-category.action.ts for the why.
+    updateTag("all-envelopes");
+    // Also the detail-endpoint tag: without it a deleted envelope's own
+    // cached detail response stayed servable. (That tag is global rather
+    // than per-id today - see the note in envelopes.service.ts.)
+    updateTag("envelope");
+    updateTag("dashboard-summary");
 
-    return {
-      success: "Sobre eliminado correctamente.",
-      errors: [],
-    };
-  } catch (error) {
-    console.error("Error deleting envelope:", error);
-    return {
-      success: "",
-      errors: ["No se pudo eliminar el sobre. Intenta más tarde."],
-    };
-  }
-};
+    return { successMessage: "Sobre eliminado correctamente." };
+  },
+);

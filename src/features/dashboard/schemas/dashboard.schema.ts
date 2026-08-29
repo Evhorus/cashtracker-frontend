@@ -8,8 +8,9 @@ export const DashboardChartEntrySchema = z.object({
 
 // Loose z.string() for currency, not the strict CurrencyCode enum -
 // same convention as EnvelopeAPIResponseSchema (envelope.schema.ts):
-// this is the network-boundary shape, the domain side narrows it. See
-// stats-cards.tsx's CurrencyTotals for where that cast happens.
+// this is the network-boundary shape, the domain side narrows it (see
+// dashboard/page.tsx and statistics/page.tsx, which cast to
+// CurrencyCode when mapping `totals`).
 export const DashboardCurrencyTotalsSchema = z.object({
   currency: z.string(),
   totalEnvelopes: z.number(),

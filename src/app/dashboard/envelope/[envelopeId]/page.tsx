@@ -1,12 +1,15 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
-import { getEnvelopeByIdAction } from "@/features/envelopes/actions/get-envelope-by-id.action";
-import { getExpensesAction } from "@/features/expenses/actions/get-expenses.action";
+import { getEnvelopeById } from "@/features/envelopes/data/get-envelope-by-id";
+import { getExpenses } from "@/features/expenses/data/get-expenses";
 import { DeleteEnvelopeAlertDialog } from "@/features/envelopes/components/delete-envelope-alert-dialog";
 import { UpdateEnvelopeDialog } from "@/features/envelopes/components/update-envelope-dialog";
 import { CreateExpenseDialog } from "@/features/expenses/components/create-expense-dialog";
 import { ExpensesFilter } from "@/features/expenses/components/expenses-filter";
 import { ExpensesList } from "@/features/expenses/components/expenses-list";
+import { ExpensesListSkeleton } from "@/features/expenses/components/expenses-list-skeleton";
 import { EnvelopeActionsMenu } from "@/features/envelopes/components/envelope-actions-menu";
 import { PageHeader } from "@/components/common/page-header";
 import { BackLinkButton } from "@/components/common/back-link-button";
@@ -14,7 +17,11 @@ import { Heading } from "@/components/common/typography";
 import { PaginationControls } from "@/components/common/pagination-controls";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
+import {
+  CURRENCY_MAP,
+  formatCurrency,
+  type CurrencyCode,
+} from "@/lib/format-currency";
 import { formatMonthYear } from "@/lib/date-helpers";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +57,17 @@ const EnvelopeChart = nextDynamic(
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
+
+// The envelope's own name in the tab title - getEnvelopeById is wrapped
+// in React's cache(), so this shares the page body's fetch rather than
+// making a second one.
+export async function generateMetadata({
+  params,
+}: Pick<EnvelopePageProps, "params">): Promise<Metadata> {
+  const { envelopeId } = await params;
+  const envelope = await getEnvelopeById(envelopeId);
+  return { title: envelope.name };
+}
 
 interface EnvelopePageProps {
   params: Promise<{ envelopeId: string }>;
@@ -91,17 +109,11 @@ export default async function EnvelopePage({
     ? Number(limitParam)
     : EXPENSES_DEFAULT_PAGE_SIZE;
 
-  const [envelope, expensesResult] = await Promise.all([
-    getEnvelopeByIdAction(envelopeId),
-    getExpensesAction(envelopeId, {
-      startDate,
-      endDate,
-      search,
-      sort: sortOrder,
-      page,
-      limit,
-    }),
-  ]);
+  // Only the envelope is on the critical path - it's what the header,
+  // the Resumen sidebar and the chart are built from. The expense list
+  // streams in behind its own Suspense boundary below, so changing a
+  // filter re-fetches just the list instead of blanking the whole page.
+  const envelope = await getEnvelopeById(envelopeId);
 
   const isUnlimited = envelope.amount === null;
   const remaining = EnvelopeHelpers.getRemaining(envelope);
@@ -177,28 +189,29 @@ export default async function EnvelopePage({
             />
           </div>
 
+          {/* Outside the boundary on purpose: ExpensesFilter is pure
+              client UI reading the URL, so it stays interactive (and
+              visible) while the list behind it reloads. */}
           <ExpensesFilter />
-          <ExpensesList
-            expenses={expensesResult.data}
-            currency={envelope.currency}
-          />
-          <PaginationControls
-            page={expensesResult.meta.page}
-            totalPages={expensesResult.meta.totalPages}
-            hasNextPage={expensesResult.meta.hasNextPage}
-            hasPreviousPage={expensesResult.meta.hasPreviousPage}
-            basePath={`/dashboard/envelope/${envelopeId}`}
-            searchParams={{
-              startDate,
-              endDate,
-              search,
-              sort,
-              limit:
-                limit === EXPENSES_DEFAULT_PAGE_SIZE
-                  ? undefined
-                  : String(limit),
-            }}
-          />
+          {/* key remounts the boundary on every filter change, so the
+              fallback re-appears instead of the old list sitting there
+              looking unchanged - same pattern as the envelopes list. */}
+          <Suspense
+            key={`${page}-${limit}-${search ?? ""}-${sort ?? ""}-${startDate ?? ""}-${endDate ?? ""}`}
+            fallback={<ExpensesListSkeleton />}
+          >
+            <ExpensesResults
+              envelopeId={envelopeId}
+              currency={envelope.currency}
+              startDate={startDate}
+              endDate={endDate}
+              search={search}
+              sort={sortOrder}
+              sortParam={sort}
+              page={page}
+              limit={limit}
+            />
+          </Suspense>
         </div>
 
         <div className="order-1 lg:order-2 lg:sticky lg:top-20 lg:self-start">
@@ -304,5 +317,65 @@ export default async function EnvelopePage({
         </div>
       </div>
     </div>
+  );
+}
+
+interface ExpensesResultsProps {
+  envelopeId: string;
+  currency: CurrencyCode;
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+  sort?: "ASC" | "DESC";
+  /** The raw ?sort= value, carried through pagination links unchanged. */
+  sortParam?: string;
+  page: number;
+  limit: number;
+}
+
+/**
+ * The expense list plus its pagination. Split out of the page body so
+ * the envelope header/summary render without waiting on it, and so a
+ * filter change only reloads this part.
+ */
+async function ExpensesResults({
+  envelopeId,
+  currency,
+  startDate,
+  endDate,
+  search,
+  sort,
+  sortParam,
+  page,
+  limit,
+}: ExpensesResultsProps) {
+  const expensesResult = await getExpenses(envelopeId, {
+    startDate,
+    endDate,
+    search,
+    sort,
+    page,
+    limit,
+  });
+
+  return (
+    <>
+      <ExpensesList expenses={expensesResult.data} currency={currency} />
+      <PaginationControls
+        page={expensesResult.meta.page}
+        totalPages={expensesResult.meta.totalPages}
+        hasNextPage={expensesResult.meta.hasNextPage}
+        hasPreviousPage={expensesResult.meta.hasPreviousPage}
+        basePath={`/dashboard/envelope/${envelopeId}`}
+        searchParams={{
+          startDate,
+          endDate,
+          search,
+          sort: sortParam,
+          limit:
+            limit === EXPENSES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
+        }}
+      />
+    </>
   );
 }

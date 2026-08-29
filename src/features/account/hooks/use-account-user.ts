@@ -1,9 +1,35 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
 
 import type { AccountUser } from "../types";
+
+type ClerkUser = NonNullable<ReturnType<typeof useUser>["user"]>;
+
+/** Clerk's user object -> this app's display-only shape. A plain
+ * function rather than an inline useMemo: it doesn't need to be a hook,
+ * and the React Compiler (reactCompiler: true in next.config.ts) already
+ * memoizes the call site. */
+function toAccountUser(user: ClerkUser): AccountUser {
+  const firstName = user.firstName ?? "";
+  const lastName = user.lastName ?? "";
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
+  const email = user.primaryEmailAddress?.emailAddress ?? "";
+  const initials =
+    [firstName[0], lastName[0]].filter(Boolean).join("").toUpperCase() ||
+    email[0]?.toUpperCase() ||
+    "?";
+
+  return {
+    firstName,
+    lastName,
+    fullName,
+    email,
+    imageUrl: user.imageUrl,
+    initials,
+  };
+}
 
 // The only file account-menu.tsx (and anything else that just needs to
 // display "who's logged in") needs to know about the auth provider
@@ -15,27 +41,7 @@ export function useAccountUser() {
   const { signOut: clerkSignOut } = useClerk();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
-  const accountUser = useMemo<AccountUser | null>(() => {
-    if (!user) return null;
-
-    const firstName = user.firstName ?? "";
-    const lastName = user.lastName ?? "";
-    const fullName = [firstName, lastName].filter(Boolean).join(" ");
-    const email = user.primaryEmailAddress?.emailAddress ?? "";
-    const initials =
-      [firstName[0], lastName[0]].filter(Boolean).join("").toUpperCase() ||
-      email[0]?.toUpperCase() ||
-      "?";
-
-    return {
-      firstName,
-      lastName,
-      fullName,
-      email,
-      imageUrl: user.imageUrl,
-      initials,
-    };
-  }, [user]);
+  const accountUser = user ? toAccountUser(user) : null;
 
   async function signOut() {
     setIsSigningOut(true);

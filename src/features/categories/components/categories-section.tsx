@@ -1,5 +1,4 @@
 "use client";
-import { useMemo } from "react";
 import { SearchX } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,15 +33,15 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
   const categories = useCategories();
   const { search, type, setType } = useCategoriesFilter();
 
-  const filtered = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return categories.filter((category) => {
-      if (term && !category.label.toLowerCase().includes(term)) return false;
-      if (type === "default" && !category.isDefault) return false;
-      if (type === "custom" && category.isDefault) return false;
-      return true;
-    });
-  }, [categories, search, type]);
+  // No useMemo: the React Compiler (reactCompiler: true in
+  // next.config.ts) memoizes this on the same three dependencies.
+  const term = search.trim().toLowerCase();
+  const filtered = categories.filter((category) => {
+    if (term && !category.label.toLowerCase().includes(term)) return false;
+    if (type === "default" && !category.isDefault) return false;
+    if (type === "custom" && category.isDefault) return false;
+    return true;
+  });
 
   // Scoped to the current search/type filter - matches EnvelopesGrid's
   // meta.total, which is always "however many match what's on screen

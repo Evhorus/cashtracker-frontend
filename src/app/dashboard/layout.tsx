@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { CustomHeader } from "@/components/common/custom-header";
 import { MobileNav } from "@/components/common/mobile-nav";
 import { DashboardSidebar } from "@/components/common/dashboard-sidebar";
@@ -5,10 +6,17 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { esMX } from "@clerk/localizations";
 import { CategoriesProvider } from "@/providers/categories-provider";
-import {
-  getCategoriesCached,
-  getCategoryOptionsCached,
-} from "@/features/categories/lib/get-categories-cached";
+import { getCategories } from "@/features/categories/data/get-categories";
+import { getCategoryOptions } from "@/features/categories/data/get-category-options";
+
+// The dashboard is behind auth and has nothing to offer a crawler, so
+// it opts out of indexing explicitly rather than relying on the login
+// redirect to keep it out. Pages under here set their own `title` and
+// pick up the root layout's "%s | CashTracker" template.
+export const metadata: Metadata = {
+  title: { default: "Dashboard", template: "%s | CashTracker" },
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardLayout({
   children,
@@ -17,13 +25,13 @@ export default async function DashboardLayout({
 }>) {
   await auth.protect();
 
-  // Fetched once here (also seeds the per-request cache Server Components
-  // reuse via getCategoriesCached()/getCategoryOptionsCached()) and
-  // handed to client components through context - see
-  // providers/categories-provider.tsx.
+  // Fetched once here (also seeds the per-request cache Server
+  // Components reuse via getCategories()/getCategoryOptions(), both
+  // wrapped in React's cache()) and handed to client components through
+  // context - see providers/categories-provider.tsx.
   const [categories, options] = await Promise.all([
-    getCategoriesCached(),
-    getCategoryOptionsCached(),
+    getCategories(),
+    getCategoryOptions(),
   ]);
 
   return (

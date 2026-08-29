@@ -1,11 +1,14 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { PageHeader } from "@/components/common/page-header";
-import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
+import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
 import { resolveCategory } from "@/features/categories/lib/category-palette";
-import { getCategoriesCached } from "@/features/categories/lib/get-categories-cached";
+import { getCategories } from "@/features/categories/data/get-categories";
 import { CategoriesSection } from "@/features/categories/components/categories-section";
 import { CategoriesFilterProvider } from "@/features/categories/components/categories-filter-context";
 import { CreateCategoryDialog } from "@/features/categories/components/create-category-dialog";
+
+export const metadata: Metadata = { title: "Categorías" };
 
 // Force dynamic rendering because this page uses Clerk auth, same as
 // account/page.tsx and dashboard/envelopes/page.tsx.
@@ -18,8 +21,8 @@ export default async function CategoriesPage() {
   // rather than inside CategoriesSection itself, since that's "use
   // client" and can't fetch async. Same 100-envelope cap the
   // envelopes/statistics/dashboard pages use.
-  const envelopesResult = await getEnvelopesAction({ limit: 100 });
-  const categories = await getCategoriesCached();
+  const envelopesResult = await getEnvelopes({ limit: 100 });
+  const categories = await getCategories();
   const categoryCounts = envelopesResult.data.reduce<Record<string, number>>(
     (counts, envelope) => {
       const category = resolveCategory(envelope.category, categories);

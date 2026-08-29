@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { formatDate, getToday } from "@/lib/date-helpers";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -52,7 +52,9 @@ export const ExpenseForm = ({
   onSubmit,
   onCloseDialog,
 }: ExpenseFormProps) => {
-  const expenseSchema = useMemo(() => buildExpenseSchema(currency), [currency]);
+  // No useMemo: the React Compiler (reactCompiler: true in
+  // next.config.ts) memoizes this on `currency` the same way.
+  const expenseSchema = buildExpenseSchema(currency);
   const currencyConfig = CURRENCY_MAP[currency];
 
   const { handleSubmit, control } = useForm<ExpenseFormValues>({

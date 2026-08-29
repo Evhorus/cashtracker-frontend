@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { SearchInput } from "@/components/common/search-input";
+import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
 import { ListFilterBar } from "@/components/common/list-filter-bar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -13,61 +14,16 @@ import {
 
 // Debounced URL-param search - envelopes are filtered server-side (a
 // paginated backend call), unlike categories/categories-search.tsx,
-// whose full list already lives on the client.
+// whose full list already lives on the client. The debounce/URL
+// plumbing itself lives in useDebouncedSearchParam, shared with the
+// expenses list.
 const EnvelopesSearch = ({ className }: { className?: string }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [, startTransition] = useTransition();
-  const searchTimeout = useRef<number | null>(null);
-
-  const initialSearch = searchParams.get("search") || "";
-  const [search, setSearch] = useState(initialSearch);
-
-  const clearSearchTimeout = () => {
-    if (searchTimeout.current) {
-      window.clearTimeout(searchTimeout.current);
-      searchTimeout.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      clearSearchTimeout();
-    };
-  }, []);
-
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-
-    clearSearchTimeout();
-
-    searchTimeout.current = window.setTimeout(() => {
-      const params = new URLSearchParams(searchParams);
-
-      if (value) {
-        params.set("search", value);
-      } else {
-        params.delete("search");
-      }
-
-      // A new search can shrink the result set - start back at page 1
-      // instead of leaving the user stuck on a now out-of-range page.
-      params.delete("page");
-
-      startTransition(() => {
-        const query = params.toString();
-        router.replace(`${pathname}${query ? `?${query}` : ""}`);
-      });
-
-      searchTimeout.current = null;
-    }, 500);
-  };
+  const { value, onChange } = useDebouncedSearchParam();
 
   return (
     <SearchInput
-      value={search}
-      onChange={handleSearchChange}
+      value={value}
+      onChange={onChange}
       placeholder="Buscar por nombre o categoría..."
       aria-label="Buscar sobres por nombre o categoría"
       className={className}

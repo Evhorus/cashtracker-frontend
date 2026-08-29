@@ -2,7 +2,7 @@ import { Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { resolveCategory } from "../lib/category-palette";
 import { withAlpha } from "../lib/with-alpha";
-import { getCategoriesCached } from "../lib/get-categories-cached";
+import { getCategories } from "../data/get-categories";
 
 interface CategoryIconProps {
   category?: string | null;
@@ -16,11 +16,11 @@ interface CategoryIconProps {
 // rendering nothing - this only changes envelopes that DO have a category.
 //
 // Async Server Component: fetches the user's categories itself
-// (getCategoriesCached() dedupes per request) instead of requiring every
+// (getCategories() dedupes per request) instead of requiring every
 // ancestor (EnvelopeCard, EnvelopesTable, the dashboard/statistics/detail
 // pages) to fetch and thread them down as a prop.
 export async function CategoryIcon({ category, className }: CategoryIconProps) {
-  const categories = await getCategoriesCached();
+  const categories = await getCategories();
   const def = resolveCategory(category, categories);
   const Icon = def?.Icon ?? Wallet;
   const color = def?.color ?? "var(--color-primary)";
@@ -49,7 +49,7 @@ interface CategoryLabelProps {
 // subtitle) - same information, now legible at a glance instead of
 // competing with the surrounding text for attention.
 export async function CategoryLabel({ category, className }: CategoryLabelProps) {
-  const categories = await getCategoriesCached();
+  const categories = await getCategories();
   const def = resolveCategory(category, categories);
   if (!def) return null;
 
