@@ -22,6 +22,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
+import { CardActionButton } from "@/components/common/card-action-button";
 import { cn } from "@/lib/utils";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -34,6 +35,15 @@ interface DeleteExpenseAlertDialogProps {
   className?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Override the default trigger's a11y label - the expense detail
+   * page's desktop header passes the shorter, i18n "Eliminar" since
+   * there's only one delete button on that page, no ambiguity to
+   * resolve. Only applies to the desktop (AlertDialog) trigger below -
+   * the mobile Drawer trigger is unaffected. */
+  label?: string;
+  /** See CardActionButton - only the expense detail page's header turns
+   * this on. Desktop-only trigger, same reasoning as `label`. */
+  showLabelOnDesktop?: boolean;
 }
 
 export const DeleteExpenseAlertDialog = ({
@@ -42,6 +52,8 @@ export const DeleteExpenseAlertDialog = ({
   className = "",
   open: controlledOpen,
   onOpenChange: setControlledOpen,
+  label,
+  showLabelOnDesktop,
 }: DeleteExpenseAlertDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -76,9 +88,13 @@ export const DeleteExpenseAlertDialog = ({
         {!isControlled && (
           <AlertDialogTrigger
             render={
-              <Button className={cn(className)} variant="ghost" size="icon">
-                <Trash2 className="h-4 w-4 text-muted-foreground transition-colors hover:text-destructive" />
-              </Button>
+              <CardActionButton
+                icon={Trash2}
+                label={label ?? "Eliminar gasto"}
+                tone="destructive"
+                showLabelOnDesktop={showLabelOnDesktop}
+                className={className}
+              />
             }
           />
         )}

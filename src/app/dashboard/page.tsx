@@ -5,6 +5,7 @@ import { getDashboardSummaryAction } from "@/features/dashboard/actions/get-dash
 import { getRecentExpensesAction } from "@/features/dashboard/actions/get-recent-expenses.action";
 import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
 import { HeroBalanceCard } from "@/components/common/hero-balance-card";
+import { Heading } from "@/components/common/typography";
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { CategoryIcon } from "@/features/categories/components/category-badge";
@@ -192,7 +193,7 @@ export default async function DashboardPage() {
               )}
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold">Sobres en alerta</h2>
+                <Heading size="sm">Sobres en alerta</Heading>
                 <Link
                   href="/dashboard/envelopes?status=alert"
                   className="text-xs font-medium text-primary hover:underline"

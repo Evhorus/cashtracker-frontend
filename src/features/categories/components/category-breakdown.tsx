@@ -2,6 +2,7 @@ import { Tag } from "lucide-react";
 import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
 import { resolveCategory, type CategoryDef } from "../lib/category-palette";
 import { getCategoriesCached } from "../lib/get-categories-cached";
+import { Text } from "@/components/common/typography";
 
 interface CategoryBreakdownProps {
   /** Only needs the two fields it actually groups/sums by - callers pass
@@ -53,9 +54,9 @@ export async function CategoryBreakdown({ envelopes, currency }: CategoryBreakdo
 
   if (rows.length === 0) {
     return (
-      <p className="py-6 text-center text-sm text-muted-foreground">
+      <Text className="py-6 text-center">
         Aún no hay gastos este período para desglosar por categoría.
-      </p>
+      </Text>
     );
   }
 

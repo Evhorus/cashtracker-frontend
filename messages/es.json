@@ -1,6 +1,7 @@
 {
   "common": {
     "appName": "CashTracker",
+    "back": "Volver",
     "save": "Guardar",
     "cancel": "Cancelar",
     "delete": "Eliminar",

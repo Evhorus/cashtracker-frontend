@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { RotateCw, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Text } from "@/components/common/typography";
 
 // Catches any render/data error anywhere under /dashboard that doesn't
 // handle it itself - none of these routes had an error boundary before
@@ -26,10 +27,10 @@ export default function DashboardError({
       </div>
       <div className="space-y-1.5">
         <h2 className="text-xl font-semibold">Algo salió mal</h2>
-        <p className="max-w-sm text-sm text-muted-foreground">
-          No pudimos cargar esta página. Tus datos están a salvo - inténtalo
-          de nuevo.
-        </p>
+        <Text className="max-w-sm">
+          No pudimos cargar esta página. Tus datos están a salvo - inténtalo de
+          nuevo.
+        </Text>
       </div>
       <Button onClick={() => reset()}>
         <RotateCw className="h-4 w-4" />
