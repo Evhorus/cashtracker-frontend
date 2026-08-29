@@ -3,14 +3,12 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    // Node, not jsdom: everything under test here is pure logic
-    // (formatting, date arithmetic, status derivation, mappers) with no
-    // DOM involved, so there's no reason to pay for a DOM. A component
-    // test would need jsdom plus @testing-library/react - see
-    // src/components/common/price-input.tsx, the one piece of intricate
-    // logic that still lives inside a component.
+    // Per-file environment: most tests are pure logic (formatting, date
+    // arithmetic, status derivation, mappers) and have no reason to pay
+    // for a DOM. The few component tests opt in with a
+    // `@vitest-environment jsdom` docblock - see price-input.test.tsx.
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
     // A deliberately non-UTC timezone, west of UTC. Half of
     // date-helpers.ts exists precisely because a calendar date must not
     // be timezone-converted while a real instant must be, and under
