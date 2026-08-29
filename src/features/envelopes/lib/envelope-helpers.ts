@@ -143,6 +143,63 @@ export const EnvelopeHelpers = {
     }
   },
 
+  /**
+   * Same status -> color mapping again, this time as a bare `bg-*` class
+   * for a plain div-based bar (envelopes-table.tsx's desktop row) - no
+   * Progress primitive there to target an indicator selector on.
+   */
+  getStatusBarColorClass: (status: EnvelopeProgressStatus): string => {
+    switch (status) {
+      case "exceeded":
+        return "bg-destructive";
+      case "warning":
+        return "bg-amber-500";
+      default:
+        return "bg-primary";
+    }
+  },
+
+  /**
+   * Tinted pill background+text pair for a status badge (envelopes-table.tsx's
+   * desktop "Estado" column) - a softer, badge-appropriate tint rather
+   * than the bare text color `getStatusTextColorClass` returns for
+   * plain colored text elsewhere.
+   */
+  getStatusBadgeClass: (status: EnvelopeProgressStatus): string => {
+    switch (status) {
+      case "exceeded":
+        return "bg-destructive/10 text-destructive";
+      case "warning":
+        return "bg-amber-500/10 text-amber-500";
+      case "unlimited":
+        return "bg-muted text-muted-foreground";
+      case "normal":
+        return "bg-primary/10 text-primary";
+    }
+  },
+
+  /**
+   * Canonical status word - "Sin límite" / "Controlado" / "En riesgo" /
+   * "Excedido". Was drifting across the app: envelopes-table.tsx's own
+   * badge said "Activo"/"Alerta" for the same two statuses the expense
+   * detail page called "Controlado"/"En riesgo" - same envelope, two
+   * different words depending which screen you were on. See
+   * EnvelopeStatusBadge (envelope-status-badge.tsx) for the component
+   * that pairs this with the color helpers above.
+   */
+  getStatusLabel: (status: EnvelopeProgressStatus): string => {
+    switch (status) {
+      case "exceeded":
+        return "Excedido";
+      case "warning":
+        return "En riesgo";
+      case "unlimited":
+        return "Sin límite";
+      case "normal":
+        return "Controlado";
+    }
+  },
+
   /** Whether an envelope belongs under one of the status filter tabs. */
   matchesStatusFilter: (
     envelope: Envelope,

@@ -6,10 +6,23 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import type { EnvelopeProgressStatus } from "@/features/envelopes/lib/envelope-helpers";
 
 interface EnvelopeChartProps {
   spent: number;
   total: number;
+  /** From EnvelopeHelpers.getProgressStatus(envelope) - the chart colors
+   * itself off the same status every other view (the envelopes list's
+   * progress bars, envelope-card.tsx, this same page's own "Gastado"
+   * figure right next to it) uses, instead of a bespoke `spent > total`
+   * check of its own. That used to mean the chart could show green at
+   * 92% (only "exceeded" flips it, no warning state) while the number
+   * beside it was already amber - same envelope, two different verdicts
+   * on the same page. Never "unlimited" here - the page only renders
+   * this chart for a capped envelope; unlimited ones show a running
+   * total instead (see envelope/[envelopeId]/page.tsx).
+   */
+  status: Exclude<EnvelopeProgressStatus, "unlimited">;
 }
 
 // "Donut Chart - Text" pattern from ui.shadcn.com/charts/pie: the stats
@@ -20,11 +33,19 @@ interface EnvelopeChartProps {
 // legend competing with it (the two colors are self-explained by the
 // center label plus the surrounding numbers). No Card wrapper here - it's
 // embedded inside the envelope detail page's own summary panel.
-export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
-  const isExceeded = spent > total;
+export const EnvelopeChart = ({ spent, total, status }: EnvelopeChartProps) => {
+  const isExceeded = status === "exceeded";
+  const isWarning = status === "warning";
   const percentage = total > 0 ? (spent / total) * 100 : 0;
   const remaining = Math.max(0, total - spent);
   const overspent = Math.max(0, spent - total);
+
+  // Which config key colors the "spent" wedge itself - green normally,
+  // amber in the warning zone. Exceeded keeps the wedge up to the limit
+  // green and adds a second red "overspent" wedge for the overage
+  // instead, same idea as everywhere else that shows "how much was
+  // within budget" separately from "how much went over."
+  const spentKey = isWarning ? "warningSpent" : "spent";
 
   const data = isExceeded
     ? [
@@ -32,7 +53,7 @@ export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
         { name: "overspent", value: overspent, fill: "var(--color-overspent)" },
       ]
     : [
-        { name: "spent", value: spent, fill: "var(--color-spent)" },
+        { name: spentKey, value: spent, fill: `var(--color-${spentKey})` },
         { name: "available", value: remaining, fill: "var(--color-available)" },
       ];
 
@@ -40,6 +61,10 @@ export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
     spent: {
       label: "Gastado",
       color: "var(--chart-1)",
+    },
+    warningSpent: {
+      label: "Gastado",
+      color: "var(--color-amber-500)",
     },
     available: {
       label: "Disponible",
@@ -53,6 +78,17 @@ export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
       color: "var(--destructive)",
     },
   } satisfies ChartConfig;
+
+  const spentDotClass = isExceeded
+    ? "bg-destructive"
+    : isWarning
+      ? "bg-amber-500"
+      : "bg-chart-1";
+  const percentageTextClass = isExceeded
+    ? "fill-destructive"
+    : isWarning
+      ? "fill-amber-500"
+      : "fill-foreground";
 
   return (
     <div>
@@ -93,9 +129,7 @@ export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
                     <tspan
                       x={viewBox.cx}
                       y={viewBox.cy}
-                      className={`text-2xl font-bold ${
-                        isExceeded ? "fill-destructive" : "fill-foreground"
-                      }`}
+                      className={`text-2xl font-bold ${percentageTextClass}`}
                     >
                       {Math.round(percentage)}%
                     </tspan>
@@ -116,7 +150,7 @@ export const EnvelopeChart = ({ spent, total }: EnvelopeChartProps) => {
 
       <div className="mt-1 flex items-center justify-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-chart-1" />
+          <span className={`h-2 w-2 rounded-full ${spentDotClass}`} />
           Gastado
         </span>
         <span className="flex items-center gap-1.5">

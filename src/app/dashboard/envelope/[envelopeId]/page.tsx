@@ -207,7 +207,7 @@ export default async function EnvelopePage({
               <CardTitle>Resumen</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
-              {isUnlimited ? (
+              {status === "unlimited" ? (
                 <div className="flex flex-col items-center gap-1.5 rounded-lg bg-secondary/40 px-4 py-6 text-center">
                   <InfinityIcon className="h-7 w-7 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
@@ -221,6 +221,7 @@ export default async function EnvelopePage({
                 <EnvelopeChart
                   spent={+envelope.spent}
                   total={+envelope.amount!}
+                  status={status}
                 />
               )}
 
