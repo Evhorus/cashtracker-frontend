@@ -28,6 +28,8 @@ export const deleteEnvelopeAction = createSafeAction(
     // updateTag (not revalidateTag) - read-your-own-writes; see
     // categories/actions/delete-category.action.ts for the why.
     updateTag("all-envelopes");
+    // Per-category envelope counts change with any envelope write.
+    updateTag("category-usage");
     // Also the detail-endpoint tag: without it a deleted envelope's own
     // cached detail response stayed servable. (That tag is global rather
     // than per-id today - see the note in envelopes.service.ts.)

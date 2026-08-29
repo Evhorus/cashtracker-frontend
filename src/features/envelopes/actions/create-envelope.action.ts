@@ -16,6 +16,8 @@ export const createEnvelopeAction = createSafeAction(
     // updateTag (not revalidateTag) - read-your-own-writes; see
     // categories/actions/delete-category.action.ts for the why.
     updateTag("all-envelopes");
+    // Per-category envelope counts change with any envelope write.
+    updateTag("category-usage");
     updateTag("dashboard-summary");
     updateTag("dashboard-category-breakdown");
 

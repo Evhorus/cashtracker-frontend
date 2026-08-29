@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { PageHeader } from "@/components/common/page-header";
-import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
+import { getCategoryUsage } from "@/features/categories/data/get-category-usage";
 import { CategoriesSection } from "@/features/categories/components/categories-section";
 import { CategoriesFilterProvider } from "@/features/categories/components/categories-filter-context";
 import { CreateCategoryDialog } from "@/features/categories/components/create-category-dialog";
@@ -15,21 +15,14 @@ export const dynamic = "force-dynamic";
 export default async function CategoriesPage() {
   await auth.protect();
 
-  // Per-category envelope counts - fetched here (a Server Component)
-  // rather than inside CategoriesSection itself, since that's "use
-  // client" and can't fetch async. Same 100-envelope cap the
-  // envelopes/statistics/dashboard pages use.
-  const envelopesResult = await getEnvelopes({ limit: 100 });
-  // A straight count by id now that envelopes reference categories
-  // properly - no resolving a free-text label against the list first.
-  const categoryCounts = envelopesResult.data.reduce<Record<string, number>>(
-    (counts, envelope) => {
-      const id = envelope.category?.id;
-      if (id) counts[id] = (counts[id] ?? 0) + 1;
-      return counts;
-    },
-    {},
-  );
+  // Counted by the backend (GET /categories/usage). This used to fetch
+  // every envelope - capped at 100 - and count in memory, so the numbers
+  // quietly went wrong for an account past that. It was the last place in
+  // the app still doing that.
+  //
+  // Fetched here rather than inside CategoriesSection because that is a
+  // Client Component and can't fetch async.
+  const categoryCounts = await getCategoryUsage();
 
   return (
     // CategoriesFilterProvider holds the search/type state shared between

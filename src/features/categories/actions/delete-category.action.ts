@@ -28,6 +28,8 @@ export const deleteCategoryAction = createSafeAction(async (id: string) => {
   // updateTag expires the entry outright so the next request waits for
   // fresh data. It's Server-Action-only, which every action here is.
   updateTag("all-categories");
+  // Deleting a category unclassifies its envelopes (ON DELETE SET NULL).
+  updateTag("category-usage");
 
   return { successMessage: "Categoría eliminada correctamente." };
 });

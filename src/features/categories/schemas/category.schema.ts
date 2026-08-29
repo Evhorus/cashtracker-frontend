@@ -53,3 +53,17 @@ export const categoryFormSchema = z.object({
 });
 
 export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
+
+// GET /categories/usage - envelope counts per category, aggregated by
+// the backend. Only categories actually in use appear; a missing entry
+// means zero. Separate from the dashboard's category breakdown, which
+// answers a different question (spending in one currency, excluding
+// untouched envelopes) - see cashtracker-backend's endpoint comments.
+export const CategoryUsageAPIResponseSchema = z.array(
+  z.object({
+    categoryId: z.string(),
+    envelopeCount: z.number(),
+  }),
+);
+
+export type CategoryUsageApi = z.infer<typeof CategoryUsageAPIResponseSchema>;
