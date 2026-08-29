@@ -1,7 +1,18 @@
-import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
+import {
+  CURRENCY_MAP,
+  formatCurrency,
+  type CurrencyCode,
+} from "@/lib/format-currency";
 
 interface CurrencyTotal {
   currency: CurrencyCode;
+  /** Straight from the summary's own `COUNT(*) ... GROUP BY currency`
+   * (getSummaryAggregate in cashtracker-backend). This used to be counted
+   * client-side from a fetched envelope list, which was both redundant
+   * and capped at 100 - so an account past that showed a count lower than
+   * the totals right beside it, which came from this same uncapped
+   * aggregate. */
+  totalEnvelopes: number;
   totalAssigned: number;
   /** Every envelope in this currency, capped or not - never used for the
    * headline figure below (see totalSpentCapped, same reasoning as
@@ -15,23 +26,18 @@ interface CurrencyTotal {
 
 interface CurrencyBreakdownProps {
   totals: CurrencyTotal[];
-  /** Envelope count per currency code, e.g. {"COP": 10, "USD": 2} -
-   * derived client-side from the same envelope list the category
-   * breakdown already fetches (statistics/page.tsx), not a separate
-   * request. */
-  envelopeCounts: Record<string, number>;
 }
 
-// Real per-currency totals (summary.totals - the same source StatsCards
-// uses elsewhere) alongside a real envelope count per currency, not
-// estimated. Only worth rendering when there's more than one currency in
-// play - see statistics/page.tsx.
-export function CurrencyBreakdown({ totals, envelopeCounts }: CurrencyBreakdownProps) {
+// Real per-currency totals and counts, every figure from the same
+// backend aggregate so they can't disagree with each other. Only worth
+// rendering when there's more than one currency in play - see
+// statistics/page.tsx.
+export function CurrencyBreakdown({ totals }: CurrencyBreakdownProps) {
   return (
     <div className="space-y-3">
       {totals.map((total) => {
         const config = CURRENCY_MAP[total.currency];
-        const count = envelopeCounts[total.currency] ?? 0;
+        const count = total.totalEnvelopes;
         // Same reasoning as HeroBalanceCard's unlimitedSpent - money
         // spent outside any budget, real but not part of "de X
         // presupuestados" below, so it's called out on its own line

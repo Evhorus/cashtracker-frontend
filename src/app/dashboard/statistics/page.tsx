@@ -141,25 +141,20 @@ async function BreakdownSection({
   chartCurrency,
   hasMultipleCurrencies,
 }: BreakdownSectionProps) {
-  // Needs every envelope, not one paginated page of them - 100 is the
-  // backend's hard cap on `limit` (a personal budget realistically has
-  // dozens of envelopes, not hundreds, so this covers the real case;
-  // past 100 the breakdown would silently miss some, the same tradeoff
-  // the year filter already makes elsewhere).
+  // Only the category breakdown still needs this: it sums `spent` per
+  // category, which no endpoint reports yet. 100 is the backend's hard
+  // cap on `limit`, so an account past that silently loses envelopes
+  // from the breakdown - the last place in the app where that is still
+  // true, and the reason a GROUP BY endpoint is the next thing to build.
+  //
+  // The per-currency counts beside it used to be derived from this same
+  // list; they come from the summary's own uncapped aggregate now.
   const envelopesResult = await getEnvelopes({ limit: 100 });
 
   // Same currency the chart itself is scoped to, so the two widgets tell
   // one consistent story instead of mixing currencies in one sum.
   const envelopesInChartCurrency = envelopesResult.data.filter(
     (envelope) => envelope.currency === chartCurrency,
-  );
-
-  const envelopeCounts = envelopesResult.data.reduce<Record<string, number>>(
-    (counts, envelope) => {
-      counts[envelope.currency] = (counts[envelope.currency] ?? 0) + 1;
-      return counts;
-    },
-    {},
   );
 
   return (
@@ -191,10 +186,7 @@ async function BreakdownSection({
             <CardTitle>Por moneda</CardTitle>
           </CardHeader>
           <CardContent>
-            <CurrencyBreakdown
-              totals={totals}
-              envelopeCounts={envelopeCounts}
-            />
+            <CurrencyBreakdown totals={totals} />
           </CardContent>
         </Card>
       )}
