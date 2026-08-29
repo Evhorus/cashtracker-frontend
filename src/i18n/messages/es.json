@@ -57,7 +57,8 @@
     "categories": "Categorías",
     "statistics": "Estadísticas",
     "account": "Cuenta",
-    "signIn": "Iniciar sesión"
+    "signIn": "Iniciar sesión",
+    "breadcrumb": "Ruta de navegación"
   },
   "pagination": {
     "previous": "Anterior",

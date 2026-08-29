@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getLocale, getTranslations } from "next-intl/server";
+import { Breadcrumb } from "@/components/common/breadcrumb";
 import { formatMonthKey } from "@/lib/date-helpers";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-breakdown";
@@ -86,31 +87,36 @@ export default async function StatisticsPage({
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          {/* Hidden above md: the app header shows the section name
-              there. The subtitle below stays - it says something the
-              header does not. */}
-          <Heading as="h1" size="lg" className="md:hidden">
+          <Heading as="h1" size="lg">
             {t("title")}
           </Heading>
           <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
         </div>
 
-        {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
-          <div className="flex items-center gap-2">
-            {summary.availableYears.length > 0 && (
-              <YearFilterSelect
-                years={summary.availableYears}
-                selectedYear={year}
-              />
-            )}
-            {hasMultipleCurrencies && (
-              <CurrencyFilterSelect
-                currencies={totals.map((total) => total.currency)}
-                selectedCurrency={chartCurrency}
-              />
-            )}
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {/* This page has its own header row rather than PageHeader (no
+              backUrl, and a subtitle plus filters PageHeader doesn't
+              fit), so it needs the breadcrumb wired explicitly to match
+              the other pages. */}
+          <Breadcrumb current={t("title")} className="hidden md:block" />
+
+          {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
+            <div className="flex items-center gap-2">
+              {summary.availableYears.length > 0 && (
+                <YearFilterSelect
+                  years={summary.availableYears}
+                  selectedYear={year}
+                />
+              )}
+              {hasMultipleCurrencies && (
+                <CurrencyFilterSelect
+                  currencies={totals.map((total) => total.currency)}
+                  selectedCurrency={chartCurrency}
+                />
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <MonthlySpendingChart

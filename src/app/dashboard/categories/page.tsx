@@ -46,21 +46,13 @@ export default async function CategoriesPage() {
             it isolated top-right with a lot of empty space around it on
             a wide viewport, far from both the title and the table it
             filters. */}
-        {/* Mobile only: the app header carries the section name on
-            desktop (see CustomHeader), so a second copy here was the same
-            word three times on one screen - header, highlighted sidebar
-            item, and this. Mobile's header shows the logo instead, so the
-            name is not duplicated there, and this row also carries the
-            back arrow and the create button on that breakpoint. */}
-        <div className="md:hidden">
-          <PageHeader
-            title={t("title")}
-            backUrl="/dashboard"
-            // Same as the envelopes list: desktop's create button sits on
-            // the filter row below, mobile keeps it here beside the title.
-            mobileActions={<CreateCategoryDialog />}
-          />
-        </div>
+        <PageHeader
+          title={t("title")}
+          backUrl="/dashboard"
+          // Same as the envelopes list: desktop's create button sits on
+          // the filter row below, mobile keeps it here beside the title.
+          mobileActions={<CreateCategoryDialog />}
+        />
 
         <CategoriesSection
           categoryCounts={categoryCounts}
