@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
+import { EnvelopeStatusBadge } from "@/features/envelopes/components/envelope-status-badge";
 import { ExpenseHelpers } from "@/features/expenses/lib/expense-helpers";
 
 // Force dynamic rendering because this page uses Clerk auth
@@ -43,12 +44,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   const expenseAmount = ExpenseHelpers.getAmount(expense);
   const currencyConfig = CURRENCY_MAP[envelope.currency];
   const impactPercentage = ExpenseHelpers.getImpactPercentage(expense, envelope);
-
-  // Determine envelope health color (soft limit - never blocks, just informs)
   const progressStatus = EnvelopeHelpers.getProgressStatus(envelope);
-  const isOverLimit = progressStatus === "exceeded";
-  const isHealthy = progressStatus === "normal";
-  const healthColor = EnvelopeHelpers.getStatusTextColorClass(progressStatus);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-10">
@@ -223,16 +219,10 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                       app; envelope-card.tsx's own status "badge" is just
                       a thin colored strip, and every other status here
                       (spentColorClass, progress bar) is color-coded text
-                      too, no boxes. */}
-                  <span className={`text-sm font-semibold ${healthColor}`}>
-                    {isUnlimited
-                      ? "Sin límite"
-                      : isOverLimit
-                        ? "Excedido"
-                        : isHealthy
-                          ? "Controlado"
-                          : "En riesgo"}
-                  </span>
+                      too, no boxes. Label/color both come from
+                      EnvelopeStatusBadge now, same as envelopes-table.tsx's
+                      pill - this is the one place either renders from. */}
+                  <EnvelopeStatusBadge status={progressStatus} variant="text" />
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">

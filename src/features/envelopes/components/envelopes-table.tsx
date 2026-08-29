@@ -16,26 +16,11 @@ import {
 import { CardHoverActions } from "@/components/common/card-hover-actions";
 import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
 import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
+import { EnvelopeStatusBadge } from "./envelope-status-badge";
 
 interface EnvelopesTableProps {
   envelopes: Envelope[];
 }
-
-const STATUS_STYLES = {
-  normal: { label: "Activo", className: "bg-primary/10 text-primary" },
-  warning: {
-    label: "Alerta",
-    className: "bg-amber-500/10 text-amber-500",
-  },
-  exceeded: {
-    label: "Excedido",
-    className: "bg-destructive/10 text-destructive",
-  },
-  unlimited: {
-    label: "Sin límite",
-    className: "bg-muted text-muted-foreground",
-  },
-} as const;
 
 // Desktop-only (see envelopes-grid.tsx - the card grid still covers
 // mobile). A dense data table instead of a stretched-out card grid is
@@ -79,13 +64,7 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
             const percentage = EnvelopeHelpers.getPercentage(envelope);
             const remaining = EnvelopeHelpers.getRemaining(envelope);
             const currencyConfig = CURRENCY_MAP[envelope.currency];
-            const statusStyle = STATUS_STYLES[status];
-            const barColorClass =
-              status === "exceeded"
-                ? "bg-destructive"
-                : status === "warning"
-                  ? "bg-amber-500"
-                  : "bg-primary";
+            const barColorClass = EnvelopeHelpers.getStatusBarColorClass(status);
 
             return (
               <TableRow key={envelope.id} className="group border-border/60">
@@ -149,14 +128,7 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
                   )}
                 </TableCell>
                 <TableCell className="px-5 py-3.5 text-right">
-                  <span
-                    className={cn(
-                      "inline-block rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap",
-                      statusStyle.className,
-                    )}
-                  >
-                    {statusStyle.label}
-                  </span>
+                  <EnvelopeStatusBadge status={status} />
                 </TableCell>
                 <TableCell className="px-5 py-3.5">
                   <CardHoverActions className="justify-end" alwaysVisible>
