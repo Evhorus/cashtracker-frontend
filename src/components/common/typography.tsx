@@ -30,6 +30,18 @@ const headingVariants = cva("", {
       // doesn't fit (no backUrl/actions, a two-line "date + Hola, X"
       // block).
       lg: "text-2xl font-bold tracking-tight break-words md:text-3xl",
+      // An empty state's own heading ("Sin resultados para X", "Aún no
+      // hay gastos"). Lighter than `md` on purpose - it sits inside a
+      // card that's already the only thing on screen, so it doesn't need
+      // to compete for attention the way a section title does. Was
+      // hand-copied as `text-xl font-semibold` at four separate call
+      // sites before EmptyState centralized them.
+      empty: "text-xl font-semibold",
+      // The editorial first-run heading ("Organiza tus gastos por
+      // sobres") - the serif display face, used only where an empty
+      // state is somebody's actual first screen in the app and is
+      // meant to read like a sentence rather than a status message.
+      display: "font-serif text-2xl font-semibold text-balance",
     },
   },
   defaultVariants: {
@@ -38,7 +50,8 @@ const headingVariants = cva("", {
 });
 
 interface HeadingProps
-  extends Omit<React.ComponentProps<"h1">, "children">,
+  extends
+    Omit<React.ComponentProps<"h1">, "children">,
     VariantProps<typeof headingVariants> {
   /** Which HTML heading element to render - independent of `size`, so a
    * visually-sm heading can still be a real h2 for document outline
@@ -106,14 +119,18 @@ const textVariants = cva("", {
 });
 
 interface TextProps
-  extends React.ComponentProps<"p">,
-    VariantProps<typeof textVariants> {
+  extends React.ComponentProps<"p">, VariantProps<typeof textVariants> {
   /** Render as a <span> instead of a <p> for inline use (e.g. next to
    * another inline element) - same text style either way. */
   as?: "p" | "span";
 }
 
-function Text({ as: Component = "p", variant, className, ...props }: TextProps) {
+function Text({
+  as: Component = "p",
+  variant,
+  className,
+  ...props
+}: TextProps) {
   return (
     <Component
       data-slot="text"

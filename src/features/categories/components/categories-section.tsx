@@ -1,6 +1,6 @@
 "use client";
 import { SearchX } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/common/empty-state";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ListFilterBar } from "@/components/common/list-filter-bar";
 import { useCategories } from "@/providers/categories-provider";
@@ -86,23 +86,20 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
       </Text>
 
       {filtered.length === 0 ? (
-        <Card className="animate-fade-in border-0 bg-card/50 p-12 text-center shadow-sm">
-          <div className="mx-auto max-w-md space-y-4">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <SearchX className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold">
-              {search
-                ? `Sin resultados para "${search}"`
-                : `Sin categorías en "${
-                    TYPE_FILTERS.find((filter) => filter.value === type)?.label ?? type
-                  }"`}
-            </h3>
-            <p className="text-muted-foreground">
-              {search ? "Prueba con otro nombre." : "Prueba con otro filtro."}
-            </p>
-          </div>
-        </Card>
+        <EmptyState
+          icon={SearchX}
+          title={
+            search
+              ? `Sin resultados para "${search}"`
+              : `Sin categorías en "${
+                  TYPE_FILTERS.find((filter) => filter.value === type)?.label ??
+                  type
+                }"`
+          }
+          description={
+            search ? "Prueba con otro nombre." : "Prueba con otro filtro."
+          }
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-3 md:hidden">
@@ -115,7 +112,10 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
               />
             ))}
           </div>
-          <CategoriesTable categories={filtered} categoryCounts={categoryCounts} />
+          <CategoriesTable
+            categories={filtered}
+            categoryCounts={categoryCounts}
+          />
         </>
       )}
     </div>
