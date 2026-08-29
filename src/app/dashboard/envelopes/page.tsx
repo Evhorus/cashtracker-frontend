@@ -11,7 +11,6 @@ import { Text } from "@/components/common/typography";
 import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
   ENVELOPE_STATUS_FILTERS,
-  EnvelopeHelpers,
   type EnvelopeStatusFilter,
 } from "@/features/envelopes/lib/envelope-helpers";
 
@@ -21,14 +20,6 @@ export const metadata: Metadata = { title: "Sobres" };
 export const dynamic = "force-dynamic";
 
 const ENVELOPES_PER_PAGE = 12;
-
-// Same cap the account/statistics pages use for "give me every envelope
-// to compute something client/server-side over" - see their comments.
-// Needed here because the "Activos/Excedidos/Sin límite" status tabs have
-// no backend query param (status is derived from spent/amount, not
-// stored), so filtering has to happen after fetching a full, unpaginated
-// list rather than on whatever single page the backend would return.
-const ALL_ENVELOPES_LIMIT = 100;
 
 interface EnvelopesPageProps {
   searchParams: Promise<{ page?: string; search?: string; status?: string }>;
@@ -106,42 +97,18 @@ async function EnvelopesResults({
   search,
   status,
 }: EnvelopesResultsProps) {
-  let data;
-  let meta;
-
-  if (status === "all") {
-    const envelopes = await getEnvelopes({
-      page,
-      limit: ENVELOPES_PER_PAGE,
-      search,
-    });
-    data = envelopes.data;
-    meta = envelopes.meta;
-  } else {
-    // Fetch every matching envelope, filter by status, then paginate
-    // in-memory - see ALL_ENVELOPES_LIMIT above.
-    const envelopes = await getEnvelopes({
-      limit: ALL_ENVELOPES_LIMIT,
-      search,
-    });
-    const filtered = envelopes.data.filter((envelope) =>
-      EnvelopeHelpers.matchesStatusFilter(envelope, status),
-    );
-    const total = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(total / ENVELOPES_PER_PAGE));
-    const clampedPage = Math.min(page, totalPages);
-    const start = (clampedPage - 1) * ENVELOPES_PER_PAGE;
-
-    data = filtered.slice(start, start + ENVELOPES_PER_PAGE);
-    meta = {
-      total,
-      page: clampedPage,
-      limit: ENVELOPES_PER_PAGE,
-      totalPages,
-      hasNextPage: clampedPage < totalPages,
-      hasPreviousPage: clampedPage > 1,
-    };
-  }
+  // The backend applies the status filter in SQL, so `meta` counts the
+  // filtered set and one page is one request. This used to fetch every
+  // envelope (capped at 100) and filter/paginate in memory, which meant
+  // the count and the tabs quietly under-reported once an account passed
+  // that cap - and, in a finance app, silently incomplete numbers are the
+  // worst kind of wrong.
+  const { data, meta } = await getEnvelopes({
+    page,
+    limit: ENVELOPES_PER_PAGE,
+    search,
+    status,
+  });
 
   // meta.total is already scoped to `search`/`status` - a live count of
   // whatever's actually showing, not a fixed page size, and correctly

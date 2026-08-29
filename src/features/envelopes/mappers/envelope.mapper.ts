@@ -30,6 +30,7 @@ export const EnvelopeMapper = {
       // it's the app's own form that ever writes this value.
       currency: apiEnvelope.currency as CurrencyCode,
       spent: apiEnvelope.spent,
+      status: apiEnvelope.status,
       category: apiEnvelope.category ?? undefined,
       description: apiEnvelope.description ?? undefined,
       createdAt: new Date(apiEnvelope.createdAt),

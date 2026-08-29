@@ -3,73 +3,43 @@ import { describe, expect, it } from "vitest";
 import type { Envelope } from "../types";
 import {
   ENVELOPE_STATUS_FILTERS,
-  ENVELOPE_WARNING_THRESHOLD,
   EnvelopeHelpers,
   type EnvelopeProgressStatus,
 } from "./envelope-helpers";
 
-// Amounts arrive from the API as decimal strings, which is exactly how
-// they reach these helpers - so the fixtures use strings too.
-function envelope(amount: string | null, spent: string): Envelope {
+/**
+ * Status *derivation* is no longer tested here - it isn't done here. The
+ * API reports `envelope.status`, and the threshold plus its edge cases
+ * are covered by envelope-status.spec.ts in cashtracker-backend, which
+ * also checks the SQL filter agrees with it.
+ *
+ * What remains is this app's own business: turning a status into labels
+ * and colour classes, and grouping envelopes already in hand.
+ */
+
+// Amounts arrive from the API as decimal strings, which is how they
+// reach these helpers - so the fixtures use strings too.
+function envelope(
+  amount: string | null,
+  spent: string,
+  status: EnvelopeProgressStatus,
+): Envelope {
   return {
     id: "e1",
     name: "Test",
     amount,
     currency: "COP",
     spent,
+    status,
     expenses: [],
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),
   };
 }
 
-describe("getProgressStatus", () => {
-  it("is unlimited when there is no cap", () => {
-    expect(EnvelopeHelpers.getProgressStatus(envelope(null, "500"))).toBe(
-      "unlimited",
-    );
-  });
-
-  it("is normal below the warning threshold", () => {
-    expect(EnvelopeHelpers.getProgressStatus(envelope("1000", "790"))).toBe(
-      "normal",
-    );
-  });
-
-  it("is warning exactly at the threshold", () => {
-    // Inclusive on purpose - 80% should already warn.
-    expect(ENVELOPE_WARNING_THRESHOLD).toBe(0.8);
-    expect(EnvelopeHelpers.getProgressStatus(envelope("1000", "800"))).toBe(
-      "warning",
-    );
-  });
-
-  it("is still warning at exactly the limit, not exceeded", () => {
-    // Spending your whole budget is not overspending.
-    expect(EnvelopeHelpers.getProgressStatus(envelope("1000", "1000"))).toBe(
-      "warning",
-    );
-  });
-
-  it("is exceeded a cent past the limit", () => {
-    expect(EnvelopeHelpers.getProgressStatus(envelope("1000", "1000.01"))).toBe(
-      "exceeded",
-    );
-  });
-
-  it("handles a zero limit without dividing by zero", () => {
-    expect(EnvelopeHelpers.getProgressStatus(envelope("0", "0"))).toBe(
-      "normal",
-    );
-    expect(EnvelopeHelpers.getProgressStatus(envelope("0", "1"))).toBe(
-      "exceeded",
-    );
-  });
-});
-
 describe("amount helpers", () => {
   it("returns null rather than a number for an unlimited envelope", () => {
-    const unlimited = envelope(null, "500");
+    const unlimited = envelope(null, "500", "unlimited");
 
     expect(EnvelopeHelpers.getAmount(unlimited)).toBeNull();
     expect(EnvelopeHelpers.getRemaining(unlimited)).toBeNull();
@@ -77,7 +47,7 @@ describe("amount helpers", () => {
   });
 
   it("computes remaining and percentage for a capped envelope", () => {
-    const capped = envelope("250000.50", "220000");
+    const capped = envelope("250000.50", "220000", "warning");
 
     expect(EnvelopeHelpers.getRemaining(capped)).toBe(30000.5);
     // 220000 / 250000.50 - just under 88%, which is what the UI rounds
@@ -89,14 +59,23 @@ describe("amount helpers", () => {
   });
 
   it("reports a negative remaining once exceeded", () => {
-    expect(EnvelopeHelpers.getRemaining(envelope("100", "140"))).toBe(-40);
+    expect(
+      EnvelopeHelpers.getRemaining(envelope("100", "140", "exceeded")),
+    ).toBe(-40);
   });
 });
 
 describe("matchesStatusFilter", () => {
+  const byStatus: Record<EnvelopeProgressStatus, Envelope> = {
+    normal: envelope("1000", "100", "normal"),
+    warning: envelope("1000", "850", "warning"),
+    exceeded: envelope("1000", "1200", "exceeded"),
+    unlimited: envelope(null, "100", "unlimited"),
+  };
+
   const cases: {
     filter: (typeof ENVELOPE_STATUS_FILTERS)[number]["value"];
-    expected: Record<string, boolean>;
+    expected: Record<EnvelopeProgressStatus, boolean>;
   }[] = [
     {
       filter: "all",
@@ -145,18 +124,14 @@ describe("matchesStatusFilter", () => {
     },
   ];
 
-  const byStatus: Record<string, Envelope> = {
-    normal: envelope("1000", "100"),
-    warning: envelope("1000", "850"),
-    exceeded: envelope("1000", "1200"),
-    unlimited: envelope(null, "100"),
-  };
-
   for (const { filter, expected } of cases) {
     it(`"${filter}" selects the right statuses`, () => {
       for (const [status, shouldMatch] of Object.entries(expected)) {
         expect(
-          EnvelopeHelpers.matchesStatusFilter(byStatus[status], filter),
+          EnvelopeHelpers.matchesStatusFilter(
+            byStatus[status as EnvelopeProgressStatus],
+            filter,
+          ),
         ).toBe(shouldMatch);
       }
     });
@@ -165,6 +140,20 @@ describe("matchesStatusFilter", () => {
   it("covers every filter the UI offers", () => {
     expect(cases.map((c) => c.filter).sort()).toEqual(
       ENVELOPE_STATUS_FILTERS.map((f) => f.value).sort(),
+    );
+  });
+
+  it("reads the reported status, not the amounts", () => {
+    // If this ever went back to deriving from amount/spent, the two
+    // clients could disagree again. An envelope whose numbers say one
+    // thing and whose reported status says another must follow the API.
+    const contradictory = envelope("1000", "50", "exceeded");
+
+    expect(EnvelopeHelpers.matchesStatusFilter(contradictory, "exceeded")).toBe(
+      true,
+    );
+    expect(EnvelopeHelpers.matchesStatusFilter(contradictory, "active")).toBe(
+      false,
     );
   });
 });

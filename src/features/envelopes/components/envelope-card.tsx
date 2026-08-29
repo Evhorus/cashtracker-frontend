@@ -33,7 +33,7 @@ export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
   const envelopeId = envelope.id;
   const currencyConfig = CURRENCY_MAP[envelope.currency];
 
-  const status = EnvelopeHelpers.getProgressStatus(envelope);
+  const status = envelope.status;
   const calculations = {
     remaining: EnvelopeHelpers.getRemaining(envelope),
     percentage: EnvelopeHelpers.getPercentage(envelope),
