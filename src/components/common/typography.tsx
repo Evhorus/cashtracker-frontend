@@ -53,11 +53,17 @@ interface HeadingProps
   extends
     Omit<React.ComponentProps<"h1">, "children">,
     VariantProps<typeof headingVariants> {
-  /** Which HTML heading element to render - independent of `size`, so a
+  /** Which HTML element to render - independent of `size`, so a
    * visually-sm heading can still be a real h2 for document outline
    * purposes. Defaults to h2, the most common case (a heading inside a
-   * page, not the page's own h1). */
-  as?: "h1" | "h2" | "h3";
+   * page, not the page's own h1).
+   *
+   * "p" exists for one case: text that looks like a page title but is
+   * not one. CustomHeader shows the section name at title size on every
+   * route, but on a detail route the page below already has its own h1
+   * (the envelope name), so a second heading there would sit above it in
+   * the document outline. Same appearance, no heading semantics. */
+  as?: "h1" | "h2" | "h3" | "p";
   /** Leading icon, tinted `text-primary` - e.g. the $ before "Historial
    * de Gastos". Only really meant for size="md"; other sizes don't use
    * an icon anywhere today. */
