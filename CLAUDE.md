@@ -8,6 +8,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Build: `pnpm run build` (builds the application for production)
 - Start: `pnpm run start` (starts the production server)
 - Lint: `pnpm run lint` (runs ESLint)
+- Test: `pnpm test` (Vitest, single run) / `pnpm run test:watch`
+  - Unit tests only, `node` environment, no DOM. They cover the pure logic:
+    `date-helpers`, `format-currency`, `pagination`, `EnvelopeHelpers`,
+    `ExpenseHelpers`, `dashboard-summary`, and the expense mapper.
+  - Config is `vitest.config.mts`, which pins `TZ=America/Bogota`. That is
+    deliberate: half of `date-helpers.ts` exists to keep a calendar date from
+    being timezone-converted while a real instant is, and under `TZ=UTC` those
+    two behaviours are indistinguishable, so the tests would pass even if the
+    distinction were broken.
+  - Component logic is not covered - that would need `jsdom` plus
+    `@testing-library/react`. The notable gap is `price-input.tsx`.
 
 ## Architecture Overview
 
