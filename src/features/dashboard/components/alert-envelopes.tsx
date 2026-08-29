@@ -37,8 +37,15 @@ export async function AlertEnvelopes({
     >
       <div className="flex items-center justify-between">
         <Heading size="sm">{t("alertsTitle")}</Heading>
+        {/* The unfiltered list, not a status filter. This widget shows
+            both kinds that need attention (at-risk and over-limit), and
+            the envelopes list has no tab meaning "either" - by design,
+            since its tabs are the statuses themselves. Sending the
+            reader to `?status=warning` would have shown 3 of the 5 this
+            widget counts. From the full list both relevant tabs are one
+            click away. */}
         <Link
-          href="/dashboard/envelopes?status=warning"
+          href="/dashboard/envelopes"
           className="text-xs font-medium text-primary hover:underline"
         >
           {t("seeAll")}
