@@ -76,22 +76,21 @@ export const CustomHeader = () => {
           <Logo href="/dashboard" />
         </div>
 
-        {/* On a section root this IS the page title, so it renders at
-            the page-title size through Heading (not hand-copied classes)
-            and is the document's h1. On a detail route it is context for
-            a page that has its own title, so it reads as a quiet
-            breadcrumb instead - same words, deliberately not the same
-            weight. */}
-        {title &&
-          (isSectionRoot ? (
-            <Heading as="h1" size="lg" className="hidden truncate md:block">
-              {title}
-            </Heading>
-          ) : (
-            <p className="hidden truncate text-sm text-muted-foreground md:block">
-              {title}
-            </p>
-          ))}
+        {/* Same size on every route - it changing size on navigation
+            read as a glitch rather than a distinction. Only the element
+            differs: on a section root this IS the page title, so it is
+            the document's h1 (the page hides its own copy above `md`).
+            On a detail route the page below has its own h1, so this
+            renders as a `p` to stay out of the outline. */}
+        {title && (
+          <Heading
+            as={isSectionRoot ? "h1" : "p"}
+            size="lg"
+            className="hidden truncate md:block"
+          >
+            {title}
+          </Heading>
+        )}
 
         {/* Pushes the toggles to the right whatever is on the left. */}
         <div className="ml-auto flex items-center gap-4">
