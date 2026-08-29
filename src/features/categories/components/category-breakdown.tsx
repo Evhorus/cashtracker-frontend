@@ -1,13 +1,18 @@
 import { Tag } from "lucide-react";
-import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
+import {
+  CURRENCY_MAP,
+  formatCurrency,
+  type CurrencyCode,
+} from "@/lib/format-currency";
 import { resolveCategory, type CategoryDef } from "../lib/category-palette";
 import { getCategories } from "../data/get-categories";
 import { Text } from "@/components/common/typography";
+import type { DashboardCategoryBreakdownRow } from "@/features/dashboard/schemas/dashboard.schema";
 
 interface CategoryBreakdownProps {
-  /** Only needs the two fields it actually groups/sums by - callers pass
-   * Envelope[] as-is. */
-  envelopes: { category?: string | null; spent: string }[];
+  /** Already summed per category by the backend - see
+   * GET /dashboard/category-breakdown. */
+  rows: DashboardCategoryBreakdownRow[];
   currency: CurrencyCode;
 }
 
@@ -17,15 +22,26 @@ const NO_CATEGORY: Pick<CategoryDef, "label" | "color" | "Icon"> = {
   Icon: Tag,
 };
 
-// Real aggregation, computed here rather than on the backend: group every
-// envelope with spend > 0 (in the given currency) by its category, sum
-// `spent` per group. Nothing here is estimated or sampled - it's exactly
-// what's on screen elsewhere (envelope cards/table), just reduced.
-//
-// Async Server Component: fetches the user's categories itself
-// (getCategories() dedupes per request), same reasoning as
-// CategoryIcon/CategoryLabel in category-badge.tsx.
-export async function CategoryBreakdown({ envelopes, currency }: CategoryBreakdownProps) {
+/**
+ * "Gasto por categoría" - the sums come from the backend's own GROUP BY
+ * now, not from reducing over a fetched envelope list capped at 100,
+ * which silently dropped categories once an account passed it.
+ *
+ * The merge below still happens here, and has to: `envelope.category` is
+ * free text, so the database groups by the exact string and returns
+ * "Hogar" and "hogar" as two rows. Resolving each row against the user's
+ * categories and re-merging by the resolved category is what the old
+ * client-side version did per envelope - this does the same thing over
+ * far fewer rows, so the displayed grouping is unchanged.
+ *
+ * Async Server Component: fetches the user's categories itself
+ * (getCategories() dedupes per request), same reasoning as
+ * CategoryIcon/CategoryLabel in category-badge.tsx.
+ */
+export async function CategoryBreakdown({
+  rows: apiRows,
+  currency,
+}: CategoryBreakdownProps) {
   const categories = await getCategories();
   const config = CURRENCY_MAP[currency];
 
@@ -34,21 +50,20 @@ export async function CategoryBreakdown({ envelopes, currency }: CategoryBreakdo
     { label: string; color: string; Icon: CategoryDef["Icon"]; amount: number }
   >();
 
-  for (const envelope of envelopes) {
-    const spent = Number(envelope.spent);
-    if (!spent || spent <= 0) continue;
-
-    const def = resolveCategory(envelope.category, categories);
+  for (const row of apiRows) {
+    const def = resolveCategory(row.category, categories);
     const key = def ? def.label.toLowerCase() : "__none__";
     const existing = buckets.get(key);
     if (existing) {
-      existing.amount += spent;
+      existing.amount += row.spent;
     } else {
       const { label, color, Icon } = def ?? NO_CATEGORY;
-      buckets.set(key, { label, color, Icon, amount: spent });
+      buckets.set(key, { label, color, Icon, amount: row.spent });
     }
   }
 
+  // Re-sorted after merging - the API orders by its own raw-text groups,
+  // which can change order once two of them collapse into one.
   const rows = [...buckets.values()].sort((a, b) => b.amount - a.amount);
   const total = rows.reduce((sum, row) => sum + row.amount, 0);
 

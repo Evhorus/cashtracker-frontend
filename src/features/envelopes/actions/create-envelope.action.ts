@@ -17,6 +17,7 @@ export const createEnvelopeAction = createSafeAction(
     // categories/actions/delete-category.action.ts for the why.
     updateTag("all-envelopes");
     updateTag("dashboard-summary");
+    updateTag("dashboard-category-breakdown");
 
     return { successMessage: data.message };
   },

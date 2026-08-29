@@ -22,6 +22,7 @@ export const updateEnvelopeAction = createSafeAction(
     updateTag("all-envelopes");
     updateTag("envelope");
     updateTag("dashboard-summary");
+    updateTag("dashboard-category-breakdown");
 
     return { successMessage: response.message };
   },

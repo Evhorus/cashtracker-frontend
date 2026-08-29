@@ -34,6 +34,7 @@ export const deleteExpenseAction = createSafeAction(
     // Same detail-tag gap the envelope delete had.
     updateTag("expense");
     updateTag("dashboard-summary");
+    updateTag("dashboard-category-breakdown");
     updateTag("dashboard-recent-expenses");
 
     return {
