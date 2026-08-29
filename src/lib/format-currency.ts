@@ -71,17 +71,27 @@ export const formatCurrency = (
   // itself) absorbs any float noise from upstream arithmetic (e.g.
   // totalAssigned - totalSpent) before deciding whether it's a whole
   // number.
-  const rounded = Number(quantity.toFixed(config.decimalDigits));
+  //
+  // `|| 0` normalizes negative zero. That same float noise can land a
+  // value a hair BELOW zero (e.g. 300 - 199.99 - 100.01 is about
+  // -2.8e-14), which rounds to -0 - and Intl renders -0 as "-$ 0", a
+  // negative zero balance shown to the user. Reachable wherever the app
+  // subtracts two backend numbers, e.g. totalSpent - totalSpentCapped in
+  // hero-balance-card.tsx.
+  const rounded = Number(quantity.toFixed(config.decimalDigits)) || 0;
   const minimumFractionDigits = Number.isInteger(rounded)
     ? 0
     : config.decimalDigits;
 
+  // Formats `rounded`, not `quantity` - otherwise the -0 normalization
+  // above would decide the fraction-digit count while Intl still
+  // rendered the un-normalized value.
   return new Intl.NumberFormat(config.locale, {
     style: "currency",
     currency: config.currency,
     minimumFractionDigits,
     maximumFractionDigits: config.decimalDigits,
-  }).format(quantity);
+  }).format(rounded);
 };
 
 export const formatNumber = (
