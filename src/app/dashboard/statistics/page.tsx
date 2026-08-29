@@ -9,6 +9,7 @@ import nextDynamic from "next/dynamic";
 import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Heading } from "@/components/common/typography";
 import { CategoryBreakdown } from "@/features/categories/components/category-breakdown";
 import { CurrencyBreakdown } from "@/features/dashboard/components/currency-breakdown";
 import { cn } from "@/lib/utils";
@@ -71,7 +72,9 @@ export default async function StatisticsPage({
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold">Estadísticas</h1>
+          <Heading as="h1" size="lg">
+            Estadísticas
+          </Heading>
           <p className="mt-1 text-muted-foreground">
             Tendencias y desglose de tu gasto
           </p>

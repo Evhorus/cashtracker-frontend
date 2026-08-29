@@ -7,6 +7,9 @@ import { getRecentExpenses } from "@/features/dashboard/data/get-recent-expenses
 import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
 import { HeroBalanceCard } from "@/components/common/hero-balance-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/common/empty-state";
+import { Heading } from "@/components/common/typography";
+import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { AlertEnvelopes } from "@/features/dashboard/components/alert-envelopes";
 import { SummaryTile } from "@/features/dashboard/components/summary-tile";
@@ -70,9 +73,9 @@ async function Greeting() {
   const user = await currentUser();
 
   return (
-    <h1 className="mt-0.5 text-3xl font-bold">
+    <Heading as="h1" size="lg" className="mt-0.5">
       {user?.firstName ? `Hola, ${user.firstName}` : "Resumen"}
-    </h1>
+    </Heading>
   );
 }
 
@@ -86,6 +89,15 @@ async function DashboardSummarySection() {
     getRecentExpenses(5),
   ]);
 
+  // Brand-new account: without this the page rendered the date, the
+  // greeting and two zero counters over a lot of empty space, with no
+  // hint of what to do next - the hero cards are driven by `totals`,
+  // which is empty until there's an envelope, and both widgets below
+  // hide themselves when they have nothing.
+  if (summary.totalEnvelopes === 0) {
+    return <DashboardEmptyState />;
+  }
+
   const totals = summary.totals.map((total) => ({
     ...total,
     currency: total.currency as CurrencyCode,
@@ -98,7 +110,11 @@ async function DashboardSummarySection() {
 
   const tiles = (
     <>
-      <SummaryTile icon={Wallet} label="Sobres activos" value={summary.totalEnvelopes} />
+      <SummaryTile
+        icon={Wallet}
+        label="Sobres activos"
+        value={summary.totalEnvelopes}
+      />
       <SummaryTile
         icon={TriangleAlert}
         label="En alerta"
@@ -181,6 +197,25 @@ async function DashboardSummarySection() {
         </div>
       )}
     </>
+  );
+}
+
+// First-run state. Deliberately warmer and more editorial than the
+// "no results" states on the list pages - for most people this is the
+// very first screen they see signed in, so it explains the envelope idea
+// rather than just reporting that a list is empty. Same shape and copy
+// direction as EnvelopesGrid's own first-run card, so the two don't read
+// like different products.
+function DashboardEmptyState() {
+  return (
+    <EmptyState
+      variant="first-run"
+      icon={Wallet}
+      eyebrow="Primer paso"
+      title="Crea tu primer sobre"
+      description="Un sobre por categoría — mercado, transporte, ocio — con el límite que decidas. CashTracker te avisa antes de que te excedas."
+      action={<CreateEnvelopeDialog />}
+    />
   );
 }
 
