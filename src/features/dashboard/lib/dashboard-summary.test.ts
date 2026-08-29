@@ -19,6 +19,7 @@ function envelope(
     // Reported by the API now, not derived client-side - so the tests
     // state it rather than implying it from amount/spent.
     status,
+    category: null,
     expenses: [],
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),

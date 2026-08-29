@@ -71,12 +71,18 @@ export type DashboardRecentExpenseApi = z.infer<
 >;
 
 // GET /dashboard/category-breakdown - spending grouped by category for
-// one currency, aggregated in SQL. `category` is the envelope's free-text
-// value as stored (null when unset), so the client still resolves it to
-// an icon/colour and merges spellings that resolve to the same category -
-// see category-breakdown.tsx.
+// one currency, aggregated in SQL. Grouped by the category itself now
+// that envelopes reference it by id, so one category is one row and the
+// client has nothing left to merge.
 export const DashboardCategoryBreakdownRowSchema = z.object({
-  category: z.string().nullable(),
+  category: z
+    .object({
+      id: z.string(),
+      label: z.string(),
+      color: z.string(),
+      icon: z.string(),
+    })
+    .nullable(),
   spent: z.number(),
   envelopeCount: z.number(),
 });

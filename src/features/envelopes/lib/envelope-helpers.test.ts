@@ -31,6 +31,7 @@ function envelope(
     currency: "COP",
     spent,
     status,
+    category: null,
     expenses: [],
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),

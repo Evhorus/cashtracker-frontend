@@ -9,7 +9,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { resolveCategory } from "../lib/category-palette";
 import { resolveIcon } from "../lib/icon-registry";
 import { withAlpha } from "../lib/with-alpha";
 import { useCategories } from "@/providers/categories-provider";
@@ -21,6 +20,8 @@ import { CreateCategoryDialog } from "./create-category-dialog";
 // `{...field}` onto this the same way it does onto CurrencySelector; the
 // extra field props (onBlur, name, ref) just go unused.
 export interface CategoryPickerProps {
+  /** The selected category's id, or "" / undefined for none. Used to be
+   * a label; envelopes reference categories by id now. */
   value?: string;
   onChange: (value: string) => void;
   disabled?: boolean;
@@ -43,13 +44,19 @@ export function CategoryPicker({
   const listboxId = useId();
   const categories = useCategories();
 
-  const selected = resolveCategory(value, categories);
+  // A direct lookup by id - no more matching a free-text label against
+  // the list case-insensitively.
+  const selected = categories.find((category) => category.id === value) ?? null;
+  // On an object, not a capitalized local - see category-badge.tsx.
+  const selectedDef = selected
+    ? { ...selected, Icon: resolveIcon(selected.icon) }
+    : null;
   const filtered = categories.filter((category) =>
     category.label.toLowerCase().includes(search.trim().toLowerCase()),
   );
 
-  const pick = (label: string) => {
-    onChange(label);
+  const pick = (categoryId: string) => {
+    onChange(categoryId);
     setOpen(false);
     setSearch("");
   };
@@ -78,10 +85,10 @@ export function CategoryPicker({
               className,
             )}
           >
-            {selected ? (
-              <selected.Icon
+            {selectedDef ? (
+              <selectedDef.Icon
                 className="h-4 w-4 shrink-0"
-                style={{ color: selected.color }}
+                style={{ color: selectedDef.color }}
               />
             ) : (
               <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -124,14 +131,13 @@ export function CategoryPicker({
           </button>
 
           {filtered.map((category) => {
-            const isSelected =
-              value?.trim().toLowerCase() === category.label.toLowerCase();
+            const isSelected = value === category.id;
             const Icon = resolveIcon(category.icon);
             return (
               <button
                 key={category.id}
                 type="button"
-                onClick={() => pick(category.label)}
+                onClick={() => pick(category.id)}
                 className="flex w-full items-center gap-2.5 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-muted"
               >
                 <span
@@ -150,9 +156,7 @@ export function CategoryPicker({
           })}
 
           {filtered.length === 0 && (
-            <Text className="px-2 py-3 text-center">
-              Sin resultados
-            </Text>
+            <Text className="px-2 py-3 text-center">Sin resultados</Text>
           )}
         </div>
 

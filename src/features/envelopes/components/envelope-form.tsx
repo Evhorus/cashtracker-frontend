@@ -42,7 +42,7 @@ export const EnvelopeForm = ({
       hasLimit: true,
       amount: "",
       currency: "COP",
-      category: "",
+      categoryId: "",
       ...defaultValues,
     },
   });
@@ -137,15 +137,15 @@ export const EnvelopeForm = ({
             </div>
             <Controller
               control={control}
-              name="category"
+              name="categoryId"
               render={({ field, fieldState }) => (
                 <Field className="md:col-span-4">
-                  <FieldLabel htmlFor="category">
+                  <FieldLabel htmlFor="categoryId">
                     Categoría (opcional)
                   </FieldLabel>
                   <CategoryPicker
                     {...field}
-                    id="category"
+                    id="categoryId"
                     aria-invalid={fieldState.invalid}
                     disabled={isLoading}
                   />

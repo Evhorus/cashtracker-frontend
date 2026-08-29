@@ -7,9 +7,9 @@ import { useActionDialog } from "@/hooks/useActionDialog";
 import { ExpenseForm } from "./expense-form";
 import { createExpenseAction } from "@/features/expenses/actions/create-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
-import { resolveCategory } from "@/features/categories/lib/category-palette";
+import { resolveIcon } from "@/features/categories/lib/icon-registry";
+import type { EnvelopeCategory } from "@/features/envelopes/types";
 import { withAlpha } from "@/features/categories/lib/with-alpha";
-import { useCategories } from "@/providers/categories-provider";
 import type { CurrencyCode } from "@/lib/format-currency";
 
 interface CreateExpenseDialogProps {
@@ -20,7 +20,7 @@ interface CreateExpenseDialogProps {
    * (envelope/[envelopeId]/page.tsx) passes these; without them the
    * subtitle falls back to the generic copy it always had. */
   envelopeName?: string;
-  envelopeCategory?: string;
+  envelopeCategory?: EnvelopeCategory | null;
 }
 
 function ExpenseDialogSubtitle({
@@ -28,10 +28,14 @@ function ExpenseDialogSubtitle({
   envelopeCategory,
 }: {
   envelopeName: string;
-  envelopeCategory?: string;
+  /** The envelope's category as the API reports it - no longer a label
+   * this component has to resolve against the category list itself. */
+  envelopeCategory?: EnvelopeCategory | null;
 }) {
-  const categories = useCategories();
-  const def = resolveCategory(envelopeCategory, categories);
+  // On an object, not a capitalized local - see category-badge.tsx.
+  const def = envelopeCategory
+    ? { ...envelopeCategory, Icon: resolveIcon(envelopeCategory.icon) }
+    : null;
   return (
     <span className="flex items-center gap-1.5">
       {def && (

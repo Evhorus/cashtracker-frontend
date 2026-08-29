@@ -28,6 +28,7 @@ function envelope(amount: string | null): Envelope {
     currency: "COP",
     spent: "0",
     status: amount === null ? "unlimited" : "normal",
+    category: null,
     expenses: [],
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),
