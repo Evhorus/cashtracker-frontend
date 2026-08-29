@@ -119,7 +119,7 @@ export const DeleteExpenseAlertDialog = ({
               disabled={isPending}
             >
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Eliminar
+              {tCommon("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -150,12 +150,12 @@ export const DeleteExpenseAlertDialog = ({
             disabled={isPending}
           >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Eliminar
+            {tCommon("delete")}
           </Button>
           <DrawerClose
             render={
               <Button variant="outline" className="w-full">
-                Cancelar
+                {tCommon("cancel")}
               </Button>
             }
           />

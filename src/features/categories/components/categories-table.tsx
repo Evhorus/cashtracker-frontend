@@ -41,10 +41,10 @@ export function CategoriesTable({
               {t("table.category")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
-              Tipo
+              {t("table.type")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-right font-semibold text-inherit">
-              Sobres
+              {t("table.envelopes")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3" />
           </TableRow>
@@ -70,11 +70,11 @@ export function CategoriesTable({
                 <TableCell className="px-5 py-3.5">
                   {category.isDefault ? (
                     <span className="inline-block rounded-full bg-muted px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-muted-foreground">
-                      Predeterminada
+                      {t("table.isDefault")}
                     </span>
                   ) : (
                     <span className="inline-block rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-primary">
-                      Personalizada
+                      {t("table.isCustom")}
                     </span>
                   )}
                 </TableCell>

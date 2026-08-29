@@ -62,7 +62,7 @@ export function DeleteAccountSection({ user }: DeleteAccountSectionProps) {
             render={
               <Button variant="destructive">
                 <Trash2 />
-                Eliminar cuenta
+                {t("title")}
               </Button>
             }
           />
@@ -78,14 +78,18 @@ export function DeleteAccountSection({ user }: DeleteAccountSectionProps) {
 
             <div className="my-2 space-y-2">
               <p className="text-sm text-muted-foreground">
-                Escribe{" "}
-                <span className="font-bold text-foreground">{user.email}</span>{" "}
-                para confirmar:
+                {t.rich("confirmPrompt", {
+                  email: () => (
+                    <span className="font-bold text-foreground">
+                      {user.email}
+                    </span>
+                  ),
+                })}
               </p>
               <Input
                 value={confirmation}
                 onChange={(e) => setConfirmation(e.target.value)}
-                placeholder="Tu email"
+                placeholder={t("yourEmail")}
                 autoComplete="off"
               />
             </div>
@@ -103,7 +107,7 @@ export function DeleteAccountSection({ user }: DeleteAccountSectionProps) {
                 {isDeleting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Eliminar cuenta
+                {t("title")}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

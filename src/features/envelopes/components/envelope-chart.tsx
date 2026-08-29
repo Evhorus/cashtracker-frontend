@@ -153,7 +153,7 @@ export const EnvelopeChart = ({ spent, total, status }: EnvelopeChartProps) => {
       <div className="mt-1 flex items-center justify-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <span className={`h-2 w-2 rounded-full ${spentDotClass}`} />
-          Gastado
+          {t("spent")}
         </span>
         <span className="flex items-center gap-1.5">
           <span

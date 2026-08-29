@@ -43,14 +43,16 @@
     "connected": {
       "title": "Connected accounts",
       "subtitle": "Link other providers to sign in faster",
-      "connectNew": "Connect a new provider"
+      "connectNew": "Connect a new provider",
+      "disconnect": "Disconnect"
     },
     "danger": {
       "title": "Delete account",
       "confirmTitle": "Delete your account?",
       "yourEmail": "Your email",
       "body": "Permanently delete your account and all of your data. This can't be undone.",
-      "confirmBody": "This can't be undone. Your account, and every envelope and expense in it, will be deleted."
+      "confirmBody": "This can't be undone. Your account, and every envelope and expense in it, will be deleted.",
+      "confirmPrompt": "Type <email></email> to confirm:"
     },
     "reverification": {
       "title": "Confirm it's you",

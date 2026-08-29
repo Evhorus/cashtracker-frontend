@@ -98,7 +98,7 @@ export const ExpenseForm = ({
                 render={({ field, fieldState }) => (
                   <Field className="flex-1">
                     <FieldLabel htmlFor="amount" className="items-center">
-                      Monto
+                      {t("amount")}
                       <span
                         title={t("inheritsCurrency")}
                         className="rounded-sm bg-secondary px-1.5 py-0.5 text-xs font-normal text-secondary-foreground"

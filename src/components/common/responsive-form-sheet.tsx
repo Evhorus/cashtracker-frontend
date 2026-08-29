@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { XIcon } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,7 @@ export function ResponsiveFormSheet({
   dialogClassName,
   children,
 }: ResponsiveFormSheetProps) {
+  const t = useTranslations("common");
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop) {
@@ -85,10 +87,13 @@ export function ResponsiveFormSheet({
             }
           >
             <XIcon />
-            <span className="sr-only">Cerrar</span>
+            <span className="sr-only">{t("close")}</span>
           </DrawerClose>
         </DrawerHeader>
-        <div className="flex-1 overflow-y-auto px-4 pb-4" data-base-ui-swipe-ignore>
+        <div
+          className="flex-1 overflow-y-auto px-4 pb-4"
+          data-base-ui-swipe-ignore
+        >
           {children}
         </div>
       </DrawerContent>

@@ -81,7 +81,7 @@ export function ConnectedAccountsSection() {
                   ) : (
                     <Unlink />
                   )}
-                  Desconectar
+                  {t("disconnect")}
                 </Button>
               </div>
             ))}
@@ -90,9 +90,7 @@ export function ConnectedAccountsSection() {
 
         {hasMoreToConnect && (
           <div>
-            <Text className="mb-2 font-medium">
-              Conectar un nuevo proveedor
-            </Text>
+            <Text className="mb-2 font-medium">{t("connectNew")}</Text>
             <OAuthButtons
               disabled={connectingProvider !== null}
               onSelect={connectProvider}

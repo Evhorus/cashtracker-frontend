@@ -83,7 +83,8 @@ export function HeroBalanceCard({
             ) : (
               <ArrowDown className="h-3 w-3" />
             )}
-            {Math.abs(deltaPercent).toFixed(0)}% vs mes anterior
+            {Math.abs(deltaPercent).toFixed(0)}
+            {t("percentVsPrevMonth")}
           </span>
         )}
       </div>
@@ -110,7 +111,10 @@ export function HeroBalanceCard({
                 {formatCurrency(totalSpentCapped, config)}
               </b>
             </span>
-            <span>{percentage.toFixed(0)}% del presupuesto</span>
+            <span>
+              {percentage.toFixed(0)}
+              {t("percentOfBudget")}
+            </span>
           </div>
         </>
       )}

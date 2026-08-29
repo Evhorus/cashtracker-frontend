@@ -123,10 +123,10 @@ export function ReverificationDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {tCommon("cancel")}
               </Button>
               <SubmitButton type="submit" isLoading={isSubmitting}>
-                Verificar
+                {t("verify")}
               </SubmitButton>
             </DialogFooter>
           </form>
@@ -177,10 +177,10 @@ export function ReverificationDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {tCommon("cancel")}
               </Button>
               <SubmitButton type="submit" isLoading={isSubmitting}>
-                Verificar
+                {t("verify")}
               </SubmitButton>
             </DialogFooter>
           </form>
@@ -196,7 +196,7 @@ export function ReverificationDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cerrar
+              {tCommon("close")}
             </Button>
           </DialogFooter>
         )}
