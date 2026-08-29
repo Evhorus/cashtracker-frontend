@@ -35,14 +35,21 @@ export type EnvelopeProgressStatus =
 export type EnvelopeStatusFilter = "all" | EnvelopeProgressStatus | "alert";
 
 /**
- * The tab bar, in order - a strict subset of the filters above: "all"
- * plus one tab per status, and no unions.
+ * The tab bar, in order: "all", one tab per status, then `alert`.
  *
- * That is what stops the two vocabularies this screen used to show. Tabs
- * read "Activos"/"En alerta" while the rows beneath them carried badges
- * reading "Controlado"/"En riesgo" - same envelopes, different words.
- * Now a tab IS a status, so it is labelled with that status's own
- * message (see statusFilterLabel in EnvelopesFilter).
+ * The statuses in the middle are labelled with their own words
+ * (`envelopes.status.*`), which is what stopped this screen showing two
+ * vocabularies - tabs reading "Activos"/"En alerta" above rows whose
+ * badges read "Controlado"/"En riesgo".
+ *
+ * `alert` is last and deliberately not named after a status: it is the
+ * warning-or-exceeded union, and its label says what it is for
+ * ("Necesitan atención") rather than claiming to be a state. It earns
+ * its place by being the summary page's destination - that page counts
+ * these envelopes and lists the worst of them, and without a tab there
+ * was nowhere for the reader to go from there. `active` (normal +
+ * warning) had no such need and is gone: no destination, and no word
+ * described it, since an envelope is never activated or deactivated.
  */
 export const ENVELOPE_STATUS_TAB_VALUES = [
   "all",
@@ -50,6 +57,7 @@ export const ENVELOPE_STATUS_TAB_VALUES = [
   "warning",
   "exceeded",
   "unlimited",
+  "alert",
 ] as const satisfies readonly EnvelopeStatusFilter[];
 
 /** A tab, as opposed to any filter the API accepts. */

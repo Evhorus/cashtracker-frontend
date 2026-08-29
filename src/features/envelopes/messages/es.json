@@ -10,7 +10,8 @@
     "searchPlaceholder": "Buscar por nombre o categoría...",
     "searchAria": "Buscar sobres por nombre o categoría",
     "filters": {
-      "all": "Todos"
+      "all": "Todos",
+      "alert": "Necesitan atención"
     },
     "status": {
       "unlimited": "Sin límite",

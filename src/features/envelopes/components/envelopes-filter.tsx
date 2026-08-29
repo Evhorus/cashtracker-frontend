@@ -14,17 +14,21 @@ import {
 } from "@/features/envelopes/lib/envelope-helpers";
 
 /**
- * The word for a tab. Every tab but "all" IS a status, so it reads the
- * status's own message - the same one the row badge renders. That is
- * what keeps the tab bar and the table from drifting into two
- * vocabularies, which is exactly what happened while the tabs had their
- * own `filters.*` labels.
+ * The word for a tab. A status tab reads the status's own message - the
+ * same one the row badge renders - so the tab bar and the table cannot
+ * drift into two vocabularies, which is what happened while every tab
+ * had its own `filters.*` label.
+ *
+ * "all" and "alert" are the exceptions because they are not statuses:
+ * they keep their own words under `filters.*`.
  */
 export function statusFilterLabel(
   t: ReturnType<typeof useTranslations<"envelopes">>,
   filter: EnvelopeStatusTab,
 ): string {
-  return filter === "all" ? t("filters.all") : t(`status.${filter}`);
+  if (filter === "all") return t("filters.all");
+  if (filter === "alert") return t("filters.alert");
+  return t(`status.${filter}`);
 }
 
 // Debounced URL-param search - envelopes are filtered server-side (a

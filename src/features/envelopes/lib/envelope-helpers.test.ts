@@ -107,19 +107,26 @@ describe("status presentation helpers", () => {
     }
   });
 
-  // Every tab but "all" IS a status, so it borrows that status's word
-  // rather than having its own - which is what makes the tab bar and the
-  // row badges structurally incapable of disagreeing. This asserts the
-  // subset relationship holds, so a tab can never be added without a
-  // word to render it.
-  it("labels every tab from the status vocabulary, in every language", () => {
-    for (const catalogue of [es, en]) {
-      expect(catalogue.envelopes.filters).toHaveProperty("all");
+  // A status tab borrows that status's own word, so the tab bar and the
+  // row badges cannot disagree - that was the bug. The two tabs that
+  // aren't statuses ("all" and the warning-or-exceeded union) keep their
+  // own words instead of borrowing one they'd misrepresent.
+  //
+  // What this locks: every tab resolves to a word, from exactly one of
+  // those two places. A tab added without one renders a raw key.
+  const NON_STATUS_TABS = ["all", "alert"] as const;
 
+  it("gives every tab a word, in every language", () => {
+    for (const catalogue of [es, en]) {
       for (const tab of ENVELOPE_STATUS_TAB_VALUES) {
-        if (tab === "all") continue;
-        expect(statuses).toContain(tab);
-        expect(catalogue.envelopes.status).toHaveProperty(tab);
+        if ((NON_STATUS_TABS as readonly string[]).includes(tab)) {
+          expect(catalogue.envelopes.filters).toHaveProperty(tab);
+        } else {
+          // Borrowed from the badge vocabulary, not duplicated.
+          expect(statuses).toContain(tab);
+          expect(catalogue.envelopes.status).toHaveProperty(tab);
+          expect(catalogue.envelopes.filters).not.toHaveProperty(tab);
+        }
       }
     }
   });
