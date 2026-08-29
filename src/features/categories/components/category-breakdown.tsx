@@ -4,8 +4,7 @@ import {
   formatCurrency,
   type CurrencyCode,
 } from "@/lib/format-currency";
-import { resolveCategory, type CategoryDef } from "../lib/category-palette";
-import { getCategories } from "../data/get-categories";
+import { resolveIcon } from "../lib/icon-registry";
 import { Text } from "@/components/common/typography";
 import type { DashboardCategoryBreakdownRow } from "@/features/dashboard/schemas/dashboard.schema";
 
@@ -16,56 +15,24 @@ interface CategoryBreakdownProps {
   currency: CurrencyCode;
 }
 
-const NO_CATEGORY: Pick<CategoryDef, "label" | "color" | "Icon"> = {
+const NO_CATEGORY = {
   label: "Sin categoría",
   color: "oklch(0.5 0.02 260)",
-  Icon: Tag,
 };
 
 /**
- * "Gasto por categoría" - the sums come from the backend's own GROUP BY
- * now, not from reducing over a fetched envelope list capped at 100,
- * which silently dropped categories once an account passed it.
+ * "Gasto por categoría". Every number here comes from the backend's own
+ * GROUP BY, and so does every label and colour.
  *
- * The merge below still happens here, and has to: `envelope.category` is
- * free text, so the database groups by the exact string and returns
- * "Hogar" and "hogar" as two rows. Resolving each row against the user's
- * categories and re-merging by the resolved category is what the old
- * client-side version did per envelope - this does the same thing over
- * far fewer rows, so the displayed grouping is unchanged.
- *
- * Async Server Component: fetches the user's categories itself
- * (getCategories() dedupes per request), same reasoning as
- * CategoryIcon/CategoryLabel in category-badge.tsx.
+ * This component used to do two things it no longer needs to: reduce over
+ * a fetched envelope list (capped at 100, so it silently dropped
+ * categories for a large account), and then re-merge rows whose free-text
+ * labels resolved to the same category. Envelopes reference categories by
+ * id now, so one category is one row by construction.
  */
-export async function CategoryBreakdown({
-  rows: apiRows,
-  currency,
-}: CategoryBreakdownProps) {
-  const categories = await getCategories();
+export function CategoryBreakdown({ rows, currency }: CategoryBreakdownProps) {
   const config = CURRENCY_MAP[currency];
-
-  const buckets = new Map<
-    string,
-    { label: string; color: string; Icon: CategoryDef["Icon"]; amount: number }
-  >();
-
-  for (const row of apiRows) {
-    const def = resolveCategory(row.category, categories);
-    const key = def ? def.label.toLowerCase() : "__none__";
-    const existing = buckets.get(key);
-    if (existing) {
-      existing.amount += row.spent;
-    } else {
-      const { label, color, Icon } = def ?? NO_CATEGORY;
-      buckets.set(key, { label, color, Icon, amount: row.spent });
-    }
-  }
-
-  // Re-sorted after merging - the API orders by its own raw-text groups,
-  // which can change order once two of them collapse into one.
-  const rows = [...buckets.values()].sort((a, b) => b.amount - a.amount);
-  const total = rows.reduce((sum, row) => sum + row.amount, 0);
+  const total = rows.reduce((sum, row) => sum + row.spent, 0);
 
   if (rows.length === 0) {
     return (
@@ -78,19 +45,23 @@ export async function CategoryBreakdown({
   return (
     <div className="space-y-4">
       {rows.map((row) => {
-        const percentage = total > 0 ? (row.amount / total) * 100 : 0;
+        const percentage = total > 0 ? (row.spent / total) * 100 : 0;
+        const label = row.category?.label ?? NO_CATEGORY.label;
+        const color = row.category?.color ?? NO_CATEGORY.color;
+        // On an object - see category-badge.tsx.
+        const def = {
+          Icon: row.category ? resolveIcon(row.category.icon) : Tag,
+        };
+
         return (
-          <div key={row.label}>
+          <div key={row.category?.id ?? "__none__"}>
             <div className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-2 font-medium">
-                <row.Icon
-                  className="h-3.5 w-3.5"
-                  style={{ color: row.color }}
-                />
-                {row.label}
+                <def.Icon className="h-3.5 w-3.5" style={{ color }} />
+                {label}
               </span>
               <span className="font-mono text-xs text-muted-foreground">
-                {formatCurrency(row.amount, config)} · {percentage.toFixed(0)}%
+                {formatCurrency(row.spent, config)} · {percentage.toFixed(0)}%
               </span>
             </div>
             {/* Decorative - the percentage is already in the row's own
@@ -101,7 +72,7 @@ export async function CategoryBreakdown({
             >
               <div
                 className="h-full rounded-full"
-                style={{ width: `${percentage}%`, background: row.color }}
+                style={{ width: `${percentage}%`, background: color }}
               />
             </div>
           </div>

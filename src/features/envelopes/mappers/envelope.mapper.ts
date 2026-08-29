@@ -13,7 +13,9 @@ export const EnvelopeMapper = {
     name: data.name,
     amount: data.hasLimit ? Number(data.amount) : null,
     currency: data.currency,
-    category: data.category,
+    // An id, not a label - "" from the picker's cleared state means "no
+    // category", which the API expects as null.
+    categoryId: data.categoryId || null,
   }),
 
   /**
@@ -31,7 +33,7 @@ export const EnvelopeMapper = {
       currency: apiEnvelope.currency as CurrencyCode,
       spent: apiEnvelope.spent,
       status: apiEnvelope.status,
-      category: apiEnvelope.category ?? undefined,
+      category: apiEnvelope.category,
       description: apiEnvelope.description ?? undefined,
       createdAt: new Date(apiEnvelope.createdAt),
       updatedAt: new Date(apiEnvelope.updatedAt),

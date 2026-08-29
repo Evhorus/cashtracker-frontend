@@ -8,6 +8,15 @@ export interface EnvelopesResponse {
   meta: PaginationMeta;
 }
 
+/** An envelope's category as the API reports it - enough to render the
+ * chip without a lookup. */
+export interface EnvelopeCategory {
+  id: string;
+  label: string;
+  color: string;
+  icon: string;
+}
+
 export interface Envelope {
   id: string;
   name: string;
@@ -29,7 +38,9 @@ export interface Envelope {
    * src/envelopes/utils/envelope-status.ts in cashtracker-backend.
    */
   status: EnvelopeProgressStatus;
-  category?: string;
+  /** Reported whole by the API (label/colour/icon), or null when the
+   * envelope is unclassified. Never resolved client-side any more. */
+  category: EnvelopeCategory | null;
   description?: string;
   expenses: Expense[];
   createdAt: Date;

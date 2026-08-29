@@ -77,7 +77,7 @@ export const UpdateEnvelopeDialog = ({
           // re-picking the right one would have overwritten the
           // envelope's real currency with COP.
           currency: envelope.currency,
-          category: envelope.category || "",
+          categoryId: envelope.category?.id ?? "",
         }}
         isLoading={isPending}
         onSubmit={handleUpdate}

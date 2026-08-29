@@ -15,9 +15,20 @@ export const EnvelopeAPIResponseSchema = z.object({
   // vocabulary rather than a value the app's form wrote, so an unknown
   // value means the contract moved and should fail loudly here.
   status: z.enum(["unlimited", "normal", "warning", "exceeded"]),
-  // The API sends explicit `null` (not just an absent key) when these are
-  // unset, so `.optional()` alone rejects them - needs `.nullable()` too.
-  category: z.string().nullable().optional(),
+  // The whole category, not a label. It used to be free text each client
+  // resolved against its own copy of the category list, which is what let
+  // a renamed category silently detach from its envelopes - see
+  // cashtracker-backend's 1787950000000-envelope_category_fk migration.
+  category: z
+    .object({
+      id: z.string(),
+      label: z.string(),
+      /** oklch() string from the backend's own whitelist. */
+      color: z.string(),
+      /** Icon key - resolved to a component via resolveIcon(). */
+      icon: z.string(),
+    })
+    .nullable(),
   description: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -51,7 +62,9 @@ export const envelopeFormSchema = z
     hasLimit: z.boolean(),
     amount: z.string().optional(),
     currency: z.enum(CURRENCY_CODES),
-    category: z.string().trim().max(50).optional(),
+    // The picked category's id, or "" for none - envelopes reference
+    // categories by id now, so the form carries an id too.
+    categoryId: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.hasLimit && !data.amount?.trim()) {

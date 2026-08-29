@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { PageHeader } from "@/components/common/page-header";
 import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
-import { resolveCategory } from "@/features/categories/lib/category-palette";
-import { getCategories } from "@/features/categories/data/get-categories";
 import { CategoriesSection } from "@/features/categories/components/categories-section";
 import { CategoriesFilterProvider } from "@/features/categories/components/categories-filter-context";
 import { CreateCategoryDialog } from "@/features/categories/components/create-category-dialog";
@@ -22,11 +20,12 @@ export default async function CategoriesPage() {
   // client" and can't fetch async. Same 100-envelope cap the
   // envelopes/statistics/dashboard pages use.
   const envelopesResult = await getEnvelopes({ limit: 100 });
-  const categories = await getCategories();
+  // A straight count by id now that envelopes reference categories
+  // properly - no resolving a free-text label against the list first.
   const categoryCounts = envelopesResult.data.reduce<Record<string, number>>(
     (counts, envelope) => {
-      const category = resolveCategory(envelope.category, categories);
-      if (category) counts[category.id] = (counts[category.id] ?? 0) + 1;
+      const id = envelope.category?.id;
+      if (id) counts[id] = (counts[id] ?? 0) + 1;
       return counts;
     },
     {},
