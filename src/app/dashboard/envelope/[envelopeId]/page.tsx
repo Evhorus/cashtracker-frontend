@@ -108,12 +108,7 @@ export default async function EnvelopePage({
   const percentage = EnvelopeHelpers.getPercentage(envelope);
   const status = EnvelopeHelpers.getProgressStatus(envelope);
   const currencyConfig = CURRENCY_MAP[envelope.currency];
-  const spentColorClass =
-    status === "exceeded"
-      ? "text-destructive"
-      : status === "warning"
-        ? "text-amber-500"
-        : "text-primary";
+  const spentColorClass = EnvelopeHelpers.getStatusTextColorClass(status);
 
   return (
     <div className="space-y-8">

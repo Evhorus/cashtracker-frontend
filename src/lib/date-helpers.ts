@@ -14,36 +14,63 @@ export function parseDateInput(dateInput: Date | string | number): Date {
 }
 
 /**
- * Parses a value that represents a pure calendar date (no meaningful
+ * Parses an API value that represents a pure calendar date (no meaningful
  * time-of-day) - e.g. an expense's `date`, backed by a Postgres `date`
- * column - into a `Date` at LOCAL midnight for that day, region-agnostic.
+ * column - into a `Date` anchored at UTC midnight for that day. This is
+ * the canonical, environment-independent representation: reading it back
+ * via UTC getters (see `formatCalendarDate` below) always reproduces the
+ * same Y/M/D no matter which runtime does the reading.
  *
- * Unlike `parseDateInput`, this never treats the value as an instant: the
- * API can (and does) echo a date-only value as a full UTC timestamp (e.g.
- * "2026-09-22T00:00:00.000Z"), so anything that runs it through
- * `parseISO` + device-timezone conversion (as `formatDate` does for real
- * instants like `createdAt`) shifts the day backward for any timezone
- * behind UTC (Bogotá, UTC-5, included). Reading only the "yyyy-MM-dd"
- * prefix and rebuilding the date from local components sidesteps that
- * entirely - the calendar day is fixed, regardless of device timezone.
+ * That "no matter which runtime" part is the whole reason this exists,
+ * not just a style choice. The API can (and does) echo a date-only value
+ * as a full UTC timestamp (e.g. "2026-09-22T00:00:00.000Z"); this reads
+ * only the "yyyy-MM-dd" prefix rather than treating it as an instant, so
+ * `parseISO` + timezone conversion never enters the picture here. And
+ * this value doesn't stay on one runtime: `ExpenseMapper.fromApi` (which
+ * calls this) runs wherever the Server Component fetching the expense
+ * runs - the local dev server, or a Vercel Lambda pinned to UTC in
+ * production - and the resulting `Date` is then serialized as a prop
+ * into Client Components (expense-card.tsx, expenses-list.tsx) that
+ * render in the actual visitor's browser. A LOCAL-midnight anchor (this
+ * function's previous implementation) is only self-consistent when the
+ * same runtime both builds and reads it; the server/client split above
+ * breaks that assumption; UTC-anchoring plus UTC-only reads doesn't
+ * depend on it in the first place.
+ *
+ * Not for the expense FORM's own live state while editing - the Calendar
+ * widget (react-day-picker) reads a Date's LOCAL getters to decide what's
+ * selected, so the form needs a browser-local-anchored Date instead. See
+ * `toFormCalendarDate` (API -> form) and `formatCalendarDateForApi` (form
+ * -> API) for that side.
  */
-export function parseCalendarDate(dateInput: Date | string): Date {
-  if (typeof dateInput === "string") {
-    const [year, month, day] = dateInput.slice(0, 10).split("-").map(Number);
-    return new Date(year, month - 1, day);
-  }
-  return new Date(
-    dateInput.getFullYear(),
-    dateInput.getMonth(),
-    dateInput.getDate(),
-  );
+export function parseCalendarDate(dateInput: string): Date {
+  const [year, month, day] = dateInput.slice(0, 10).split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
 /**
- * Formats a calendar date (see `parseCalendarDate`) for the API as a plain
- * "yyyy-MM-dd" string, using LOCAL date components - never `toISOString()`,
- * which would convert through UTC and can shift the day for timezones
- * ahead of UTC before the request ever reaches the backend.
+ * Converts a canonical UTC-anchored calendar date (see `parseCalendarDate`,
+ * e.g. `expense.date`) into a browser-local-anchored `Date` for the
+ * expense form's Calendar widget to pre-select when editing - the
+ * opposite direction of `formatCalendarDateForApi`. Always runs
+ * client-side (the form is a Client Component), so reading via the
+ * browser's own local getters here is safe: this call and react-day-
+ * picker's own reads happen in the same runtime.
+ */
+export function toFormCalendarDate(date: Date): Date {
+  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
+/**
+ * Formats a browser-local-anchored calendar date (the expense form's own
+ * live state - `getToday()`, or whatever the Calendar widget/
+ * `toFormCalendarDate` produced) for the API as a plain "yyyy-MM-dd"
+ * string, using LOCAL date components - never `toISOString()`, which
+ * would convert through UTC and can shift the day for timezones ahead of
+ * UTC before the request ever reaches the backend. Always runs
+ * client-side, so "local" unambiguously means the visitor's own
+ * timezone here - unlike parseCalendarDate's UTC anchor, which exists
+ * specifically because ITS values do cross into other runtimes.
  */
 export function formatCalendarDateForApi(date: Date): string {
   return format(date, "yyyy-MM-dd");
@@ -51,6 +78,27 @@ export function formatCalendarDateForApi(date: Date): string {
 
 function toDeviceTimeZone(dateInput: Date): Date {
   return new TZDate(dateInput, getDeviceTimeZone());
+}
+
+/**
+ * Formats a canonical UTC-anchored calendar date (see `parseCalendarDate`)
+ * for display - reading its UTC wall-clock, never the ambient/device
+ * timezone `formatDate`/`formatShortDate` use for real instants
+ * (createdAt/updatedAt, where ambient-timezone conversion is exactly what
+ * you want). A calendar date has to render identically no matter which
+ * environment does the formatting - use this, not formatDate, for
+ * `expense.date` at every display call site, server or client.
+ */
+export function formatCalendarDate(date: Date): string {
+  return format(new TZDate(date, "UTC"), "EEEE, d 'de' MMMM 'de' yyyy", {
+    locale: es,
+  });
+}
+
+/** Compact "d MMM" form of formatCalendarDate - see formatShortDate for
+ * the equivalent over a real instant, and why the two need to differ. */
+export function formatCalendarDateShort(date: Date): string {
+  return format(new TZDate(date, "UTC"), "d MMM", { locale: es });
 }
 
 export function formatDate(dateInput: Date | string | number): string {
@@ -90,6 +138,15 @@ export function formatRelativeTime(dateInput: Date | string | number): string {
   });
 }
 
+/**
+ * Today, as a browser-local-anchored calendar date for the expense
+ * form's own live state (see `toFormCalendarDate`) - always called
+ * client-side, so reading `new Date()`'s local getters here correctly
+ * means "today for this visitor," not parseCalendarDate's UTC anchor
+ * (which exists for values that cross into other runtimes; this one
+ * never does).
+ */
 export function getToday(): Date {
-  return parseCalendarDate(new Date());
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }

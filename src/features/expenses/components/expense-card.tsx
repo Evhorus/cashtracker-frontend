@@ -3,7 +3,7 @@
 import { Expense } from "@/features/expenses/types";
 import { Calendar, ChevronRight, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { formatDate } from "@/lib/date-helpers";
+import { formatCalendarDate } from "@/lib/date-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { Card, CardContent } from "@/components/ui/card";
 import { CardHoverActions } from "@/components/common/card-hover-actions";
@@ -63,7 +63,7 @@ export const ExpenseCard = ({
             <h4 className="truncate text-sm font-semibold">{expense.name}</h4>
             <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
               <Calendar className="h-3 w-3" />
-              {formatDate(expense.date)}
+              {formatCalendarDate(expense.date)}
             </div>
           </div>
 

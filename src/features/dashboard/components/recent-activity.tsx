@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { formatShortDate } from "@/lib/date-helpers";
+import { formatCalendarDateShort } from "@/lib/date-helpers";
 import { cn } from "@/lib/utils";
 import { Heading } from "@/components/common/typography";
 import type { DashboardRecentExpense } from "../types";
@@ -50,7 +50,7 @@ export function RecentActivity({ expenses, className }: RecentActivityProps) {
                   {expense.name}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {expense.envelopeName} · {formatShortDate(expense.date)}
+                  {expense.envelopeName} · {formatCalendarDateShort(expense.date)}
                 </p>
               </div>
               <span className="shrink-0 font-mono text-sm font-semibold">

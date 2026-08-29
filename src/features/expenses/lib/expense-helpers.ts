@@ -1,4 +1,6 @@
 import type { Expense } from "../types";
+import type { Envelope } from "@/features/envelopes/types";
+import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 
 // Backend's hard cap on `limit` (PaginationQueryDto, shared by every
 // paginated list endpoint) - the ceiling "Todo" can actually ask for.
@@ -28,5 +30,17 @@ export const ExpenseHelpers = {
    */
   getTotalAmount: (expenses: Expense[]): number => {
     return expenses.reduce((sum, exp) => sum + Number(exp.amount), 0);
+  },
+
+  /**
+   * What percentage of its envelope's limit this one expense represents -
+   * the expense detail page's "Impacto en el Sobre" figure. Returns null
+   * for an unlimited envelope, same as EnvelopeHelpers.getPercentage
+   * (there's no limit to be a percentage of).
+   */
+  getImpactPercentage: (expense: Expense, envelope: Envelope): number | null => {
+    const envelopeAmount = EnvelopeHelpers.getAmount(envelope);
+    if (envelopeAmount === null) return null;
+    return (ExpenseHelpers.getAmount(expense) / envelopeAmount) * 100;
   },
 };

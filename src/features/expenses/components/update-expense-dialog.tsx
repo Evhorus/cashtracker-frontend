@@ -8,6 +8,7 @@ import { ExpenseForm } from "./expense-form";
 import { Expense } from "@/features/expenses/types";
 import { updateExpenseAction } from "@/features/expenses/actions/update-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
+import { ExpenseMapper } from "@/features/expenses/mappers/expense.mapper";
 import type { CurrencyCode } from "@/lib/format-currency";
 
 interface UpdateExpenseDialogProps {
@@ -74,12 +75,7 @@ export const UpdateExpenseDialog = ({
     >
       <ExpenseForm
         currency={currency}
-        defaultValues={{
-          name: expense.name,
-          amount: expense.amount,
-          description: expense.description || "",
-          date: expense.date,
-        }}
+        defaultValues={ExpenseMapper.toFormValues(expense)}
         onSubmit={handleCreate}
         isLoading={isPending}
         onCloseDialog={() => setOpen(false)}

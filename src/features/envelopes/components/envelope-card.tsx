@@ -40,21 +40,12 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
     };
   }, [envelope]);
 
-  // Targets the actual filled bar (Progress renders Root > Track > Indicator,
-  // so the indicator is a grandchild, not a direct child - a plain
-  // `[&>div]` here would only ever reach the Track and never recolor the
-  // fill itself, which is why this used to always render green).
-  const progressColorClass = calculations.isExceeded
-    ? "[&_[data-slot=progress-indicator]]:bg-destructive"
-    : calculations.isWarning
-      ? "[&_[data-slot=progress-indicator]]:bg-amber-500"
-      : "[&_[data-slot=progress-indicator]]:bg-primary";
-
-  const amountTextColorClass = calculations.isExceeded
-    ? "text-destructive"
-    : calculations.isWarning
-      ? "text-amber-500"
-      : "text-primary";
+  const progressColorClass = EnvelopeHelpers.getStatusProgressBarColorClass(
+    calculations.status,
+  );
+  const amountTextColorClass = EnvelopeHelpers.getStatusTextColorClass(
+    calculations.status,
+  );
 
   return (
     // No left-border accent bar - a flat color stripe down the side of

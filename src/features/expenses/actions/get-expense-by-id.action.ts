@@ -1,8 +1,6 @@
 "use server";
 import { auth } from "@clerk/nextjs/server";
-import { Expense } from "@/features/expenses/types";
-
-import { authenticatedFetch } from "@/lib/authenticated-fetch";
+import { ExpensesService } from "@/features/expenses/services/expenses.service";
 import { redirect } from "next/navigation";
 
 export const getExpenseByIdAction = async (
@@ -12,27 +10,14 @@ export const getExpenseByIdAction = async (
   await auth.protect();
 
   try {
-    const req = await authenticatedFetch(
-      `/envelopes/${envelopeId}/expenses/${expenseId}`,
-      {
-        next: {
-          tags: ["expense"],
-          revalidate: 60, // Revalidate every 60 seconds
-        },
-      },
-    );
-
-    const json = await req.json();
-
-    if (!req.ok) {
-      redirect(`/dashboard/envelope/${envelopeId}`);
-    }
-
-    const expense: Expense = json;
-
-    return expense;
+    // Delegates to ExpensesService (fetchApi + Zod validation +
+    // ExpenseMapper), instead of casting the raw API response directly -
+    // same bug as get-envelope-by-id.action.ts used to have: the raw
+    // cast silently produced an Expense with a string `date` instead of
+    // a real Date, since it skipped the mapper entirely.
+    return await ExpensesService.getById(envelopeId, expenseId);
   } catch (error) {
-    console.error("Error fetching envelope by id:", error);
-    throw error;
+    console.error("Error fetching expense by id:", error);
+    redirect(`/dashboard/envelope/${envelopeId}`);
   }
 };
