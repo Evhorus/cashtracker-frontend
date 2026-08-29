@@ -38,7 +38,7 @@ export async function AlertEnvelopes({
       <div className="flex items-center justify-between">
         <Heading size="sm">{t("alertsTitle")}</Heading>
         <Link
-          href="/dashboard/envelopes?status=alert"
+          href="/dashboard/envelopes?status=warning"
           className="text-xs font-medium text-primary hover:underline"
         >
           {t("seeAll")}

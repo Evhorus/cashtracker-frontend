@@ -19,7 +19,7 @@ export interface AlertEnvelope {
  * Envelopes that need attention - at/over the warning threshold or
  * already past their limit - worst first. Same warning-or-exceeded test
  * as the "En alerta" tab on the envelopes list
- * (EnvelopeHelpers.matchesStatusFilter with "alert"), so the count here
+ * (warning or exceeded), so the count here
  * and the list that tab shows can't drift apart.
  */
 export function getAlertEnvelopes(envelopes: Envelope[]): AlertEnvelope[] {

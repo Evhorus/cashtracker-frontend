@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Envelope } from "../types";
 import {
-  ENVELOPE_STATUS_FILTER_VALUES,
+  ENVELOPE_STATUS_TAB_VALUES,
   EnvelopeHelpers,
   type EnvelopeProgressStatus,
 } from "./envelope-helpers";
@@ -13,7 +13,10 @@ import en from "../messages/en.json";
  * Status *derivation* is no longer tested here - it isn't done here. The
  * API reports `envelope.status`, and the threshold plus its edge cases
  * are covered by envelope-status.spec.ts in cashtracker-backend, which
- * also checks the SQL filter agrees with it.
+ * also checks the SQL filter agrees with it. Neither is grouping:
+ * `matchesStatusFilter` was deleted, having had no consumer outside
+ * this file - the list page asks the API with `?status=` and the summary
+ * page's widget filters inline.
  *
  * What remains is this app's own business: turning a status into colour
  * classes, and grouping envelopes already in hand. The status *words*
@@ -70,99 +73,6 @@ describe("amount helpers", () => {
   });
 });
 
-describe("matchesStatusFilter", () => {
-  const byStatus: Record<EnvelopeProgressStatus, Envelope> = {
-    normal: envelope("1000", "100", "normal"),
-    warning: envelope("1000", "850", "warning"),
-    exceeded: envelope("1000", "1200", "exceeded"),
-    unlimited: envelope(null, "100", "unlimited"),
-  };
-
-  const cases: {
-    filter: (typeof ENVELOPE_STATUS_FILTER_VALUES)[number];
-    expected: Record<EnvelopeProgressStatus, boolean>;
-  }[] = [
-    {
-      filter: "all",
-      expected: {
-        normal: true,
-        warning: true,
-        exceeded: true,
-        unlimited: true,
-      },
-    },
-    {
-      filter: "active",
-      expected: {
-        normal: true,
-        warning: true,
-        exceeded: false,
-        unlimited: false,
-      },
-    },
-    {
-      filter: "alert",
-      expected: {
-        normal: false,
-        warning: true,
-        exceeded: true,
-        unlimited: false,
-      },
-    },
-    {
-      filter: "exceeded",
-      expected: {
-        normal: false,
-        warning: false,
-        exceeded: true,
-        unlimited: false,
-      },
-    },
-    {
-      filter: "unlimited",
-      expected: {
-        normal: false,
-        warning: false,
-        exceeded: false,
-        unlimited: true,
-      },
-    },
-  ];
-
-  for (const { filter, expected } of cases) {
-    it(`"${filter}" selects the right statuses`, () => {
-      for (const [status, shouldMatch] of Object.entries(expected)) {
-        expect(
-          EnvelopeHelpers.matchesStatusFilter(
-            byStatus[status as EnvelopeProgressStatus],
-            filter,
-          ),
-        ).toBe(shouldMatch);
-      }
-    });
-  }
-
-  it("covers every filter the UI offers", () => {
-    expect(cases.map((c) => c.filter).sort()).toEqual(
-      [...ENVELOPE_STATUS_FILTER_VALUES].sort(),
-    );
-  });
-
-  it("reads the reported status, not the amounts", () => {
-    // If this ever went back to deriving from amount/spent, the two
-    // clients could disagree again. An envelope whose numbers say one
-    // thing and whose reported status says another must follow the API.
-    const contradictory = envelope("1000", "50", "exceeded");
-
-    expect(EnvelopeHelpers.matchesStatusFilter(contradictory, "exceeded")).toBe(
-      true,
-    );
-    expect(EnvelopeHelpers.matchesStatusFilter(contradictory, "active")).toBe(
-      false,
-    );
-  });
-});
-
 describe("status presentation helpers", () => {
   const statuses: EnvelopeProgressStatus[] = [
     "unlimited",
@@ -197,10 +107,19 @@ describe("status presentation helpers", () => {
     }
   });
 
-  it("has a translated word for every filter tab, in every language", () => {
+  // Every tab but "all" IS a status, so it borrows that status's word
+  // rather than having its own - which is what makes the tab bar and the
+  // row badges structurally incapable of disagreeing. This asserts the
+  // subset relationship holds, so a tab can never be added without a
+  // word to render it.
+  it("labels every tab from the status vocabulary, in every language", () => {
     for (const catalogue of [es, en]) {
-      for (const filter of ENVELOPE_STATUS_FILTER_VALUES) {
-        expect(catalogue.envelopes.filters).toHaveProperty(filter);
+      expect(catalogue.envelopes.filters).toHaveProperty("all");
+
+      for (const tab of ENVELOPE_STATUS_TAB_VALUES) {
+        if (tab === "all") continue;
+        expect(statuses).toContain(tab);
+        expect(catalogue.envelopes.status).toHaveProperty(tab);
       }
     }
   });

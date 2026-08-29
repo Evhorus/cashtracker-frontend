@@ -11,8 +11,8 @@ import { PaginationControls } from "@/components/common/pagination-controls";
 import { Text } from "@/components/common/typography";
 import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
-  ENVELOPE_STATUS_FILTER_VALUES,
-  type EnvelopeStatusFilter,
+  ENVELOPE_STATUS_TAB_VALUES,
+  type EnvelopeStatusTab,
 } from "@/features/envelopes/lib/envelope-helpers";
 
 // generateMetadata, not a static `metadata` object: the tab title has
@@ -40,10 +40,10 @@ export default async function EnvelopesPage({
   const t = await getTranslations("envelopes");
   const { page: pageParam, search, status: statusParam } = await searchParams;
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
-  const status: EnvelopeStatusFilter = ENVELOPE_STATUS_FILTER_VALUES.some(
+  const status: EnvelopeStatusTab = ENVELOPE_STATUS_TAB_VALUES.some(
     (filter) => filter === statusParam,
   )
-    ? (statusParam as EnvelopeStatusFilter)
+    ? (statusParam as EnvelopeStatusTab)
     : "all";
 
   return (
@@ -90,7 +90,7 @@ export default async function EnvelopesPage({
 interface EnvelopesResultsProps {
   page: number;
   search?: string;
-  status: EnvelopeStatusFilter;
+  status: EnvelopeStatusTab;
 }
 
 async function EnvelopesResults({
