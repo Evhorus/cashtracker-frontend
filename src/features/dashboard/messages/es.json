@@ -2,7 +2,6 @@
   "dashboard": {
     "title": "Resumen",
     "greeting": "Hola, {name}",
-    "activeEnvelopes": "Sobres activos",
     "onAlert": "En alerta",
     "alertsTitle": "Sobres en alerta",
     "seeAll": "Ver todos →",
@@ -13,7 +12,8 @@
     "availableThisMonth": "Disponible este mes",
     "spent": "Gastado",
     "percentVsPrevMonth": "% vs mes anterior",
-    "percentOfBudget": "% del presupuesto"
+    "percentOfBudget": "% del presupuesto",
+    "totalEnvelopes": "Total de sobres"
   },
   "statistics": {
     "title": "Estadísticas",

@@ -2,7 +2,6 @@
   "dashboard": {
     "title": "Overview",
     "greeting": "Hi, {name}",
-    "activeEnvelopes": "Active envelopes",
     "onAlert": "Needs attention",
     "alertsTitle": "Envelopes needing attention",
     "seeAll": "See all →",
@@ -13,7 +12,8 @@
     "availableThisMonth": "Available this month",
     "spent": "Spent",
     "percentVsPrevMonth": "% vs last month",
-    "percentOfBudget": "% of budget"
+    "percentOfBudget": "% of budget",
+    "totalEnvelopes": "Total envelopes"
   },
   "statistics": {
     "title": "Statistics",

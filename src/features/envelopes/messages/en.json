@@ -10,7 +10,8 @@
     "searchPlaceholder": "Search by name or category...",
     "searchAria": "Search envelopes by name or category",
     "filters": {
-      "all": "All"
+      "all": "All",
+      "alert": "Needs attention"
     },
     "status": {
       "unlimited": "No limit",

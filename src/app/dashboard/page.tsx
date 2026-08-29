@@ -129,16 +129,20 @@ async function DashboardSummarySection() {
 
   const tiles = (
     <>
+      {/* Every envelope, not a subset - the label used to read "Sobres
+          activos" over a count of all of them. */}
       <SummaryTile
         icon={Wallet}
-        label={t("activeEnvelopes")}
+        label={t("totalEnvelopes")}
         value={summary.totalEnvelopes}
+        href="/dashboard/envelopes"
       />
       <SummaryTile
         icon={TriangleAlert}
         label={t("onAlert")}
         value={alertCount}
         tone={alertCount > 0 ? "alert" : "muted"}
+        href="/dashboard/envelopes?status=alert"
       />
     </>
   );

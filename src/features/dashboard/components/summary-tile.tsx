@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,22 +14,32 @@ interface SummaryTileProps {
    * prop rather than baked into a variant per tile.
    */
   tone?: "primary" | "alert" | "muted";
+  /**
+   * Where the tile goes. Both of Resumen's tiles have one: a count of
+   * envelopes that a reader cannot open is a dead end, and this one
+   * looked clickable enough that it was reported as broken navigation.
+   */
+  href: string;
 }
 
 /**
- * One of Resumen's small count tiles ("Sobres activos", "En alerta").
- * Extracted from dashboard/page.tsx, where the two were near-identical
- * JSX blocks assigned to local variables so they could be rendered in
- * either of the page's two layouts.
+ * One of the summary page's small count tiles. Extracted from
+ * dashboard/page.tsx, where the two were near-identical JSX blocks
+ * assigned to local variables so they could be rendered in either of the
+ * page's two layouts.
  */
 export function SummaryTile({
   icon: Icon,
   label,
   value,
   tone = "primary",
+  href,
 }: SummaryTileProps) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5">
+    <Link
+      href={href}
+      className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/50 px-4 py-3.5 transition-colors hover:border-border hover:bg-card"
+    >
       <div
         className={cn(
           "flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
@@ -41,6 +52,6 @@ export function SummaryTile({
       </div>
       <span className="text-sm text-muted-foreground">{label}</span>
       <span className="ml-auto font-mono text-lg font-semibold">{value}</span>
-    </div>
+    </Link>
   );
 }
