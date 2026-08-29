@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/common/breadcrumb";
 import { Heading } from "@/components/common/typography";
 
 interface PageHeaderProps {
@@ -16,19 +17,6 @@ interface PageHeaderProps {
    * category icon on envelope/[envelopeId]/page.tsx. Most callers don't
    * pass this. */
   icon?: ReactNode;
-  /**
-   * Hides the title above `md`, for a section page whose name the app
-   * header already shows (see CustomHeader). Without it the same word
-   * appeared three times on one screen: the header, the highlighted
-   * sidebar item, and here.
-   *
-   * Only the title - `description` stays, since the header carries no
-   * subtitle, and mobile keeps both because its header shows the logo
-   * rather than the section name. Detail pages never set this: their
-   * title is an envelope or expense name, which the header does not
-   * duplicate.
-   */
-  hideTitleOnDesktop?: boolean;
 }
 
 export const PageHeader = ({
@@ -38,7 +26,6 @@ export const PageHeader = ({
   actions,
   mobileActions,
   icon,
-  hideTitleOnDesktop = false,
 }: PageHeaderProps) => {
   return (
     // items-start, not items-center: a title long enough to wrap (see the
@@ -88,11 +75,7 @@ export const PageHeader = ({
             same criterion as sessions-section.tsx and
             envelope-card.tsx's meta line. */}
         <div className="min-w-0 flex-1">
-          <Heading
-            as="h1"
-            size="lg"
-            className={hideTitleOnDesktop ? "md:hidden" : undefined}
-          >
+          <Heading as="h1" size="lg">
             {title}
           </Heading>
           {description && (
@@ -103,7 +86,13 @@ export const PageHeader = ({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-start gap-2">
+      <div className="flex shrink-0 items-center gap-4">
+        {/* Opposite the title, the shape dashboard kits use. Desktop
+            only: at 390px this row already carries the back arrow, the
+            title and the create action, and that back arrow is the same
+            affordance a breadcrumb would offer. */}
+        <Breadcrumb current={title} className="hidden md:block" />
+
         {actions && (
           <div className="hidden items-center gap-2 md:flex">{actions}</div>
         )}

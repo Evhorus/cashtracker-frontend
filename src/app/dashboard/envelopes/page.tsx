@@ -53,22 +53,14 @@ export default async function EnvelopesPage({
           same Suspense boundary as the slow part, so clicking a status
           tab froze the header along with it instead of reacting
           instantly. */}
-      {/* Mobile only: the app header carries the section name on
-          desktop (see CustomHeader), so a second copy here was the same
-          word three times on one screen - header, highlighted sidebar
-          item, and this. Mobile's header shows the logo instead, so the
-          name is not duplicated there, and this row also carries the
-          back arrow and the create button on that breakpoint. */}
-      <div className="md:hidden">
-        <PageHeader
-          title={t("title")}
-          backUrl="/dashboard"
-          // Desktop's create button lives on the filter row instead (see
-          // below), pinned right on the same line as the search and
-          // filter. Mobile keeps it here, icon-only beside the title.
-          mobileActions={<CreateEnvelopeDialog />}
-        />
-      </div>
+      <PageHeader
+        title={t("title")}
+        backUrl="/dashboard"
+        // Desktop's create button lives on the filter row instead (see
+        // below), pinned right on the same line as the search and
+        // filter. Mobile keeps it here, icon-only beside the title.
+        mobileActions={<CreateEnvelopeDialog />}
+      />
 
       {/* Outside the Suspense boundary below on purpose - EnvelopesFilter
           is pure client UI (its active tab/search value reads the URL
