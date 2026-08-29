@@ -91,6 +91,5 @@ export function formatRelativeTime(dateInput: Date | string | number): string {
 }
 
 export function getToday(): Date {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return parseCalendarDate(new Date());
 }
