@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, XAxis } from "recharts";
 import {
@@ -9,12 +10,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { CURRENCY_MAP, type CurrencyCode } from "@/lib/format-currency";
+import { type CurrencyCode } from "@/lib/format-currency";
 
 type MonthlySpendingChartData = {
   label: string;
-  Gastado: number;
-  Disponible: number;
+  spent: number;
+  available: number;
 };
 
 interface MonthlySpendingChartProps {
@@ -37,14 +38,14 @@ interface MonthlySpendingChartProps {
 // is both meaningful on its own and naturally sorts chronologically -
 // the backend already returns entries oldest-to-newest.
 //
-// Two side-by-side bars per month (not stacked) - Gastado and Disponible
+// Two side-by-side bars per month (not stacked) - spent and available
 // don't sum to a meaningful third quantity, so stacking them into one bar
 // implied a relationship ("this is the budget") that isn't actually true
-// once an envelope is exceeded (Disponible goes negative, which a stack
+// once an envelope is exceeded (available goes negative, which a stack
 // can't render at all). Grouped bars compare the two directly instead.
-// Gastado reuses the app's own primary accent (the color spent amounts
+// The spent bar reuses the app's own primary accent (the color spent amounts
 // already render in everywhere else - envelope cards, the detail page);
-// Disponible is muted-foreground, a status-style "this is the backdrop,
+// The available bar is muted-foreground, a status-style "this is the backdrop,
 // not a second category" pairing rather than a second competing hue.
 export const MonthlySpendingChart = ({
   chartData,
@@ -52,7 +53,9 @@ export const MonthlySpendingChart = ({
   currency,
   hasOtherCurrencies,
 }: MonthlySpendingChartProps) => {
-  // A single bar can't show a trend - it's the same Gastado/Disponible
+  const t = useTranslations("statistics");
+  const tCurrency = useTranslations("currencies");
+  // A single bar can't show a trend - it's the same spent/available
   // split the stat cards above already spell out in text, just redrawn
   // as a ~320px-tall chart. That's not "no info", it's negative value
   // (a lot of scroll for nothing new), so this only renders once there's
@@ -61,13 +64,17 @@ export const MonthlySpendingChart = ({
   // exact case, since the backend buckets by envelope creation month.
   if (totalEnvelopes === 0 || chartData.length < 2) return null;
 
+  // Data keys are English identifiers, not display words - they're
+  // also spliced into CSS custom property names (--color-spent), so a
+  // translated key would break the fill. The words the reader sees are
+  // `label`, resolved per-locale.
   const chartConfig = {
-    Gastado: {
-      label: "Gastado",
+    spent: {
+      label: t("spent"),
       color: "var(--color-primary)",
     },
-    Disponible: {
-      label: "Disponible",
+    available: {
+      label: t("available"),
       color: "var(--color-muted-foreground)",
     },
   } satisfies ChartConfig;
@@ -76,10 +83,10 @@ export const MonthlySpendingChart = ({
     <Card className="animate-fade-in [animation-delay:0.4s]">
       <CardHeader>
         <CardTitle>
-          Gastos por Mes
+          {t("chartTitle")}
           {hasOtherCurrencies && (
             <span className="ml-2 text-sm font-normal text-muted-foreground">
-              ({CURRENCY_MAP[currency]?.label ?? currency})
+              ({tCurrency(currency)})
             </span>
           )}
         </CardTitle>
@@ -89,14 +96,19 @@ export const MonthlySpendingChart = ({
           config={chartConfig}
           className="aspect-auto h-64 w-full sm:h-80"
         >
-          <BarChart accessibilityLayer data={chartData} barGap={4} barCategoryGap="30%">
+          <BarChart
+            accessibilityLayer
+            data={chartData}
+            barGap={4}
+            barCategoryGap="30%"
+          >
             {/*
-              Full labels ("Ago 2026") got shown-but-cramped: on narrow
+              Full labels ("Aug 2026") got shown-but-cramped: on narrow
               screens recharts starts skipping ticks to avoid overlap,
               leaving it ambiguous which bar was which month/year. A
               single letter turned out too ambiguous on its own ("O"
               could be almost anything) - the 3-letter month
-              abbreviation (labels already start with one, e.g. "Ago")
+              abbreviation (labels already start with one, e.g. "Aug")
               is still short enough to avoid skipping, but actually
               reads as a month. Full month/year (plus the year, when
               the range spans more than one) still shows in the
@@ -118,14 +130,14 @@ export const MonthlySpendingChart = ({
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
             <Bar
-              dataKey="Gastado"
-              fill="var(--color-Gastado)"
+              dataKey="spent"
+              fill="var(--color-spent)"
               radius={[4, 4, 0, 0]}
               maxBarSize={28}
             />
             <Bar
-              dataKey="Disponible"
-              fill="var(--color-Disponible)"
+              dataKey="available"
+              fill="var(--color-available)"
               fillOpacity={0.6}
               radius={[4, 4, 0, 0]}
               maxBarSize={28}

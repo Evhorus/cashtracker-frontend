@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Edit } from "lucide-react";
 import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
@@ -18,7 +19,7 @@ interface UpdateExpenseDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   /** Override the default trigger's a11y label - the expense detail page
-   * passes the shorter, i18n "Editar" since there's only one edit button
+   * passes the shorter common.edit since there's only one edit button
    * on that page, no ambiguity to resolve. */
   label?: string;
   /** See CardActionButton - only the expense detail page's header turns
@@ -35,6 +36,7 @@ export const UpdateExpenseDialog = ({
   label,
   showLabelOnDesktop,
 }: UpdateExpenseDialogProps) => {
+  const t = useTranslations("expenses");
   const [internalOpen, setInternalOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
@@ -60,14 +62,14 @@ export const UpdateExpenseDialog = ({
     <ResponsiveFormSheet
       open={open}
       onOpenChange={setOpen}
-      title="Editar Gasto"
-      description="Modifica los datos del gasto seleccionado"
+      title={t("updateDialog.title")}
+      description={t("updateDialog.description")}
       dialogClassName="sm:max-w-125"
       trigger={
         isControlled ? undefined : (
           <CardActionButton
             icon={Edit}
-            label={label ?? "Editar gasto"}
+            label={label ?? t("editAria")}
             showLabelOnDesktop={showLabelOnDesktop}
           />
         )

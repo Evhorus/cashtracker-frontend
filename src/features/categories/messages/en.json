@@ -1,0 +1,57 @@
+{
+  "categories": {
+    "title": "Categories",
+    "new": "New category",
+    "none": "No category",
+    "summary": "{categories, plural, one {# category} other {# categories}} · {envelopes, plural, one {# classified envelope} other {# classified envelopes}}",
+    "searchPlaceholder": "Search category...",
+    "searchAria": "Search categories by name",
+    "editAria": "Edit category",
+    "deleteAria": "Delete category",
+    "envelopeCount": "{count, plural, one {# envelope} other {# envelopes}}",
+    "types": {
+      "all": "All",
+      "default": "Default",
+      "custom": "Custom"
+    },
+    "table": {
+      "category": "Category",
+      "type": "Type",
+      "envelopes": "Envelopes",
+      "isDefault": "Default",
+      "isCustom": "Custom"
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Subscriptions",
+      "icon": "Icon",
+      "color": "Color"
+    },
+    "createDialog": {
+      "title": "Create category",
+      "description": "Pick a name, icon and color for your category"
+    },
+    "updateDialog": {
+      "title": "Edit category",
+      "description": "Change your category's name, icon or color"
+    },
+    "deleteDialog": {
+      "title": "Delete category?",
+      "description": "<name>{name}</name> will be deleted. Envelopes already using it aren't changed, they just stop having it available to pick."
+    },
+    "picker": {
+      "create": "Create category"
+    },
+    "empty": {
+      "noResultsTitle": "No results for \"{query}\"",
+      "noResultsBody": "Try another name.",
+      "noneInFilterTitle": "No categories in \"{filter}\"",
+      "noneInFilterBody": "Try another filter."
+    },
+    "toast": {
+      "created": "Category created.",
+      "updated": "Category updated.",
+      "deleted": "Category deleted."
+    }
+  }
+}

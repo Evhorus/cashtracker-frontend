@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { formatMonthYear } from "@/lib/date-helpers";
 import { ArrowRight, Infinity as InfinityIcon } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import {
   CategoryIcon,
   CategoryLabel,
@@ -30,6 +31,8 @@ interface EnvelopeCardProps {
 // client-side optimizations on a component that never runs on the
 // client.
 export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
+  const t = useTranslations("envelopes");
+  const locale = useLocale();
   const envelopeId = envelope.id;
   const currencyConfig = CURRENCY_MAP[envelope.currency];
 
@@ -85,11 +88,11 @@ export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
             </CardTitle>
             {/* Always shows the creation month/year, not just when a
                 category is set - envelope names are free text and
-                commonly reused across years (e.g. a recurring "Agosto
-                NUU" every year), so without this there'd be no way to
+                commonly reused across years (e.g. a recurring
+                "August rent" every year), so without this there'd be no way to
                 tell which year's card is which in the list. */}
             <Text className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
-              <span>{formatMonthYear(envelope.createdAt)}</span>
+              <span>{formatMonthYear(envelope.createdAt, locale)}</span>
               {envelope.category && (
                 <>
                   <span aria-hidden="true">·</span>
@@ -156,7 +159,7 @@ export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
               {formatCurrency(+envelope.spent, currencyConfig)}
             </span>{" "}
             <span className="text-muted-foreground">
-              {calculations.isUnlimited ? "sin límite" : "gastado"}
+              {calculations.isUnlimited ? t("card.noLimit") : t("card.spent")}
             </span>
           </span>
           {calculations.isUnlimited ? (
@@ -171,7 +174,12 @@ export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
                   : "font-semibold text-success"
               }
             >
-              {formatCurrency(calculations.remaining ?? 0, currencyConfig)} disp.
+              {t("card.available", {
+                amount: formatCurrency(
+                  calculations.remaining ?? 0,
+                  currencyConfig,
+                ),
+              })}
             </span>
           )}
         </div>
@@ -182,7 +190,7 @@ export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
           className="group/btn h-auto w-full justify-end gap-1 px-0 py-0 text-xs font-medium text-muted-foreground hover:bg-transparent hover:text-primary"
           render={
             <Link href={`/dashboard/envelope/${envelopeId}`}>
-              Ver detalles
+              {t("seeDetails")}
               <ArrowRight className="h-3 w-3 transition-transform group-hover/btn:translate-x-0.5" />
             </Link>
           }

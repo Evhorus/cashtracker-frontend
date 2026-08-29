@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,21 +22,25 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { useForgotPassword } from "../hooks/use-forgot-password";
 import {
   type CodeFormValues,
-  codeFormSchema,
+  buildCodeFormSchema,
   type EmailFormValues,
-  emailFormSchema,
+  buildEmailFormSchema,
   type NewPasswordFormValues,
-  newPasswordFormSchema,
+  buildNewPasswordFormSchema,
 } from "../schemas/auth.schema";
 
 // Three-step reset flow (send code -> verify code -> set new password) on
 // top of the useForgotPassword() hook (features/auth/hooks/
 // use-forgot-password.ts) - see sign-in-form.tsx for the full reasoning
 // behind FormInput/serverError. The last step asks for the new password
-// twice (schema-enforced match via newPasswordFormSchema) so a mistyped
+// twice (schema-enforced match via buildNewPasswordFormSchema) so a mistyped
 // password doesn't lock the user out of the account they're actively
 // trying to recover.
 export function ForgotPasswordForm() {
+  const t = useTranslations("auth.forgotPassword");
+  const tSignIn = useTranslations("auth.signIn");
+  const tCommon = useTranslations("common");
+  const tValidation = useTranslations("validation");
   const {
     isSubmitting,
     needsNewPassword,
@@ -49,17 +54,17 @@ export function ForgotPasswordForm() {
   const [codeSent, setCodeSent] = useState(false);
 
   const emailForm = useForm<EmailFormValues>({
-    resolver: zodResolver(emailFormSchema),
+    resolver: zodResolver(buildEmailFormSchema(tValidation)),
     defaultValues: { email: "" },
   });
 
   const codeForm = useForm<CodeFormValues>({
-    resolver: zodResolver(codeFormSchema),
+    resolver: zodResolver(buildCodeFormSchema(tValidation)),
     defaultValues: { code: "" },
   });
 
   const newPasswordForm = useForm<NewPasswordFormValues>({
-    resolver: zodResolver(newPasswordFormSchema),
+    resolver: zodResolver(buildNewPasswordFormSchema(tValidation)),
     defaultValues: { password: "", confirmPassword: "" },
   });
 
@@ -81,13 +86,13 @@ export function ForgotPasswordForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Recupera tu contraseña</CardTitle>
+        <CardTitle>{t("title")}</CardTitle>
         <CardDescription>
           {!codeSent
-            ? "Te enviaremos un código a tu correo"
+            ? t("subtitleEmail")
             : !needsNewPassword
-              ? "Ingresa el código que recibiste"
-              : "Elige una nueva contraseña"}
+              ? t("subtitleCode")
+              : t("subtitlePassword")}
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-y-4">
@@ -103,9 +108,9 @@ export function ForgotPasswordForm() {
             <FormInput
               control={emailForm.control}
               name="email"
-              label="Email"
+              label={tCommon("email")}
               type="email"
-              placeholder="tucorreo@ejemplo.com"
+              placeholder={tCommon("emailPlaceholder")}
               autoComplete="email"
               disabled={isSubmitting}
               serverError={fieldErrors.identifier}
@@ -115,7 +120,7 @@ export function ForgotPasswordForm() {
               isLoading={isSubmitting}
               className="w-full"
             >
-              Enviar código
+              {t("sendCode")}
             </SubmitButton>
           </form>
         )}
@@ -132,7 +137,7 @@ export function ForgotPasswordForm() {
                 const message = fieldState.error?.message ?? fieldErrors.code;
                 return (
                   <Field>
-                    <FieldLabel htmlFor="code">Código</FieldLabel>
+                    <FieldLabel htmlFor="code">{tCommon("code")}</FieldLabel>
                     <OtpInput
                       id="code"
                       value={field.value}
@@ -152,7 +157,7 @@ export function ForgotPasswordForm() {
               isLoading={isSubmitting}
               className="w-full"
             >
-              Verificar código
+              {t("verifyCode")}
             </SubmitButton>
           </form>
         )}
@@ -165,9 +170,9 @@ export function ForgotPasswordForm() {
             <FormInput
               control={newPasswordForm.control}
               name="password"
-              label="Nueva contraseña"
+              label={t("newPassword")}
               type="password"
-              placeholder="••••••••"
+              placeholder={tCommon("passwordPlaceholder")}
               autoComplete="new-password"
               disabled={isSubmitting}
               serverError={fieldErrors.password}
@@ -175,9 +180,9 @@ export function ForgotPasswordForm() {
             <FormInput
               control={newPasswordForm.control}
               name="confirmPassword"
-              label="Confirma tu nueva contraseña"
+              label={t("confirmPassword")}
               type="password"
-              placeholder="••••••••"
+              placeholder={tCommon("passwordPlaceholder")}
               autoComplete="new-password"
               disabled={isSubmitting}
             />
@@ -186,7 +191,7 @@ export function ForgotPasswordForm() {
               isLoading={isSubmitting}
               className="w-full"
             >
-              Guardar contraseña
+              {t("savePassword")}
             </SubmitButton>
           </form>
         )}
@@ -197,16 +202,16 @@ export function ForgotPasswordForm() {
             href="/sign-in"
             className="font-medium text-primary hover:underline"
           >
-            Volver a iniciar sesión
+            {t("backToSignIn")}
           </Link>
         </p>
         <p className="w-full text-center text-sm text-muted-foreground">
-          ¿No tienes cuenta?{" "}
+          {tSignIn("noAccount")}{" "}
           <Link
             href="/sign-up"
             className="font-medium text-primary hover:underline"
           >
-            Crea una
+            {tSignIn("createOne")}
           </Link>
         </p>
       </CardFooter>

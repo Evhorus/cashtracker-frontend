@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Loader2, Unlink } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +21,7 @@ import { useConnectedAccounts } from "../hooks/use-connected-accounts";
 const OAUTH_PROVIDERS: OAuthProvider[] = ["google", "facebook"];
 
 export function ConnectedAccountsSection() {
+  const t = useTranslations("account.connected");
   const {
     connectedAccounts,
     connectingProvider,
@@ -42,10 +44,8 @@ export function ConnectedAccountsSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Cuentas conectadas</CardTitle>
-        <CardDescription>
-          Vincula otros proveedores para iniciar sesión más rápido
-        </CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("subtitle")}</CardDescription>
       </CardHeader>
       <CardContent className="gap-y-4">
         {error && <ErrorMessage>{error}</ErrorMessage>}

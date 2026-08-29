@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 
@@ -12,6 +13,7 @@ import { mapClerkError } from "./map-clerk-error";
 // case. See features/auth/hooks/use-sign-in.ts for the provider-agnostic
 // reasoning this mirrors.
 export function useUpdateProfile() {
+  const t = useTranslations("account.errors");
   const { user } = useUser();
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isUpdatingPhoto, setIsUpdatingPhoto] = useState(false);
@@ -23,7 +25,7 @@ export function useUpdateProfile() {
     firstName: string;
     lastName: string;
   }): Promise<AccountActionResult> {
-    if (!user) return { error: "No hay una sesión activa" };
+    if (!user) return { error: t("noSession") };
 
     setIsUpdatingProfile(true);
     setFieldErrors({});
@@ -38,6 +40,7 @@ export function useUpdateProfile() {
           firstName: ["first_name", "firstName"],
           lastName: ["last_name", "lastName"],
         },
+        t("unexpected"),
       );
       setFieldErrors(fields);
       setGlobalErrors(globals);
@@ -48,7 +51,7 @@ export function useUpdateProfile() {
   }
 
   async function updatePhoto(file: File): Promise<AccountActionResult> {
-    if (!user) return { error: "No hay una sesión activa" };
+    if (!user) return { error: t("noSession") };
 
     setIsUpdatingPhoto(true);
     setPhotoError(null);

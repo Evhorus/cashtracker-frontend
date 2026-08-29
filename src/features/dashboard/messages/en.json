@@ -1,0 +1,33 @@
+{
+  "dashboard": {
+    "title": "Overview",
+    "greeting": "Hi, {name}",
+    "activeEnvelopes": "Active envelopes",
+    "onAlert": "Needs attention",
+    "alertsTitle": "Envelopes needing attention",
+    "seeAll": "See all →",
+    "recentActivity": "Recent activity",
+    "emptyEyebrow": "First step",
+    "emptyTitle": "Create your first envelope",
+    "emptyBody": "One envelope per category — groceries, transport, leisure — with the limit you choose. CashTracker warns you before you go over.",
+    "availableThisMonth": "Available this month",
+    "spent": "Spent"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "subtitle": "Trends and a breakdown of your spending",
+    "byCategory": "Spending by category",
+    "byCurrency": "By currency",
+    "monthlySpending": "Monthly spending",
+    "chartTitle": "Spending by Month",
+    "filterYear": "Filter by year",
+    "allYears": "All years",
+    "filterCurrency": "Filter by currency",
+    "envelopeCount": "{count, plural, one {# envelope} other {# envelopes}}",
+    "ofBudgeted": "of {amount} budgeted",
+    "inUnlimited": "in unlimited envelopes",
+    "noSpendingYet": "No spending this period to break down by category yet.",
+    "spent": "Spent",
+    "available": "Available"
+  }
+}

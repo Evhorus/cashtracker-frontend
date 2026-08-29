@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,9 +23,9 @@ import { SubmitButton } from "@/components/common/submit-button";
 import { useReverificationFlow } from "../hooks/use-reverification-flow";
 import {
   type ReverificationCodeFormValues,
-  reverificationCodeFormSchema,
+  buildReverificationCodeFormSchema,
   type ReverificationPasswordFormValues,
-  reverificationPasswordFormSchema,
+  buildReverificationPasswordFormSchema,
 } from "../schemas/account.schema";
 import type { ReverificationRequest } from "../types";
 
@@ -45,6 +46,9 @@ export function ReverificationDialog({
   onOpenChange,
   onSuccess,
 }: ReverificationDialogProps) {
+  const t = useTranslations("account.reverification");
+  const tCommon = useTranslations("common");
+  const tValidation = useTranslations("validation");
   const {
     factor,
     isPreparing,
@@ -58,11 +62,11 @@ export function ReverificationDialog({
   } = useReverificationFlow(request, onSuccess);
 
   const passwordForm = useForm<ReverificationPasswordFormValues>({
-    resolver: zodResolver(reverificationPasswordFormSchema),
+    resolver: zodResolver(buildReverificationPasswordFormSchema(tValidation)),
     defaultValues: { password: "" },
   });
   const codeForm = useForm<ReverificationCodeFormValues>({
-    resolver: zodResolver(reverificationCodeFormSchema),
+    resolver: zodResolver(buildReverificationCodeFormSchema(tValidation)),
     defaultValues: { code: "" },
   });
 
@@ -78,11 +82,11 @@ export function ReverificationDialog({
     <Dialog open={request !== null} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirma que eres tú</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>
             {factor?.kind === "email_code"
-              ? `Enviamos un código a ${factor.safeIdentifier}`
-              : "Por seguridad, confirma tu identidad para continuar"}
+              ? t("codeSentTo", { identifier: factor.safeIdentifier ?? "" })
+              : t("subtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -106,7 +110,7 @@ export function ReverificationDialog({
             <FormInput
               control={passwordForm.control}
               name="password"
-              label="Contraseña"
+              label={tCommon("password")}
               type="password"
               autoComplete="current-password"
               autoFocus
@@ -142,7 +146,7 @@ export function ReverificationDialog({
                 const message = fieldState.error?.message ?? fieldErrors.code;
                 return (
                   <Field>
-                    <FieldLabel htmlFor="code">Código</FieldLabel>
+                    <FieldLabel htmlFor="code">{tCommon("code")}</FieldLabel>
                     <OtpInput
                       id="code"
                       value={field.value}
@@ -165,7 +169,7 @@ export function ReverificationDialog({
               onClick={resendCode}
             >
               {isResending && <Loader2 className="animate-spin" />}
-              Reenviar código
+              {t("resendCode")}
             </Button>
             <DialogFooter>
               <Button

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
 import { useActionDialog } from "@/hooks/useActionDialog";
@@ -10,6 +11,7 @@ import { EnvelopeFormValues } from "@/features/envelopes/schemas/envelope.schema
 import { createEnvelopeAction } from "@/features/envelopes/actions/create-envelope.action";
 
 export const CreateEnvelopeDialog = () => {
+  const t = useTranslations("envelopes");
   const [open, setOpen] = useState(false);
 
   const { dispatch, isPending } = useActionDialog(
@@ -31,12 +33,12 @@ export const CreateEnvelopeDialog = () => {
     <ResponsiveFormSheet
       open={open}
       onOpenChange={setOpen}
-      title="Crear"
-      description="Aquí puedes crear un sobre"
+      title={t("createDialog.title")}
+      description={t("createDialog.description")}
       trigger={
         <Button variant="default" size="lg">
           <Plus className="h-5 w-5" />
-          <span className="hidden md:inline">Nuevo Sobre</span>
+          <span className="hidden md:inline">{t("new")}</span>
         </Button>
       }
     >

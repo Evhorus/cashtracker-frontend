@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Heading } from "@/components/common/typography";
 import { CategoryIcon } from "@/features/categories/components/category-badge";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
@@ -20,7 +21,13 @@ const MAX_ROWS = 3;
  * along with RecentActivity's sibling treatment, so the page composes
  * two widgets instead of inlining one of them.
  */
-export function AlertEnvelopes({ entries, className }: AlertEnvelopesProps) {
+export async function AlertEnvelopes({
+  entries,
+  className,
+}: AlertEnvelopesProps) {
+  const t = await getTranslations("dashboard");
+  const tEnv = await getTranslations("envelopes");
+
   return (
     <div
       className={cn(
@@ -29,12 +36,12 @@ export function AlertEnvelopes({ entries, className }: AlertEnvelopesProps) {
       )}
     >
       <div className="flex items-center justify-between">
-        <Heading size="sm">Sobres en alerta</Heading>
+        <Heading size="sm">{t("alertsTitle")}</Heading>
         <Link
           href="/dashboard/envelopes?status=alert"
           className="text-xs font-medium text-primary hover:underline"
         >
-          Ver todos →
+          {t("seeAll")}
         </Link>
       </div>
       <div className="mt-3 space-y-3">
@@ -75,7 +82,7 @@ export function AlertEnvelopes({ entries, className }: AlertEnvelopesProps) {
                   aria-valuenow={Math.round(Math.min(percentage, 100))}
                   aria-valuemin={0}
                   aria-valuemax={100}
-                  aria-label={`${envelope.name}: ${Math.round(percentage)}% del límite gastado`}
+                  aria-label={`${envelope.name}: ${tEnv("detail.percentOfLimit", { percent: Math.round(percentage) })}`}
                   className="mt-1 h-1 w-full overflow-hidden rounded-full bg-secondary/60"
                 >
                   <div

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Select,
@@ -23,6 +24,7 @@ export const YearFilterSelect = ({
   years,
   selectedYear,
 }: YearFilterSelectProps) => {
+  const t = useTranslations("statistics");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -53,16 +55,16 @@ export const YearFilterSelect = ({
       <SelectTrigger
         size="sm"
         className="w-auto gap-1.5 font-medium"
-        aria-label="Filtrar por año"
+        aria-label={t("filterYear")}
       >
         <SelectValue>
           {(value: string) =>
-            value === ALL_YEARS_VALUE ? "Todos los años" : value
+            value === ALL_YEARS_VALUE ? t("allYears") : value
           }
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value={ALL_YEARS_VALUE}>Todos los años</SelectItem>
+        <SelectItem value={ALL_YEARS_VALUE}>{t("allYears")}</SelectItem>
         {years.map((year) => (
           <SelectItem key={year} value={String(year)}>
             {year}

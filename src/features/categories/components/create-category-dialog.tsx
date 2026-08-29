@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export const CreateCategoryDialog = ({
   onCreated,
   trigger,
 }: CreateCategoryDialogProps) => {
+  const t = useTranslations("categories");
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -54,14 +56,14 @@ export const CreateCategoryDialog = ({
     <ResponsiveFormSheet
       open={open}
       onOpenChange={setOpen}
-      title="Crear categoría"
-      description="Elige un nombre, ícono y color para tu categoría"
+      title={t("createDialog.title")}
+      description={t("createDialog.description")}
       trigger={
         trigger ??
         (!isControlled ? (
           <Button variant="default" size="lg">
             <Plus className="h-5 w-5" />
-            <span className="hidden md:inline">Nueva categoría</span>
+            <span className="hidden md:inline">{t("new")}</span>
           </Button>
         ) : undefined)
       }

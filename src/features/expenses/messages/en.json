@@ -1,0 +1,72 @@
+{
+  "expenses": {
+    "add": "Add Expense",
+    "optionsMenu": "Expense options",
+    "editAria": "Edit expense",
+    "deleteAria": "Delete expense",
+    "searchPlaceholder": "Search by name...",
+    "searchAria": "Search expenses by name",
+    "perPage": "Expenses per page",
+    "sortAria": "Sort expenses by date",
+    "newestFirst": "Newest first",
+    "oldestFirst": "Oldest first",
+    "table": {
+      "expense": "Expense",
+      "date": "Date",
+      "amount": "Amount"
+    },
+    "form": {
+      "name": "Expense name",
+      "namePlaceholder": "e.g. Grocery shopping",
+      "amount": "Amount",
+      "inheritsCurrency": "Inherits the envelope's currency",
+      "date": "Date",
+      "selectDate": "Select date",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Add details about the expense..."
+    },
+    "createDialog": {
+      "title": "Add New Expense",
+      "forEnvelope": "For the <name>{name}</name> envelope",
+      "fallbackDescription": "Fill in the form to record a new expense in this envelope"
+    },
+    "updateDialog": {
+      "title": "Edit Expense",
+      "description": "Change the details of this expense"
+    },
+    "deleteDialog": {
+      "title": "Delete expense?",
+      "description": "This can't be undone."
+    },
+    "detail": {
+      "title": "Expense Details",
+      "inEnvelope": "In envelope:",
+      "totalAmount": "Total Amount",
+      "description": "Description",
+      "systemInfo": "System Information",
+      "createdAt": "Created on",
+      "updatedAt": "Last updated",
+      "envelopeImpact": "Impact on the Envelope",
+      "represents": "Represents",
+      "ofAssigned": "of the total assigned ({amount})",
+      "noLimitEnvelope": "This envelope has no spending limit",
+      "envelopeStatus": "Envelope Status",
+      "totalSpent": "Total Spent"
+    },
+    "empty": {
+      "noResultsTitle": "No results for \"{query}\"",
+      "noResultsBody": "Try another name.",
+      "noDateRangeTitle": "No expenses in this period",
+      "noDateRangeBody": "Try another date range.",
+      "firstRunTitle": "No expenses yet",
+      "firstRunBody": "Add the first one with \"Add Expense\" and you'll see where this envelope's money goes."
+    },
+    "pageSizeAll": "All",
+    "perPageValue": "{size} / page",
+    "toast": {
+      "created": "Expense created.",
+      "updated": "Expense updated.",
+      "deleted": "Expense deleted."
+    }
+  }
+}

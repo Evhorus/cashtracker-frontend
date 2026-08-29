@@ -27,10 +27,10 @@ function envelope(
 }
 
 const month = (
-  label: string,
+  month: string,
   available: number,
 ): DashboardSummary["chart"][number] => ({
-  label,
+  month,
   spent: 0,
   available,
 });
@@ -38,30 +38,30 @@ const month = (
 describe("getMonthOverMonthDelta", () => {
   it("is null with fewer than two months", () => {
     expect(getMonthOverMonthDelta([])).toBeNull();
-    expect(getMonthOverMonthDelta([month("Ago", 100)])).toBeNull();
+    expect(getMonthOverMonthDelta([month("2026-08", 100)])).toBeNull();
   });
 
   it("computes the change between the last two months", () => {
     const delta = getMonthOverMonthDelta([
-      month("Jun", 50),
-      month("Jul", 100),
-      month("Ago", 150),
+      month("2026-06", 50),
+      month("2026-07", 100),
+      month("2026-08", 150),
     ]);
 
     expect(delta).toBe(50);
   });
 
   it("reports a decrease as negative", () => {
-    expect(getMonthOverMonthDelta([month("Jul", 200), month("Ago", 150)])).toBe(
-      -25,
-    );
+    expect(
+      getMonthOverMonthDelta([month("2026-07", 200), month("2026-08", 150)]),
+    ).toBe(-25);
   });
 
   it("is null when the earlier month was exactly zero", () => {
     // Any change from zero is an infinite percentage - the UI renders
     // nothing rather than a fabricated figure.
     expect(
-      getMonthOverMonthDelta([month("Jul", 0), month("Ago", 500)]),
+      getMonthOverMonthDelta([month("2026-07", 0), month("2026-08", 500)]),
     ).toBeNull();
   });
 
@@ -69,15 +69,15 @@ describe("getMonthOverMonthDelta", () => {
     // Going from -100 available to -50 is an improvement, so the delta
     // must be positive. Dividing by the signed value would flip it.
     expect(
-      getMonthOverMonthDelta([month("Jul", -100), month("Ago", -50)]),
+      getMonthOverMonthDelta([month("2026-07", -100), month("2026-08", -50)]),
     ).toBe(50);
   });
 
   it("ignores months before the last two", () => {
     const delta = getMonthOverMonthDelta([
-      month("Ene", 99999),
-      month("Jul", 100),
-      month("Ago", 110),
+      month("2026-01", 99999),
+      month("2026-07", 100),
+      month("2026-08", 110),
     ]);
 
     expect(delta).toBeCloseTo(10);

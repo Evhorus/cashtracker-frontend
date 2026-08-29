@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
+import { getTranslations } from "next-intl/server";
 import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
 import { EnvelopesFilter } from "@/features/envelopes/components/envelopes-filter";
@@ -10,11 +11,18 @@ import { PaginationControls } from "@/components/common/pagination-controls";
 import { Text } from "@/components/common/typography";
 import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
-  ENVELOPE_STATUS_FILTERS,
+  ENVELOPE_STATUS_FILTER_VALUES,
   type EnvelopeStatusFilter,
 } from "@/features/envelopes/lib/envelope-helpers";
 
-export const metadata: Metadata = { title: "Sobres" };
+// generateMetadata, not a static `metadata` object: the tab title has
+// to follow the reader's language, and a module-level constant is
+// evaluated once at build time with no request (and so no locale) in
+// scope. Same reason every other page in this app switched.
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("envelopes");
+  return { title: t("title") };
+}
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
@@ -29,14 +37,11 @@ export default async function EnvelopesPage({
   searchParams,
 }: EnvelopesPageProps) {
   await auth.protect();
-  const {
-    page: pageParam,
-    search,
-    status: statusParam,
-  } = await searchParams;
+  const t = await getTranslations("envelopes");
+  const { page: pageParam, search, status: statusParam } = await searchParams;
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
-  const status: EnvelopeStatusFilter = ENVELOPE_STATUS_FILTERS.some(
-    (filter) => filter.value === statusParam,
+  const status: EnvelopeStatusFilter = ENVELOPE_STATUS_FILTER_VALUES.some(
+    (filter) => filter === statusParam,
   )
     ? (statusParam as EnvelopeStatusFilter)
     : "all";
@@ -49,7 +54,7 @@ export default async function EnvelopesPage({
           tab froze the header along with it instead of reacting
           instantly. */}
       <PageHeader
-        title="Sobres"
+        title={t("title")}
         backUrl="/dashboard"
         actions={<CreateEnvelopeDialog />}
         mobileActions={<CreateEnvelopeDialog />}
@@ -76,11 +81,7 @@ export default async function EnvelopesPage({
           </div>
         }
       >
-        <EnvelopesResults
-          page={page}
-          search={search}
-          status={status}
-        />
+        <EnvelopesResults page={page} search={search} status={status} />
       </Suspense>
     </div>
   );
@@ -97,6 +98,7 @@ async function EnvelopesResults({
   search,
   status,
 }: EnvelopesResultsProps) {
+  const t = await getTranslations("envelopes");
   // The backend applies the status filter in SQL, so `meta` counts the
   // filtered set and one page is one request. This used to fetch every
   // envelope (capped at 100) and filter/paginate in memory, which meant
@@ -112,7 +114,7 @@ async function EnvelopesResults({
 
   // meta.total is already scoped to `search`/`status` - a live count of
   // whatever's actually showing, not a fixed page size, and correctly
-  // reads as "3 sobres" while filtering instead of a static subtitle that
+  // reads as "3 envelopes" while filtering instead of a static subtitle that
   // never moves. No budget total alongside it - envelopes span multiple
   // currencies (COP/USD/EUR), and summing across them into one number
   // would be meaningless, same reasoning as everywhere else in the app
@@ -121,11 +123,13 @@ async function EnvelopesResults({
 
   return (
     <div className="space-y-6">
-      <Text>
-        {total} {total === 1 ? "sobre" : "sobres"}
-      </Text>
+      <Text>{t("count", { count: total })}</Text>
 
-      <EnvelopesGrid envelopes={data} searchQuery={search} statusFilter={status} />
+      <EnvelopesGrid
+        envelopes={data}
+        searchQuery={search}
+        statusFilter={status}
+      />
 
       <PaginationControls
         page={meta.page}

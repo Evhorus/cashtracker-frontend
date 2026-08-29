@@ -30,9 +30,13 @@ export interface AccountSession {
   id: string;
   isCurrent: boolean;
   lastActiveAt: Date;
-  browser: string;
-  device: string;
-  location: string;
+  /** null when Clerk reports no browser at all - the *word* for that
+   * ("unknown browser") is a translation, so it's the component's to
+   * supply, not this hook's. Same for `location`. */
+  browser: string | null;
+  /** Which icon and which word to show; not the word itself. */
+  isMobile: boolean;
+  location: string | null;
 }
 
 export interface ConnectedAccount {

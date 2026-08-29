@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { SearchX } from "lucide-react";
 import { EmptyState } from "@/components/common/empty-state";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,6 +31,7 @@ interface CategoriesSectionProps {
 // list already lives on the client (useCategories()), no backend call
 // needed to filter it, so instant is both simpler and better UX here.
 export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
+  const t = useTranslations("categories");
   const categories = useCategories();
   const { search, type, setType } = useCategoriesFilter();
 
@@ -64,13 +66,13 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
           <Tabs
             value={type}
             onValueChange={(value) =>
-              setType(value as (typeof TYPE_FILTERS)[number]["value"])
+              setType(value as (typeof TYPE_FILTERS)[number])
             }
           >
             <TabsList className="w-full sm:w-fit">
               {TYPE_FILTERS.map((filter) => (
-                <TabsTrigger key={filter.value} value={filter.value}>
-                  {filter.label}
+                <TabsTrigger key={filter} value={filter}>
+                  {t(`types.${filter}`)}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -80,9 +82,10 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
       />
 
       <Text>
-        {filtered.length} {filtered.length === 1 ? "categoría" : "categorías"}
-        {" · "}
-        {totalEnvelopesCategorized} sobres clasificados
+        {t("summary", {
+          categories: filtered.length,
+          envelopes: totalEnvelopesCategorized,
+        })}
       </Text>
 
       {filtered.length === 0 ? (
@@ -90,14 +93,11 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
           icon={SearchX}
           title={
             search
-              ? `Sin resultados para "${search}"`
-              : `Sin categorías en "${
-                  TYPE_FILTERS.find((filter) => filter.value === type)?.label ??
-                  type
-                }"`
+              ? t("empty.noResultsTitle", { query: search })
+              : t("empty.noneInFilterTitle", { filter: t(`types.${type}`) })
           }
           description={
-            search ? "Prueba con otro nombre." : "Prueba con otro filtro."
+            search ? t("empty.noResultsBody") : t("empty.noneInFilterBody")
           }
         />
       ) : (

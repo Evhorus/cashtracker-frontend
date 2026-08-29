@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { RotateCw, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/common/typography";
@@ -16,6 +17,8 @@ export default function DashboardError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations("errors");
+  const tCommon = useTranslations("common");
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -26,15 +29,12 @@ export default function DashboardError({
         <TriangleAlert className="h-8 w-8 text-destructive" />
       </div>
       <div className="space-y-1.5">
-        <h2 className="text-xl font-semibold">Algo salió mal</h2>
-        <Text className="max-w-sm">
-          No pudimos cargar esta página. Tus datos están a salvo - inténtalo de
-          nuevo.
-        </Text>
+        <h2 className="text-xl font-semibold">{t("genericTitle")}</h2>
+        <Text className="max-w-sm">{t("genericBody")}</Text>
       </div>
       <Button onClick={() => reset()}>
         <RotateCw className="h-4 w-4" />
-        Reintentar
+        {tCommon("retry")}
       </Button>
     </div>
   );

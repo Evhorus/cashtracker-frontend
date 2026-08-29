@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { TriangleAlert, Wallet } from "lucide-react";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getRecentExpenses } from "@/features/dashboard/data/get-recent-expenses";
@@ -21,7 +22,10 @@ import { formatDate } from "@/lib/date-helpers";
 import { type CurrencyCode } from "@/lib/format-currency";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Resumen" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard");
+  return { title: t("title") };
+}
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
@@ -48,12 +52,13 @@ const ALERT_ENVELOPES_LIMIT = 100;
  */
 export default async function DashboardPage() {
   await auth.protect();
+  const locale = await getLocale();
 
   return (
     <div className="space-y-6">
       <div>
         <p className="font-mono text-xs font-medium tracking-wider text-muted-foreground uppercase">
-          {formatDate(new Date())}
+          {formatDate(new Date(), locale)}
         </p>
         {/* Its own boundary: the greeting needs a Clerk profile round
             trip (currentUser()), which has nothing to do with the
@@ -72,16 +77,20 @@ export default async function DashboardPage() {
 
 async function Greeting() {
   // Only the first name - real Clerk profile data, not a placeholder.
-  const user = await currentUser();
+  const [user, t] = await Promise.all([
+    currentUser(),
+    getTranslations("dashboard"),
+  ]);
 
   return (
     <Heading as="h1" size="lg" className="mt-0.5">
-      {user?.firstName ? `Hola, ${user.firstName}` : "Resumen"}
+      {user?.firstName ? t("greeting", { name: user.firstName }) : t("title")}
     </Heading>
   );
 }
 
 async function DashboardSummarySection() {
+  const t = await getTranslations("dashboard");
   const [summary, envelopesResult, recentExpenses] = await Promise.all([
     getDashboardSummary(),
     // Filtered in SQL - see cashtracker-backend's status predicate. This
@@ -122,12 +131,12 @@ async function DashboardSummarySection() {
     <>
       <SummaryTile
         icon={Wallet}
-        label="Sobres activos"
+        label={t("activeEnvelopes")}
         value={summary.totalEnvelopes}
       />
       <SummaryTile
         icon={TriangleAlert}
-        label="En alerta"
+        label={t("onAlert")}
         value={alertCount}
         tone={alertCount > 0 ? "alert" : "muted"}
       />
@@ -216,14 +225,16 @@ async function DashboardSummarySection() {
 // rather than just reporting that a list is empty. Same shape and copy
 // direction as EnvelopesGrid's own first-run card, so the two don't read
 // like different products.
-function DashboardEmptyState() {
+async function DashboardEmptyState() {
+  const t = await getTranslations("dashboard");
+
   return (
     <EmptyState
       variant="first-run"
       icon={Wallet}
-      eyebrow="Primer paso"
-      title="Crea tu primer sobre"
-      description="Un sobre por categoría — mercado, transporte, ocio — con el límite que decidas. CashTracker te avisa antes de que te excedas."
+      eyebrow={t("emptyEyebrow")}
+      title={t("emptyTitle")}
+      description={t("emptyBody")}
       action={<CreateEnvelopeDialog />}
     />
   );

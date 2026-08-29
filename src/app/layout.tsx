@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { manrope, plexMono, sourceSerif } from "./fonts";
@@ -17,16 +18,21 @@ import "./globals.css";
 // set nothing.
 // metadataBase lives here rather than on the landing page so relative
 // OG/Twitter image URLs resolve on every route, not just "/".
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:3001"),
-  title: {
-    default: "CashTracker - Control de Finanzas Personales",
-    template: "%s | CashTracker",
-  },
-  description:
-    "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras con CashTracker.",
-  applicationName: "CashTracker",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("home.meta");
+
+  return {
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_URL || "http://localhost:3001",
+    ),
+    title: {
+      default: t("title"),
+      template: "%s | CashTracker",
+    },
+    description: t("description"),
+    applicationName: "CashTracker",
+  };
+}
 
 // ClerkProvider intentionally lives in the (auth) and dashboard layouts
 // instead of here - the public marketing routes never render a signed-in

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useReverification, useUser } from "@clerk/nextjs";
@@ -14,6 +15,7 @@ import { useReverificationGate } from "./use-reverification-gate";
 // trusting a still-fresh session alone. Same onNeedsReverification gate
 // as that hook - see use-reverification-gate.ts.
 export function useDeleteAccount() {
+  const t = useTranslations("account.errors");
   const { user } = useUser();
   const router = useRouter();
   const onNeedsReverification = useReverificationGate();
@@ -25,7 +27,7 @@ export function useDeleteAccount() {
   });
 
   async function deleteAccount(): Promise<AccountActionResult> {
-    if (!user) return { error: "No hay una sesión activa" };
+    if (!user) return { error: t("noSession") };
 
     setIsDeleting(true);
     setError(null);
@@ -44,7 +46,7 @@ export function useDeleteAccount() {
         return { error: null };
       }
 
-      const { globalErrors } = mapClerkError(err, {});
+      const { globalErrors } = mapClerkError(err, {}, t("unexpected"));
       const message = globalErrors[0] ?? "No se pudo eliminar la cuenta";
       setError(message);
       return { error: message };

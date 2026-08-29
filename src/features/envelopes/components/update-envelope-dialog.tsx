@@ -2,6 +2,7 @@
 import { CardActionButton } from "@/components/common/card-action-button";
 import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
 import { Edit } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { EnvelopeForm } from "./envelope-form";
 import { useActionDialog } from "@/hooks/useActionDialog";
@@ -13,9 +14,10 @@ interface UpdateEnvelopeDialogProps {
   envelope: Envelope;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Override the default trigger's a11y label ("Editar sobre") - the
-   * envelope detail page passes the shorter, i18n "Editar" since there's
-   * only one edit button on that page, no ambiguity to resolve. */
+  /** Override the default trigger's a11y label (envelopes.editAria) -
+   * the envelope detail page passes the shorter common.edit since
+   * there's only one edit button on that page, no ambiguity to
+   * resolve. */
   label?: string;
   /** See CardActionButton - only the envelope detail page's header
    * turns this on. */
@@ -29,6 +31,7 @@ export const UpdateEnvelopeDialog = ({
   label,
   showLabelOnDesktop,
 }: UpdateEnvelopeDialogProps) => {
+  const t = useTranslations("envelopes");
   const [internalOpen, setInternalOpen] = useState(false);
 
   const isControlled = controlledOpen !== undefined;
@@ -54,13 +57,13 @@ export const UpdateEnvelopeDialog = ({
     <ResponsiveFormSheet
       open={open}
       onOpenChange={setOpen}
-      title="Editar"
-      description="Aquí puedes editar el sobre"
+      title={t("updateDialog.title")}
+      description={t("updateDialog.description")}
       trigger={
         isControlled ? undefined : (
           <CardActionButton
             icon={Edit}
-            label={label ?? "Editar sobre"}
+            label={label ?? t("editAria")}
             showLabelOnDesktop={showLabelOnDesktop}
           />
         )

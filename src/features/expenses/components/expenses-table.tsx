@@ -1,3 +1,4 @@
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { Expense } from "@/features/expenses/types";
 import { formatCalendarDate } from "@/lib/date-helpers";
@@ -33,6 +34,8 @@ export function ExpensesTable({
   envelopeId,
   currency,
 }: ExpensesTableProps) {
+  const t = useTranslations("expenses.table");
+  const locale = useLocale();
   const currencyConfig = CURRENCY_MAP[currency];
 
   return (
@@ -41,13 +44,13 @@ export function ExpensesTable({
         <TableHeader>
           <TableRow className="border-border/60 bg-card/60 text-xs font-semibold tracking-wider text-muted-foreground uppercase hover:bg-card/60">
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
-              Gasto
+              {t("expense")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
-              Fecha
+              {t("date")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-right font-semibold text-inherit">
-              Monto
+              {t("amount")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3" />
           </TableRow>
@@ -75,7 +78,7 @@ export function ExpensesTable({
                 </Link>
               </TableCell>
               <TableCell className="px-5 py-3.5 text-muted-foreground">
-                {formatCalendarDate(expense.date)}
+                {formatCalendarDate(expense.date, locale)}
               </TableCell>
               <TableCell className="px-5 py-3.5 text-right font-mono font-semibold text-primary">
                 {formatCurrency(+expense.amount, currencyConfig)}

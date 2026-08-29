@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { Check, ChevronDown, Plus, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ export function CategoryPicker({
   id,
   "aria-invalid": ariaInvalid,
 }: CategoryPickerProps) {
+  const t = useTranslations("categories");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
@@ -99,7 +101,7 @@ export function CategoryPicker({
                 !selected && "text-muted-foreground",
               )}
             >
-              {selected ? selected.label : "Sin categoría"}
+              {selected ? selected.label : t("none")}
             </span>
             <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
           </button>
@@ -111,7 +113,7 @@ export function CategoryPicker({
             autoFocus
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar categoría..."
+            placeholder={t("searchPlaceholder")}
           />
         </div>
 
@@ -126,7 +128,7 @@ export function CategoryPicker({
             className="flex w-full items-center gap-2.5 rounded-sm px-2 py-1.5 text-left text-sm text-muted-foreground hover:bg-muted"
           >
             <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-dashed border-muted-foreground/50" />
-            <span className="flex-1">Sin categoría</span>
+            <span className="flex-1">{t("none")}</span>
             {!value?.trim() && <Check className="h-4 w-4 shrink-0" />}
           </button>
 
@@ -170,7 +172,7 @@ export function CategoryPicker({
             className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <Plus className="h-3.5 w-3.5" />
-            Crear categoría
+            {t("picker.create")}
           </button>
         </div>
       </PopoverContent>

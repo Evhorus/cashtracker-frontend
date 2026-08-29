@@ -1,0 +1,76 @@
+{
+  "account": {
+    "title": "Mi cuenta",
+    "subtitle": "Gestiona tu perfil, seguridad y cuenta",
+    "menu": "Menú de cuenta",
+    "sections": {
+      "profile": "Perfil",
+      "password": "Contraseña",
+      "sessions": "Sesiones",
+      "connected": "Cuentas conectadas",
+      "danger": "Eliminar cuenta"
+    },
+    "profile": {
+      "title": "Perfil",
+      "subtitle": "Tu nombre y foto de perfil",
+      "changePhoto": "Cambiar foto de perfil",
+      "changePhotoHint": "Haz clic en la foto para cambiarla",
+      "save": "Guardar cambios",
+      "savedToast": "Perfil actualizado",
+      "photoSavedToast": "Foto de perfil actualizada"
+    },
+    "password": {
+      "title": "Contraseña",
+      "subtitle": "Actualiza la contraseña de tu cuenta",
+      "current": "Contraseña actual",
+      "new": "Nueva contraseña",
+      "confirm": "Confirma tu nueva contraseña",
+      "submit": "Actualizar contraseña",
+      "savedToast": "Contraseña actualizada"
+    },
+    "sessions": {
+      "title": "Sesiones activas",
+      "subtitle": "Dispositivos donde tu cuenta tiene una sesión iniciada actualmente",
+      "thisDevice": "Este dispositivo",
+      "empty": "No hay sesiones activas.",
+      "mobile": "Móvil",
+      "desktop": "Escritorio",
+      "unknownBrowser": "Navegador desconocido",
+      "unknownLocation": "Ubicación desconocida",
+      "lastActive": "activo {when}",
+      "revoke": "Cerrar sesión"
+    },
+    "connected": {
+      "title": "Cuentas conectadas",
+      "subtitle": "Vincula otros proveedores para iniciar sesión más rápido",
+      "connectNew": "Conectar un nuevo proveedor"
+    },
+    "danger": {
+      "title": "Eliminar cuenta",
+      "confirmTitle": "¿Eliminar tu cuenta?",
+      "yourEmail": "Tu email",
+      "body": "Elimina tu cuenta y todos tus datos de forma permanente. Esta acción no se puede deshacer.",
+      "confirmBody": "Esta acción no se puede deshacer. Se eliminará tu cuenta y todos tus sobres y gastos."
+    },
+    "reverification": {
+      "title": "Confirma que eres tú",
+      "verify": "Verificar",
+      "resendCode": "Reenviar código",
+      "subtitle": "Por seguridad, confirma tu identidad para continuar",
+      "codeSentTo": "Enviamos un código a {identifier}"
+    },
+    "signOut": "Cerrar sesión",
+    "errors": {
+      "unexpected": "Ocurrió un error inesperado. Intenta de nuevo.",
+      "noSession": "No hay una sesión activa",
+      "loadFailed": "No se pudieron cargar las sesiones",
+      "revokeFailed": "No se pudo cerrar esa sesión",
+      "connectFailed": "No se pudo iniciar la conexión con el proveedor",
+      "passwordUpdateFailed": "No se pudo actualizar la contraseña",
+      "noMethodAvailable": "No pudimos verificar tu identidad con los métodos disponibles para esta cuenta.",
+      "startFailed": "No se pudo iniciar la verificación",
+      "completeFailed": "No se pudo completar la verificación",
+      "resendFailed": "No se pudo reenviar el código"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useReverification, useUser } from "@clerk/nextjs";
 import { isReverificationCancelledError } from "@clerk/nextjs/errors";
@@ -15,6 +16,7 @@ import { useReverificationGate } from "./use-reverification-gate";
 // Google/Facebook buttons that start a sign-up (oauth-buttons.tsx) start
 // linking a provider to an already-signed-in user here instead.
 export function useConnectedAccounts() {
+  const t = useTranslations("account.errors");
   const { user } = useUser();
   const onNeedsReverification = useReverificationGate();
   const [connectingProvider, setConnectingProvider] =
@@ -86,7 +88,7 @@ export function useConnectedAccounts() {
         externalAccount?.verification?.externalVerificationRedirectURL;
 
       if (!redirectUrl) {
-        setError("No se pudo iniciar la conexión con el proveedor");
+        setError(t("connectFailed"));
         setConnectingProvider(null);
         return;
       }

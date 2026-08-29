@@ -1,0 +1,50 @@
+{
+  "auth": {
+    "backHome": "Back to home",
+    "signIn": {
+      "title": "Sign in",
+      "subtitle": "Welcome back to CashTracker",
+      "submit": "Sign in",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one",
+      "emailCode": "Email code",
+      "sendCode": "Send code",
+      "resendCode": "Resend code",
+      "verify": "Verify",
+      "codeSentTo": "We sent a code to <email></email>"
+    },
+    "signUp": {
+      "title": "Create account",
+      "submit": "Create account",
+      "verifySubmit": "Verify and create account",
+      "resendCode": "Resend code",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "confirmPassword": "Confirm your password",
+      "firstNamePlaceholder": "Jane",
+      "lastNamePlaceholder": "Doe",
+      "subtitle": "Start tracking your finances, free",
+      "verifyTitle": "Verify your email",
+      "verifySubtitle": "Enter the code we sent to your inbox"
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "sendCode": "Send code",
+      "verifyCode": "Verify code",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm your new password",
+      "savePassword": "Save password",
+      "backToSignIn": "Back to sign in",
+      "subtitleEmail": "We'll send a code to your inbox",
+      "subtitleCode": "Enter the code you received",
+      "subtitlePassword": "Choose a new password"
+    },
+    "oauth": {
+      "google": "Google",
+      "facebook": "Facebook"
+    },
+    "logoAlt": "CashTracker logo",
+    "tagline": "Your app for keeping track of what comes in and what goes out, and managing your money safely and simply."
+  }
+}

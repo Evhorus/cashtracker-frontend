@@ -3,7 +3,7 @@ import type { Envelope } from "@/features/envelopes/types";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 
 // Backend's hard cap on `limit` (PaginationQueryDto, shared by every
-// paginated list endpoint) - the ceiling "Todo" can actually ask for.
+// paginated list endpoint) - the ceiling the "all" option can ask for.
 // A single envelope's own expense list realistically never gets near
 // this (envelopes are period-scoped, see envelopes-repository's own
 // "one account for one month" reasoning) so it reads as "everything" in
@@ -13,11 +13,17 @@ export const EXPENSES_MAX_PAGE_SIZE = 100;
 
 export const EXPENSES_DEFAULT_PAGE_SIZE = 10;
 
-export const EXPENSES_PAGE_SIZE_OPTIONS: { value: number; label: string }[] = [
-  { value: 10, label: "10" },
-  { value: 20, label: "20" },
-  { value: EXPENSES_MAX_PAGE_SIZE, label: "Todo" },
-];
+/**
+ * Page sizes offered by the expense list. Numbers only: two of the
+ * three render as themselves, and the largest renders as the word for
+ * "all" (`expenses.pageSizeAll`), which is a translation rather than
+ * data and so can't live here.
+ */
+export const EXPENSES_PAGE_SIZE_OPTIONS = [
+  10,
+  20,
+  EXPENSES_MAX_PAGE_SIZE,
+] as const;
 
 export const ExpenseHelpers = {
   /**
@@ -38,7 +44,10 @@ export const ExpenseHelpers = {
    * for an unlimited envelope, same as EnvelopeHelpers.getPercentage
    * (there's no limit to be a percentage of).
    */
-  getImpactPercentage: (expense: Expense, envelope: Envelope): number | null => {
+  getImpactPercentage: (
+    expense: Expense,
+    envelope: Envelope,
+  ): number | null => {
     const envelopeAmount = EnvelopeHelpers.getAmount(envelope);
     if (envelopeAmount === null) return null;
     return (ExpenseHelpers.getAmount(expense) / envelopeAmount) * 100;

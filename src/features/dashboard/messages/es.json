@@ -1,0 +1,33 @@
+{
+  "dashboard": {
+    "title": "Resumen",
+    "greeting": "Hola, {name}",
+    "activeEnvelopes": "Sobres activos",
+    "onAlert": "En alerta",
+    "alertsTitle": "Sobres en alerta",
+    "seeAll": "Ver todos →",
+    "recentActivity": "Actividad reciente",
+    "emptyEyebrow": "Primer paso",
+    "emptyTitle": "Crea tu primer sobre",
+    "emptyBody": "Un sobre por categoría — mercado, transporte, ocio — con el límite que decidas. CashTracker te avisa antes de que te excedas.",
+    "availableThisMonth": "Disponible este mes",
+    "spent": "Gastado"
+  },
+  "statistics": {
+    "title": "Estadísticas",
+    "subtitle": "Tendencias y desglose de tu gasto",
+    "byCategory": "Gasto por categoría",
+    "byCurrency": "Por moneda",
+    "monthlySpending": "Gasto mensual",
+    "chartTitle": "Gastos por Mes",
+    "filterYear": "Filtrar por año",
+    "allYears": "Todos los años",
+    "filterCurrency": "Filtrar por moneda",
+    "envelopeCount": "{count, plural, one {# sobre} other {# sobres}}",
+    "ofBudgeted": "de {amount} presupuestados",
+    "inUnlimited": "en sobres sin límite",
+    "noSpendingYet": "Aún no hay gastos este período para desglosar por categoría.",
+    "spent": "Gastado",
+    "available": "Disponible"
+  }
+}

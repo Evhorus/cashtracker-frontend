@@ -1,0 +1,94 @@
+{
+  "envelopes": {
+    "title": "Envelopes",
+    "count": "{count, plural, one {# envelope} other {# envelopes}}",
+    "new": "New Envelope",
+    "seeDetails": "View details",
+    "optionsMenu": "Envelope options",
+    "editAria": "Edit envelope",
+    "deleteAria": "Delete envelope",
+    "searchPlaceholder": "Search by name or category...",
+    "searchAria": "Search envelopes by name or category",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "alert": "Needs attention",
+      "exceeded": "Over limit",
+      "unlimited": "No limit"
+    },
+    "status": {
+      "unlimited": "No limit",
+      "normal": "On track",
+      "warning": "At risk",
+      "exceeded": "Over limit"
+    },
+    "table": {
+      "envelope": "Envelope",
+      "category": "Category",
+      "progress": "Progress",
+      "spent": "Spent",
+      "available": "Available",
+      "status": "Status",
+      "noLimit": "No limit"
+    },
+    "form": {
+      "name": "Envelope name",
+      "namePlaceholder": "e.g. Household expenses",
+      "currency": "Currency",
+      "hasLimit": "This envelope has a spending limit",
+      "amount": "Amount",
+      "category": "Category (optional)"
+    },
+    "createDialog": {
+      "title": "Create",
+      "description": "Create an envelope here"
+    },
+    "updateDialog": {
+      "title": "Edit",
+      "description": "Edit the envelope here"
+    },
+    "deleteDialog": {
+      "title": "Delete envelope?",
+      "description": "This can't be undone. Every expense in it will be deleted too.",
+      "confirmPrompt": "Type <name>{name}</name> to confirm:",
+      "namePlaceholder": "Envelope name"
+    },
+    "detail": {
+      "summary": "Summary",
+      "history": "Expense History",
+      "noSpendingLimit": "No spending limit",
+      "exceededBy": "You went over by {amount} this month",
+      "available": "Available",
+      "spent": "Spent",
+      "percentOfLimit": "{percent}% of the limit",
+      "totalLimit": "Total limit",
+      "transactions": "Transactions"
+    },
+    "empty": {
+      "noResultsTitle": "No results for \"{query}\"",
+      "noResultsBody": "Try another name or category.",
+      "noneInFilterTitle": "No envelopes in \"{filter}\"",
+      "noneInFilterBody": "Try another filter.",
+      "firstRunTitle": "Organize your spending into envelopes",
+      "firstRunBody": "Create an envelope for each category — groceries, transport, leisure — and CashTracker warns you before you go over.",
+      "firstRunEyebrow": "CashTracker"
+    },
+    "card": {
+      "noLimit": "no limit",
+      "spent": "spent",
+      "available": "{amount} left"
+    },
+    "chart": {
+      "spent": "Spent",
+      "available": "Available",
+      "exceeded": "Over budget",
+      "used": "used",
+      "limitExceeded": "Over the limit"
+    },
+    "toast": {
+      "created": "Envelope created.",
+      "updated": "Envelope updated.",
+      "deleted": "Envelope deleted."
+    }
+  }
+}

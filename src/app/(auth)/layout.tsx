@@ -3,8 +3,9 @@ import Link from "next/link";
 
 import { ChevronLeft } from "lucide-react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { getClerkLocalization } from "@/i18n/clerk-localization";
 import { auth } from "@clerk/nextjs/server";
-import { esMX } from "@clerk/localizations";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 // Covers /sign-in, /sign-up and /forgot-password (sso-callback lives
@@ -15,11 +16,13 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const t = await getTranslations("auth");
+  const clerkLocalization = await getClerkLocalization();
   const { isAuthenticated } = await auth();
   if (isAuthenticated) redirect("/dashboard");
 
   return (
-    <ClerkProvider localization={esMX}>
+    <ClerkProvider localization={clerkLocalization}>
       <div className="grid min-h-svh lg:grid-cols-2">
         <div className="relative hidden items-center justify-center overflow-hidden bg-linear-to-br from-primary/90 via-primary to-primary/80 px-10 lg:flex">
           {/* Decorative elements */}
@@ -30,7 +33,7 @@ export default async function AuthLayout({
             <div className="relative mb-8 w-full scale-110">
               <Image
                 src="/logo.svg"
-                alt="Logo CashTracker"
+                alt={t("logoAlt")}
                 width={0}
                 height={0}
                 className="w-full"
@@ -39,8 +42,7 @@ export default async function AuthLayout({
             </div>
 
             <p className="text-lg leading-relaxed font-light text-primary-foreground/90">
-              Tu app para controlar ingresos y gastos con facilidad, para
-              administrar tu dinero de forma segura y práctica.
+              {t("tagline")}
             </p>
           </div>
         </div>
@@ -53,7 +55,7 @@ export default async function AuthLayout({
               className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ChevronLeft size={20} />
-              Volver al inicio
+              {t("backHome")}
             </Link>
           </div>
 

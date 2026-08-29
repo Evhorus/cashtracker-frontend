@@ -1,14 +1,12 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Envelope } from "@/features/envelopes/types";
 import { SearchX, Wallet } from "lucide-react";
 import { EmptyState } from "@/components/common/empty-state";
 import { CreateEnvelopeDialog } from "./create-envelope-dialog";
 import { EnvelopeCard } from "./envelope-card";
 import { EnvelopesTable } from "./envelopes-table";
-import {
-  ENVELOPE_STATUS_FILTERS,
-  type EnvelopeStatusFilter,
-} from "@/features/envelopes/lib/envelope-helpers";
+import { type EnvelopeStatusFilter } from "@/features/envelopes/lib/envelope-helpers";
 
 interface EnvelopesGridProps {
   envelopes: Envelope[];
@@ -28,6 +26,7 @@ export const EnvelopesGrid = ({
   searchQuery,
   statusFilter = "all",
 }: EnvelopesGridProps) => {
+  const t = useTranslations("envelopes");
   const hasActiveFilter = Boolean(searchQuery) || statusFilter !== "all";
 
   return (
@@ -38,17 +37,15 @@ export const EnvelopesGrid = ({
             icon={SearchX}
             title={
               searchQuery
-                ? `Sin resultados para "${searchQuery}"`
-                : `Sin sobres en "${
-                    ENVELOPE_STATUS_FILTERS.find(
-                      (filter) => filter.value === statusFilter,
-                    )?.label ?? statusFilter
-                  }"`
+                ? t("empty.noResultsTitle", { query: searchQuery })
+                : t("empty.noneInFilterTitle", {
+                    filter: t(`filters.${statusFilter}`),
+                  })
             }
             description={
               searchQuery
-                ? "Prueba con otro nombre o categoría."
-                : "Prueba con otro filtro."
+                ? t("empty.noResultsBody")
+                : t("empty.noneInFilterBody")
             }
           />
         ) : (
@@ -58,9 +55,9 @@ export const EnvelopesGrid = ({
           <EmptyState
             variant="first-run"
             icon={Wallet}
-            eyebrow="CashTracker"
-            title="Organiza tus gastos por sobres"
-            description="Crea un sobre para cada categoría — mercado, transporte, ocio — y CashTracker te avisa antes de que te excedas."
+            eyebrow={t("empty.firstRunEyebrow")}
+            title={t("empty.firstRunTitle")}
+            description={t("empty.firstRunBody")}
             action={<CreateEnvelopeDialog />}
           />
         )

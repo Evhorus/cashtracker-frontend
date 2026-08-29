@@ -5,7 +5,6 @@ export interface CurrencyConfig {
   locale: string;
   currency: string;
   symbol: string;
-  label: string;
   /**
    * Minor-unit digits for this currency (ISO 4217's "exponent"), e.g. 2
    * for COP/USD/EUR (they all support cents, even though COP rarely
@@ -17,16 +16,17 @@ export interface CurrencyConfig {
    * and whether it accepts a decimal point at all - 0 means it doesn't).
    *
    * TO ADD A NEW CURRENCY: add one entry to CURRENCY_MAP with its own
-   * locale/symbol/label/decimalDigits (e.g. a 0-decimal currency like
-   * JPY, or a 3-decimal one like BHD) and add its code to
-   * CURRENCY_CODES above - formatCurrency, formatNumber, and
-   * PriceInput all read from here, nothing else needs to change. If a
-   * future currency actually needs the *interface text itself*
-   * translated (not just number formatting), that's a separate concern
-   * this file doesn't cover - the app's copy is hardcoded Spanish
-   * throughout today, deliberately: real i18n (a translation library,
-   * locale-switching UI) is only worth adding once there's an actual
-   * non-Spanish-speaking user to support, not speculatively.
+   * locale/symbol/decimalDigits (e.g. a 0-decimal currency like JPY, or
+   * a 3-decimal one like BHD), add its code to CURRENCY_CODES above,
+   * and add its *name* to `currencies` in both message catalogues -
+   * formatCurrency, formatNumber, and PriceInput all read from here,
+   * nothing else needs to change.
+   *
+   * The currency's display name is deliberately NOT here: this map is
+   * number-formatting data, identical for every reader, while
+   * "Dólar Estadounidense" / "US Dollar" is copy. It lives in
+   * `currencies.<code>` and is looked up where it's rendered
+   * (currency-selector.tsx, the statistics filters).
    */
   decimalDigits: number;
 }
@@ -36,21 +36,18 @@ export const CURRENCY_MAP: Record<CurrencyCode, CurrencyConfig> = {
     locale: "es-CO",
     currency: "COP",
     symbol: "$",
-    label: "Peso Colombiano",
     decimalDigits: 2,
   },
   USD: {
     locale: "en-US",
     currency: "USD",
     symbol: "$",
-    label: "Dólar Estadounidense",
     decimalDigits: 2,
   },
   EUR: {
     locale: "de-DE",
     currency: "EUR",
     symbol: "€",
-    label: "Euro",
     decimalDigits: 2,
   },
 };

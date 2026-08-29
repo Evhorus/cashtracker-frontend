@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appName": "CashTracker",
+    "back": "Volver",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "retry": "Reintentar",
+    "actions": "Acciones",
+    "name": "Nombre",
+    "lastName": "Apellido",
+    "amount": "Monto",
+    "currency": "Moneda",
+    "category": "Categoría",
+    "date": "Fecha",
+    "description": "Descripción",
+    "email": "Email",
+    "password": "Contraseña",
+    "code": "Código",
+    "status": "Estado",
+    "spent": "Gastado",
+    "available": "Disponible",
+    "noResults": "Sin resultados",
+    "emailPlaceholder": "tucorreo@ejemplo.com",
+    "passwordPlaceholder": "••••••••",
+    "or": "o"
+  },
+  "validation": {
+    "firstNameRequired": "El nombre es obligatorio",
+    "lastNameRequired": "El apellido es obligatorio",
+    "emailInvalid": "Ingresa un email válido",
+    "passwordRequired": "Ingresa tu contraseña",
+    "currentPasswordRequired": "Ingresa tu contraseña actual",
+    "passwordMin": "Debe tener al menos 8 caracteres",
+    "passwordConfirm": "Confirma tu contraseña",
+    "passwordsDontMatch": "Las contraseñas no coinciden",
+    "codeRequired": "Ingresa el código",
+    "codeSixDigits": "El código debe tener 6 dígitos",
+    "envelopeNameRequired": "El nombre del sobre es obligatorio",
+    "expenseNameRequired": "El nombre del gasto es obligatorio",
+    "categoryNameRequired": "El nombre de la categoría es obligatorio",
+    "notOnlySpaces": "No puede ser solo espacios",
+    "amountRequired": "El monto es obligatorio",
+    "amountEmpty": "El monto no puede estar vacío",
+    "dateRequired": "La fecha es obligatoria",
+    "descriptionTooLong": "La descripción es muy larga",
+    "colorRequired": "Elige un color",
+    "iconRequired": "Elige un ícono"
+  },
+  "nav": {
+    "summary": "Resumen",
+    "envelopes": "Sobres",
+    "categories": "Categorías",
+    "statistics": "Estadísticas",
+    "account": "Cuenta",
+    "signIn": "Iniciar sesión"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "goToPrevious": "Ir a la página anterior",
+    "goToNext": "Ir a la página siguiente",
+    "goToPage": "Ir a la página {page}"
+  },
+  "errors": {
+    "genericTitle": "Algo salió mal",
+    "genericBody": "No pudimos cargar esta página. Tus datos están a salvo - inténtalo de nuevo.",
+    "notFoundCode": "Error 404",
+    "notFoundTitle": "Esta página no existe",
+    "notFoundBody": "Puede que el enlace esté mal escrito, o que lo que buscabas se haya eliminado.",
+    "goToSummary": "Ir a mi resumen",
+    "goHome": "Volver al inicio",
+    "unexpected": "Ocurrió un error inesperado. Por favor, intenta de nuevo."
+  },
+  "theme": {
+    "toggle": "Cambiar tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "currencies": {
+    "COP": "Peso Colombiano",
+    "USD": "Dólar Estadounidense",
+    "EUR": "Euro"
+  }
+}

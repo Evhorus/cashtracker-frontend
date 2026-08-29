@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { formatMonthKey } from "@/lib/date-helpers";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-breakdown";
 import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
@@ -27,7 +29,10 @@ const MonthlySpendingChart = nextDynamic(
   { loading: () => <MonthlySpendingChartSkeleton /> },
 );
 
-export const metadata: Metadata = { title: "Estadísticas" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("statistics");
+  return { title: t("title") };
+}
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
@@ -44,6 +49,8 @@ export default async function StatisticsPage({
   searchParams,
 }: StatisticsPageProps) {
   await auth.protect();
+  const locale = await getLocale();
+  const t = await getTranslations("statistics");
   const { year: yearParam, currency: currencyParam } = await searchParams;
   const year = yearParam ? parseInt(yearParam, 10) || undefined : undefined;
 
@@ -55,10 +62,17 @@ export default async function StatisticsPage({
   // Suspense boundary.
   const summary = await getDashboardSummary(year, currencyParam);
 
+  // The year is only worth showing when the range actually spans more
+  // than one - within a single year "Aug" alone reads fine, and the
+  // extra token is what used to make the axis labels crowd. This lived
+  // in the backend until it started sending raw month keys.
+  const spansMultipleYears =
+    new Set(summary.chart.map((entry) => entry.month.slice(0, 4))).size > 1;
+
   const chartData = summary.chart.map((entry) => ({
-    label: entry.label,
-    Gastado: entry.spent,
-    Disponible: entry.available,
+    label: formatMonthKey(entry.month, locale, spansMultipleYears),
+    spent: entry.spent,
+    available: entry.available,
   }));
 
   const totals = summary.totals.map((total) => ({
@@ -73,11 +87,9 @@ export default async function StatisticsPage({
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <Heading as="h1" size="lg">
-            Estadísticas
+            {t("title")}
           </Heading>
-          <p className="mt-1 text-muted-foreground">
-            Tendencias y desglose de tu gasto
-          </p>
+          <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
         </div>
 
         {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
@@ -145,6 +157,7 @@ async function BreakdownSection({
   hasMultipleCurrencies,
   year,
 }: BreakdownSectionProps) {
+  const t = await getTranslations("statistics");
   // Aggregated by the backend, scoped to the same currency the chart
   // is, so the two widgets tell one consistent story. This used to fetch
   // every envelope (capped at 100) and reduce over it, which silently
@@ -165,7 +178,7 @@ async function BreakdownSection({
         )}
       >
         <CardHeader>
-          <CardTitle>Gasto por categoría</CardTitle>
+          <CardTitle>{t("byCategory")}</CardTitle>
         </CardHeader>
         <CardContent>
           <CategoryBreakdown rows={breakdownRows} currency={chartCurrency} />
@@ -175,7 +188,7 @@ async function BreakdownSection({
       {hasMultipleCurrencies && (
         <Card className="border-0 bg-card/50 shadow-sm">
           <CardHeader>
-            <CardTitle>Por moneda</CardTitle>
+            <CardTitle>{t("byCurrency")}</CardTitle>
           </CardHeader>
           <CardContent>
             <CurrencyBreakdown totals={totals} />

@@ -1,6 +1,11 @@
+import { useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { CURRENCY_MAP, formatCurrency, type CurrencyCode } from "@/lib/format-currency";
+import {
+  CURRENCY_MAP,
+  formatCurrency,
+  type CurrencyCode,
+} from "@/lib/format-currency";
 import { cn } from "@/lib/utils";
 
 interface HeroBalanceCardProps {
@@ -38,6 +43,8 @@ export function HeroBalanceCard({
   deltaPercent,
   className,
 }: HeroBalanceCardProps) {
+  const t = useTranslations("dashboard");
+  const tStats = useTranslations("statistics");
   const config = CURRENCY_MAP[currency];
   const percentage =
     totalAssigned > 0
@@ -62,7 +69,7 @@ export function HeroBalanceCard({
               amounts read as ambiguous without it (is this pesos or
               dollars?), and a user with one currency today may add a
               second one later without this label suddenly appearing. */}
-          Disponible este mes · {currency}
+          {t("availableThisMonth")} · {currency}
         </span>
         {deltaPercent != null && (
           <span
@@ -83,7 +90,7 @@ export function HeroBalanceCard({
 
       <p
         className={cn(
-          "mt-1.5 font-serif text-4xl font-semibold tabular-nums tracking-tight",
+          "mt-1.5 font-serif text-4xl font-semibold tracking-tight tabular-nums",
           totalAvailable < 0 ? "text-destructive" : "text-foreground",
         )}
       >
@@ -98,7 +105,7 @@ export function HeroBalanceCard({
           />
           <div className="mt-2.5 flex items-center justify-between text-xs text-muted-foreground">
             <span>
-              Gastado{" "}
+              {t("spent")}{" "}
               <b className="font-mono font-semibold text-foreground">
                 {formatCurrency(totalSpentCapped, config)}
               </b>
@@ -119,7 +126,7 @@ export function HeroBalanceCard({
           <b className="font-mono font-semibold text-foreground">
             {formatCurrency(unlimitedSpent, config)}
           </b>{" "}
-          en sobres sin límite
+          {tStats("inUnlimited")}
         </p>
       )}
     </div>

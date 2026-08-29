@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
+import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/common/page-header";
 import { AccountView } from "@/features/account/components/account-view";
 
-export const metadata: Metadata = { title: "Mi cuenta" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("account");
+  return { title: t("title") };
+}
 
 // Force dynamic rendering because this page uses Clerk auth, same as
 // dashboard/envelopes/page.tsx.
@@ -11,6 +15,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
   await auth.protect();
+  const t = await getTranslations("account");
 
   return (
     // No mx-auto/max-w-* wrapper - every sibling page (Sobres,
@@ -22,8 +27,8 @@ export default async function AccountPage() {
     // didn't, being centered inside it instead).
     <div className="space-y-6">
       <PageHeader
-        title="Mi cuenta"
-        description="Gestiona tu perfil, seguridad y cuenta"
+        title={t("title")}
+        description={t("subtitle")}
         backUrl="/dashboard"
       />
       <AccountView />

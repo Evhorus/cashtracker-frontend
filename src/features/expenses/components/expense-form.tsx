@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations, useLocale } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
@@ -52,9 +53,13 @@ export const ExpenseForm = ({
   onSubmit,
   onCloseDialog,
 }: ExpenseFormProps) => {
+  const tValidation = useTranslations("validation");
+  const t = useTranslations("expenses.form");
+  const locale = useLocale();
+  const tCommon = useTranslations("common");
   // No useMemo: the React Compiler (reactCompiler: true in
   // next.config.ts) memoizes this on `currency` the same way.
-  const expenseSchema = buildExpenseSchema(currency);
+  const expenseSchema = buildExpenseSchema(currency, tValidation);
   const currencyConfig = CURRENCY_MAP[currency];
 
   const { handleSubmit, control } = useForm<ExpenseFormValues>({
@@ -79,8 +84,8 @@ export const ExpenseForm = ({
             <FormInput
               control={control}
               name="name"
-              label="Nombre del gasto"
-              placeholder="Ej: Compra supermercado"
+              label={t("name")}
+              placeholder={t("namePlaceholder")}
               autoComplete="off"
               autoFocus
               disabled={isLoading}
@@ -95,7 +100,7 @@ export const ExpenseForm = ({
                     <FieldLabel htmlFor="amount" className="items-center">
                       Monto
                       <span
-                        title="Hereda la moneda del sobre"
+                        title={t("inheritsCurrency")}
                         className="rounded-sm bg-secondary px-1.5 py-0.5 text-xs font-normal text-secondary-foreground"
                       >
                         {currencyConfig.currency}
@@ -118,7 +123,7 @@ export const ExpenseForm = ({
                 name="date"
                 render={({ field, fieldState }) => (
                   <Field className="flex-1">
-                    <FieldLabel htmlFor="expense-date">Fecha</FieldLabel>
+                    <FieldLabel htmlFor="expense-date">{t("date")}</FieldLabel>
                     <Popover
                       open={isCalendarOpen}
                       onOpenChange={setIsCalendarOpen}
@@ -136,9 +141,9 @@ export const ExpenseForm = ({
                             disabled={isLoading}
                           >
                             {field.value ? (
-                              formatDate(field.value)
+                              formatDate(field.value, locale)
                             ) : (
-                              <span>Seleccionar fecha</span>
+                              <span>{t("selectDate")}</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -172,12 +177,12 @@ export const ExpenseForm = ({
             render={({ field, fieldState }) => (
               <Field>
                 <FieldLabel htmlFor="expense-description">
-                  Descripción (opcional)
+                  {t("description")}
                 </FieldLabel>
                 <Textarea
                   {...field}
                   id="expense-description"
-                  placeholder="Añade detalles del gasto..."
+                  placeholder={t("descriptionPlaceholder")}
                   rows={3}
                   aria-invalid={fieldState.invalid}
                   disabled={isLoading}
@@ -190,7 +195,7 @@ export const ExpenseForm = ({
 
         <Field orientation="responsive">
           <SubmitButton isLoading={isLoading} type="submit">
-            Guardar
+            {tCommon("save")}
           </SubmitButton>
           <Button
             type="button"
@@ -198,7 +203,7 @@ export const ExpenseForm = ({
             onClick={onCloseDialog}
             disabled={isLoading}
           >
-            Cancelar
+            {tCommon("cancel")}
           </Button>
         </Field>
       </FieldGroup>

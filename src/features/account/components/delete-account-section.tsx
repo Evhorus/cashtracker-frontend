@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Loader2, Trash2 } from "lucide-react";
 
@@ -36,6 +37,8 @@ interface DeleteAccountSectionProps {
 // the user's own email as the string to type - there's no shorter name
 // to reuse here the way an envelope/expense has one.
 export function DeleteAccountSection({ user }: DeleteAccountSectionProps) {
+  const t = useTranslations("account.danger");
+  const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const { isDeleting, error, deleteAccount } = useDeleteAccount();
@@ -50,11 +53,8 @@ export function DeleteAccountSection({ user }: DeleteAccountSectionProps) {
   return (
     <Card className="border-destructive/30">
       <CardHeader>
-        <CardTitle>Eliminar cuenta</CardTitle>
-        <CardDescription>
-          Elimina tu cuenta y todos tus datos de forma permanente. Esta acción
-          no se puede deshacer.
-        </CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("body")}</CardDescription>
       </CardHeader>
       <CardContent>
         <AlertDialog open={open} onOpenChange={handleOpenChange}>
@@ -68,10 +68,9 @@ export function DeleteAccountSection({ user }: DeleteAccountSectionProps) {
           />
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>¿Eliminar tu cuenta?</AlertDialogTitle>
+              <AlertDialogTitle>{t("confirmTitle")}</AlertDialogTitle>
               <AlertDialogDescription>
-                Esta acción no se puede deshacer. Se eliminará tu cuenta y todos
-                tus sobres y gastos.
+                {t("confirmBody")}
               </AlertDialogDescription>
             </AlertDialogHeader>
 
@@ -92,7 +91,7 @@ export function DeleteAccountSection({ user }: DeleteAccountSectionProps) {
             </div>
 
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
               <AlertDialogAction
                 className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 sm:w-auto"
                 disabled={!canConfirm || isDeleting}

@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
@@ -15,7 +16,7 @@ import type { CurrencyCode } from "@/lib/format-currency";
 interface CreateExpenseDialogProps {
   envelopeId: string;
   currency: CurrencyCode;
-  /** Optional context for the dialog's subtitle ("Para el sobre X") - only
+  /** Optional context for the dialog's subtitle - only
    * the one call site that already has the envelope object on hand
    * (envelope/[envelopeId]/page.tsx) passes these; without them the
    * subtitle falls back to the generic copy it always had. */
@@ -32,6 +33,7 @@ function ExpenseDialogSubtitle({
    * this component has to resolve against the category list itself. */
   envelopeCategory?: EnvelopeCategory | null;
 }) {
+  const t = useTranslations("expenses.createDialog");
   // On an object, not a capitalized local - see category-badge.tsx.
   const def = envelopeCategory
     ? { ...envelopeCategory, Icon: resolveIcon(envelopeCategory.icon) }
@@ -46,7 +48,9 @@ function ExpenseDialogSubtitle({
           <def.Icon className="h-2.5 w-2.5" />
         </span>
       )}
-      Para el sobre <b className="font-semibold">{envelopeName}</b>
+      {t.rich("forEnvelope", {
+        name: () => <b className="font-semibold">{envelopeName}</b>,
+      })}
     </span>
   );
 }
@@ -57,6 +61,7 @@ export const CreateExpenseDialog = ({
   envelopeName,
   envelopeCategory,
 }: CreateExpenseDialogProps) => {
+  const t = useTranslations("expenses");
   const [open, setOpen] = useState(false);
 
   const { dispatch, isPending } = useActionDialog(
@@ -73,7 +78,7 @@ export const CreateExpenseDialog = ({
     <ResponsiveFormSheet
       open={open}
       onOpenChange={setOpen}
-      title="Agregar Nuevo Gasto"
+      title={t("createDialog.title")}
       description={
         envelopeName ? (
           <ExpenseDialogSubtitle
@@ -81,14 +86,14 @@ export const CreateExpenseDialog = ({
             envelopeCategory={envelopeCategory}
           />
         ) : (
-          "Completa el formulario para registrar un nuevo gasto en este sobre"
+          t("createDialog.fallbackDescription")
         )
       }
       dialogClassName="sm:max-w-125"
       trigger={
         <Button variant="default" size="lg">
           <Plus />
-          <span className="hidden sm:inline-block">Agregar Gasto</span>
+          <span className="hidden sm:inline-block">{t("add")}</span>
         </Button>
       }
     >

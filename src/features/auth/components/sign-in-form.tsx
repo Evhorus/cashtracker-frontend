@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,11 +26,11 @@ import { OAuthButtons } from "./oauth-buttons";
 import { useSignIn } from "../hooks/use-sign-in";
 import {
   type CodeFormValues,
-  codeFormSchema,
+  buildCodeFormSchema,
   type EmailFormValues,
-  emailFormSchema,
+  buildEmailFormSchema,
   type SignInPasswordFormValues,
-  signInPasswordFormSchema,
+  buildSignInPasswordFormSchema,
 } from "../schemas/auth.schema";
 
 type Method = "password" | "code";
@@ -47,6 +48,9 @@ type Method = "password" | "code";
 // such account, etc.) - both share the same field slot, client-side
 // taking priority since it means the request was never sent.
 export function SignInForm() {
+  const t = useTranslations("auth.signIn");
+  const tCommon = useTranslations("common");
+  const tValidation = useTranslations("validation");
   const {
     isSubmitting,
     fieldErrors,
@@ -64,17 +68,17 @@ export function SignInForm() {
   const [sentTo, setSentTo] = useState("");
 
   const passwordForm = useForm<SignInPasswordFormValues>({
-    resolver: zodResolver(signInPasswordFormSchema),
+    resolver: zodResolver(buildSignInPasswordFormSchema(tValidation)),
     defaultValues: { email: "", password: "" },
   });
 
   const codeRequestForm = useForm<EmailFormValues>({
-    resolver: zodResolver(emailFormSchema),
+    resolver: zodResolver(buildEmailFormSchema(tValidation)),
     defaultValues: { email: "" },
   });
 
   const codeVerifyForm = useForm<CodeFormValues>({
-    resolver: zodResolver(codeFormSchema),
+    resolver: zodResolver(buildCodeFormSchema(tValidation)),
     defaultValues: { code: "" },
   });
 
@@ -97,14 +101,14 @@ export function SignInForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Inicia sesión</CardTitle>
-        <CardDescription>Bienvenido de nuevo a CashTracker</CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("subtitle")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-y-4">
         <OAuthButtons disabled={isSubmitting} onSelect={signInWithOAuth} />
 
         <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
-          o
+          {tCommon("or")}
         </p>
 
         {globalErrors.map((message, i) => (
@@ -124,10 +128,10 @@ export function SignInForm() {
         >
           <TabsList className="w-full">
             <TabsTrigger value="password" className="flex-1">
-              Contraseña
+              {tCommon("password")}
             </TabsTrigger>
             <TabsTrigger value="code" className="flex-1">
-              Código por email
+              {t("emailCode")}
             </TabsTrigger>
           </TabsList>
 
@@ -139,9 +143,9 @@ export function SignInForm() {
               <FormInput
                 control={passwordForm.control}
                 name="email"
-                label="Email"
+                label={tCommon("email")}
                 type="email"
-                placeholder="tucorreo@ejemplo.com"
+                placeholder={tCommon("emailPlaceholder")}
                 autoComplete="email"
                 disabled={isSubmitting}
                 serverError={fieldErrors.identifier}
@@ -153,25 +157,30 @@ export function SignInForm() {
                 control={passwordForm.control}
                 name="password"
                 render={({ field, fieldState }) => {
-                  const message = fieldState.error?.message ?? fieldErrors.password;
+                  const message =
+                    fieldState.error?.message ?? fieldErrors.password;
                   return (
                     <Field>
                       <div className="flex items-center justify-between">
-                        <FieldLabel htmlFor="password">Contraseña</FieldLabel>
+                        <FieldLabel htmlFor="password">
+                          {tCommon("password")}
+                        </FieldLabel>
                         <Link
                           href="/forgot-password"
                           className="text-sm text-primary hover:underline"
                         >
-                          ¿Olvidaste tu contraseña?
+                          {t("forgotPassword")}
                         </Link>
                       </div>
                       <Input
                         id="password"
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={tCommon("passwordPlaceholder")}
                         autoComplete="current-password"
                         {...field}
-                        aria-invalid={fieldState.invalid || !!fieldErrors.password}
+                        aria-invalid={
+                          fieldState.invalid || !!fieldErrors.password
+                        }
                         disabled={isSubmitting}
                       />
                       {message && <FieldError>{message}</FieldError>}
@@ -184,7 +193,7 @@ export function SignInForm() {
                 isLoading={isSubmitting}
                 className="w-full"
               >
-                Iniciar sesión
+                {t("submit")}
               </SubmitButton>
             </form>
           </TabsContent>
@@ -198,9 +207,9 @@ export function SignInForm() {
                 <FormInput
                   control={codeRequestForm.control}
                   name="email"
-                  label="Email"
+                  label={tCommon("email")}
                   type="email"
-                  placeholder="tucorreo@ejemplo.com"
+                  placeholder={tCommon("emailPlaceholder")}
                   autoComplete="email"
                   disabled={isSubmitting}
                   serverError={fieldErrors.identifier}
@@ -210,7 +219,7 @@ export function SignInForm() {
                   isLoading={isSubmitting}
                   className="w-full"
                 >
-                  Enviar código
+                  {t("sendCode")}
                 </SubmitButton>
               </form>
             ) : (
@@ -219,15 +228,18 @@ export function SignInForm() {
                 className="grid gap-y-4"
               >
                 <Text>
-                  Enviamos un código a{" "}
-                  <span className="font-medium text-foreground">
-                    {sentTo}
-                  </span>
+                  {t.rich("codeSentTo", {
+                    email: () => (
+                      <span className="font-medium text-foreground">
+                        {sentTo}
+                      </span>
+                    ),
+                  })}
                 </Text>
                 <FormInput
                   control={codeVerifyForm.control}
                   name="code"
-                  label="Código"
+                  label={tCommon("code")}
                   placeholder="123456"
                   autoComplete="one-time-code"
                   disabled={isSubmitting}
@@ -238,7 +250,7 @@ export function SignInForm() {
                   isLoading={isSubmitting}
                   className="w-full"
                 >
-                  Verificar
+                  {t("verify")}
                 </SubmitButton>
                 <Button
                   type="button"
@@ -247,7 +259,7 @@ export function SignInForm() {
                   disabled={isSubmitting}
                   onClick={() => resendEmailCode()}
                 >
-                  Reenviar código
+                  {t("resendCode")}
                 </Button>
               </form>
             )}
@@ -256,12 +268,12 @@ export function SignInForm() {
       </CardContent>
       <CardFooter>
         <Text className="w-full text-center">
-          ¿No tienes cuenta?{" "}
+          {t("noAccount")}{" "}
           <Link
             href="/sign-up"
             className="font-medium text-primary hover:underline"
           >
-            Crea una
+            {t("createOne")}
           </Link>
         </Text>
       </CardFooter>

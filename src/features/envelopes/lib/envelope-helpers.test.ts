@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import type { Envelope } from "../types";
 import {
-  ENVELOPE_STATUS_FILTERS,
+  ENVELOPE_STATUS_FILTER_VALUES,
   EnvelopeHelpers,
   type EnvelopeProgressStatus,
 } from "./envelope-helpers";
+import es from "../messages/es.json";
+import en from "../messages/en.json";
 
 /**
  * Status *derivation* is no longer tested here - it isn't done here. The
@@ -13,8 +15,10 @@ import {
  * are covered by envelope-status.spec.ts in cashtracker-backend, which
  * also checks the SQL filter agrees with it.
  *
- * What remains is this app's own business: turning a status into labels
- * and colour classes, and grouping envelopes already in hand.
+ * What remains is this app's own business: turning a status into colour
+ * classes, and grouping envelopes already in hand. The status *words*
+ * moved to the message catalogues, so the checks that used to assert
+ * them here now assert every status and filter actually has one.
  */
 
 // Amounts arrive from the API as decimal strings, which is how they
@@ -75,7 +79,7 @@ describe("matchesStatusFilter", () => {
   };
 
   const cases: {
-    filter: (typeof ENVELOPE_STATUS_FILTERS)[number]["value"];
+    filter: (typeof ENVELOPE_STATUS_FILTER_VALUES)[number];
     expected: Record<EnvelopeProgressStatus, boolean>;
   }[] = [
     {
@@ -140,7 +144,7 @@ describe("matchesStatusFilter", () => {
 
   it("covers every filter the UI offers", () => {
     expect(cases.map((c) => c.filter).sort()).toEqual(
-      ENVELOPE_STATUS_FILTERS.map((f) => f.value).sort(),
+      [...ENVELOPE_STATUS_FILTER_VALUES].sort(),
     );
   });
 
@@ -167,11 +171,10 @@ describe("status presentation helpers", () => {
     "exceeded",
   ];
 
-  it("returns a label and a class for every status", () => {
+  it("returns a class for every status", () => {
     // These are exhaustive switches with no default - a new status would
     // silently return undefined and render as blank text or no colour.
     for (const status of statuses) {
-      expect(EnvelopeHelpers.getStatusLabel(status)).toBeTruthy();
       expect(EnvelopeHelpers.getStatusTextColorClass(status)).toBeTruthy();
       expect(EnvelopeHelpers.getStatusBadgeClass(status)).toBeTruthy();
       expect(EnvelopeHelpers.getStatusBarColorClass(status)).toBeTruthy();
@@ -181,11 +184,25 @@ describe("status presentation helpers", () => {
     }
   });
 
-  it("uses the canonical vocabulary", () => {
-    expect(EnvelopeHelpers.getStatusLabel("unlimited")).toBe("Sin límite");
-    expect(EnvelopeHelpers.getStatusLabel("normal")).toBe("Controlado");
-    expect(EnvelopeHelpers.getStatusLabel("warning")).toBe("En riesgo");
-    expect(EnvelopeHelpers.getStatusLabel("exceeded")).toBe("Excedido");
+  // Replaces an older assertion that pinned the four Spanish words
+  // here. The words live in the catalogues now, so what's worth
+  // locking is that adding a status (or a filter tab) can't ship
+  // without the word to render it - otherwise the type compiles, the
+  // switch statements are exhaustive, and the UI renders a raw key.
+  it("has a translated word for every status, in every language", () => {
+    for (const catalogue of [es, en]) {
+      for (const status of statuses) {
+        expect(catalogue.envelopes.status).toHaveProperty(status);
+      }
+    }
+  });
+
+  it("has a translated word for every filter tab, in every language", () => {
+    for (const catalogue of [es, en]) {
+      for (const filter of ENVELOPE_STATUS_FILTER_VALUES) {
+        expect(catalogue.envelopes.filters).toHaveProperty(filter);
+      }
+    }
   });
 
   it("keeps the bar and text colours consistent per status", () => {

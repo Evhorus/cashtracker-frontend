@@ -76,8 +76,8 @@ describe("getImpactPercentage", () => {
 describe("page size options", () => {
   it("offers only sizes the backend accepts", () => {
     for (const option of EXPENSES_PAGE_SIZE_OPTIONS) {
-      expect(option.value).toBeLessThanOrEqual(EXPENSES_MAX_PAGE_SIZE);
-      expect(option.value).toBeGreaterThan(0);
+      expect(option).toBeLessThanOrEqual(EXPENSES_MAX_PAGE_SIZE);
+      expect(option).toBeGreaterThan(0);
     }
   });
 
@@ -87,7 +87,7 @@ describe("page size options", () => {
     // as an invalid value.
     expect(
       EXPENSES_PAGE_SIZE_OPTIONS.some(
-        (option) => option.value === EXPENSES_DEFAULT_PAGE_SIZE,
+        (option) => option === EXPENSES_DEFAULT_PAGE_SIZE,
       ),
     ).toBe(true);
   });

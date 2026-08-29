@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations, useLocale } from "next-intl";
 import { Expense } from "@/features/expenses/types";
 import { Calendar, ChevronRight, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -25,6 +26,8 @@ export const ExpenseCard = ({
   envelopeId,
   currency,
 }: ExpenseCardProps) => {
+  const t = useTranslations("expenses");
+  const locale = useLocale();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -43,7 +46,8 @@ export const ExpenseCard = ({
           that made every bit of text on the row, including the amount,
           unselectable-without-navigating. The chevron below is the one
           real click/nav target instead, same as EnvelopeCard's own
-          "Ver detalles" - name/date/amount stay plain, selectable text. */}
+          the details link - name/date/amount stay plain, selectable
+          text. */}
       <Card
         size="sm"
         className="relative overflow-hidden border-border/60 bg-card/50 shadow-sm transition-colors duration-200 hover:bg-card"
@@ -63,7 +67,7 @@ export const ExpenseCard = ({
             <h4 className="truncate text-sm font-semibold">{expense.name}</h4>
             <div className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
               <Calendar className="h-3 w-3" />
-              {formatCalendarDate(expense.date)}
+              {formatCalendarDate(expense.date, locale)}
             </div>
           </div>
 
@@ -83,7 +87,7 @@ export const ExpenseCard = ({
           <CardHoverActions alwaysVisible>
             <CardActionButton
               icon={Edit}
-              label="Editar gasto"
+              label={t("editAria")}
               onClick={(e) => {
                 e.stopPropagation();
                 setShowEditDialog(true);
@@ -91,7 +95,7 @@ export const ExpenseCard = ({
             />
             <CardActionButton
               icon={Trash2}
-              label="Eliminar gasto"
+              label={t("deleteAria")}
               tone="destructive"
               onClick={(e) => {
                 e.stopPropagation();

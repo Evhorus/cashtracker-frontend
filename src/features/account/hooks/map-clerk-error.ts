@@ -15,15 +15,21 @@ import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 // a couple of plausible spellings per field is cheap insurance against
 // that mismatch. Anything that doesn't match a known field lands in
 // globalErrors instead of silently disappearing.
+// `fallbackMessage` is passed in rather than hardcoded: this is a pure
+// function, so it can't call useTranslations itself, and the one string
+// it produces on its own (everything else comes back from Clerk, already
+// in the reader's language once ClerkProvider is localized - see
+// i18n/clerk-localization.ts) still has to follow the locale.
 export function mapClerkError<TField extends string>(
   err: unknown,
   fieldParamNames: Record<TField, readonly string[]>,
+  fallbackMessage: string,
 ): { fieldErrors: Partial<Record<TField, string>>; globalErrors: string[] } {
   const fieldErrors: Partial<Record<TField, string>> = {};
   const globalErrors: string[] = [];
 
   if (!isClerkAPIResponseError(err)) {
-    globalErrors.push("Ocurrió un error inesperado. Intenta de nuevo.");
+    globalErrors.push(fallbackMessage);
     return { fieldErrors, globalErrors };
   }
 

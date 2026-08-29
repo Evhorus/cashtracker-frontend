@@ -3,6 +3,7 @@ import { AccountMenu } from "@/features/account/components/account-menu";
 
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
+import { LocaleToggle } from "@/features/locale/components/locale-toggle";
 
 // Mobile-only now (see the `md:hidden` below) - desktop nav/branding/theme
 // /account moved to dashboard-sidebar.tsx, rendered alongside this in
@@ -15,6 +16,7 @@ export const CustomHeader = () => {
         <Logo href="/dashboard" />
 
         <div className="flex items-center gap-4">
+          <LocaleToggle />
           <ModeToggle />
           <AccountMenu />
         </div>

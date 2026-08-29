@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { ApiError } from "./api-client";
 
 export type ActionState<T = unknown> = {
@@ -35,8 +37,12 @@ export function createSafeAction<TPayload, TResult>(
         };
       }
 
+      // Translated here rather than at the call site: every action
+      // funnels through this one fallback, and it runs on the server
+      // where getTranslations is available.
+      const t = await getTranslations("errors");
       return {
-        errors: ["Ocurrió un error inesperado. Por favor, intenta de nuevo."],
+        errors: [t("unexpected")],
         success: "",
       };
     }

@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -51,17 +53,29 @@ export const EnvelopeCardSkeleton = () => {
 // real header labels render directly (static text, nothing to skeleton)
 // so only the body rows are placeholders.
 const EnvelopesTableSkeleton = () => {
+  const t = useTranslations("envelopes.table");
+
   return (
     <div className="hidden overflow-x-auto rounded-2xl border border-border/60 bg-card/30 md:block">
       <table className="w-full min-w-max text-sm">
         <thead>
           <tr className="border-b border-border/60 bg-card/60 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-            <th className="px-5 py-3 text-left font-semibold">Sobre</th>
-            <th className="px-5 py-3 text-left font-semibold">Categoría</th>
-            <th className="px-5 py-3 text-left font-semibold">Progreso</th>
-            <th className="px-5 py-3 text-right font-semibold">Gastado</th>
-            <th className="px-5 py-3 text-right font-semibold">Disponible</th>
-            <th className="px-5 py-3 text-right font-semibold">Estado</th>
+            <th className="px-5 py-3 text-left font-semibold">
+              {t("envelope")}
+            </th>
+            <th className="px-5 py-3 text-left font-semibold">
+              {t("category")}
+            </th>
+            <th className="px-5 py-3 text-left font-semibold">
+              {t("progress")}
+            </th>
+            <th className="px-5 py-3 text-right font-semibold">{t("spent")}</th>
+            <th className="px-5 py-3 text-right font-semibold">
+              {t("available")}
+            </th>
+            <th className="px-5 py-3 text-right font-semibold">
+              {t("status")}
+            </th>
             <th className="px-5 py-3" />
           </tr>
         </thead>

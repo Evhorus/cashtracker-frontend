@@ -2,14 +2,15 @@ import type { Envelope } from "../types";
 
 /**
  * Helper functions to work with Envelope amounts as numbers, and to map
- * a spending status to how it's presented (verde/ámbar/rojo/sin límite).
+ * a spending status to how it's presented (green/amber/red/no limit).
  *
  * The status itself is NOT derived here any more - the API reports it
  * (`envelope.status`), so the 80% threshold and its edge cases live in
  * one place instead of being reimplemented by every client. See
  * src/envelopes/utils/envelope-status.ts in cashtracker-backend. What
- * stays here is presentation: labels and colour classes, which are this
- * app's business and nobody else's.
+ * stays here is presentation: colour classes. The status *words*
+ * aren't here either - they're translations (`envelopes.status.*`),
+ * looked up by EnvelopeStatusBadge at the point of render.
  *
  * An envelope's `amount` is a soft limit, not a hard cap: going over it is
  * allowed and only surfaces as a visual warning (this is the same pattern
@@ -21,36 +22,34 @@ export type EnvelopeProgressStatus =
   "unlimited" | "normal" | "warning" | "exceeded";
 
 /**
- * The "Todos / Activos / Excedidos / Sin límite" tabs on the Sobres list
+ * The "all / active / exceeded / unlimited" tabs on the Sobres list
  * (mockup: MobileEnvelopes/DesktopEnvelopes), plus "En alerta" (not in
- * the mockup - added so the Resumen page's "Sobres en alerta" widget has
- * somewhere real to deep-link its "Ver todos" to). Distinct from
+ * the mockup - added so the summary page's alert widget has
+ * somewhere real to deep-link its "see all" to). Distinct from
  * EnvelopeProgressStatus:
  * - "active" merges "normal" and "warning" (both "a limited envelope
  *   that isn't over yet"), a courser grouping than the 3-color progress
  *   indicator needs.
  * - "alert" merges "warning" and "exceeded" (both "needs your
  *   attention") - it overlaps "active" and "exceeded" rather than
- *   partitioning the list the way the other four tabs do, same as
- *   Resumen's own "en alerta" count already does.
+ *   partitioning the list the way the other four tabs do, same as the
+ *   summary page's own alert count already does.
  */
 export type EnvelopeStatusFilter =
-  | "all"
-  | "active"
-  | "alert"
-  | "exceeded"
-  | "unlimited";
+  "all" | "active" | "alert" | "exceeded" | "unlimited";
 
-export const ENVELOPE_STATUS_FILTERS: {
-  value: EnvelopeStatusFilter;
-  label: string;
-}[] = [
-  { value: "all", label: "Todos" },
-  { value: "active", label: "Activos" },
-  { value: "alert", label: "En alerta" },
-  { value: "exceeded", label: "Excedidos" },
-  { value: "unlimited", label: "Sin límite" },
-];
+/**
+ * Tab order on the Sobres list. Values only - the words shown for them
+ * are translations (`envelopes.filters.*`), not data, so they cannot
+ * live in a module that both the server and every locale share.
+ */
+export const ENVELOPE_STATUS_FILTER_VALUES = [
+  "all",
+  "active",
+  "alert",
+  "exceeded",
+  "unlimited",
+] as const satisfies readonly EnvelopeStatusFilter[];
 
 export const EnvelopeHelpers = {
   /**
@@ -83,7 +82,7 @@ export const EnvelopeHelpers = {
   },
 
   /**
-   * Text color for a progress status - envelope/page.tsx's "Gastado"
+   * Text color for a progress status - the envelope detail page's spent
    * figure, the expense detail page's envelope-health color, and
    * envelope-card.tsx's amount all used to hand-roll this same 3-way
    * (4-way counting "unlimited") ternary independently, which is how the
@@ -144,7 +143,7 @@ export const EnvelopeHelpers = {
 
   /**
    * Tinted pill background+text pair for a status badge (envelopes-table.tsx's
-   * desktop "Estado" column) - a softer, badge-appropriate tint rather
+   * desktop status column) - a softer, badge-appropriate tint rather
    * than the bare text color `getStatusTextColorClass` returns for
    * plain colored text elsewhere.
    */
@@ -158,28 +157,6 @@ export const EnvelopeHelpers = {
         return "bg-muted text-muted-foreground";
       case "normal":
         return "bg-primary/10 text-primary";
-    }
-  },
-
-  /**
-   * Canonical status word - "Sin límite" / "Controlado" / "En riesgo" /
-   * "Excedido". Was drifting across the app: envelopes-table.tsx's own
-   * badge said "Activo"/"Alerta" for the same two statuses the expense
-   * detail page called "Controlado"/"En riesgo" - same envelope, two
-   * different words depending which screen you were on. See
-   * EnvelopeStatusBadge (envelope-status-badge.tsx) for the component
-   * that pairs this with the color helpers above.
-   */
-  getStatusLabel: (status: EnvelopeProgressStatus): string => {
-    switch (status) {
-      case "exceeded":
-        return "Excedido";
-      case "warning":
-        return "En riesgo";
-      case "unlimited":
-        return "Sin límite";
-      case "normal":
-        return "Controlado";
     }
   },
 
@@ -198,9 +175,10 @@ export const EnvelopeHelpers = {
     const { status } = envelope;
     if (filter === "unlimited") return status === "unlimited";
     if (filter === "exceeded") return status === "exceeded";
-    // "alert": same warning-or-exceeded test the Resumen page's own "en
-    // alerta" count/widget use (dashboard/page.tsx's alertEnvelopes).
-    if (filter === "alert") return status === "warning" || status === "exceeded";
+    // "alert": same warning-or-exceeded test the summary page's own
+    // alert count/widget use (dashboard/page.tsx's alertEnvelopes).
+    if (filter === "alert")
+      return status === "warning" || status === "exceeded";
     // "active": has a limit and hasn't gone over it yet.
     return status === "normal" || status === "warning";
   },

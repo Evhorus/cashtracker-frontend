@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useSession } from "@clerk/nextjs";
 
@@ -51,6 +52,7 @@ export function useReverificationFlow(
   request: ReverificationRequest | null,
   onSuccess: () => void,
 ): ReverificationFlow {
+  const t = useTranslations("account.errors");
   const { session } = useSession();
   const [factor, setFactor] = useState<ReverificationFactor | null>(null);
   const [emailAddressId, setEmailAddressId] = useState<string | null>(null);
@@ -137,12 +139,10 @@ export function useReverificationFlow(
         // Out of scope for now (e.g. an account that would need a second
         // factor, or only supports passkey/SSO) - see point 1 of the
         // followup doc, this only covers password/email_code.
-        setGlobalErrors([
-          "No pudimos verificar tu identidad con los métodos disponibles para esta cuenta.",
-        ]);
+        setGlobalErrors([t("noMethodAvailable")]);
       })
       .catch(() => {
-        if (!ignore) setGlobalErrors(["No se pudo iniciar la verificación"]);
+        if (!ignore) setGlobalErrors([t("startFailed")]);
       });
 
     return () => {
@@ -173,12 +173,13 @@ export function useReverificationFlow(
         request.complete();
         onSuccess();
       } else {
-        setGlobalErrors(["No se pudo completar la verificación"]);
+        setGlobalErrors([t("completeFailed")]);
       }
     } catch (err) {
       const { fieldErrors: fields, globalErrors: globals } = mapClerkError(
         err,
         { password: ["password"], code: ["code"] },
+        t("unexpected"),
       );
       setFieldErrors(fields);
       setGlobalErrors(globals);
@@ -206,7 +207,7 @@ export function useReverificationFlow(
         emailAddressId,
       });
     } catch {
-      setGlobalErrors(["No se pudo reenviar el código"]);
+      setGlobalErrors([t("resendFailed")]);
     } finally {
       setIsResending(false);
     }
