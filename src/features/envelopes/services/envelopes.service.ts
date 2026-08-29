@@ -26,9 +26,7 @@ export interface GetEnvelopesParams extends PaginationParams {
 }
 
 export const EnvelopesService = {
-  getAll: async (
-    params?: GetEnvelopesParams,
-  ): Promise<EnvelopesResponse> => {
+  getAll: async (params?: GetEnvelopesParams): Promise<EnvelopesResponse> => {
     const query = new URLSearchParams();
     if (params?.search) query.set("search", params.search);
     // "all" is the default; sending it would just be noise in the URL.
