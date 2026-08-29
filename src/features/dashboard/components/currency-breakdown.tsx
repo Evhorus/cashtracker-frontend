@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import {
   CURRENCY_MAP,
   formatCurrency,
@@ -33,6 +34,7 @@ interface CurrencyBreakdownProps {
 // rendering when there's more than one currency in play - see
 // statistics/page.tsx.
 export function CurrencyBreakdown({ totals }: CurrencyBreakdownProps) {
+  const t = useTranslations("statistics");
   return (
     <div className="space-y-3">
       {totals.map((total) => {
@@ -53,14 +55,16 @@ export function CurrencyBreakdown({ totals }: CurrencyBreakdownProps) {
                 {total.currency}
               </span>
               <span className="text-xs text-muted-foreground">
-                {count} {count === 1 ? "sobre" : "sobres"}
+                {t("envelopeCount", { count })}
               </span>
             </div>
             <p className="mt-2.5 font-mono text-lg font-semibold">
               {formatCurrency(total.totalSpentCapped, config)}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              de {formatCurrency(total.totalAssigned, config)} presupuestados
+              {t("ofBudgeted", {
+                amount: formatCurrency(total.totalAssigned, config),
+              })}
             </p>
             {unlimitedSpent > 0 && (
               <p className="mt-1 text-xs text-muted-foreground">
@@ -68,7 +72,7 @@ export function CurrencyBreakdown({ totals }: CurrencyBreakdownProps) {
                 <b className="font-mono font-semibold text-foreground">
                   {formatCurrency(unlimitedSpent, config)}
                 </b>{" "}
-                en sobres sin límite
+                {t("inUnlimited")}
               </p>
             )}
           </div>

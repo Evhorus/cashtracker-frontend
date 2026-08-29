@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Check } from "lucide-react";
@@ -14,7 +15,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import {
-  categoryFormSchema,
+  buildCategoryFormSchema,
   CategoryFormValues,
 } from "@/features/categories/schemas/category.schema";
 import { resolveIcon } from "@/features/categories/lib/icon-registry";
@@ -39,9 +40,12 @@ export const CategoryForm = ({
   onSubmit,
   onCloseDialog,
 }: CategoryFormProps) => {
+  const t = useTranslations("categories.form");
+  const tCommon = useTranslations("common");
+  const tValidation = useTranslations("validation");
   const { icons, colors } = useCategoryOptions();
   const { handleSubmit, control } = useForm<CategoryFormValues>({
-    resolver: zodResolver(categoryFormSchema),
+    resolver: zodResolver(buildCategoryFormSchema(tValidation)),
     defaultValues: {
       label: "",
       color: colors[0],
@@ -58,7 +62,7 @@ export const CategoryForm = ({
             <FormInput
               control={control}
               name="label"
-              label="Nombre"
+              label={t("name")}
               placeholder="Ej: Suscripciones"
               autoComplete="off"
               autoFocus
@@ -70,7 +74,7 @@ export const CategoryForm = ({
               name="icon"
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel htmlFor="icon">Ícono</FieldLabel>
+                  <FieldLabel htmlFor="icon">{t("icon")}</FieldLabel>
                   <div
                     id="icon"
                     role="radiogroup"
@@ -110,7 +114,7 @@ export const CategoryForm = ({
               name="color"
               render={({ field, fieldState }) => (
                 <Field>
-                  <FieldLabel htmlFor="color">Color</FieldLabel>
+                  <FieldLabel htmlFor="color">{t("color")}</FieldLabel>
                   <div
                     id="color"
                     role="radiogroup"
@@ -130,7 +134,7 @@ export const CategoryForm = ({
                           className={cn(
                             "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-transform",
                             selected
-                              ? "border-foreground/80 scale-110"
+                              ? "scale-110 border-foreground/80"
                               : "border-transparent",
                           )}
                           style={{ background: color }}
@@ -151,7 +155,7 @@ export const CategoryForm = ({
 
         <Field orientation="responsive">
           <SubmitButton isLoading={isLoading} type="submit">
-            Guardar
+            {tCommon("save")}
           </SubmitButton>
           <Button
             type="button"
@@ -159,7 +163,7 @@ export const CategoryForm = ({
             onClick={onCloseDialog}
             disabled={isLoading}
           >
-            Cancelar
+            {tCommon("cancel")}
           </Button>
         </Field>
       </FieldGroup>

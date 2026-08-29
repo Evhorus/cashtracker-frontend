@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import type { ValidationTranslator } from "@/lib/validation";
+
 export const CategoryAPIResponseSchema = z.object({
   id: z.string(),
   label: z.string(),
@@ -29,7 +31,9 @@ export const CategoryOptionsAPIResponseSchema = z.object({
   colors: z.array(z.string()),
 });
 
-export type CategoryOptionsApi = z.infer<typeof CategoryOptionsAPIResponseSchema>;
+export type CategoryOptionsApi = z.infer<
+  typeof CategoryOptionsAPIResponseSchema
+>;
 
 /*
  * Category Form
@@ -41,18 +45,21 @@ export type CategoryOptionsApi = z.infer<typeof CategoryOptionsAPIResponseSchema
 // submits a value from that fetched list (a curated button grid, no free
 // text), so this is really just a "something was picked" check - the
 // backend's IsIn() validators are the actual enforcement.
-export const categoryFormSchema = z.object({
-  label: z
-    .string()
-    .min(1, { message: "El nombre de la categoría es obligatorio" })
-    .max(50)
-    .refine((val) => val.trim().length > 0, "No puede ser solo espacios")
-    .transform((val) => val.trim()),
-  color: z.string().min(1, { message: "Elige un color" }),
-  icon: z.string().min(1, { message: "Elige un ícono" }),
-});
+export const buildCategoryFormSchema = (t: ValidationTranslator) =>
+  z.object({
+    label: z
+      .string()
+      .min(1, { message: t("categoryNameRequired") })
+      .max(50)
+      .refine((val) => val.trim().length > 0, t("notOnlySpaces"))
+      .transform((val) => val.trim()),
+    color: z.string().min(1, { message: t("colorRequired") }),
+    icon: z.string().min(1, { message: t("iconRequired") }),
+  });
 
-export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
+export type CategoryFormValues = z.infer<
+  ReturnType<typeof buildCategoryFormSchema>
+>;
 
 // GET /categories/usage - envelope counts per category, aggregated by
 // the backend. Only categories actually in use appear; a missing entry

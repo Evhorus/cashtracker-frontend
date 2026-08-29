@@ -1,5 +1,6 @@
 "use client";
 import { Cell, Label, Pie, PieChart } from "recharts";
+import { useTranslations } from "next-intl";
 import {
   ChartConfig,
   ChartContainer,
@@ -13,7 +14,7 @@ interface EnvelopeChartProps {
   total: number;
   /** From `envelope.status`, reported by the API - the chart colors
    * itself off the same status every other view (the envelopes list's
-   * progress bars, envelope-card.tsx, this same page's own "Gastado"
+   * progress bars, envelope-card.tsx, this same page's own spent
    * figure right next to it) uses, instead of a bespoke `spent > total`
    * check of its own. That used to mean the chart could show green at
    * 92% (only "exceeded" flips it, no warning state) while the number
@@ -34,6 +35,7 @@ interface EnvelopeChartProps {
 // center label plus the surrounding numbers). No Card wrapper here - it's
 // embedded inside the envelope detail page's own summary panel.
 export const EnvelopeChart = ({ spent, total, status }: EnvelopeChartProps) => {
+  const t = useTranslations("envelopes.chart");
   const isExceeded = status === "exceeded";
   const isWarning = status === "warning";
   const percentage = total > 0 ? (spent / total) * 100 : 0;
@@ -59,22 +61,22 @@ export const EnvelopeChart = ({ spent, total, status }: EnvelopeChartProps) => {
 
   const chartConfig = {
     spent: {
-      label: "Gastado",
+      label: t("spent"),
       color: "var(--chart-1)",
     },
     warningSpent: {
-      label: "Gastado",
+      label: t("spent"),
       color: "var(--color-amber-500)",
     },
     available: {
-      label: "Disponible",
+      label: t("available"),
       // A neutral "track" tone rather than a data color - --muted matches
       // --card's lightness in dark mode (near-invisible), so this uses
       // --muted-foreground instead, softened via Cell's fillOpacity below.
       color: "var(--muted-foreground)",
     },
     overspent: {
-      label: "Excedido",
+      label: t("exceeded"),
       color: "var(--destructive)",
     },
   } satisfies ChartConfig;
@@ -138,7 +140,7 @@ export const EnvelopeChart = ({ spent, total, status }: EnvelopeChartProps) => {
                       y={(viewBox.cy ?? 0) + 20}
                       className="fill-muted-foreground text-xs"
                     >
-                      {isExceeded ? "Límite excedido" : "usado"}
+                      {isExceeded ? t("limitExceeded") : t("used")}
                     </tspan>
                   </text>
                 );

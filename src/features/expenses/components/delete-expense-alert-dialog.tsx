@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { deleteExpenseAction } from "@/features/expenses/actions/delete-expense.action";
 import {
   AlertDialog,
@@ -36,7 +37,7 @@ interface DeleteExpenseAlertDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   /** Override the default trigger's a11y label - the expense detail
-   * page's desktop header passes the shorter, i18n "Eliminar" since
+   * page's desktop header passes the shorter common.delete since
    * there's only one delete button on that page, no ambiguity to
    * resolve. Only applies to the desktop (AlertDialog) trigger below -
    * the mobile Drawer trigger is unaffected. */
@@ -55,6 +56,8 @@ export const DeleteExpenseAlertDialog = ({
   label,
   showLabelOnDesktop,
 }: DeleteExpenseAlertDialogProps) => {
+  const t = useTranslations("expenses");
+  const tCommon = useTranslations("common");
   const [internalOpen, setInternalOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const { dispatch, isPending } = useActionDialog(
@@ -90,7 +93,7 @@ export const DeleteExpenseAlertDialog = ({
             render={
               <CardActionButton
                 icon={Trash2}
-                label={label ?? "Eliminar gasto"}
+                label={label ?? t("deleteAria")}
                 tone="destructive"
                 showLabelOnDesktop={showLabelOnDesktop}
                 className={className}
@@ -100,13 +103,13 @@ export const DeleteExpenseAlertDialog = ({
         )}
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar gasto?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer.
+              {t("deleteDialog.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -137,10 +140,8 @@ export const DeleteExpenseAlertDialog = ({
       )}
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>¿Eliminar gasto?</DrawerTitle>
-          <DrawerDescription>
-            Esta acción no se puede deshacer.
-          </DrawerDescription>
+          <DrawerTitle>{t("deleteDialog.title")}</DrawerTitle>
+          <DrawerDescription>{t("deleteDialog.description")}</DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="pt-2">
           <Button

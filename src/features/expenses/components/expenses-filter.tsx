@@ -5,6 +5,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarArrowDown, CalendarArrowUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
+
 import { SearchInput } from "@/components/common/search-input";
 import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
 import {
@@ -21,11 +23,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  EXPENSES_MAX_PAGE_SIZE,
   EXPENSES_DEFAULT_PAGE_SIZE,
   EXPENSES_PAGE_SIZE_OPTIONS,
 } from "../lib/expense-helpers";
 
 export const ExpensesFilter = () => {
+  const t = useTranslations("expenses");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -49,10 +53,15 @@ export const ExpensesFilter = () => {
 
   const limitParam = Number(searchParams.get("limit"));
   const pageSize = EXPENSES_PAGE_SIZE_OPTIONS.some(
-    (option) => option.value === limitParam,
+    (option) => option === limitParam,
   )
     ? limitParam
     : EXPENSES_DEFAULT_PAGE_SIZE;
+
+  // The largest option means "everything" rather than a literal count,
+  // so it reads as a word; the other two are just their number.
+  const pageSizeLabel = (size: number) =>
+    size === EXPENSES_MAX_PAGE_SIZE ? t("pageSizeAll") : String(size);
 
   const navigate = (params: URLSearchParams) => {
     // Changing a filter can shrink the result set - start back at page 1
@@ -90,29 +99,25 @@ export const ExpensesFilter = () => {
       <SearchInput
         value={search}
         onChange={handleSearchChange}
-        placeholder="Buscar por nombre..."
-        aria-label="Buscar gastos por nombre"
+        placeholder={t("searchPlaceholder")}
+        aria-label={t("searchAria")}
         className="flex-1"
       />
       <div className="flex gap-2">
-        <Select
-          value={String(pageSize)}
-          onValueChange={handlePageSizeChange}
-        >
-          <SelectTrigger className="w-28" aria-label="Gastos por página">
+        <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
+          <SelectTrigger className="w-28" aria-label={t("perPage")}>
             <SelectValue>
-              {(value: string) => {
-                const option = EXPENSES_PAGE_SIZE_OPTIONS.find(
-                  (o) => String(o.value) === value,
-                );
-                return option ? `${option.label} / pág.` : value;
-              }}
+              {(value: string) =>
+                EXPENSES_PAGE_SIZE_OPTIONS.some((o) => String(o) === value)
+                  ? t("perPageValue", { size: pageSizeLabel(Number(value)) })
+                  : value
+              }
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {EXPENSES_PAGE_SIZE_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={String(option.value)}>
-                {option.label}
+              <SelectItem key={option} value={String(option)}>
+                {pageSizeLabel(option)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -124,17 +129,17 @@ export const ExpensesFilter = () => {
               <Button
                 variant="outline"
                 className="w-52 justify-start"
-                aria-label="Ordenar gastos por fecha"
+                aria-label={t("sortAria")}
               >
                 {sort === "ASC" ? (
                   <>
                     <CalendarArrowUp className="mr-2 h-4 w-4" />
-                    Más antiguos primero
+                    {t("oldestFirst")}
                   </>
                 ) : (
                   <>
                     <CalendarArrowDown className="mr-2 h-4 w-4" />
-                    Más recientes primero
+                    {t("newestFirst")}
                   </>
                 )}
               </Button>
@@ -143,11 +148,11 @@ export const ExpensesFilter = () => {
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => handleSortChange("DESC")}>
               <CalendarArrowDown className="mr-2 h-4 w-4" />
-              Más recientes primero
+              {t("newestFirst")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleSortChange("ASC")}>
               <CalendarArrowUp className="mr-2 h-4 w-4" />
-              Más antiguos primero
+              {t("oldestFirst")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

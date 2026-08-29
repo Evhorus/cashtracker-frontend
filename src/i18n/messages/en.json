@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appName": "CashTracker",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "actions": "Actions",
+    "name": "Name",
+    "lastName": "Last name",
+    "amount": "Amount",
+    "currency": "Currency",
+    "category": "Category",
+    "date": "Date",
+    "description": "Description",
+    "email": "Email",
+    "password": "Password",
+    "code": "Code",
+    "status": "Status",
+    "spent": "Spent",
+    "available": "Available",
+    "noResults": "No results",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "or": "or"
+  },
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "emailInvalid": "Enter a valid email address",
+    "passwordRequired": "Enter your password",
+    "currentPasswordRequired": "Enter your current password",
+    "passwordMin": "Must be at least 8 characters",
+    "passwordConfirm": "Confirm your password",
+    "passwordsDontMatch": "The passwords don't match",
+    "codeRequired": "Enter the code",
+    "codeSixDigits": "The code must be 6 digits",
+    "envelopeNameRequired": "The envelope needs a name",
+    "expenseNameRequired": "The expense needs a name",
+    "categoryNameRequired": "The category needs a name",
+    "notOnlySpaces": "It can't be only spaces",
+    "amountRequired": "The amount is required",
+    "amountEmpty": "The amount can't be empty",
+    "dateRequired": "The date is required",
+    "descriptionTooLong": "That description is too long",
+    "colorRequired": "Pick a colour",
+    "iconRequired": "Pick an icon"
+  },
+  "nav": {
+    "summary": "Overview",
+    "envelopes": "Envelopes",
+    "categories": "Categories",
+    "statistics": "Statistics",
+    "account": "Account",
+    "signIn": "Sign in"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "goToPrevious": "Go to previous page",
+    "goToNext": "Go to next page",
+    "goToPage": "Go to page {page}"
+  },
+  "errors": {
+    "genericTitle": "Something went wrong",
+    "genericBody": "We couldn't load this page. Your data is safe - please try again.",
+    "notFoundCode": "Error 404",
+    "notFoundTitle": "This page doesn't exist",
+    "notFoundBody": "The link may be mistyped, or what you were looking for may have been deleted.",
+    "goToSummary": "Go to my overview",
+    "goHome": "Back to home",
+    "unexpected": "Something went wrong. Please try again."
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "currencies": {
+    "COP": "Colombian Peso",
+    "USD": "US Dollar",
+    "EUR": "Euro"
+  }
+}

@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { Edit } from "lucide-react";
 import { useState } from "react";
 import { CardActionButton } from "@/components/common/card-action-button";
@@ -20,6 +21,7 @@ export const UpdateCategoryDialog = ({
   open: controlledOpen,
   onOpenChange: setControlledOpen,
 }: UpdateCategoryDialogProps) => {
+  const t = useTranslations("categories");
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -39,11 +41,11 @@ export const UpdateCategoryDialog = ({
     <ResponsiveFormSheet
       open={open}
       onOpenChange={setOpen}
-      title="Editar categoría"
-      description="Cambia el nombre, ícono o color de tu categoría"
+      title={t("updateDialog.title")}
+      description={t("updateDialog.description")}
       trigger={
         isControlled ? undefined : (
-          <CardActionButton icon={Edit} label="Editar categoría" />
+          <CardActionButton icon={Edit} label={t("editAria")} />
         )
       }
     >

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { CurrencyCode } from "@/lib/format-currency";
 import { paginatedSchema } from "@/lib/pagination";
+import type { ValidationTranslator } from "@/lib/validation";
 
 export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),
@@ -28,18 +29,21 @@ export type ExpensesResponseApi = z.infer<typeof ExpensesAPIResponseSchema>;
  * impossible to submit an expense whose currency doesn't match its
  * envelope.
  */
-export const buildExpenseSchema = (currency: CurrencyCode) =>
+export const buildExpenseSchema = (
+  currency: CurrencyCode,
+  t: ValidationTranslator,
+) =>
   z.object({
-    name: z.string().min(1, { message: "El Nombre del gasto es obligatorio" }),
+    name: z.string().min(1, { message: t("expenseNameRequired") }),
     amount: z
-      .string({ message: "El monto es obligatorio" })
-      .min(1, { message: "El monto no puede estar vacío" }),
+      .string({ message: t("amountRequired") })
+      .min(1, { message: t("amountEmpty") }),
     currency: z.literal(currency),
-    date: z.coerce.date<Date>({ message: "La fecha es obligatoria" }),
+    date: z.coerce.date<Date>({ message: t("dateRequired") }),
 
     description: z
       .string()
-      .max(500, { message: "La descripción es muy larga" })
+      .max(500, { message: t("descriptionTooLong") })
       .optional(),
   });
 

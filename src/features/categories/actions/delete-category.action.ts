@@ -3,17 +3,15 @@
 import { auth } from "@clerk/nextjs/server";
 import { updateTag } from "next/cache";
 import { CategoriesService } from "../services/categories.service";
+import { getTranslations } from "next-intl/server";
+
 import { createSafeAction } from "@/lib/safe-action";
 
-// The success message is hardcoded rather than read off the response:
-// unlike create/update (which return `{ message }`), the backend's
-// DELETE returns the *removed entity* - see categories.service.ts's
-// `remove()` in cashtracker-backend, which returns
-// `categoriesRepository.remove(category)`. Reading `.message` off that
-// gave `undefined`, and useActionWithToast only fires on a truthy
-// `success` - so deleting a category showed no toast, left the dialog
-// open, and never called router.refresh(), even though the delete had
-// actually gone through.
+// The success toast is written here, not read off the API response.
+// The backend's `{ message }` is Spanish and has no idea who's reading
+// it - the same response has to be able to render in either language.
+// Toast wording is presentation, so it belongs on this side of the
+// wire; getTranslations resolves it against the caller's own locale.
 // eslint-disable-next-line @clerk/next/require-auth-protection -- Protected inside createSafeAction wrapper by calling auth.protect() in the handler.
 export const deleteCategoryAction = createSafeAction(async (id: string) => {
   await auth.protect();
@@ -31,5 +29,7 @@ export const deleteCategoryAction = createSafeAction(async (id: string) => {
   // Deleting a category unclassifies its envelopes (ON DELETE SET NULL).
   updateTag("category-usage");
 
-  return { successMessage: "Categoría eliminada correctamente." };
+  const t = await getTranslations("categories.toast");
+
+  return { successMessage: t("deleted") };
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Loader2, LogOut, Settings } from "lucide-react";
 
@@ -31,6 +32,7 @@ interface AccountMenuProps {
 // confirmed a session via auth.protect(), but isLoaded still gates the
 // brief render before Clerk's client-side user data arrives.
 export function AccountMenu({ trigger }: AccountMenuProps = {}) {
+  const t = useTranslations("account");
   const { isLoaded, user, isSigningOut, signOut } = useAccountUser();
 
   if (!isLoaded || !user) return null;
@@ -47,13 +49,13 @@ export function AccountMenu({ trigger }: AccountMenuProps = {}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label="Menú de cuenta"
+        aria-label={t("menu")}
         render={trigger ?? defaultTrigger}
       />
       {/* DropdownMenuContent defaults to w-(--anchor-width) - fine for a
           menu anchored to a normal button, but the trigger here is just
           the avatar, so left alone the popup would clamp to that same
-          tiny width and truncate the name/email/wrap "Cerrar sesión". An
+          tiny width and truncate the name/email/wrap the sign-out label. An
           explicit width overrides that. */}
       <DropdownMenuContent align="end" className="w-64">
         {/* Base UI's GroupLabel throws outside a Menu.Group, unlike
@@ -81,7 +83,7 @@ export function AccountMenu({ trigger }: AccountMenuProps = {}) {
           onClick={() => signOut()}
         >
           {isSigningOut ? <Loader2 className="animate-spin" /> : <LogOut />}
-          Cerrar sesión
+          {t("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,9 +22,9 @@ import { OAuthButtons } from "./oauth-buttons";
 import { useSignUp } from "../hooks/use-sign-up";
 import {
   type CodeFormValues,
-  codeFormSchema,
+  buildCodeFormSchema,
   type SignUpFormValues,
-  signUpFormSchema,
+  buildSignUpFormSchema,
 } from "../schemas/auth.schema";
 
 // Custom-built sign-up UI on top of the useSignUp() hook (features/auth/
@@ -34,6 +35,9 @@ import {
 // layout.tsx (a resource-level check, not middleware), so an already-
 // authenticated visitor never sees a blank flash of this page.
 export function SignUpForm() {
+  const t = useTranslations("auth.signUp");
+  const tCommon = useTranslations("common");
+  const tValidation = useTranslations("validation");
   const {
     isSubmitting,
     isComplete,
@@ -47,7 +51,7 @@ export function SignUpForm() {
   } = useSignUp();
 
   const signUpForm = useForm<SignUpFormValues>({
-    resolver: zodResolver(signUpFormSchema),
+    resolver: zodResolver(buildSignUpFormSchema(tValidation)),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -58,7 +62,7 @@ export function SignUpForm() {
   });
 
   const codeVerifyForm = useForm<CodeFormValues>({
-    resolver: zodResolver(codeFormSchema),
+    resolver: zodResolver(buildCodeFormSchema(tValidation)),
     defaultValues: { code: "" },
   });
 
@@ -81,12 +85,10 @@ export function SignUpForm() {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>
-          {awaitingVerification ? "Verifica tu email" : "Crea tu cuenta"}
+          {awaitingVerification ? t("verifyTitle") : t("title")}
         </CardTitle>
         <CardDescription>
-          {awaitingVerification
-            ? "Ingresa el código que enviamos a tu correo"
-            : "Empieza a controlar tus finanzas gratis"}
+          {awaitingVerification ? t("verifySubtitle") : t("subtitle")}
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-y-4">
@@ -105,7 +107,7 @@ export function SignUpForm() {
             <OAuthButtons disabled={isSubmitting} onSelect={signUpWithOAuth} />
 
             <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
-              o
+              {tCommon("or")}
             </p>
 
             <form
@@ -116,8 +118,8 @@ export function SignUpForm() {
                 <FormInput
                   control={signUpForm.control}
                   name="firstName"
-                  label="Nombre"
-                  placeholder="Juan"
+                  label={tCommon("name")}
+                  placeholder={t("firstNamePlaceholder")}
                   autoComplete="given-name"
                   disabled={isSubmitting}
                   serverError={fieldErrors.firstName}
@@ -125,8 +127,8 @@ export function SignUpForm() {
                 <FormInput
                   control={signUpForm.control}
                   name="lastName"
-                  label="Apellido"
-                  placeholder="Pérez"
+                  label={tCommon("lastName")}
+                  placeholder={t("lastNamePlaceholder")}
                   autoComplete="family-name"
                   disabled={isSubmitting}
                   serverError={fieldErrors.lastName}
@@ -135,9 +137,9 @@ export function SignUpForm() {
               <FormInput
                 control={signUpForm.control}
                 name="email"
-                label="Email"
+                label={tCommon("email")}
                 type="email"
-                placeholder="tucorreo@ejemplo.com"
+                placeholder={tCommon("emailPlaceholder")}
                 autoComplete="email"
                 disabled={isSubmitting}
                 serverError={fieldErrors.emailAddress}
@@ -145,9 +147,9 @@ export function SignUpForm() {
               <FormInput
                 control={signUpForm.control}
                 name="password"
-                label="Contraseña"
+                label={tCommon("password")}
                 type="password"
-                placeholder="••••••••"
+                placeholder={tCommon("passwordPlaceholder")}
                 autoComplete="new-password"
                 disabled={isSubmitting}
                 serverError={fieldErrors.password}
@@ -155,9 +157,9 @@ export function SignUpForm() {
               <FormInput
                 control={signUpForm.control}
                 name="confirmPassword"
-                label="Confirma tu contraseña"
+                label={t("confirmPassword")}
                 type="password"
-                placeholder="••••••••"
+                placeholder={tCommon("passwordPlaceholder")}
                 autoComplete="new-password"
                 disabled={isSubmitting}
               />
@@ -166,7 +168,7 @@ export function SignUpForm() {
                 isLoading={isSubmitting}
                 className="w-full"
               >
-                Crear cuenta
+                {t("submit")}
               </SubmitButton>
             </form>
           </>
@@ -178,7 +180,7 @@ export function SignUpForm() {
             <FormInput
               control={codeVerifyForm.control}
               name="code"
-              label="Código"
+              label={tCommon("code")}
               placeholder="123456"
               autoComplete="one-time-code"
               disabled={isSubmitting}
@@ -189,7 +191,7 @@ export function SignUpForm() {
               isLoading={isSubmitting}
               className="w-full"
             >
-              Verificar y crear cuenta
+              {t("verifySubmit")}
             </SubmitButton>
             <Button
               type="button"
@@ -198,19 +200,19 @@ export function SignUpForm() {
               disabled={isSubmitting}
               onClick={() => resendEmailCode()}
             >
-              Reenviar código
+              {t("resendCode")}
             </Button>
           </form>
         )}
       </CardContent>
       <CardFooter>
         <Text className="w-full text-center">
-          ¿Ya tienes cuenta?{" "}
+          {t("haveAccount")}{" "}
           <Link
             href="/sign-in"
             className="font-medium text-primary hover:underline"
           >
-            Inicia sesión
+            {t("signInLink")}
           </Link>
         </Text>
       </CardFooter>

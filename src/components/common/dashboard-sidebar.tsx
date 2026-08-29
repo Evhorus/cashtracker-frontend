@@ -1,36 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
-import {
-  ChartNoAxesColumn,
-  ChevronRight,
-  Home,
-  Tag,
-  UserRound,
-  Wallet,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { DASHBOARD_NAV_ITEMS } from "./nav-items";
 import { Logo } from "./logo";
 import { ModeToggle } from "./mode-toggle";
+import { LocaleToggle } from "@/features/locale/components/locale-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AccountMenu } from "@/features/account/components/account-menu";
 import { useAccountUser } from "@/features/account/hooks/use-account-user";
-
-const navItems = [
-  { name: "Resumen", href: "/dashboard", icon: Home },
-  { name: "Sobres", href: "/dashboard/envelopes", icon: Wallet },
-  { name: "Categorías", href: "/dashboard/categories", icon: Tag },
-  { name: "Estadísticas", href: "/dashboard/statistics", icon: ChartNoAxesColumn },
-  { name: "Cuenta", href: "/dashboard/account", icon: UserRound },
-];
 
 // Desktop-only persistent nav shell (see dashboard/layout.tsx). Replaces
 // custom-header.tsx's pill-nav on desktop entirely - that header is now
 // md:hidden, mobile-only, since this covers branding/nav/theme/account for
 // desktop instead. Mobile keeps CustomHeader + MobileNav, unchanged.
 export function DashboardSidebar() {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const { isLoaded, user } = useAccountUser();
 
@@ -38,11 +27,12 @@ export function DashboardSidebar() {
     <aside className="hidden h-full w-62 shrink-0 flex-col border-r border-border/60 bg-card/30 p-4 md:flex">
       <div className="flex items-center justify-between px-2">
         <Logo href="/dashboard" />
+        <LocaleToggle />
         <ModeToggle />
       </div>
 
       <nav className="mt-8 flex flex-col gap-1">
-        {navItems.map((item) => {
+        {DASHBOARD_NAV_ITEMS.map((item) => {
           const isActive =
             item.href === "/dashboard"
               ? pathname === item.href
@@ -59,7 +49,7 @@ export function DashboardSidebar() {
               )}
             >
               <item.icon className="h-4 w-4" />
-              {item.name}
+              {t(item.key)}
             </Link>
           );
         })}
@@ -69,7 +59,7 @@ export function DashboardSidebar() {
         <div className="mt-auto">
           <AccountMenu
             trigger={
-              <button className="flex w-full items-center gap-2.5 rounded-xl border border-border/60 bg-card/50 p-2.5 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50">
+              <button className="flex w-full items-center gap-2.5 rounded-xl border border-border/60 bg-card/50 p-2.5 text-left transition-colors outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50">
                 <Avatar size="sm" className="shrink-0">
                   <AvatarImage src={user.imageUrl} alt={user.fullName} />
                   <AvatarFallback>{user.initials}</AvatarFallback>

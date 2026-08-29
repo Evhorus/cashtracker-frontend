@@ -20,7 +20,9 @@ export interface ActionItem {
 
 interface ActionsDrawerProps {
   actions: ActionItem[];
-  title?: string;
+  /** Drawer heading. Required: it used to default to a hardcoded
+   * Spanish word, which every caller overrode anyway. */
+  title: string;
   triggerClassName?: string;
 }
 
@@ -35,7 +37,7 @@ interface ActionsDrawerProps {
 // more confusing to read than useful, so it's gone.
 export const ActionsDrawer = ({
   actions,
-  title = "Acciones",
+  title,
   triggerClassName,
 }: ActionsDrawerProps) => {
   const [open, setOpen] = useState(false);

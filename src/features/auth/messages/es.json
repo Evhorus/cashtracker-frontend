@@ -1,0 +1,50 @@
+{
+  "auth": {
+    "backHome": "Volver al inicio",
+    "signIn": {
+      "title": "Iniciar sesión",
+      "subtitle": "Bienvenido de nuevo a CashTracker",
+      "submit": "Iniciar sesión",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "createOne": "Crea una",
+      "emailCode": "Código por email",
+      "sendCode": "Enviar código",
+      "resendCode": "Reenviar código",
+      "verify": "Verificar",
+      "codeSentTo": "Enviamos un código a <email></email>"
+    },
+    "signUp": {
+      "title": "Crear cuenta",
+      "submit": "Crear cuenta",
+      "verifySubmit": "Verificar y crear cuenta",
+      "resendCode": "Reenviar código",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "signInLink": "Inicia sesión",
+      "confirmPassword": "Confirma tu contraseña",
+      "firstNamePlaceholder": "Juan",
+      "lastNamePlaceholder": "Pérez",
+      "subtitle": "Empieza a controlar tus finanzas gratis",
+      "verifyTitle": "Verifica tu email",
+      "verifySubtitle": "Ingresa el código que enviamos a tu correo"
+    },
+    "forgotPassword": {
+      "title": "Recupera tu contraseña",
+      "sendCode": "Enviar código",
+      "verifyCode": "Verificar código",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirma tu nueva contraseña",
+      "savePassword": "Guardar contraseña",
+      "backToSignIn": "Volver a iniciar sesión",
+      "subtitleEmail": "Te enviaremos un código a tu correo",
+      "subtitleCode": "Ingresa el código que recibiste",
+      "subtitlePassword": "Elige una nueva contraseña"
+    },
+    "oauth": {
+      "google": "Google",
+      "facebook": "Facebook"
+    },
+    "logoAlt": "Logo de CashTracker",
+    "tagline": "Tu app para controlar ingresos y gastos con facilidad, para administrar tu dinero de forma segura y práctica."
+  }
+}

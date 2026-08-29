@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -23,12 +24,14 @@ interface DeleteCategoryAlertDialogProps {
 
 // Simpler than DeleteEnvelopeAlertDialog (no "type the name to confirm")
 // - deleting a category doesn't cascade-delete anything (envelope.category
-// stays free text; existing envelopes just fall back to the "Otros" look,
+// stays free text; existing envelopes just fall back to the neutral look,
 // same as any unrecognized category text already does).
 export const DeleteCategoryAlertDialog = ({
   id,
   label,
 }: DeleteCategoryAlertDialogProps) => {
+  const t = useTranslations("categories");
+  const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
   const { dispatch, isPending } = useActionDialog(
     deleteCategoryAction,
@@ -42,22 +45,24 @@ export const DeleteCategoryAlertDialog = ({
         render={
           <CardActionButton
             icon={Trash2}
-            label="Eliminar categoría"
+            label={t("deleteAria")}
             tone="destructive"
           />
         }
       />
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Eliminar categoría?</AlertDialogTitle>
+          <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Se eliminará <span className="font-medium text-foreground">{label}</span>.
-            Los sobres que ya la usan no se modifican, solo dejan de tenerla
-            disponible para elegir.
+            {t.rich("deleteDialog.description", {
+              name: () => (
+                <span className="font-medium text-foreground">{label}</span>
+              ),
+            })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
           <AlertDialogAction
             className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 sm:w-auto"
             onClick={(e) => {

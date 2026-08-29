@@ -3,6 +3,7 @@ import { LandingHeader } from "@/components/common/landing-header";
 import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Check, Sparkles, Wallet } from "lucide-react";
 
 import {
@@ -17,54 +18,48 @@ import Link from "next/link";
 // metadataBase is inherited from the root layout (it used to be
 // declared here, pointing at port 3000 while the dev server runs on
 // 3001). Everything below is landing-page specific and stays.
-export const metadata: Metadata = {
-  title: "CashTracker - Control de Finanzas Personales",
-  description:
-    "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.",
-  keywords: [
-    "finanzas personales",
-    "control de gastos",
-    "sobres",
-    "ahorro",
-    "gestión financiera",
-    "cashtracker",
-  ],
-  authors: [{ name: "CashTracker Team" }],
-  openGraph: {
-    title: "CashTracker - Toma el control de tus finanzas personales",
-    description:
-      "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras. 100% gratis para empezar.",
-    type: "website",
-    locale: "es_ES",
-    siteName: "CashTracker",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "CashTracker - Control de Finanzas Personales",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "CashTracker - Control de Finanzas Personales",
-    description:
-      "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras. 100% gratis.",
-    images: ["/og-image.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("home.meta");
 
+  return {
+    title: t("title"),
+    description: t("description"),
+    keywords: t("keywords").split(", "),
+    authors: [{ name: "CashTracker Team" }],
+    openGraph: {
+      title: t("ogTitle"),
+      description: t("ogDescription"),
+      type: "website",
+      locale: t("ogLocale"),
+      siteName: "CashTracker",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: t("title"),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("twitterDescription"),
+      images: ["/og-image.png"],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 // Resource-level check (not middleware - see proxy.ts) so a signed-in
 // visitor is redirected to /dashboard instead of seeing the marketing
 // page again. auth() reads the already-verified session (no network
 // call, unlike currentUser()), so this is cheap even though it does
 // mean the route can no longer prerender as fully static.
 export default async function Home() {
+  const t = await getTranslations("home");
   const { isAuthenticated } = await auth();
   if (isAuthenticated) redirect("/dashboard");
 
@@ -84,21 +79,22 @@ export default async function Home() {
         <div className="container mx-auto max-w-4xl animate-fade-in space-y-8">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
             <Sparkles className="h-4 w-4" />
-            100% gratis para empezar
+            {t("badge")}
           </span>
           <h1 className="text-4xl leading-tight font-bold md:text-6xl">
-            Toma el control de tus{" "}
-            <span className="text-primary">finanzas personales</span>
+            {t.rich("heroTitle", {
+              accent: (chunks) => (
+                <span className="text-primary">{chunks}</span>
+              ),
+            })}
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
-            CashTracker te ayuda a gestionar tus gastos, crear sobres
-            inteligentes y alcanzar tus metas financieras con una interfaz
-            moderna y fácil de usar.
+            {t("heroBody")}
           </p>
           <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
             <Link href="/sign-in">
               <Button size="lg" className="w-full sm:w-auto">
-                Comenzar Gratis
+                {t("ctaStart")}
               </Button>
             </Link>
 
@@ -115,17 +111,17 @@ export default async function Home() {
       <section className="container mx-auto bg-muted/30 px-4 py-20">
         <div className="mb-16 text-center">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Todo lo que necesitas para gestionar tu dinero
+            {t("featuresTitle")}
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Herramientas poderosas diseñadas para simplificar tu vida financiera
+            {t("featuresBody")}
           </p>
         </div>
 
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <Card
-              key={index}
+              key={feature.key}
               className="animate-fade-in border-border/50 transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
               style={{ animationDelay: `${index * 100}ms` }}
             >
@@ -133,9 +129,11 @@ export default async function Home() {
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                   <feature.icon className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
+                <CardTitle className="text-xl">
+                  {t(`features.${feature.key}Title`)}
+                </CardTitle>
                 <CardDescription className="text-base">
-                  {feature.description}
+                  {t(`features.${feature.key}Body`)}
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -149,7 +147,7 @@ export default async function Home() {
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div className="space-y-6">
               <h2 className="text-3xl font-bold md:text-4xl">
-                Simplifica tu economía personal
+                {t("benefitsTitle")}
               </h2>
               <div className="space-y-4">
                 <div className="flex gap-4">
@@ -157,13 +155,8 @@ export default async function Home() {
                     <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold">
-                      Sin complicaciones
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Interfaz intuitiva que cualquiera puede usar desde el
-                      primer día
-                    </p>
+                    <h3 className="mb-1 font-semibold">{t("benefit1Title")}</h3>
+                    <p className="text-muted-foreground">{t("benefit1Body")}</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -171,13 +164,8 @@ export default async function Home() {
                     <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold">
-                      Acceso multiplataforma
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Úsalo desde tu computadora, tablet o smartphone sin
-                      problemas
-                    </p>
+                    <h3 className="mb-1 font-semibold">{t("benefit2Title")}</h3>
+                    <p className="text-muted-foreground">{t("benefit2Body")}</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
@@ -185,13 +173,8 @@ export default async function Home() {
                     <Check className="h-4 w-4 text-success" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-semibold">
-                      Resultados inmediatos
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Comienza a ver patrones y optimizar tus gastos desde el
-                      primer mes
-                    </p>
+                    <h3 className="mb-1 font-semibold">{t("benefit3Title")}</h3>
+                    <p className="text-muted-foreground">{t("benefit3Body")}</p>
                   </div>
                 </div>
               </div>
@@ -200,18 +183,16 @@ export default async function Home() {
               <div className="space-y-6">
                 <div>
                   <p className="text-5xl font-bold">100%</p>
-                  <p className="mt-2 text-white/80">Gratis para empezar</p>
+                  <p className="mt-2 text-white/80">{t("freeLabel")}</p>
                 </div>
                 <div className="border-t border-white/20 pt-6">
                   <p className="mb-2 text-lg font-semibold">
-                    ¿Listo para comenzar?
+                    {t("readyTitle")}
                   </p>
-                  <p className="mb-6 text-white/80">
-                    Únete a miles de personas que ya controlan sus finanzas
-                  </p>
+                  <p className="mb-6 text-white/80">{t("readyBody")}</p>
                   <Link href="/sign-in">
                     <Button size="lg" variant="secondary" className="w-full">
-                      Crear Cuenta Gratis
+                      {t("ctaCreateAccount")}
                     </Button>
                   </Link>
                 </div>
@@ -224,16 +205,11 @@ export default async function Home() {
       {/* CTA Section */}
       <section className="container mx-auto bg-muted/30 px-4 py-20">
         <div className="mx-auto max-w-3xl space-y-6 text-center">
-          <h2 className="text-3xl font-bold md:text-4xl">
-            Empieza a gestionar tu dinero hoy mismo
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            No necesitas tarjeta de crédito. Comienza gratis en menos de 2
-            minutos.
-          </p>
+          <h2 className="text-3xl font-bold md:text-4xl">{t("finalTitle")}</h2>
+          <p className="text-lg text-muted-foreground">{t("finalBody")}</p>
           <Link href="/sign-in">
             <Button size="lg" className="mt-6">
-              Comenzar Ahora
+              {t("ctaNow")}
             </Button>
           </Link>
         </div>
@@ -247,8 +223,7 @@ export default async function Home() {
             <span className="font-semibold">CashTracker</span>
           </div>
           <p className="text-sm">
-            &copy; {new Date().getFullYear()} CashTracker. Control de gastos
-            personales.
+            &copy; {new Date().getFullYear()} CashTracker. {t("footer")}
           </p>
         </div>
       </footer>

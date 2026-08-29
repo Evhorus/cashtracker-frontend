@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Tag } from "lucide-react";
 import {
   CURRENCY_MAP,
@@ -15,13 +16,10 @@ interface CategoryBreakdownProps {
   currency: CurrencyCode;
 }
 
-const NO_CATEGORY = {
-  label: "Sin categoría",
-  color: "oklch(0.5 0.02 260)",
-};
+const NO_CATEGORY_COLOR = "oklch(0.5 0.02 260)";
 
 /**
- * "Gasto por categoría". Every number here comes from the backend's own
+ * The spending-by-category breakdown. Every number here comes from the backend's own
  * GROUP BY, and so does every label and colour.
  *
  * This component used to do two things it no longer needs to: reduce over
@@ -31,23 +29,21 @@ const NO_CATEGORY = {
  * id now, so one category is one row by construction.
  */
 export function CategoryBreakdown({ rows, currency }: CategoryBreakdownProps) {
+  const t = useTranslations("categories");
+  const tStats = useTranslations("statistics");
   const config = CURRENCY_MAP[currency];
   const total = rows.reduce((sum, row) => sum + row.spent, 0);
 
   if (rows.length === 0) {
-    return (
-      <Text className="py-6 text-center">
-        Aún no hay gastos este período para desglosar por categoría.
-      </Text>
-    );
+    return <Text className="py-6 text-center">{tStats("noSpendingYet")}</Text>;
   }
 
   return (
     <div className="space-y-4">
       {rows.map((row) => {
         const percentage = total > 0 ? (row.spent / total) * 100 : 0;
-        const label = row.category?.label ?? NO_CATEGORY.label;
-        const color = row.category?.color ?? NO_CATEGORY.color;
+        const label = row.category?.label ?? t("none");
+        const color = row.category?.color ?? NO_CATEGORY_COLOR;
         // On an object - see category-badge.tsx.
         const def = {
           Icon: row.category ? resolveIcon(row.category.icon) : Tag,

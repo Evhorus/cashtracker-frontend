@@ -2,13 +2,10 @@
 
 import { createContext, useContext, useState } from "react";
 
-export const CATEGORY_TYPE_FILTERS = [
-  { value: "all", label: "Todas" },
-  { value: "default", label: "Predeterminadas" },
-  { value: "custom", label: "Personalizadas" },
-] as const;
+/** Tab order. Values only - the words are `categories.types.*`. */
+export const CATEGORY_TYPE_FILTERS = ["all", "default", "custom"] as const;
 
-export type CategoryTypeFilter = (typeof CATEGORY_TYPE_FILTERS)[number]["value"];
+export type CategoryTypeFilter = (typeof CATEGORY_TYPE_FILTERS)[number];
 
 interface CategoriesFilterContextValue {
   search: string;
@@ -21,7 +18,8 @@ const CategoriesFilterContext =
   createContext<CategoriesFilterContextValue | null>(null);
 
 // Lets the search box live in the page header (desktop, inline next to
-// "Nueva categoría" - matching how envelopes/page.tsx does it) while the
+// the "new category" button - matching how envelopes/page.tsx does it)
+// while the
 // filtered results render in CategoriesSection lower on the page - two
 // siblings under the same server-rendered page.tsx that both need the
 // same search/type state, hence a context instead of prop drilling

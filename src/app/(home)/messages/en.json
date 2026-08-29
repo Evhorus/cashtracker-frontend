@@ -1,0 +1,48 @@
+{
+  "home": {
+    "badge": "100% free to start",
+    "heroTitle": "Take control of your <accent>personal finances</accent>",
+    "heroBody": "CashTracker helps you manage your spending, create smart envelopes and reach your financial goals, with an interface that's modern and easy to use.",
+    "ctaStart": "Start for Free",
+    "featuresTitle": "Everything you need to manage your money",
+    "featuresBody": "Powerful tools designed to simplify your financial life",
+    "benefitsTitle": "Simplify your personal finances",
+    "benefit1Title": "No complications",
+    "benefit1Body": "An intuitive interface anyone can use from day one",
+    "benefit2Title": "Use it anywhere",
+    "benefit2Body": "Works on your computer, tablet or phone without a hitch",
+    "benefit3Title": "Immediate results",
+    "benefit3Body": "Start spotting patterns and improving your spending from the first month",
+    "freeLabel": "Free to start",
+    "readyTitle": "Ready to begin?",
+    "readyBody": "Join thousands of people already in control of their finances",
+    "ctaCreateAccount": "Create a Free Account",
+    "finalTitle": "Start managing your money today",
+    "finalBody": "No credit card needed. Get started free in under 2 minutes.",
+    "ctaNow": "Get Started",
+    "footer": "Personal expense tracking.",
+    "meta": {
+      "title": "CashTracker - Personal Finance Tracking",
+      "description": "Track your spending, build smart envelopes and reach your financial goals with CashTracker. A modern, easy interface. Free to start.",
+      "keywords": "personal finance, expense tracking, envelope budgeting, savings, money management, cashtracker",
+      "ogTitle": "CashTracker - Take control of your personal finances",
+      "ogDescription": "Track your spending, build smart envelopes and reach your financial goals. Free to start.",
+      "ogLocale": "en_US",
+      "twitterDescription": "Track your spending, build smart envelopes and reach your financial goals. Free."
+    },
+    "features": {
+      "controlTitle": "Full control",
+      "controlBody": "Manage your spending and envelopes from one place, intuitively.",
+      "chartsTitle": "Clear charts",
+      "chartsBody": "Interactive charts showing exactly where your money goes.",
+      "envelopesTitle": "Smart envelopes",
+      "envelopesBody": "Build your own envelopes and get warned before you hit the limit.",
+      "reduceTitle": "Spend less",
+      "reduceBody": "Spot spending patterns and find where you can save.",
+      "secureTitle": "Your data is yours",
+      "secureBody": "Your financial information is protected, and only you can reach it.",
+      "reportsTitle": "Detailed reports",
+      "reportsBody": "Full reports on your financial habits and how they're changing."
+    }
+  }
+}

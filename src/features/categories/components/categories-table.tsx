@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { Category } from "../types";
 import { resolveIcon } from "../lib/icon-registry";
 import {
@@ -26,14 +27,18 @@ interface CategoriesTableProps {
 // stock styling overridden to match that same standard (rounded-2xl
 // border card, uppercase header, px-5 py-3.5 cells) instead of shadcn's
 // defaults.
-export function CategoriesTable({ categories, categoryCounts }: CategoriesTableProps) {
+export function CategoriesTable({
+  categories,
+  categoryCounts,
+}: CategoriesTableProps) {
+  const t = useTranslations("categories");
   return (
     <div className="hidden overflow-hidden rounded-2xl border border-border/60 bg-card/30 md:block">
       <Table className="min-w-max text-sm">
         <TableHeader>
           <TableRow className="border-border/60 bg-card/60 text-xs font-semibold tracking-wider text-muted-foreground uppercase hover:bg-card/60">
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
-              Categoría
+              {t("table.category")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
               Tipo
@@ -57,7 +62,9 @@ export function CategoriesTable({ categories, categoryCounts }: CategoriesTableP
                       color={category.color}
                       className="h-9 w-9"
                     />
-                    <span className="truncate font-medium">{category.label}</span>
+                    <span className="truncate font-medium">
+                      {category.label}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell className="px-5 py-3.5">
@@ -72,7 +79,7 @@ export function CategoriesTable({ categories, categoryCounts }: CategoriesTableP
                   )}
                 </TableCell>
                 <TableCell className="px-5 py-3.5 text-right font-mono text-muted-foreground">
-                  {count} {count === 1 ? "sobre" : "sobres"}
+                  {t("envelopeCount", { count })}
                 </TableCell>
                 <TableCell className="px-5 py-3.5">
                   {/* Global (isDefault) categories aren't owned by anyone

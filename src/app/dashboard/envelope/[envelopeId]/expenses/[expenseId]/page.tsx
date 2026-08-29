@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getEnvelopeById } from "@/features/envelopes/data/get-envelope-by-id";
 import { getExpenseById } from "@/features/expenses/data/get-expense-by-id";
 import { DeleteExpenseAlertDialog } from "@/features/expenses/components/delete-expense-alert-dialog";
@@ -45,7 +45,9 @@ interface ExpensePageProps {
 
 export default async function ExpensePage({ params }: ExpensePageProps) {
   await auth.protect();
-  const t = await getTranslations("common");
+  const locale = await getLocale();
+  const tCommon = await getTranslations("common");
+  const t = await getTranslations("expenses");
   const { envelopeId, expenseId } = await params;
   // In parallel, not one after the other: these two reads are
   // independent, so awaiting them sequentially just added the slower
@@ -60,18 +62,21 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   const envelopeSpent = EnvelopeHelpers.getSpent(envelope);
   const expenseAmount = ExpenseHelpers.getAmount(expense);
   const currencyConfig = CURRENCY_MAP[envelope.currency];
-  const impactPercentage = ExpenseHelpers.getImpactPercentage(expense, envelope);
+  const impactPercentage = ExpenseHelpers.getImpactPercentage(
+    expense,
+    envelope,
+  );
   const progressStatus = envelope.status;
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-10">
       {/* Header Section */}
       <PageHeader
-        title="Detalle del Gasto"
+        title={t("detail.title")}
         backUrl={`/dashboard/envelope/${envelopeId}`}
         description={
           <>
-            <span className="text-sm">En el sobre:</span>
+            <span className="text-sm">{t("detail.inEnvelope")}</span>
             <Link
               href={`/dashboard/envelope/${envelopeId}`}
               className="text-sm font-medium text-primary hover:underline"
@@ -84,19 +89,19 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
           <>
             <BackLinkButton
               href={`/dashboard/envelope/${envelopeId}`}
-              label={t("back")}
+              label={tCommon("back")}
             />
             <UpdateExpenseDialog
               envelopeId={envelopeId}
               currency={envelope.currency}
               expense={expense}
-              label={t("edit")}
+              label={tCommon("edit")}
               showLabelOnDesktop
             />
             <DeleteExpenseAlertDialog
               envelopeId={envelopeId}
               expenseId={expenseId}
-              label={t("delete")}
+              label={tCommon("delete")}
               showLabelOnDesktop
             />
           </>
@@ -116,13 +121,14 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
           that page: there, Resumen is a quick overview ahead of a list,
           so overview-first makes sense - here the hero card below already
           *is* the overview (name/date/amount), so it stays first; only
-          Impacto's sticky-on-desktop behavior is worth matching. */}
+          the impact panel's sticky-on-desktop behavior is worth
+          matching. */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main Info Column (2/3 width) */}
         <div className="space-y-6 lg:col-span-2">
           {/* Expense Highlight Card - border-0 bg-card/50 shadow-sm matches
-              every other card in the app (envelope page's Resumen,
-              Estadísticas, category cards...); this one used to stand out
+              every other card in the app (the envelope page's summary,
+              the statistics page, category cards...); this one stood out
               with a gradient fill and a heavier shadow. */}
           <Card className="overflow-hidden border-0 bg-card/50 shadow-sm">
             <CardContent className="p-8">
@@ -138,14 +144,14 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     <div className="flex w-fit items-center gap-2 rounded-full bg-background/50 px-2.5 py-1 text-muted-foreground">
                       <Calendar className="h-3.5 w-3.5" />
                       <span className="text-xs font-medium sm:text-sm">
-                        {formatCalendarDate(expense.date)}
+                        {formatCalendarDate(expense.date, locale)}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="pl-18 text-left sm:pl-0 md:text-right">
                   <Text className="mb-0.5 text-xs font-medium sm:text-sm">
-                    Monto Total
+                    {t("detail.totalAmount")}
                   </Text>
                   <p className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
                     {formatCurrency(expenseAmount, currencyConfig)}
@@ -157,7 +163,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                 <div className="mt-8 border-t border-border/50 pt-6">
                   <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <FileText className="h-4 w-4" />
-                    Descripción
+                    {t("detail.description")}
                   </h3>
                   <p className="max-w-2xl text-base leading-relaxed text-foreground/80">
                     {expense.description}
@@ -170,16 +176,22 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
           {/* Additional Meta Info */}
           <Card className="border-0 bg-card/50 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg">Información de Sistema</CardTitle>
+              <CardTitle className="text-lg">
+                {t("detail.systemInfo")}
+              </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-6 text-sm sm:grid-cols-2">
               <div className="space-y-1">
-                <Text>Creado el</Text>
-                <p className="font-medium">{formatDate(expense.createdAt)}</p>
+                <Text>{t("detail.createdAt")}</Text>
+                <p className="font-medium">
+                  {formatDate(expense.createdAt, locale)}
+                </p>
               </div>
               <div className="space-y-1">
-                <Text>Última actualización</Text>
-                <p className="font-medium">{formatDate(expense.updatedAt)}</p>
+                <Text>{t("detail.updatedAt")}</Text>
+                <p className="font-medium">
+                  {formatDate(expense.updatedAt, locale)}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -191,28 +203,26 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
           <Card className="overflow-hidden border-0 bg-card/50 shadow-sm">
             <CardHeader className="pt-6 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg">
-                Impacto en el Sobre
+                {t("detail.envelopeImpact")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 pt-4">
               {isUnlimited ? (
                 <div className="flex flex-col items-center gap-2 py-2 text-center">
                   <InfinityIcon className="h-6 w-6 text-muted-foreground" />
-                  <Text>
-                    Este sobre no tiene límite de gasto
-                  </Text>
+                  <Text>{t("detail.noLimitEnvelope")}</Text>
                 </div>
               ) : (
                 <div>
                   <div className="mb-2 flex items-end justify-between">
                     <span className="w-full text-sm font-medium text-muted-foreground">
-                      Representa el
+                      {t("detail.represents")}
                     </span>
                     <span className="text-2xl font-bold text-primary">
                       {(impactPercentage ?? 0).toFixed(1)}%
                     </span>
                   </div>
-                  {/* Decorative - "Representa el X%" is stated in the
+                  {/* Decorative - the same percentage is stated in the
                       text directly above this bar. */}
                   <div
                     aria-hidden="true"
@@ -226,18 +236,24 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     />
                   </div>
                   <Text className="mt-2 text-right text-xs">
-                    del total asignado (
-                    {formatCurrency(envelopeAmount ?? 0, currencyConfig)})
+                    {t("detail.ofAssigned", {
+                      amount: formatCurrency(
+                        envelopeAmount ?? 0,
+                        currencyConfig,
+                      ),
+                    })}
                   </Text>
                 </div>
               )}
 
               <div className="space-y-3 border-t border-border/50 pt-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Estado del Sobre</span>
+                  <span className="text-sm font-medium">
+                    {t("detail.envelopeStatus")}
+                  </span>
                   {/* Plain colored text, no badge box - the boxed
-                      all-caps treatment this used to have (SALUDABLE,
-                      EXCEDIDO...) had no precedent anywhere else in the
+                      all-caps treatment this used to have had no
+                      precedent anywhere else in the
                       app; envelope-card.tsx's own status "badge" is just
                       a thin colored strip, and every other status here
                       (spentColorClass, progress bar) is color-coded text
@@ -248,7 +264,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Gastado Total</span>
+                    <span className="text-muted-foreground">
+                      {t("detail.totalSpent")}
+                    </span>
                     <span className="font-semibold">
                       {formatCurrency(envelopeSpent, currencyConfig)}
                     </span>

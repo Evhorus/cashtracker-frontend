@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 export const DashboardChartEntrySchema = z.object({
-  label: z.string(),
+  /** "YYYY-MM". The API used to send a formatted Spanish month name
+   * here; formatting it is the client's job now - see
+   * statistics/page.tsx. */
+  month: z.string(),
   spent: z.number(),
   available: z.number(),
 });

@@ -1,0 +1,72 @@
+{
+  "expenses": {
+    "add": "Agregar Gasto",
+    "optionsMenu": "Opciones de Gasto",
+    "editAria": "Editar gasto",
+    "deleteAria": "Eliminar gasto",
+    "searchPlaceholder": "Buscar por nombre...",
+    "searchAria": "Buscar gastos por nombre",
+    "perPage": "Gastos por página",
+    "sortAria": "Ordenar gastos por fecha",
+    "newestFirst": "Más recientes primero",
+    "oldestFirst": "Más antiguos primero",
+    "table": {
+      "expense": "Gasto",
+      "date": "Fecha",
+      "amount": "Monto"
+    },
+    "form": {
+      "name": "Nombre del gasto",
+      "namePlaceholder": "Ej: Compra supermercado",
+      "amount": "Monto",
+      "inheritsCurrency": "Hereda la moneda del sobre",
+      "date": "Fecha",
+      "selectDate": "Seleccionar fecha",
+      "description": "Descripción (opcional)",
+      "descriptionPlaceholder": "Añade detalles del gasto..."
+    },
+    "createDialog": {
+      "title": "Agregar Nuevo Gasto",
+      "forEnvelope": "Para el sobre <name>{name}</name>",
+      "fallbackDescription": "Completa el formulario para registrar un nuevo gasto en este sobre"
+    },
+    "updateDialog": {
+      "title": "Editar Gasto",
+      "description": "Modifica los datos del gasto seleccionado"
+    },
+    "deleteDialog": {
+      "title": "¿Eliminar gasto?",
+      "description": "Esta acción no se puede deshacer."
+    },
+    "detail": {
+      "title": "Detalle del Gasto",
+      "inEnvelope": "En el sobre:",
+      "totalAmount": "Monto Total",
+      "description": "Descripción",
+      "systemInfo": "Información de Sistema",
+      "createdAt": "Creado el",
+      "updatedAt": "Última actualización",
+      "envelopeImpact": "Impacto en el Sobre",
+      "represents": "Representa el",
+      "ofAssigned": "del total asignado ({amount})",
+      "noLimitEnvelope": "Este sobre no tiene límite de gasto",
+      "envelopeStatus": "Estado del Sobre",
+      "totalSpent": "Gastado Total"
+    },
+    "empty": {
+      "noResultsTitle": "Sin resultados para \"{query}\"",
+      "noResultsBody": "Prueba con otro nombre.",
+      "noDateRangeTitle": "Sin gastos en este periodo",
+      "noDateRangeBody": "Prueba con otro rango de fechas.",
+      "firstRunTitle": "Aún no hay gastos",
+      "firstRunBody": "Registra el primero con «Agregar Gasto» y verás aquí en qué se va el dinero de este sobre."
+    },
+    "pageSizeAll": "Todo",
+    "perPageValue": "{size} / pág.",
+    "toast": {
+      "created": "Gasto creado correctamente.",
+      "updated": "Gasto actualizado correctamente.",
+      "deleted": "Gasto eliminado correctamente."
+    }
+  }
+}

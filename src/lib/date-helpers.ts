@@ -1,6 +1,34 @@
 import { format, formatDistanceToNow, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
+import { enUS, es } from "date-fns/locale";
+
+import type { SupportedLocale } from "@/i18n/config";
 import { TZDate } from "@date-fns/tz";
+
+/**
+ * Every display formatter below takes the reader's locale explicitly
+ * rather than closing over one. They used to hardcode `locale: es`, so
+ * an English reader got "miércoles, 15 de julio de 2026" inside an
+ * otherwise-English page. It's a parameter and not a module-level
+ * variable because these run in both Server and Client Components, in
+ * the same process, for different readers - there is no single ambient
+ * answer to cache.
+ *
+ * The API-facing and parsing helpers take no locale: their output is a
+ * wire format or a Date, not something anybody reads.
+ */
+const DATE_FNS_LOCALES = { es, en: enUS } as const satisfies Record<
+  SupportedLocale,
+  unknown
+>;
+
+/** Long form, e.g. "miércoles, 15 de julio de 2026" / "Wednesday, 15
+ * July 2026". Spelled per-locale rather than one pattern with a
+ * translated month name - Spanish needs the "de" separators English
+ * doesn't have. */
+const LONG_DATE_PATTERN = {
+  es: "EEEE, d 'de' MMMM 'de' yyyy",
+  en: "EEEE, d MMMM yyyy",
+} as const satisfies Record<SupportedLocale, string>;
 
 function getDeviceTimeZone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
@@ -89,9 +117,12 @@ function toDeviceTimeZone(dateInput: Date): Date {
  * environment does the formatting - use this, not formatDate, for
  * `expense.date` at every display call site, server or client.
  */
-export function formatCalendarDate(date: Date): string {
-  return format(new TZDate(date, "UTC"), "EEEE, d 'de' MMMM 'de' yyyy", {
-    locale: es,
+export function formatCalendarDate(
+  date: Date,
+  locale: SupportedLocale,
+): string {
+  return format(new TZDate(date, "UTC"), LONG_DATE_PATTERN[locale], {
+    locale: DATE_FNS_LOCALES[locale],
   });
 }
 
@@ -100,23 +131,34 @@ export function formatCalendarDate(date: Date): string {
  * timezone), this reads the date's UTC wall-clock - see
  * formatCalendarDate above for why a calendar date must not be
  * timezone-converted. */
-export function formatCalendarDateShort(date: Date): string {
-  return format(new TZDate(date, "UTC"), "d MMM", { locale: es });
+export function formatCalendarDateShort(
+  date: Date,
+  locale: SupportedLocale,
+): string {
+  return format(new TZDate(date, "UTC"), "d MMM", {
+    locale: DATE_FNS_LOCALES[locale],
+  });
 }
 
-export function formatDate(dateInput: Date | string | number): string {
+export function formatDate(
+  dateInput: Date | string | number,
+  locale: SupportedLocale,
+): string {
   return format(
     toDeviceTimeZone(parseDateInput(dateInput)),
-    "EEEE, d 'de' MMMM 'de' yyyy",
-    { locale: es },
+    LONG_DATE_PATTERN[locale],
+    { locale: DATE_FNS_LOCALES[locale] },
   );
 }
 
 /** Compact "mmm yyyy" form (e.g. "jul 2026") - for tight spaces like a card cell,
  * where the full formatDate() output ("miércoles, 15 de julio de 2026") doesn't fit. */
-export function formatMonthYear(dateInput: Date | string | number): string {
+export function formatMonthYear(
+  dateInput: Date | string | number,
+  locale: SupportedLocale,
+): string {
   return format(toDeviceTimeZone(parseDateInput(dateInput)), "MMM yyyy", {
-    locale: es,
+    locale: DATE_FNS_LOCALES[locale],
   });
 }
 
@@ -124,9 +166,12 @@ export function formatMonthYear(dateInput: Date | string | number): string {
  * last-active) where the exact date matters less than how recent it was.
  * No timezone conversion needed, unlike the helpers above: the diff
  * between two instants is timezone-independent. */
-export function formatRelativeTime(dateInput: Date | string | number): string {
+export function formatRelativeTime(
+  dateInput: Date | string | number,
+  locale: SupportedLocale,
+): string {
   return formatDistanceToNow(parseDateInput(dateInput), {
-    locale: es,
+    locale: DATE_FNS_LOCALES[locale],
     addSuffix: true,
   });
 }
@@ -142,4 +187,29 @@ export function formatRelativeTime(dateInput: Date | string | number): string {
 export function getToday(): Date {
   const now = new Date();
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+/**
+ * Formats a "YYYY-MM" month key (the shape the dashboard summary
+ * endpoint reports) as a short month name, optionally with the year.
+ *
+ * Parsed as a UTC calendar value, not `new Date("2026-08")` - that
+ * would be read as UTC midnight and then converted to the device zone,
+ * which lands in July for anywhere behind UTC. Same hazard the
+ * calendar-date helpers above exist for.
+ */
+export function formatMonthKey(
+  monthKey: string,
+  locale: SupportedLocale,
+  includeYear: boolean,
+): string {
+  const [year, month] = monthKey.split("-").map(Number);
+
+  if (!year || !month) return monthKey;
+
+  return format(
+    new TZDate(Date.UTC(year, month - 1, 1), "UTC"),
+    includeYear ? "MMM yyyy" : "MMM",
+    { locale: DATE_FNS_LOCALES[locale] },
+  );
 }

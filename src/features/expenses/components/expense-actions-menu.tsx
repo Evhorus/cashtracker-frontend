@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 import { Expense } from "@/features/expenses/types";
@@ -24,17 +25,18 @@ export const ExpenseActionsMenu = ({
   expense,
   triggerClassName,
 }: ExpenseActionsMenuProps) => {
+  const t = useTranslations("expenses");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const actions: ActionItem[] = [
     {
-      label: "Editar Gasto",
+      label: t("editAria"),
       icon: Edit,
       onClick: () => setShowEditDialog(true),
     },
     {
-      label: "Eliminar Gasto",
+      label: t("deleteAria"),
       icon: Trash2,
       onClick: () => setShowDeleteDialog(true),
       variant: "destructive",
@@ -45,7 +47,7 @@ export const ExpenseActionsMenu = ({
     <>
       <ActionsDrawer
         actions={actions}
-        title="Opciones de Gasto"
+        title={t("optionsMenu")}
         triggerClassName={triggerClassName}
       />
 

@@ -74,6 +74,54 @@ This is a Next.js 16 project using the App Router and TypeScript.
 - **Submission Flow**: Parent components (e.g., Dialogs) use `useActionState` and `startTransition` to dispatch data to Server Actions.
 - **Error styling**: Fields flip to a red border via `aria-invalid` (already baked into the Tailwind classes of `Input`/`Textarea`/`CurrencySelector`/`Button`) whenever `fieldState.invalid` is true or a server-side error applies to that field. Per-field messages use the lightweight `FieldError` (`src/components/ui/field.tsx`), not `ErrorMessage`; `ErrorMessage` (`src/components/common/error-message.tsx`) is reserved for global/account-level errors that aren't tied to one field.
 
+#### Internationalisation
+
+- The app ships in Spanish and English (`next-intl` 4).
+- **Messages live with the feature that renders them**: each feature has its own
+  `messages/es.json` + `messages/en.json` holding just its namespace(s) — same
+  reasoning that co-locates its actions, schemas and components. What belongs to
+  no feature (`common`, `validation`, `nav`, `pagination`, `errors`, `theme`,
+  `currencies`) is in `src/i18n/messages/`; the landing page's copy is in
+  `src/app/(home)/messages/`.
+- `src/i18n/messages.ts` assembles them into one catalogue per locale. It spreads
+  whole top-level namespaces, so **no two files may claim the same namespace** —
+  the merge would silently keep one and drop the other. `messages.test.ts`
+  asserts that, plus that nothing is lost in the merge and that both languages
+  split into the same files.
+- Spanish is the reference language. `src/i18n/messages.test.ts` fails the build
+  if the two drift: missing keys, mismatched ICU placeholders, empty strings,
+  untranslated copy-paste.
+- `src/global.d.ts` augments next-intl's `AppConfig` with the merged Spanish
+  shape, so every `t("...")` key is checked by `tsc`. A typo is a build error,
+  not a runtime `MISSING_MESSAGE`.
+- **No user-facing string belongs in a `lib/`, `schemas/` or `_data/` module.**
+  Those are shared by every locale. Where a module used to hold labels it now
+  holds keys or plain values, translated at the point of render:
+  `ENVELOPE_STATUS_FILTER_VALUES`, `EXPENSES_PAGE_SIZE_OPTIONS`,
+  `CATEGORY_TYPE_FILTERS`, `DASHBOARD_NAV_ITEMS`, `features.ts`.
+- Form schemas are **factories** taking the `validation` translator
+  (`buildEnvelopeFormSchema(t)`, `buildExpenseSchema(currency, t)`, ...) — see
+  `src/lib/validation.ts`. Only Client Components use them, as react-hook-form
+  resolvers, so a `useTranslations("validation")` in the form is enough.
+- Date formatters in `src/lib/date-helpers.ts` take the locale explicitly.
+  Server Components get it from `getLocale()`, Client Components from
+  `useLocale()`.
+- Server Actions write their own success toasts via `getTranslations` rather
+  than echoing the backend's `{ message }`, which is Spanish only. Same reason
+  the dashboard summary endpoint now reports `month: "2026-08"` instead of a
+  formatted `label: "Ago 2026"` — a month name is presentation, and the API has
+  more than one kind of reader.
+- The locale is a **cookie** (`NEXT_LOCALE`), not a route segment — URLs are the
+  same in both languages. `src/i18n/config.ts` explains the trade-off.
+- The catalogues are imported **statically** in `src/i18n/messages.ts`. A
+  template-literal `await import()` left the bundler no static edge to the JSON,
+  so edits during `next dev` never invalidated and every newly added key logged
+  MISSING_MESSAGE until a server restart. It is also what keeps the merged shape
+  statically known, which the type augmentation above needs.
+- Clerk's own strings follow the locale too, via `src/i18n/clerk-localization.ts`.
+- Page titles use `generateMetadata`, never a module-level `metadata` object: a
+  constant is evaluated once with no request, and so no locale, in scope.
+
 #### API & Data Flow
 
 - **Boundary Validation**: All API responses are validated at the network boundary using Zod schemas within `fetchApi` (`src/lib/api-client.ts`) to prevent corrupt data from reaching the UI.

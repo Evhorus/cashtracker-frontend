@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -17,15 +18,17 @@ import { SubmitButton } from "@/components/common/submit-button";
 import { useUpdatePassword } from "../hooks/use-update-password";
 import {
   type PasswordFormValues,
-  passwordFormSchema,
+  buildPasswordFormSchema,
 } from "../schemas/account.schema";
 
 export function PasswordSection() {
+  const t = useTranslations("account.password");
+  const tValidation = useTranslations("validation");
   const { isUpdating, fieldErrors, globalErrors, updatePassword } =
     useUpdatePassword();
 
   const form = useForm<PasswordFormValues>({
-    resolver: zodResolver(passwordFormSchema),
+    resolver: zodResolver(buildPasswordFormSchema(tValidation)),
     defaultValues: {
       currentPassword: "",
       newPassword: "",
@@ -37,15 +40,15 @@ export function PasswordSection() {
     const { error } = await updatePassword(values);
     if (!error) {
       form.reset();
-      toast.success("Contraseña actualizada");
+      toast.success(t("savedToast"));
     }
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contraseña</CardTitle>
-        <CardDescription>Actualiza la contraseña de tu cuenta</CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("subtitle")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-y-4">
         {globalErrors.map((message, i) => (
@@ -59,7 +62,7 @@ export function PasswordSection() {
           <FormInput
             control={form.control}
             name="currentPassword"
-            label="Contraseña actual"
+            label={t("current")}
             type="password"
             autoComplete="current-password"
             disabled={isUpdating}
@@ -68,7 +71,7 @@ export function PasswordSection() {
           <FormInput
             control={form.control}
             name="newPassword"
-            label="Nueva contraseña"
+            label={t("new")}
             type="password"
             autoComplete="new-password"
             disabled={isUpdating}
@@ -77,13 +80,13 @@ export function PasswordSection() {
           <FormInput
             control={form.control}
             name="confirmPassword"
-            label="Confirma tu nueva contraseña"
+            label={t("confirm")}
             type="password"
             autoComplete="new-password"
             disabled={isUpdating}
           />
           <SubmitButton type="submit" isLoading={isUpdating} className="w-fit">
-            Actualizar contraseña
+            {t("submit")}
           </SubmitButton>
         </form>
       </CardContent>

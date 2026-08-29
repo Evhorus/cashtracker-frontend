@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getEnvelopeById } from "@/features/envelopes/data/get-envelope-by-id";
 import { getExpenses } from "@/features/expenses/data/get-expenses";
 import { DeleteEnvelopeAlertDialog } from "@/features/envelopes/components/delete-envelope-alert-dialog";
@@ -86,7 +86,9 @@ export default async function EnvelopePage({
   searchParams,
 }: EnvelopePageProps) {
   await auth.protect();
+  const locale = await getLocale();
   const t = await getTranslations("common");
+  const tEnvelope = await getTranslations("envelopes");
   const { envelopeId } = await params;
   const {
     startDate,
@@ -99,18 +101,18 @@ export default async function EnvelopePage({
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
   const sortOrder =
     sort === "DESC" ? "DESC" : sort === "ASC" ? "ASC" : undefined;
-  // 10 / 20 / "Todo" (100, the backend's own hard cap) - see
+  // 10 / 20 / all (100, the backend's own hard cap) - see
   // ExpensesFilter's page-size Select and expense-helpers.ts. Anything
   // else in the URL (hand-edited, stale) falls back to the default
   // rather than passing an arbitrary number through to the backend.
   const limit = EXPENSES_PAGE_SIZE_OPTIONS.some(
-    (option) => String(option.value) === limitParam,
+    (option) => String(option) === limitParam,
   )
     ? Number(limitParam)
     : EXPENSES_DEFAULT_PAGE_SIZE;
 
   // Only the envelope is on the critical path - it's what the header,
-  // the Resumen sidebar and the chart are built from. The expense list
+  // the summary sidebar and the chart are built from. The expense list
   // streams in behind its own Suspense boundary below, so changing a
   // filter re-fetches just the list instead of blanking the whole page.
   const envelope = await getEnvelopeById(envelopeId);
@@ -140,7 +142,7 @@ export default async function EnvelopePage({
           // are free text and commonly reused across years, so this is
           // the one place that disambiguates which year's envelope this is.
           <p className="flex items-center gap-1.5 truncate text-sm text-muted-foreground">
-            {formatMonthYear(envelope.createdAt)}
+            {formatMonthYear(envelope.createdAt, locale)}
             {envelope.category && (
               <>
                 <span aria-hidden="true">·</span>
@@ -172,7 +174,7 @@ export default async function EnvelopePage({
         mobileActions={<EnvelopeActionsMenu envelope={envelope} />}
       />
 
-      {/* Historial de Gastos (main, left on desktop) + Resumen (sidebar,
+      {/* Expense history (main, left on desktop) + summary (sidebar,
           sticky on desktop) - a single grid instead of a full-width stats
           row followed by a lopsided main/sidebar split, so the summary
           isn't a short block floating above a lot of empty space next to
@@ -180,7 +182,7 @@ export default async function EnvelopePage({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="order-2 space-y-6 lg:order-1 lg:col-span-2">
           <div className="flex flex-row items-center justify-between">
-            <Heading icon={DollarSign}>Historial de Gastos</Heading>
+            <Heading icon={DollarSign}>{tEnvelope("detail.history")}</Heading>
             <CreateExpenseDialog
               envelopeId={envelope.id}
               currency={envelope.currency}
@@ -214,17 +216,17 @@ export default async function EnvelopePage({
           </Suspense>
         </div>
 
-        <div className="order-1 lg:order-2 lg:sticky lg:top-20 lg:self-start">
+        <div className="order-1 lg:sticky lg:top-20 lg:order-2 lg:self-start">
           <Card className="border-0 bg-card/50 shadow-sm">
             <CardHeader>
-              <CardTitle>Resumen</CardTitle>
+              <CardTitle>{tEnvelope("detail.summary")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
               {status === "unlimited" ? (
                 <div className="flex flex-col items-center gap-1.5 rounded-lg bg-secondary/40 px-4 py-6 text-center">
                   <InfinityIcon className="h-7 w-7 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Sin límite de gasto
+                    {tEnvelope("detail.noSpendingLimit")}
                   </p>
                   <p className="text-2xl font-bold">
                     {formatCurrency(+envelope.spent, currencyConfig)}
@@ -242,9 +244,12 @@ export default async function EnvelopePage({
                 <div className="flex items-center gap-2.5 rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5">
                   <TriangleAlert className="h-4 w-4 shrink-0 text-destructive" />
                   <p className="text-sm font-medium text-destructive">
-                    Te excediste por{" "}
-                    {formatCurrency(Math.abs(remaining ?? 0), currencyConfig)}{" "}
-                    este mes
+                    {tEnvelope("detail.exceededBy", {
+                      amount: formatCurrency(
+                        Math.abs(remaining ?? 0),
+                        currencyConfig,
+                      ),
+                    })}
                   </p>
                 </div>
               )}
@@ -253,7 +258,7 @@ export default async function EnvelopePage({
                 {!isUnlimited && (
                   <div className="flex items-center justify-between py-3 first:pt-0">
                     <dt className="text-sm text-muted-foreground">
-                      Disponible
+                      {tEnvelope("detail.available")}
                     </dt>
                     <dd
                       className={cn(
@@ -274,28 +279,30 @@ export default async function EnvelopePage({
                     row only applies to capped envelopes. */}
                 {!isUnlimited && (
                   <div className="flex items-center justify-between py-3 first:pt-0">
-                    <dt className="text-sm text-muted-foreground">Gastado</dt>
+                    <dt className="text-sm text-muted-foreground">
+                      {tEnvelope("detail.spent")}
+                    </dt>
                     <dd className="text-right">
-                      <p
-                        className={cn("text-base font-bold", spentColorClass)}
-                      >
+                      <p className={cn("text-base font-bold", spentColorClass)}>
                         {formatCurrency(+envelope.spent, currencyConfig)}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {(percentage ?? 0).toFixed(1)}% del límite
+                        {tEnvelope("detail.percentOfLimit", {
+                          percent: (percentage ?? 0).toFixed(1),
+                        })}
                       </p>
                     </dd>
                   </div>
                 )}
 
-                {/* "Transacciones" gets its own row rather than riding as
-                    a caption under "Límite total" - the count has nothing
+                {/* The transaction count gets its own row rather than
+                    riding as a caption under the limit - it has nothing
                     to do with the limit itself, and reading them stacked
                     together read as if they were related. */}
                 {!isUnlimited && (
                   <div className="flex items-center justify-between py-3 first:pt-0">
                     <dt className="text-sm text-muted-foreground">
-                      Límite total
+                      {tEnvelope("detail.totalLimit")}
                     </dt>
                     <dd className="text-base font-bold">
                       {formatCurrency(+envelope.amount!, currencyConfig)}
@@ -305,7 +312,7 @@ export default async function EnvelopePage({
 
                 <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                   <dt className="text-sm text-muted-foreground">
-                    Transacciones
+                    {tEnvelope("detail.transactions")}
                   </dt>
                   <dd className="text-base font-bold">
                     {envelope.expenses.length}

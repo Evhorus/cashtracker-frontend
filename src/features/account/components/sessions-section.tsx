@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { Laptop, Loader2, LogOut, Smartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,16 +16,16 @@ import { formatRelativeTime } from "@/lib/date-helpers";
 import { useSessions } from "../hooks/use-sessions";
 
 export function SessionsSection() {
+  const t = useTranslations("account.sessions");
+  const locale = useLocale();
   const { sessions, isLoading, error, revokingId, revokeSession } =
     useSessions();
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sesiones activas</CardTitle>
-        <CardDescription>
-          Dispositivos donde tu cuenta tiene una sesión iniciada actualmente
-        </CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("subtitle")}</CardDescription>
       </CardHeader>
       <CardContent className="gap-y-3">
         {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -34,12 +35,10 @@ export function SessionsSection() {
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
         ) : sessions?.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No hay sesiones activas.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("empty")}</p>
         ) : (
           sessions?.map((session) => {
-            const DeviceIcon = session.device === "Móvil" ? Smartphone : Laptop;
+            const DeviceIcon = session.isMobile ? Smartphone : Laptop;
             return (
               <div
                 key={session.id}
@@ -55,16 +54,19 @@ export function SessionsSection() {
                         wraps to another line instead of hiding behind an
                         ellipsis (same criterion as envelope-card.tsx). */}
                     <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
-                      {session.browser} · {session.device}
+                      {session.browser} ·{" "}
+                      {t(session.isMobile ? "mobile" : "desktop")}
                       {session.isCurrent && (
                         <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
-                          Este dispositivo
+                          {t("thisDevice")}
                         </span>
                       )}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {session.location} · activo{" "}
-                      {formatRelativeTime(session.lastActiveAt)}
+                      {session.location} ·{" "}
+                      {t("lastActive", {
+                        when: formatRelativeTime(session.lastActiveAt, locale),
+                      })}
                     </p>
                   </div>
                 </div>
@@ -88,7 +90,7 @@ export function SessionsSection() {
                     ) : (
                       <LogOut />
                     )}
-                    Cerrar sesión
+                    {t("revoke")}
                   </Button>
                 )}
               </div>

@@ -1,84 +1,103 @@
 import { z } from "zod";
 
+import type { ValidationTranslator } from "@/lib/validation";
+
+/**
+ * Auth form schemas. Every export is a factory taking the `validation`
+ * translator - see ValidationTranslator for why these can't be plain
+ * module constants.
+ */
+
 // z.email() (not the deprecated .string().email()) covers "required" and
 // "valid format" in one message - an empty string already fails it, so
 // there's no separate .min(1) needed on top.
-const emailSchema = z.email({ message: "Ingresa un email válido" });
+const emailSchema = (t: ValidationTranslator) =>
+  z.email({ message: t("emailInvalid") });
 
 // Doesn't enforce Clerk's actual password policy (that's server-side and
 // configurable in the Dashboard) - just a sane client-side floor so
 // obviously-too-short passwords never round-trip to the API at all.
-const newPasswordSchema = z
-  .string()
-  .min(8, { message: "Debe tener al menos 8 caracteres" });
+const newPasswordSchema = (t: ValidationTranslator) =>
+  z.string().min(8, { message: t("passwordMin") });
 
-const confirmPasswordSchema = z
-  .string()
-  .min(1, { message: "Confirma tu contraseña" });
+const confirmPasswordSchema = (t: ValidationTranslator) =>
+  z.string().min(1, { message: t("passwordConfirm") });
 
 // Exported - features/account/schemas/account.schema.ts reuses this for
 // the reverification dialog's email_code step, same 6-digit shape, one
 // definition instead of two.
-export const codeSchema = z
-  .string()
-  .min(1, { message: "Ingresa el código" })
-  .regex(/^\d{6}$/, { message: "El código debe tener 6 dígitos" });
+export const codeSchema = (t: ValidationTranslator) =>
+  z
+    .string()
+    .min(1, { message: t("codeRequired") })
+    .regex(/^\d{6}$/, { message: t("codeSixDigits") });
 
 /*
  * Sign in
  */
 
-export const emailFormSchema = z.object({
-  email: emailSchema,
-});
-export type EmailFormValues = z.infer<typeof emailFormSchema>;
+export const buildEmailFormSchema = (t: ValidationTranslator) =>
+  z.object({
+    email: emailSchema(t),
+  });
+export type EmailFormValues = z.infer<ReturnType<typeof buildEmailFormSchema>>;
 
-export const signInPasswordFormSchema = z.object({
-  email: emailSchema,
-  password: z.string().min(1, { message: "Ingresa tu contraseña" }),
-});
-export type SignInPasswordFormValues = z.infer<typeof signInPasswordFormSchema>;
+export const buildSignInPasswordFormSchema = (t: ValidationTranslator) =>
+  z.object({
+    email: emailSchema(t),
+    password: z.string().min(1, { message: t("passwordRequired") }),
+  });
+export type SignInPasswordFormValues = z.infer<
+  ReturnType<typeof buildSignInPasswordFormSchema>
+>;
 
-export const codeFormSchema = z.object({
-  code: codeSchema,
-});
-export type CodeFormValues = z.infer<typeof codeFormSchema>;
+export const buildCodeFormSchema = (t: ValidationTranslator) =>
+  z.object({
+    code: codeSchema(t),
+  });
+export type CodeFormValues = z.infer<ReturnType<typeof buildCodeFormSchema>>;
 
 /*
  * Sign up
  */
 
-export const signUpFormSchema = z
-  .object({
-    firstName: z
-      .string()
-      .min(1, { message: "El nombre es obligatorio" })
-      .transform((val) => val.trim()),
-    lastName: z
-      .string()
-      .min(1, { message: "El apellido es obligatorio" })
-      .transform((val) => val.trim()),
-    email: emailSchema,
-    password: newPasswordSchema,
-    confirmPassword: confirmPasswordSchema,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
-  });
-export type SignUpFormValues = z.infer<typeof signUpFormSchema>;
+export const buildSignUpFormSchema = (t: ValidationTranslator) =>
+  z
+    .object({
+      firstName: z
+        .string()
+        .min(1, { message: t("firstNameRequired") })
+        .transform((val) => val.trim()),
+      lastName: z
+        .string()
+        .min(1, { message: t("lastNameRequired") })
+        .transform((val) => val.trim()),
+      email: emailSchema(t),
+      password: newPasswordSchema(t),
+      confirmPassword: confirmPasswordSchema(t),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("passwordsDontMatch"),
+      path: ["confirmPassword"],
+    });
+export type SignUpFormValues = z.infer<
+  ReturnType<typeof buildSignUpFormSchema>
+>;
 
 /*
  * Forgot password
  */
 
-export const newPasswordFormSchema = z
-  .object({
-    password: newPasswordSchema,
-    confirmPassword: confirmPasswordSchema,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
-  });
-export type NewPasswordFormValues = z.infer<typeof newPasswordFormSchema>;
+export const buildNewPasswordFormSchema = (t: ValidationTranslator) =>
+  z
+    .object({
+      password: newPasswordSchema(t),
+      confirmPassword: confirmPasswordSchema(t),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("passwordsDontMatch"),
+      path: ["confirmPassword"],
+    });
+export type NewPasswordFormValues = z.infer<
+  ReturnType<typeof buildNewPasswordFormSchema>
+>;

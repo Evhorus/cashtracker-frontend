@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -28,12 +29,14 @@ import { ConnectedAccountsSection } from "./connected-accounts-section";
 import { DeleteAccountSection } from "./delete-account-section";
 import { ReverificationProvider } from "./reverification-provider";
 
+// `value` doubles as the ?section= URL param and the message key
+// (account.sections.*) - the words are per-language, the URL isn't.
 const SECTIONS = [
-  { value: "profile", label: "Perfil", icon: UserRound },
-  { value: "password", label: "Contraseña", icon: KeyRound },
-  { value: "sessions", label: "Sesiones", icon: Laptop },
-  { value: "connected", label: "Cuentas conectadas", icon: Link2 },
-  { value: "danger", label: "Eliminar cuenta", icon: Trash2 },
+  { value: "profile", icon: UserRound },
+  { value: "password", icon: KeyRound },
+  { value: "sessions", icon: Laptop },
+  { value: "connected", icon: Link2 },
+  { value: "danger", icon: Trash2 },
 ] as const;
 
 type SectionValue = (typeof SECTIONS)[number]["value"];
@@ -46,12 +49,13 @@ function isSectionValue(value: string | null): value is SectionValue {
 // re-renders off the same Clerk-managed user object - see
 // profile-section.tsx for why that matters for the photo/name updates.
 export function AccountView() {
+  const t = useTranslations("account");
   const { isLoaded, user } = useAccountUser();
-  // ?section= opens straight into a specific tab instead of always
-  // Perfil - used by the OAuth-linking sso-callback route
+  // ?section= opens straight into a specific tab instead of always the
+  // profile - used by the OAuth-linking sso-callback route
   // (dashboard/account/sso-callback/page.tsx) so connecting or
-  // cancelling a provider lands back on Cuentas conectadas, not a blank
-  // Perfil tab that gives no sign the linking attempt even happened.
+  // cancelling a provider lands back on the connected-accounts tab, not
+  // a blank profile tab that gives no sign the attempt even happened.
   // Read once as the initial tab, not kept in sync afterward - the user
   // is free to switch tabs from there same as always.
   const searchParams = useSearchParams();
@@ -100,7 +104,7 @@ export function AccountView() {
                   return (
                     <>
                       <current.icon className="size-4 text-muted-foreground" />
-                      {current.label}
+                      {t(`sections.${current.value}`)}
                     </>
                   );
                 }}
@@ -117,7 +121,7 @@ export function AccountView() {
                   )}
                 >
                   <s.icon className="size-4" />
-                  {s.label}
+                  {t(`sections.${s.value}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -162,7 +166,7 @@ export function AccountView() {
               )}
             >
               <s.icon className="size-4" />
-              {s.label}
+              {t(`sections.${s.value}`)}
             </TabsTrigger>
           ))}
         </TabsList>

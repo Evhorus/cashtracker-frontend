@@ -18,6 +18,7 @@ import { Text } from "@/components/common/typography";
 import { useActionDialog } from "@/hooks/useActionDialog";
 import { Loader2, Trash2 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 interface DeleteEnvelopeAlertDialogProps {
@@ -25,8 +26,8 @@ interface DeleteEnvelopeAlertDialogProps {
   name: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Override the default trigger's a11y label ("Eliminar sobre") - the
-   * envelope detail page passes the shorter, i18n "Eliminar" since
+  /** Override the default trigger's a11y label (envelopes.deleteAria) -
+   * the envelope detail page passes the shorter common.delete since
    * there's only one delete button on that page, no ambiguity to
    * resolve. */
   label?: string;
@@ -43,6 +44,8 @@ export const DeleteEnvelopeAlertDialog = ({
   label,
   showLabelOnDesktop,
 }: DeleteEnvelopeAlertDialogProps) => {
+  const t = useTranslations("envelopes");
+  const tCommon = useTranslations("common");
   const router = useRouter();
   const pathname = usePathname();
   const [internalOpen, setInternalOpen] = useState(false);
@@ -84,13 +87,14 @@ export const DeleteEnvelopeAlertDialog = ({
   const Content = (
     <div className="my-2 space-y-2">
       <Text>
-        Escribe <span className="font-bold text-foreground">{name}</span> para
-        confirmar:
+        {t.rich("deleteDialog.confirmPrompt", {
+          name: () => <span className="font-bold text-foreground">{name}</span>,
+        })}
       </Text>
       <Input
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        placeholder="Nombre del sobre"
+        placeholder={t("deleteDialog.namePlaceholder")}
         className="col-span-3"
         autoComplete="off"
       />
@@ -104,7 +108,7 @@ export const DeleteEnvelopeAlertDialog = ({
           render={
             <CardActionButton
               icon={Trash2}
-              label={label ?? "Eliminar sobre"}
+              label={label ?? t("deleteAria")}
               tone="destructive"
               showLabelOnDesktop={showLabelOnDesktop}
             />
@@ -113,15 +117,14 @@ export const DeleteEnvelopeAlertDialog = ({
       )}
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Eliminar sobre?</AlertDialogTitle>
+          <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Se eliminarán todos los gastos
-            asociados.
+            {t("deleteDialog.description")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         {Content}
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
           <AlertDialogAction
             className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 sm:w-auto"
             onClick={(e) => {
@@ -131,7 +134,7 @@ export const DeleteEnvelopeAlertDialog = ({
             disabled={isPending || inputValue !== name}
           >
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Eliminar
+            {tCommon("delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

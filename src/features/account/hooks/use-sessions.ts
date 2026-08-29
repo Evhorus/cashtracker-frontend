@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useSession, useUser } from "@clerk/nextjs";
 
@@ -23,12 +24,12 @@ function toAccountSession(
     browser:
       [latestActivity.browserName, latestActivity.browserVersion]
         .filter(Boolean)
-        .join(" ") || "Navegador desconocido",
-    device: latestActivity.isMobile ? "Móvil" : "Escritorio",
+        .join(" ") || null,
+    isMobile: Boolean(latestActivity.isMobile),
     location:
       [latestActivity.city, latestActivity.country]
         .filter(Boolean)
-        .join(", ") || "Ubicación desconocida",
+        .join(", ") || null,
   };
 }
 
@@ -39,6 +40,7 @@ function toAccountSession(
 // object the way externalAccounts is, so this hook owns its own
 // fetch/refetch instead of just deriving from useUser().
 export function useSessions() {
+  const t = useTranslations("account.errors");
   const { user } = useUser();
   const { session: currentSession } = useSession();
   const [sessions, setSessions] = useState<AccountSession[] | null>(null);
@@ -69,7 +71,7 @@ export function useSessions() {
         );
       })
       .catch(() => {
-        if (!ignore) setError("No se pudieron cargar las sesiones");
+        if (!ignore) setError(t("loadFailed"));
       })
       .finally(() => {
         if (!ignore) setIsLoading(false);
@@ -78,7 +80,7 @@ export function useSessions() {
     return () => {
       ignore = true;
     };
-  }, [user, currentSession?.id, reloadToken]);
+  }, [user, currentSession?.id, reloadToken, t]);
 
   function reload() {
     setIsLoading(true);
@@ -101,7 +103,7 @@ export function useSessions() {
       await target?.revoke();
       reload();
     } catch {
-      setError("No se pudo cerrar esa sesión");
+      setError(t("revokeFailed"));
     } finally {
       setRevokingId(null);
     }

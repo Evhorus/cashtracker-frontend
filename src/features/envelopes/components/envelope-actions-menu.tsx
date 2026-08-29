@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Envelope } from "@/features/envelopes/types";
 import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
 import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
@@ -12,17 +13,18 @@ interface EnvelopeActionsMenuProps {
 }
 
 export const EnvelopeActionsMenu = ({ envelope }: EnvelopeActionsMenuProps) => {
+  const t = useTranslations("envelopes");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const actions: ActionItem[] = [
     {
-      label: "Editar Sobre",
+      label: t("editAria"),
       icon: Edit,
       onClick: () => setShowEditDialog(true),
     },
     {
-      label: "Eliminar Sobre",
+      label: t("deleteAria"),
       icon: Trash2,
       onClick: () => setShowDeleteDialog(true),
       variant: "destructive",
@@ -31,7 +33,7 @@ export const EnvelopeActionsMenu = ({ envelope }: EnvelopeActionsMenuProps) => {
 
   return (
     <>
-      <ActionsDrawer actions={actions} title="Opciones de Sobre" />
+      <ActionsDrawer actions={actions} title={t("optionsMenu")} />
 
       <UpdateEnvelopeDialog
         envelope={envelope}

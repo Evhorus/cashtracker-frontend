@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import {
@@ -9,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CURRENCY_MAP, type CurrencyCode } from "@/lib/format-currency";
+import { type CurrencyCode } from "@/lib/format-currency";
 
 interface CurrencyFilterSelectProps {
   currencies: CurrencyCode[];
@@ -29,6 +30,8 @@ export const CurrencyFilterSelect = ({
   currencies,
   selectedCurrency,
 }: CurrencyFilterSelectProps) => {
+  const t = useTranslations("statistics");
+  const tCurrency = useTranslations("currencies");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -48,7 +51,7 @@ export const CurrencyFilterSelect = ({
       <SelectTrigger
         size="sm"
         className="w-auto gap-1.5 font-medium"
-        aria-label="Filtrar por moneda"
+        aria-label={t("filterCurrency")}
       >
         {/* Currency code only (COP, not "Peso Colombiano") - this is a
             compact filter chip, not the place a full currency name earns
@@ -60,7 +63,7 @@ export const CurrencyFilterSelect = ({
       <SelectContent>
         {currencies.map((currency) => (
           <SelectItem key={currency} value={currency}>
-            {CURRENCY_MAP[currency]?.label ?? currency}
+            {tCurrency(currency)}
           </SelectItem>
         ))}
       </SelectContent>

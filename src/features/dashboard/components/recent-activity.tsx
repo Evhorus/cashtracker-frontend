@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { formatCalendarDateShort } from "@/lib/date-helpers";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,13 @@ interface RecentActivityProps {
 // Renders nothing when there are no expenses yet - unlike "Sobres en
 // alerta" above it on the page, an empty state here ("no activity yet")
 // wouldn't tell the user anything the empty envelopes list doesn't already.
-export function RecentActivity({ expenses, className }: RecentActivityProps) {
+export async function RecentActivity({
+  expenses,
+  className,
+}: RecentActivityProps) {
+  const t = await getTranslations("dashboard");
+  const locale = await getLocale();
+
   if (expenses.length === 0) return null;
 
   return (
@@ -29,7 +36,7 @@ export function RecentActivity({ expenses, className }: RecentActivityProps) {
         className,
       )}
     >
-      <Heading size="sm">Actividad reciente</Heading>
+      <Heading size="sm">{t("recentActivity")}</Heading>
 
       <div className="mt-3 space-y-1">
         {expenses.map((expense) => {
@@ -46,11 +53,10 @@ export function RecentActivity({ expenses, className }: RecentActivityProps) {
                 </span>
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
-                  {expense.name}
-                </p>
+                <p className="truncate text-sm font-medium">{expense.name}</p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {expense.envelopeName} · {formatCalendarDateShort(expense.date)}
+                  {expense.envelopeName} ·{" "}
+                  {formatCalendarDateShort(expense.date, locale)}
                 </p>
               </div>
               <span className="shrink-0 font-mono text-sm font-semibold">

@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { Expense } from "@/features/expenses/types";
 import { useParams, useSearchParams } from "next/navigation";
 import { Receipt, SearchX } from "lucide-react";
@@ -22,6 +23,7 @@ interface ExpensesGridProps {
  * the server used to build the list, so there's nothing to thread down.
  */
 function ExpensesEmptyState() {
+  const t = useTranslations("expenses.empty");
   const searchParams = useSearchParams();
   const search = searchParams.get("search");
   const hasDateFilter =
@@ -31,8 +33,8 @@ function ExpensesEmptyState() {
     return (
       <EmptyState
         icon={SearchX}
-        title={`Sin resultados para "${search}"`}
-        description="Prueba con otro nombre."
+        title={t("noResultsTitle", { query: search })}
+        description={t("noResultsBody")}
       />
     );
   }
@@ -41,8 +43,8 @@ function ExpensesEmptyState() {
     return (
       <EmptyState
         icon={SearchX}
-        title="Sin gastos en este periodo"
-        description="Prueba con otro rango de fechas."
+        title={t("noDateRangeTitle")}
+        description={t("noDateRangeBody")}
       />
     );
   }
@@ -51,8 +53,8 @@ function ExpensesEmptyState() {
     <EmptyState
       variant="first-run"
       icon={Receipt}
-      title="Aún no hay gastos"
-      description="Registra el primero con «Agregar Gasto» y verás aquí en qué se va el dinero de este sobre."
+      title={t("firstRunTitle")}
+      description={t("firstRunBody")}
     />
   );
 }

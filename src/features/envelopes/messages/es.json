@@ -1,0 +1,94 @@
+{
+  "envelopes": {
+    "title": "Sobres",
+    "count": "{count, plural, one {# sobre} other {# sobres}}",
+    "new": "Nuevo Sobre",
+    "seeDetails": "Ver detalles",
+    "optionsMenu": "Opciones de Sobre",
+    "editAria": "Editar sobre",
+    "deleteAria": "Eliminar sobre",
+    "searchPlaceholder": "Buscar por nombre o categoría...",
+    "searchAria": "Buscar sobres por nombre o categoría",
+    "filters": {
+      "all": "Todos",
+      "active": "Activos",
+      "alert": "En alerta",
+      "exceeded": "Excedidos",
+      "unlimited": "Sin límite"
+    },
+    "status": {
+      "unlimited": "Sin límite",
+      "normal": "Controlado",
+      "warning": "En riesgo",
+      "exceeded": "Excedido"
+    },
+    "table": {
+      "envelope": "Sobre",
+      "category": "Categoría",
+      "progress": "Progreso",
+      "spent": "Gastado",
+      "available": "Disponible",
+      "status": "Estado",
+      "noLimit": "Sin límite"
+    },
+    "form": {
+      "name": "Nombre del sobre",
+      "namePlaceholder": "Ej: Gastos del hogar",
+      "currency": "Moneda",
+      "hasLimit": "Este sobre tiene un límite de gasto",
+      "amount": "Monto",
+      "category": "Categoría (opcional)"
+    },
+    "createDialog": {
+      "title": "Crear",
+      "description": "Aquí puedes crear un sobre"
+    },
+    "updateDialog": {
+      "title": "Editar",
+      "description": "Aquí puedes editar el sobre"
+    },
+    "deleteDialog": {
+      "title": "¿Eliminar sobre?",
+      "description": "Esta acción no se puede deshacer. Se eliminarán todos los gastos asociados.",
+      "confirmPrompt": "Escribe <name>{name}</name> para confirmar:",
+      "namePlaceholder": "Nombre del sobre"
+    },
+    "detail": {
+      "summary": "Resumen",
+      "history": "Historial de Gastos",
+      "noSpendingLimit": "Sin límite de gasto",
+      "exceededBy": "Te excediste por {amount} este mes",
+      "available": "Disponible",
+      "spent": "Gastado",
+      "percentOfLimit": "{percent}% del límite",
+      "totalLimit": "Límite total",
+      "transactions": "Transacciones"
+    },
+    "empty": {
+      "noResultsTitle": "Sin resultados para \"{query}\"",
+      "noResultsBody": "Prueba con otro nombre o categoría.",
+      "noneInFilterTitle": "Sin sobres en \"{filter}\"",
+      "noneInFilterBody": "Prueba con otro filtro.",
+      "firstRunTitle": "Organiza tus gastos por sobres",
+      "firstRunBody": "Crea un sobre para cada categoría — mercado, transporte, ocio — y CashTracker te avisa antes de que te excedas.",
+      "firstRunEyebrow": "CashTracker"
+    },
+    "card": {
+      "noLimit": "sin límite",
+      "spent": "gastado",
+      "available": "{amount} disp."
+    },
+    "chart": {
+      "spent": "Gastado",
+      "available": "Disponible",
+      "exceeded": "Excedido",
+      "used": "usado",
+      "limitExceeded": "Límite excedido"
+    },
+    "toast": {
+      "created": "Sobre creado correctamente.",
+      "updated": "Sobre actualizado correctamente.",
+      "deleted": "Sobre eliminado correctamente."
+    }
+  }
+}

@@ -1,67 +1,76 @@
 import { z } from "zod";
 
 import { codeSchema } from "@/features/auth/schemas/auth.schema";
+import type { ValidationTranslator } from "@/lib/validation";
 
 // Mirrors the floor set in features/auth/schemas/auth.schema.ts - not
 // Clerk's actual password policy (server-side, configurable in the
 // Dashboard), just enough to stop an obviously-too-short password from
 // round-tripping to the API at all.
-const newPasswordSchema = z
-  .string()
-  .min(8, { message: "Debe tener al menos 8 caracteres" });
+const newPasswordSchema = (t: ValidationTranslator) =>
+  z.string().min(8, { message: t("passwordMin") });
 
-const confirmPasswordSchema = z
-  .string()
-  .min(1, { message: "Confirma tu contraseña" });
+const confirmPasswordSchema = (t: ValidationTranslator) =>
+  z.string().min(1, { message: t("passwordConfirm") });
 
 /*
  * Profile
  */
 
-export const profileFormSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, { message: "El nombre es obligatorio" })
-    .transform((val) => val.trim()),
-  lastName: z
-    .string()
-    .min(1, { message: "El apellido es obligatorio" })
-    .transform((val) => val.trim()),
-});
-export type ProfileFormValues = z.infer<typeof profileFormSchema>;
+export const buildProfileFormSchema = (t: ValidationTranslator) =>
+  z.object({
+    firstName: z
+      .string()
+      .min(1, { message: t("firstNameRequired") })
+      .transform((val) => val.trim()),
+    lastName: z
+      .string()
+      .min(1, { message: t("lastNameRequired") })
+      .transform((val) => val.trim()),
+  });
+export type ProfileFormValues = z.infer<
+  ReturnType<typeof buildProfileFormSchema>
+>;
 
 /*
  * Password
  */
 
-export const passwordFormSchema = z
-  .object({
-    currentPassword: z
-      .string()
-      .min(1, { message: "Ingresa tu contraseña actual" }),
-    newPassword: newPasswordSchema,
-    confirmPassword: confirmPasswordSchema,
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Las contraseñas no coinciden",
-    path: ["confirmPassword"],
-  });
-export type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+export const buildPasswordFormSchema = (t: ValidationTranslator) =>
+  z
+    .object({
+      currentPassword: z
+        .string()
+        .min(1, { message: t("currentPasswordRequired") }),
+      newPassword: newPasswordSchema(t),
+      confirmPassword: confirmPasswordSchema(t),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t("passwordsDontMatch"),
+      path: ["confirmPassword"],
+    });
+export type PasswordFormValues = z.infer<
+  ReturnType<typeof buildPasswordFormSchema>
+>;
 
 /*
  * Reverification (ReverificationDialog - see use-reverification-flow.ts)
  */
 
-export const reverificationPasswordFormSchema = z.object({
-  password: z.string().min(1, { message: "Ingresa tu contraseña" }),
-});
+export const buildReverificationPasswordFormSchema = (
+  t: ValidationTranslator,
+) =>
+  z.object({
+    password: z.string().min(1, { message: t("passwordRequired") }),
+  });
 export type ReverificationPasswordFormValues = z.infer<
-  typeof reverificationPasswordFormSchema
+  ReturnType<typeof buildReverificationPasswordFormSchema>
 >;
 
-export const reverificationCodeFormSchema = z.object({
-  code: codeSchema,
-});
+export const buildReverificationCodeFormSchema = (t: ValidationTranslator) =>
+  z.object({
+    code: codeSchema(t),
+  });
 export type ReverificationCodeFormValues = z.infer<
-  typeof reverificationCodeFormSchema
+  ReturnType<typeof buildReverificationCodeFormSchema>
 >;

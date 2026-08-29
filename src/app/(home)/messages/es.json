@@ -1,0 +1,48 @@
+{
+  "home": {
+    "badge": "100% gratis para empezar",
+    "heroTitle": "Toma el control de tus <accent>finanzas personales</accent>",
+    "heroBody": "CashTracker te ayuda a gestionar tus gastos, crear sobres inteligentes y alcanzar tus metas financieras con una interfaz moderna y fácil de usar.",
+    "ctaStart": "Comenzar Gratis",
+    "featuresTitle": "Todo lo que necesitas para gestionar tu dinero",
+    "featuresBody": "Herramientas poderosas diseñadas para simplificar tu vida financiera",
+    "benefitsTitle": "Simplifica tu economía personal",
+    "benefit1Title": "Sin complicaciones",
+    "benefit1Body": "Interfaz intuitiva que cualquiera puede usar desde el primer día",
+    "benefit2Title": "Acceso multiplataforma",
+    "benefit2Body": "Úsalo desde tu computadora, tablet o smartphone sin problemas",
+    "benefit3Title": "Resultados inmediatos",
+    "benefit3Body": "Comienza a ver patrones y optimizar tus gastos desde el primer mes",
+    "freeLabel": "Gratis para empezar",
+    "readyTitle": "¿Listo para comenzar?",
+    "readyBody": "Únete a miles de personas que ya controlan sus finanzas",
+    "ctaCreateAccount": "Crear Cuenta Gratis",
+    "finalTitle": "Empieza a gestionar tu dinero hoy mismo",
+    "finalBody": "No necesitas tarjeta de crédito. Comienza gratis en menos de 2 minutos.",
+    "ctaNow": "Comenzar Ahora",
+    "footer": "Control de gastos personales.",
+    "meta": {
+      "title": "CashTracker - Control de Finanzas Personales",
+      "description": "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.",
+      "keywords": "finanzas personales, control de gastos, sobres, ahorro, gestión financiera, cashtracker",
+      "ogTitle": "CashTracker - Toma el control de tus finanzas personales",
+      "ogDescription": "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras. 100% gratis para empezar.",
+      "ogLocale": "es_ES",
+      "twitterDescription": "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras. 100% gratis."
+    },
+    "features": {
+      "controlTitle": "Control Total",
+      "controlBody": "Administra tus gastos y sobres desde un solo lugar de forma intuitiva.",
+      "chartsTitle": "Visualización Clara",
+      "chartsBody": "Gráficos interactivos que muestran exactamente en qué gastas tu dinero.",
+      "envelopesTitle": "Sobres Inteligentes",
+      "envelopesBody": "Crea sobres personalizados y recibe alertas cuando te acerques al límite.",
+      "reduceTitle": "Reduce Gastos",
+      "reduceBody": "Identifica patrones de gasto y encuentra oportunidades para ahorrar.",
+      "secureTitle": "Datos Seguros",
+      "secureBody": "Tu información financiera está protegida y solo tú tienes acceso a ella.",
+      "reportsTitle": "Reportes Detallados",
+      "reportsBody": "Accede a reportes completos sobre tus hábitos financieros y progreso."
+    }
+  }
+}

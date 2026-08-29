@@ -1,5 +1,6 @@
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { CURRENCY_MAP } from "@/lib/format-currency";
+import { CURRENCY_MAP, type CurrencyCode } from "@/lib/format-currency";
 
 export interface CurrencySelectorProps {
   value: string;
@@ -18,6 +19,7 @@ export function CurrencySelector({
   id,
   "aria-invalid": ariaInvalid,
 }: CurrencySelectorProps) {
+  const t = useTranslations("currencies");
   return (
     <select
       id={id}
@@ -34,7 +36,7 @@ export function CurrencySelector({
     >
       {Object.entries(CURRENCY_MAP).map(([code, config]) => (
         <option key={code} value={code}>
-          {config.label} ({config.symbol})
+          {t(code as CurrencyCode)} ({config.symbol})
         </option>
       ))}
     </select>

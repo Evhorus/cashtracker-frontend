@@ -5,6 +5,7 @@ import {
   formatCalendarDateForApi,
   formatCalendarDateShort,
   formatMonthYear,
+  formatRelativeTime,
   getToday,
   parseCalendarDate,
   toFormCalendarDate,
@@ -51,20 +52,22 @@ describe("formatCalendarDate", () => {
   it("renders the stored day, not the device-local one", () => {
     const date = parseCalendarDate("2026-09-22");
 
-    expect(formatCalendarDate(date)).toBe("martes, 22 de septiembre de 2026");
+    expect(formatCalendarDate(date, "es")).toBe(
+      "martes, 22 de septiembre de 2026",
+    );
   });
 
   it("holds at a month boundary, where an off-by-one would show", () => {
     const date = parseCalendarDate("2026-03-01");
 
-    expect(formatCalendarDate(date)).toBe("domingo, 1 de marzo de 2026");
-    expect(formatCalendarDateShort(date)).toBe("1 mar");
+    expect(formatCalendarDate(date, "es")).toBe("domingo, 1 de marzo de 2026");
+    expect(formatCalendarDateShort(date, "es")).toBe("1 mar");
   });
 
   it("holds at a year boundary", () => {
     const date = parseCalendarDate("2027-01-01");
 
-    expect(formatCalendarDate(date)).toBe("viernes, 1 de enero de 2027");
+    expect(formatCalendarDate(date, "es")).toBe("viernes, 1 de enero de 2027");
   });
 });
 
@@ -123,6 +126,48 @@ describe("formatMonthYear", () => {
   it("converts a real instant into the device timezone", () => {
     // Unlike a calendar date, an instant SHOULD be localized: 03:00 UTC
     // on 1 September is still 31 August in Bogotá.
-    expect(formatMonthYear("2026-09-01T03:00:00.000Z")).toBe("ago 2026");
+    expect(formatMonthYear("2026-09-01T03:00:00.000Z", "es")).toBe("ago 2026");
+  });
+});
+
+describe("locale", () => {
+  // These formatters used to hardcode Spanish, so an English reader saw
+  // "martes, 22 de septiembre de 2026" inside an otherwise-English
+  // page. What's worth locking is not that the words differ - date-fns
+  // handles that - but that the *pattern* does: Spanish needs the "de"
+  // separators English doesn't, so the two can't share one format
+  // string, and a regression would silently produce "Tuesday, 22 de
+  // September de 2026".
+  const date = parseCalendarDate("2026-09-22");
+
+  it("renders a long date with each language's own separators", () => {
+    expect(formatCalendarDate(date, "es")).toBe(
+      "martes, 22 de septiembre de 2026",
+    );
+    expect(formatCalendarDate(date, "en")).toBe("Tuesday, 22 September 2026");
+  });
+
+  it("still reads the stored day, in either language", () => {
+    // The whole point of the calendar-date helpers: no timezone
+    // conversion. Adding a locale parameter must not have changed that.
+    expect(formatCalendarDateShort(date, "es")).toBe("22 sep");
+    expect(formatCalendarDateShort(date, "en")).toBe("22 Sep");
+  });
+
+  it("localizes an instant's month, timezone conversion included", () => {
+    // 03:00 UTC on 1 September is still August in Bogotá (TZ is pinned
+    // to America/Bogota - see vitest.config.mts), and that has to stay
+    // true independently of which language names the month.
+    expect(formatMonthYear("2026-09-01T03:00:00.000Z", "es")).toBe("ago 2026");
+    expect(formatMonthYear("2026-09-01T03:00:00.000Z", "en")).toBe("Aug 2026");
+  });
+
+  it("localizes a relative time", () => {
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+
+    expect(formatRelativeTime(twoHoursAgo, "es")).toBe(
+      "hace alrededor de 2 horas",
+    );
+    expect(formatRelativeTime(twoHoursAgo, "en")).toBe("about 2 hours ago");
   });
 });

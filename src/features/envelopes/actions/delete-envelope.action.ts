@@ -3,6 +3,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath, updateTag } from "next/cache";
 import { EnvelopesService } from "../services/envelopes.service";
+import { getTranslations } from "next-intl/server";
+
 import { createSafeAction } from "@/lib/safe-action";
 
 // Goes through EnvelopesService + createSafeAction like every other
@@ -17,6 +19,11 @@ import { createSafeAction } from "@/lib/safe-action";
 // returns `envelopesRepository.remove(envelope)`. Reading a `.message`
 // off that would be `undefined`, which useActionWithToast treats as "no
 // success" - no toast, and the dialog never closes.
+// The success toast is written here, not read off the API response.
+// The backend's `{ message }` is Spanish and has no idea who's reading
+// it - the same response has to be able to render in either language.
+// Toast wording is presentation, so it belongs on this side of the
+// wire; getTranslations resolves it against the caller's own locale.
 // eslint-disable-next-line @clerk/next/require-auth-protection -- Protected inside createSafeAction wrapper by calling auth.protect() in the handler.
 export const deleteEnvelopeAction = createSafeAction(
   async (envelopeId: string) => {
@@ -37,6 +44,8 @@ export const deleteEnvelopeAction = createSafeAction(
     updateTag("dashboard-summary");
     updateTag("dashboard-category-breakdown");
 
-    return { successMessage: "Sobre eliminado correctamente." };
+    const t = await getTranslations("envelopes.toast");
+
+    return { successMessage: t("deleted") };
   },
 );

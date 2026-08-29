@@ -1,0 +1,76 @@
+{
+  "account": {
+    "title": "My account",
+    "subtitle": "Manage your profile, security and account",
+    "menu": "Account menu",
+    "sections": {
+      "profile": "Profile",
+      "password": "Password",
+      "sessions": "Sessions",
+      "connected": "Connected accounts",
+      "danger": "Delete account"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Your name and profile photo",
+      "changePhoto": "Change profile photo",
+      "changePhotoHint": "Click the photo to change it",
+      "save": "Save changes",
+      "savedToast": "Profile updated",
+      "photoSavedToast": "Profile photo updated"
+    },
+    "password": {
+      "title": "Password",
+      "subtitle": "Update your account password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm your new password",
+      "submit": "Update password",
+      "savedToast": "Password updated"
+    },
+    "sessions": {
+      "title": "Active sessions",
+      "subtitle": "Devices where your account is currently signed in",
+      "thisDevice": "This device",
+      "empty": "No active sessions.",
+      "mobile": "Mobile",
+      "desktop": "Desktop",
+      "unknownBrowser": "Unknown browser",
+      "unknownLocation": "Unknown location",
+      "lastActive": "active {when}",
+      "revoke": "Sign out"
+    },
+    "connected": {
+      "title": "Connected accounts",
+      "subtitle": "Link other providers to sign in faster",
+      "connectNew": "Connect a new provider"
+    },
+    "danger": {
+      "title": "Delete account",
+      "confirmTitle": "Delete your account?",
+      "yourEmail": "Your email",
+      "body": "Permanently delete your account and all of your data. This can't be undone.",
+      "confirmBody": "This can't be undone. Your account, and every envelope and expense in it, will be deleted."
+    },
+    "reverification": {
+      "title": "Confirm it's you",
+      "verify": "Verify",
+      "resendCode": "Resend code",
+      "subtitle": "For your security, confirm it's you before continuing",
+      "codeSentTo": "We sent a code to {identifier}"
+    },
+    "signOut": "Sign out",
+    "errors": {
+      "unexpected": "Something went wrong. Please try again.",
+      "noSession": "There's no active session",
+      "loadFailed": "Couldn't load your sessions",
+      "revokeFailed": "Couldn't sign that session out",
+      "connectFailed": "Couldn't start connecting that provider",
+      "passwordUpdateFailed": "Couldn't update your password",
+      "noMethodAvailable": "We couldn't verify it's you with the methods available on this account.",
+      "startFailed": "Couldn't start verification",
+      "completeFailed": "Couldn't complete verification",
+      "resendFailed": "Couldn't resend the code"
+    }
+  }
+}

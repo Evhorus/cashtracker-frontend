@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { LucideIcon } from "lucide-react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Category } from "../types";
@@ -17,9 +18,10 @@ interface CategoryCardProps {
 // EnvelopeCard - elevated hover (-translate-y-1, shadow-lg), the
 // gradient overlay, the bigger icon that scales on hover, bold tracked
 // title - just without a progress bar/amount, since a category has
-// neither. The "Predeterminada"/"Personalizada" chip mirrors
+// neither. The default/custom chip mirrors
 // EnvelopeCard's always-shown currency chip.
 export function CategoryCard({ category, count, Icon }: CategoryCardProps) {
+  const t = useTranslations("categories");
   return (
     <Card className="group relative h-full overflow-hidden border-border/60 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg md:hidden">
       <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-transparent to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -38,11 +40,11 @@ export function CategoryCard({ category, count, Icon }: CategoryCardProps) {
               <span className="block truncate">{category.label}</span>
             </CardTitle>
             <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">
-              <span>
-                {count} {count === 1 ? "sobre" : "sobres"}
-              </span>
+              <span>{t("envelopeCount", { count })}</span>
               <span className="rounded-sm bg-secondary px-1 py-0.5 text-secondary-foreground">
-                {category.isDefault ? "Predeterminada" : "Personalizada"}
+                {category.isDefault
+                  ? t("table.isDefault")
+                  : t("table.isCustom")}
               </span>
             </p>
           </div>
@@ -57,7 +59,10 @@ export function CategoryCard({ category, count, Icon }: CategoryCardProps) {
         {!category.isDefault && (
           <div className="flex shrink-0 items-center">
             <UpdateCategoryDialog category={category} />
-            <DeleteCategoryAlertDialog id={category.id} label={category.label} />
+            <DeleteCategoryAlertDialog
+              id={category.id}
+              label={category.label}
+            />
           </div>
         )}
       </CardHeader>

@@ -7,41 +7,16 @@ import {
   BarChart3,
 } from "lucide-react";
 
+/**
+ * The landing page's feature grid. Icons and order live here; the
+ * wording lives in `home.features.*` - `key` names the pair of
+ * `<key>Title` / `<key>Body` messages that describe each one.
+ */
 export const features = [
-  {
-    icon: Wallet,
-    title: "Control Total",
-    description:
-      "Administra tus gastos y sobres desde un solo lugar de forma intuitiva.",
-  },
-  {
-    icon: PieChart,
-    title: "Visualización Clara",
-    description:
-      "Gráficos interactivos que muestran exactamente en qué gastas tu dinero.",
-  },
-  {
-    icon: Target,
-    title: "Sobres Inteligentes",
-    description:
-      "Crea sobres personalizados y recibe alertas cuando te acerques al límite.",
-  },
-  {
-    icon: TrendingDown,
-    title: "Reduce Gastos",
-    description:
-      "Identifica patrones de gasto y encuentra oportunidades para ahorrar.",
-  },
-  {
-    icon: Shield,
-    title: "Datos Seguros",
-    description:
-      "Tu información financiera está protegida y solo tú tienes acceso a ella.",
-  },
-  {
-    icon: BarChart3,
-    title: "Reportes Detallados",
-    description:
-      "Accede a reportes completos sobre tus hábitos financieros y progreso.",
-  },
-];
+  { icon: Wallet, key: "control" },
+  { icon: PieChart, key: "charts" },
+  { icon: Target, key: "envelopes" },
+  { icon: TrendingDown, key: "reduce" },
+  { icon: Shield, key: "secure" },
+  { icon: BarChart3, key: "reports" },
+] as const;

@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import {
   Pagination,
   PaginationContent,
@@ -55,7 +57,7 @@ function getPageRange(current: number, total: number) {
   return range;
 }
 
-export const PaginationControls = ({
+export const PaginationControls = async ({
   page,
   totalPages,
   hasNextPage,
@@ -64,6 +66,8 @@ export const PaginationControls = ({
   searchParams,
 }: PaginationControlsProps) => {
   if (totalPages <= 1) return null;
+
+  const t = await getTranslations("pagination");
 
   const pages = getPageRange(page, totalPages);
 
@@ -89,8 +93,8 @@ export const PaginationControls = ({
               components/ui is generated code we don't hand-edit. */}
           <PaginationPrevious
             href={buildHref(basePath, Math.max(1, page - 1), searchParams)}
-            text="Anterior"
-            aria-label="Ir a la página anterior"
+            text={t("previous")}
+            aria-label={t("goToPrevious")}
             aria-disabled={!hasPreviousPage}
             inert={!hasPreviousPage}
             className={
@@ -109,7 +113,7 @@ export const PaginationControls = ({
               <PaginationLink
                 href={buildHref(basePath, entry, searchParams)}
                 isActive={entry === page}
-                aria-label={`Ir a la página ${entry}`}
+                aria-label={t("goToPage", { page: entry })}
               >
                 {entry}
               </PaginationLink>
@@ -124,8 +128,8 @@ export const PaginationControls = ({
               Math.min(totalPages, page + 1),
               searchParams,
             )}
-            text="Siguiente"
-            aria-label="Ir a la página siguiente"
+            text={t("next")}
+            aria-label={t("goToNext")}
             aria-disabled={!hasNextPage}
             inert={!hasNextPage}
             className={

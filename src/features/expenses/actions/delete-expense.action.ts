@@ -3,6 +3,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath, updateTag } from "next/cache";
 import { ExpensesService } from "../services/expenses.service";
+import { getTranslations } from "next-intl/server";
+
 import { createSafeAction } from "@/lib/safe-action";
 
 // Goes through ExpensesService + createSafeAction like every other
@@ -14,6 +16,11 @@ import { createSafeAction } from "@/lib/safe-action";
 // `remove()` in cashtracker-backend), so the backend's own wording is
 // used when present - with a fallback so a future contract change can't
 // silently leave the dialog open with no toast.
+// The success toast is written here, not read off the API response.
+// The backend's `{ message }` is Spanish and has no idea who's reading
+// it - the same response has to be able to render in either language.
+// Toast wording is presentation, so it belongs on this side of the
+// wire; getTranslations resolves it against the caller's own locale.
 // eslint-disable-next-line @clerk/next/require-auth-protection -- Protected inside createSafeAction wrapper by calling auth.protect() in the handler.
 export const deleteExpenseAction = createSafeAction(
   async ({
@@ -24,7 +31,7 @@ export const deleteExpenseAction = createSafeAction(
     expenseId: string;
   }) => {
     await auth.protect();
-    const response = await ExpensesService.delete(envelopeId, expenseId);
+    await ExpensesService.delete(envelopeId, expenseId);
 
     revalidatePath("/dashboard");
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
@@ -37,8 +44,8 @@ export const deleteExpenseAction = createSafeAction(
     updateTag("dashboard-category-breakdown");
     updateTag("dashboard-recent-expenses");
 
-    return {
-      successMessage: response.message || "Gasto eliminado correctamente.",
-    };
+    const t = await getTranslations("expenses.toast");
+
+    return { successMessage: t("deleted") };
   },
 );

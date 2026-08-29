@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useReverification, useUser } from "@clerk/nextjs";
 import { isReverificationCancelledError } from "@clerk/nextjs/errors";
@@ -15,6 +16,7 @@ import { useReverificationGate } from "./use-reverification-gate";
 // ReverificationDialog (our own UI, rendered by ReverificationProvider)
 // asks for it instead. See use-reverification-gate.ts.
 export function useUpdatePassword() {
+  const t = useTranslations("account.errors");
   const { user } = useUser();
   const onNeedsReverification = useReverificationGate();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -35,7 +37,7 @@ export function useUpdatePassword() {
     currentPassword: string;
     newPassword: string;
   }): Promise<AccountActionResult> {
-    if (!user) return { error: "No hay una sesión activa" };
+    if (!user) return { error: t("noSession") };
 
     setIsUpdating(true);
     setFieldErrors({});
@@ -56,10 +58,11 @@ export function useUpdatePassword() {
           currentPassword: ["current_password", "currentPassword"],
           newPassword: ["password", "new_password", "newPassword"],
         },
+        t("unexpected"),
       );
       setFieldErrors(fields);
       setGlobalErrors(globals);
-      return { error: globals[0] ?? "No se pudo actualizar la contraseña" };
+      return { error: globals[0] ?? t("passwordUpdateFailed") };
     } finally {
       setIsUpdating(false);
     }

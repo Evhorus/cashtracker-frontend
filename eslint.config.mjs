@@ -14,7 +14,15 @@ const eslintConfig = defineConfig([
         "error",
         {
           protected: ["src/app/dashboard/**", "src/features/**"],
-          public: ["src/app/(auth)/**", "src/app/(home)/**"],
+          public: [
+            "src/app/(auth)/**",
+            "src/app/(home)/**",
+            // Changing language needs no session - the landing page and
+            // the sign-in screen both offer the switcher, so requiring
+            // auth here would break it for exactly the visitors most
+            // likely to need it.
+            "src/features/locale/**",
+          ],
           resources: {
             routeHandlers: true,
             serverFunctions: true,

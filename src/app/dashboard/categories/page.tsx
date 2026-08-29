@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
+import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/common/page-header";
 import { getCategoryUsage } from "@/features/categories/data/get-category-usage";
 import { CategoriesSection } from "@/features/categories/components/categories-section";
 import { CategoriesFilterProvider } from "@/features/categories/components/categories-filter-context";
 import { CreateCategoryDialog } from "@/features/categories/components/create-category-dialog";
 
-export const metadata: Metadata = { title: "Categorías" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("categories");
+  return { title: t("title") };
+}
 
 // Force dynamic rendering because this page uses Clerk auth, same as
 // account/page.tsx and dashboard/envelopes/page.tsx.
@@ -14,6 +18,7 @@ export const dynamic = "force-dynamic";
 
 export default async function CategoriesPage() {
   await auth.protect();
+  const t = await getTranslations("categories");
 
   // Counted by the backend (GET /categories/usage). This used to fetch
   // every envelope - capped at 100 - and count in memory, so the numbers
@@ -42,7 +47,7 @@ export default async function CategoriesPage() {
             a wide viewport, far from both the title and the table it
             filters. */}
         <PageHeader
-          title="Categorías"
+          title={t("title")}
           backUrl="/dashboard"
           actions={<CreateCategoryDialog />}
           mobileActions={<CreateCategoryDialog />}

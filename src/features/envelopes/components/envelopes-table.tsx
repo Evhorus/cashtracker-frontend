@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { Infinity as InfinityIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Envelope } from "@/features/envelopes/types";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { cn } from "@/lib/utils";
-import { CategoryIcon, CategoryLabel } from "@/features/categories/components/category-badge";
+import {
+  CategoryIcon,
+  CategoryLabel,
+} from "@/features/categories/components/category-badge";
 import {
   Table,
   TableBody,
@@ -32,28 +36,30 @@ interface EnvelopesTableProps {
 // py-3.5 cells) instead of shadcn's defaults - see categories-table.tsx
 // for the same treatment.
 export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
+  const t = useTranslations("envelopes.table");
+
   return (
     <div className="hidden overflow-hidden rounded-2xl border border-border/60 bg-card/30 md:block">
       <Table className="min-w-max text-sm">
         <TableHeader>
           <TableRow className="border-border/60 bg-card/60 text-xs font-semibold tracking-wider text-muted-foreground uppercase hover:bg-card/60">
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
-              Sobre
+              {t("envelope")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
-              Categoría
+              {t("category")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-left font-semibold text-inherit">
-              Progreso
+              {t("progress")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-right font-semibold text-inherit">
-              Gastado
+              {t("spent")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-right font-semibold text-inherit">
-              Disponible
+              {t("available")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3 text-right font-semibold text-inherit">
-              Estado
+              {t("status")}
             </TableHead>
             <TableHead className="h-auto px-5 py-3" />
           </TableRow>
@@ -64,7 +70,8 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
             const percentage = EnvelopeHelpers.getPercentage(envelope);
             const remaining = EnvelopeHelpers.getRemaining(envelope);
             const currencyConfig = CURRENCY_MAP[envelope.currency];
-            const barColorClass = EnvelopeHelpers.getStatusBarColorClass(status);
+            const barColorClass =
+              EnvelopeHelpers.getStatusBarColorClass(status);
 
             return (
               <TableRow key={envelope.id} className="group border-border/60">
@@ -84,7 +91,10 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
                 </TableCell>
                 <TableCell className="px-5 py-3.5">
                   {envelope.category ? (
-                    <CategoryLabel category={envelope.category} className="text-xs" />
+                    <CategoryLabel
+                      category={envelope.category}
+                      className="text-xs"
+                    />
                   ) : (
                     <span className="text-xs text-muted-foreground">—</span>
                   )}
@@ -93,7 +103,7 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
                   {status === "unlimited" ? (
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <InfinityIcon className="h-3.5 w-3.5" />
-                      Sin límite
+                      {t("noLimit")}
                     </span>
                   ) : (
                     <div className="flex items-center gap-2.5">
@@ -107,7 +117,9 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
                       >
                         <div
                           className={cn("h-full rounded-full", barColorClass)}
-                          style={{ width: `${Math.min(percentage ?? 0, 100)}%` }}
+                          style={{
+                            width: `${Math.min(percentage ?? 0, 100)}%`,
+                          }}
                         />
                       </div>
                       <span className="font-mono text-xs font-semibold text-muted-foreground">

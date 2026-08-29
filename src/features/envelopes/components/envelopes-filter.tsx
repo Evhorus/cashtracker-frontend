@@ -2,13 +2,14 @@
 
 import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { SearchInput } from "@/components/common/search-input";
 import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
 import { ListFilterBar } from "@/components/common/list-filter-bar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  ENVELOPE_STATUS_FILTERS,
+  ENVELOPE_STATUS_FILTER_VALUES,
   type EnvelopeStatusFilter,
 } from "@/features/envelopes/lib/envelope-helpers";
 
@@ -18,28 +19,30 @@ import {
 // plumbing itself lives in useDebouncedSearchParam, shared with the
 // expenses list.
 const EnvelopesSearch = ({ className }: { className?: string }) => {
+  const t = useTranslations("envelopes");
   const { value, onChange } = useDebouncedSearchParam();
 
   return (
     <SearchInput
       value={value}
       onChange={onChange}
-      placeholder="Buscar por nombre o categoría..."
-      aria-label="Buscar sobres por nombre o categoría"
+      placeholder={t("searchPlaceholder")}
+      aria-label={t("searchAria")}
       className={className}
     />
   );
 };
 
 const EnvelopesStatusTabs = () => {
+  const t = useTranslations("envelopes.filters");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
 
   const statusParam = searchParams.get("status");
-  const status: EnvelopeStatusFilter = ENVELOPE_STATUS_FILTERS.some(
-    (filter) => filter.value === statusParam,
+  const status: EnvelopeStatusFilter = ENVELOPE_STATUS_FILTER_VALUES.some(
+    (filter) => filter === statusParam,
   )
     ? (statusParam as EnvelopeStatusFilter)
     : "all";
@@ -66,9 +69,9 @@ const EnvelopesStatusTabs = () => {
   return (
     <Tabs value={status} onValueChange={handleStatusChange}>
       <TabsList className="w-full sm:w-fit">
-        {ENVELOPE_STATUS_FILTERS.map((filter) => (
-          <TabsTrigger key={filter.value} value={filter.value}>
-            {filter.label}
+        {ENVELOPE_STATUS_FILTER_VALUES.map((filter) => (
+          <TabsTrigger key={filter} value={filter}>
+            {t(filter)}
           </TabsTrigger>
         ))}
       </TabsList>

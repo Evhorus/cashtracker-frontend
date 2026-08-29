@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,7 +21,7 @@ import { SubmitButton } from "@/components/common/submit-button";
 import { useUpdateProfile } from "../hooks/use-update-profile";
 import {
   type ProfileFormValues,
-  profileFormSchema,
+  buildProfileFormSchema,
 } from "../schemas/account.schema";
 import type { AccountUser } from "../types";
 
@@ -33,6 +34,9 @@ interface ProfileSectionProps {
 // update re-renders both this card and account-menu.tsx's trigger from
 // the same Clerk-managed state, with no separate fetch to keep in sync.
 export function ProfileSection({ user }: ProfileSectionProps) {
+  const t = useTranslations("account.profile");
+  const tCommon = useTranslations("common");
+  const tValidation = useTranslations("validation");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     isUpdatingProfile,
@@ -45,7 +49,7 @@ export function ProfileSection({ user }: ProfileSectionProps) {
   } = useUpdateProfile();
 
   const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+    resolver: zodResolver(buildProfileFormSchema(tValidation)),
     defaultValues: {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -54,7 +58,7 @@ export function ProfileSection({ user }: ProfileSectionProps) {
 
   async function onSubmit(values: ProfileFormValues) {
     const { error } = await updateProfile(values);
-    if (!error) toast.success("Perfil actualizado");
+    if (!error) toast.success(t("savedToast"));
   }
 
   async function onPhotoSelected(event: React.ChangeEvent<HTMLInputElement>) {
@@ -64,14 +68,14 @@ export function ProfileSection({ user }: ProfileSectionProps) {
     if (!file) return;
 
     const { error } = await updatePhoto(file);
-    if (!error) toast.success("Foto de perfil actualizada");
+    if (!error) toast.success(t("photoSavedToast"));
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Perfil</CardTitle>
-        <CardDescription>Tu nombre y foto de perfil</CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("subtitle")}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-y-4">
         {globalErrors.map((message, i) => (
@@ -90,12 +94,12 @@ export function ProfileSection({ user }: ProfileSectionProps) {
           {/* Camera-badge-overlay avatar (redesign): the whole avatar is
               the click target, badge just signals that - same
               onPhotoSelected/isUpdatingPhoto flow as the old separate
-              "Cambiar foto" button, not a new upload path. */}
+              change-photo button, not a new upload path. */}
           <button
             type="button"
             disabled={isUpdatingPhoto}
             onClick={() => fileInputRef.current?.click()}
-            aria-label="Cambiar foto de perfil"
+            aria-label={t("changePhoto")}
             className="group relative shrink-0 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-70"
           >
             <Avatar size="lg">
@@ -123,7 +127,7 @@ export function ProfileSection({ user }: ProfileSectionProps) {
             <FormInput
               control={form.control}
               name="firstName"
-              label="Nombre"
+              label={tCommon("name")}
               autoComplete="given-name"
               disabled={isUpdatingProfile}
               serverError={fieldErrors.firstName}
@@ -131,7 +135,7 @@ export function ProfileSection({ user }: ProfileSectionProps) {
             <FormInput
               control={form.control}
               name="lastName"
-              label="Apellido"
+              label={tCommon("lastName")}
               autoComplete="family-name"
               disabled={isUpdatingProfile}
               serverError={fieldErrors.lastName}
