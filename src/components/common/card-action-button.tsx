@@ -18,8 +18,10 @@ const toneVariant = {
   destructive: "destructive",
 } as const;
 
-interface CardActionButtonProps
-  extends Omit<React.ComponentProps<typeof Button>, "variant" | "size" | "children"> {
+interface CardActionButtonProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "variant" | "size" | "children"
+> {
   icon: LucideIcon;
   /** Accessible name. Visually hidden by default (the button is
    * icon-only) - shown on screen too when `showLabelOnDesktop` is set. */
