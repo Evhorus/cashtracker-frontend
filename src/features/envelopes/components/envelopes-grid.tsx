@@ -4,9 +4,10 @@ import { Envelope } from "@/features/envelopes/types";
 import { SearchX, Wallet } from "lucide-react";
 import { EmptyState } from "@/components/common/empty-state";
 import { CreateEnvelopeDialog } from "./create-envelope-dialog";
+import { statusFilterLabel } from "./envelopes-filter";
 import { EnvelopeCard } from "./envelope-card";
 import { EnvelopesTable } from "./envelopes-table";
-import { type EnvelopeStatusFilter } from "@/features/envelopes/lib/envelope-helpers";
+import { type EnvelopeStatusTab } from "@/features/envelopes/lib/envelope-helpers";
 
 interface EnvelopesGridProps {
   envelopes: Envelope[];
@@ -18,7 +19,7 @@ interface EnvelopesGridProps {
   /** Active status tab, if not "all" - same reasoning as searchQuery:
    * an empty "Excedidos" tab means "nothing matches this filter", not
    * "you have no envelopes". */
-  statusFilter?: EnvelopeStatusFilter;
+  statusFilter?: EnvelopeStatusTab;
 }
 
 export const EnvelopesGrid = ({
@@ -39,7 +40,7 @@ export const EnvelopesGrid = ({
               searchQuery
                 ? t("empty.noResultsTitle", { query: searchQuery })
                 : t("empty.noneInFilterTitle", {
-                    filter: t(`filters.${statusFilter}`),
+                    filter: statusFilterLabel(t, statusFilter),
                   })
             }
             description={

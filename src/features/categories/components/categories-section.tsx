@@ -69,7 +69,7 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
               setType(value as (typeof TYPE_FILTERS)[number])
             }
           >
-            <TabsList className="w-full sm:w-fit">
+            <TabsList className="w-max">
               {TYPE_FILTERS.map((filter) => (
                 <TabsTrigger key={filter} value={filter}>
                   {t(`types.${filter}`)}

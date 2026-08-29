@@ -10,16 +10,12 @@
     "searchPlaceholder": "Buscar por nombre o categoría...",
     "searchAria": "Buscar sobres por nombre o categoría",
     "filters": {
-      "all": "Todos",
-      "active": "Activos",
-      "alert": "En alerta",
-      "exceeded": "Excedidos",
-      "unlimited": "Sin límite"
+      "all": "Todos"
     },
     "status": {
       "unlimited": "Sin límite",
-      "normal": "Controlado",
-      "warning": "En riesgo",
+      "normal": "En buen estado",
+      "warning": "Cerca del límite",
       "exceeded": "Excedido"
     },
     "table": {

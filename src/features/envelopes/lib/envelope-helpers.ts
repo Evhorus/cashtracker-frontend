@@ -22,34 +22,38 @@ export type EnvelopeProgressStatus =
   "unlimited" | "normal" | "warning" | "exceeded";
 
 /**
- * The "all / active / exceeded / unlimited" tabs on the Sobres list
- * (mockup: MobileEnvelopes/DesktopEnvelopes), plus "En alerta" (not in
- * the mockup - added so the summary page's alert widget has
- * somewhere real to deep-link its "see all" to). Distinct from
- * EnvelopeProgressStatus:
- * - "active" merges "normal" and "warning" (both "a limited envelope
- *   that isn't over yet"), a courser grouping than the 3-color progress
- *   indicator needs.
- * - "alert" merges "warning" and "exceeded" (both "needs your
- *   attention") - it overlaps "active" and "exceeded" rather than
- *   partitioning the list the way the other four tabs do, same as the
- *   summary page's own alert count already does.
+ * What `?status=` accepts: "all", any single status, or `alert` - the
+ * warning-or-exceeded union the summary page fetches for its
+ * needs-attention widget, which is a query rather than something a user
+ * picks.
+ *
+ * `active` (normal + warning) used to be here too and is gone. It was a
+ * union nothing consumed, and no word could name it honestly: an
+ * envelope is never activated or deactivated, so "Activos" described
+ * nothing a user does.
  */
-export type EnvelopeStatusFilter =
-  "all" | "active" | "alert" | "exceeded" | "unlimited";
+export type EnvelopeStatusFilter = "all" | EnvelopeProgressStatus | "alert";
 
 /**
- * Tab order on the Sobres list. Values only - the words shown for them
- * are translations (`envelopes.filters.*`), not data, so they cannot
- * live in a module that both the server and every locale share.
+ * The tab bar, in order - a strict subset of the filters above: "all"
+ * plus one tab per status, and no unions.
+ *
+ * That is what stops the two vocabularies this screen used to show. Tabs
+ * read "Activos"/"En alerta" while the rows beneath them carried badges
+ * reading "Controlado"/"En riesgo" - same envelopes, different words.
+ * Now a tab IS a status, so it is labelled with that status's own
+ * message (see statusFilterLabel in EnvelopesFilter).
  */
-export const ENVELOPE_STATUS_FILTER_VALUES = [
+export const ENVELOPE_STATUS_TAB_VALUES = [
   "all",
-  "active",
-  "alert",
+  "normal",
+  "warning",
   "exceeded",
   "unlimited",
 ] as const satisfies readonly EnvelopeStatusFilter[];
+
+/** A tab, as opposed to any filter the API accepts. */
+export type EnvelopeStatusTab = (typeof ENVELOPE_STATUS_TAB_VALUES)[number];
 
 export const EnvelopeHelpers = {
   /**
@@ -158,28 +162,5 @@ export const EnvelopeHelpers = {
       case "normal":
         return "bg-primary/10 text-primary";
     }
-  },
-
-  /**
-   * Whether an envelope belongs under one of the status filter tabs.
-   *
-   * Only used for grouping envelopes already in hand (the Resumen alert
-   * widget). The list page asks the backend for `?status=` instead of
-   * filtering client-side, so counts stay right past one page.
-   */
-  matchesStatusFilter: (
-    envelope: Envelope,
-    filter: EnvelopeStatusFilter,
-  ): boolean => {
-    if (filter === "all") return true;
-    const { status } = envelope;
-    if (filter === "unlimited") return status === "unlimited";
-    if (filter === "exceeded") return status === "exceeded";
-    // "alert": same warning-or-exceeded test the summary page's own
-    // alert count/widget use (dashboard/page.tsx's alertEnvelopes).
-    if (filter === "alert")
-      return status === "warning" || status === "exceeded";
-    // "active": has a limit and hasn't gone over it yet.
-    return status === "normal" || status === "warning";
   },
 };

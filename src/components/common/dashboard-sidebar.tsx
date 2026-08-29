@@ -8,8 +8,6 @@ import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DASHBOARD_NAV_ITEMS } from "./nav-items";
 import { Logo } from "./logo";
-import { ModeToggle } from "./mode-toggle";
-import { LocaleToggle } from "@/features/locale/components/locale-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AccountMenu } from "@/features/account/components/account-menu";
 import { useAccountUser } from "@/features/account/hooks/use-account-user";
@@ -17,7 +15,9 @@ import { useAccountUser } from "@/features/account/hooks/use-account-user";
 // Desktop-only persistent nav shell (see dashboard/layout.tsx). Replaces
 // custom-header.tsx's pill-nav on desktop entirely - that header is now
 // md:hidden, mobile-only, since this covers branding/nav/theme/account for
-// desktop instead. Mobile keeps CustomHeader + MobileNav, unchanged.
+// desktop instead. CustomHeader sits above the content column at every
+// breakpoint and carries the theme/language toggles; mobile also keeps
+// MobileNav for the bottom tab bar.
 export function DashboardSidebar() {
   const t = useTranslations("nav");
   const pathname = usePathname();
@@ -25,10 +25,11 @@ export function DashboardSidebar() {
 
   return (
     <aside className="hidden h-full w-62 shrink-0 flex-col border-r border-border/60 bg-card/30 p-4 md:flex">
-      <div className="flex items-center justify-between px-2">
+      {/* Logo only. The theme and language toggles moved to
+          CustomHeader - they are app-wide chrome, and three controls in
+          a 248px row was tight. */}
+      <div className="px-2">
         <Logo href="/dashboard" />
-        <LocaleToggle />
-        <ModeToggle />
       </div>
 
       <nav className="mt-8 flex flex-col gap-1">

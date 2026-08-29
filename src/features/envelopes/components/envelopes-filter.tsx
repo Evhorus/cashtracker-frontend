@@ -9,9 +9,23 @@ import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
 import { ListFilterBar } from "@/components/common/list-filter-bar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  ENVELOPE_STATUS_FILTER_VALUES,
-  type EnvelopeStatusFilter,
+  ENVELOPE_STATUS_TAB_VALUES,
+  type EnvelopeStatusTab,
 } from "@/features/envelopes/lib/envelope-helpers";
+
+/**
+ * The word for a tab. Every tab but "all" IS a status, so it reads the
+ * status's own message - the same one the row badge renders. That is
+ * what keeps the tab bar and the table from drifting into two
+ * vocabularies, which is exactly what happened while the tabs had their
+ * own `filters.*` labels.
+ */
+export function statusFilterLabel(
+  t: ReturnType<typeof useTranslations<"envelopes">>,
+  filter: EnvelopeStatusTab,
+): string {
+  return filter === "all" ? t("filters.all") : t(`status.${filter}`);
+}
 
 // Debounced URL-param search - envelopes are filtered server-side (a
 // paginated backend call), unlike categories/categories-search.tsx,
@@ -34,17 +48,17 @@ const EnvelopesSearch = ({ className }: { className?: string }) => {
 };
 
 const EnvelopesStatusTabs = () => {
-  const t = useTranslations("envelopes.filters");
+  const t = useTranslations("envelopes");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
 
   const statusParam = searchParams.get("status");
-  const status: EnvelopeStatusFilter = ENVELOPE_STATUS_FILTER_VALUES.some(
+  const status: EnvelopeStatusTab = ENVELOPE_STATUS_TAB_VALUES.some(
     (filter) => filter === statusParam,
   )
-    ? (statusParam as EnvelopeStatusFilter)
+    ? (statusParam as EnvelopeStatusTab)
     : "all";
 
   const handleStatusChange = (value: unknown) => {
@@ -68,10 +82,13 @@ const EnvelopesStatusTabs = () => {
 
   return (
     <Tabs value={status} onValueChange={handleStatusChange}>
-      <TabsList className="w-full sm:w-fit">
-        {ENVELOPE_STATUS_FILTER_VALUES.map((filter) => (
+      {/* w-max, not w-full: the row is as wide as its tabs and
+            scrolls within ListFilterBar rather than stretching or
+            clipping them. */}
+      <TabsList className="w-max">
+        {ENVELOPE_STATUS_TAB_VALUES.map((filter) => (
           <TabsTrigger key={filter} value={filter}>
-            {t(filter)}
+            {statusFilterLabel(t, filter)}
           </TabsTrigger>
         ))}
       </TabsList>

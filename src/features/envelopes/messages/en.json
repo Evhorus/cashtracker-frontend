@@ -10,16 +10,12 @@
     "searchPlaceholder": "Search by name or category...",
     "searchAria": "Search envelopes by name or category",
     "filters": {
-      "all": "All",
-      "active": "Active",
-      "alert": "Needs attention",
-      "exceeded": "Over limit",
-      "unlimited": "No limit"
+      "all": "All"
     },
     "status": {
       "unlimited": "No limit",
-      "normal": "On track",
-      "warning": "At risk",
+      "normal": "In good shape",
+      "warning": "Close to the limit",
       "exceeded": "Over limit"
     },
     "table": {
@@ -81,7 +77,7 @@
     "chart": {
       "spent": "Spent",
       "available": "Available",
-      "exceeded": "Over budget",
+      "exceeded": "Over limit",
       "used": "used",
       "limitExceeded": "Over the limit"
     },
