@@ -13,12 +13,21 @@ interface UpdateEnvelopeDialogProps {
   envelope: Envelope;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Override the default trigger's a11y label ("Editar sobre") - the
+   * envelope detail page passes the shorter, i18n "Editar" since there's
+   * only one edit button on that page, no ambiguity to resolve. */
+  label?: string;
+  /** See CardActionButton - only the envelope detail page's header
+   * turns this on. */
+  showLabelOnDesktop?: boolean;
 }
 
 export const UpdateEnvelopeDialog = ({
   envelope,
   open: controlledOpen,
   onOpenChange: setControlledOpen,
+  label,
+  showLabelOnDesktop,
 }: UpdateEnvelopeDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
 
@@ -49,7 +58,11 @@ export const UpdateEnvelopeDialog = ({
       description="Aquí puedes editar el sobre"
       trigger={
         isControlled ? undefined : (
-          <CardActionButton icon={Edit} label="Editar sobre" />
+          <CardActionButton
+            icon={Edit}
+            label={label ?? "Editar sobre"}
+            showLabelOnDesktop={showLabelOnDesktop}
+          />
         )
       }
     >

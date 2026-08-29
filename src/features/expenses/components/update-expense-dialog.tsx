@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Edit } from "lucide-react";
 import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
-import { Button } from "@/components/ui/button";
+import { CardActionButton } from "@/components/common/card-action-button";
 import { useActionDialog } from "@/hooks/useActionDialog";
 import { ExpenseForm } from "./expense-form";
 import { Expense } from "@/features/expenses/types";
@@ -16,6 +16,13 @@ interface UpdateExpenseDialogProps {
   expense: Expense;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Override the default trigger's a11y label - the expense detail page
+   * passes the shorter, i18n "Editar" since there's only one edit button
+   * on that page, no ambiguity to resolve. */
+  label?: string;
+  /** See CardActionButton - only the expense detail page's header turns
+   * this on. */
+  showLabelOnDesktop?: boolean;
 }
 
 export const UpdateExpenseDialog = ({
@@ -24,6 +31,8 @@ export const UpdateExpenseDialog = ({
   expense,
   open: controlledOpen,
   onOpenChange: setControlledOpen,
+  label,
+  showLabelOnDesktop,
 }: UpdateExpenseDialogProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
 
@@ -55,9 +64,11 @@ export const UpdateExpenseDialog = ({
       dialogClassName="sm:max-w-125"
       trigger={
         isControlled ? undefined : (
-          <Button variant="ghost" size="icon">
-            <Edit className="h-4 w-4 text-muted-foreground transition-colors hover:text-primary" />
-          </Button>
+          <CardActionButton
+            icon={Edit}
+            label={label ?? "Editar gasto"}
+            showLabelOnDesktop={showLabelOnDesktop}
+          />
         )
       }
     >

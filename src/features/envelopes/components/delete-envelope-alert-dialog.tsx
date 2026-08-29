@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { CardActionButton } from "@/components/common/card-action-button";
+import { Text } from "@/components/common/typography";
 import { useActionDialog } from "@/hooks/useActionDialog";
 import { Loader2, Trash2 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -24,6 +25,14 @@ interface DeleteEnvelopeAlertDialogProps {
   name: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Override the default trigger's a11y label ("Eliminar sobre") - the
+   * envelope detail page passes the shorter, i18n "Eliminar" since
+   * there's only one delete button on that page, no ambiguity to
+   * resolve. */
+  label?: string;
+  /** See CardActionButton - only the envelope detail page's header
+   * turns this on. */
+  showLabelOnDesktop?: boolean;
 }
 
 export const DeleteEnvelopeAlertDialog = ({
@@ -31,6 +40,8 @@ export const DeleteEnvelopeAlertDialog = ({
   name,
   open: controlledOpen,
   onOpenChange: setControlledOpen,
+  label,
+  showLabelOnDesktop,
 }: DeleteEnvelopeAlertDialogProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -72,10 +83,10 @@ export const DeleteEnvelopeAlertDialog = ({
 
   const Content = (
     <div className="my-2 space-y-2">
-      <p className="text-sm text-muted-foreground">
+      <Text>
         Escribe <span className="font-bold text-foreground">{name}</span> para
         confirmar:
-      </p>
+      </Text>
       <Input
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
@@ -93,8 +104,9 @@ export const DeleteEnvelopeAlertDialog = ({
           render={
             <CardActionButton
               icon={Trash2}
-              label="Eliminar sobre"
+              label={label ?? "Eliminar sobre"}
               tone="destructive"
+              showLabelOnDesktop={showLabelOnDesktop}
             />
           }
         />

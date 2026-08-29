@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
 import { formatShortDate } from "@/lib/date-helpers";
 import { cn } from "@/lib/utils";
+import { Heading } from "@/components/common/typography";
 import type { DashboardRecentExpense } from "../types";
 
 interface RecentActivityProps {
@@ -28,7 +29,7 @@ export function RecentActivity({ expenses, className }: RecentActivityProps) {
         className,
       )}
     >
-      <h2 className="text-sm font-semibold">Actividad reciente</h2>
+      <Heading size="sm">Actividad reciente</Heading>
 
       <div className="mt-3 space-y-1">
         {expenses.map((expense) => {

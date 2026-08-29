@@ -1,10 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
+import { getTranslations } from "next-intl/server";
 import { getEnvelopeByIdAction } from "@/features/envelopes/actions/get-envelope-by-id.action";
 import { getExpenseByIdAction } from "@/features/expenses/actions/get-expense-by-id.action";
 import { DeleteExpenseAlertDialog } from "@/features/expenses/components/delete-expense-alert-dialog";
 import { UpdateExpenseDialog } from "@/features/expenses/components/update-expense-dialog";
 import { ExpenseActionsMenu } from "@/features/expenses/components/expense-actions-menu";
 import { PageHeader } from "@/components/common/page-header";
+import { BackLinkButton } from "@/components/common/back-link-button";
+import { Text } from "@/components/common/typography";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -28,6 +31,7 @@ interface ExpensePageProps {
 
 export default async function ExpensePage({ params }: ExpensePageProps) {
   await auth.protect();
+  const t = await getTranslations("common");
   const { envelopeId, expenseId } = await params;
   const expense = await getExpenseByIdAction(envelopeId, expenseId);
   const envelope = await getEnvelopeByIdAction(envelopeId);
@@ -71,14 +75,22 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
         }
         actions={
           <>
+            <BackLinkButton
+              href={`/dashboard/envelope/${envelopeId}`}
+              label={t("back")}
+            />
             <UpdateExpenseDialog
               envelopeId={envelopeId}
               currency={envelope.currency}
               expense={expense}
+              label={t("edit")}
+              showLabelOnDesktop
             />
             <DeleteExpenseAlertDialog
               envelopeId={envelopeId}
               expenseId={expenseId}
+              label={t("delete")}
+              showLabelOnDesktop
             />
           </>
         }
@@ -91,11 +103,21 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
         }
       />
 
+      {/* Main info (left on desktop) + Impacto en el Sobre (sidebar,
+          sticky on desktop, same as the envelope detail page's own
+          Historial/Resumen split). No mobile reorder here though, unlike
+          that page: there, Resumen is a quick overview ahead of a list,
+          so overview-first makes sense - here the hero card below already
+          *is* the overview (name/date/amount), so it stays first; only
+          Impacto's sticky-on-desktop behavior is worth matching. */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main Info Column (2/3 width) */}
         <div className="space-y-6 lg:col-span-2">
-          {/* Expense Highlight Card */}
-          <Card className="overflow-hidden border-0 bg-linear-to-br from-card to-secondary/10 shadow-md">
+          {/* Expense Highlight Card - border-0 bg-card/50 shadow-sm matches
+              every other card in the app (envelope page's Resumen,
+              Estadísticas, category cards...); this one used to stand out
+              with a gradient fill and a heavier shadow. */}
+          <Card className="overflow-hidden border-0 bg-card/50 shadow-sm">
             <CardContent className="p-8">
               <div className="flex flex-col items-start justify-between gap-4 sm:flex-row md:items-center">
                 <div className="flex items-center gap-4">
@@ -115,9 +137,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                   </div>
                 </div>
                 <div className="pl-18 text-left sm:pl-0 md:text-right">
-                  <p className="mb-0.5 text-xs font-medium text-muted-foreground sm:text-sm">
+                  <Text className="mb-0.5 text-xs font-medium sm:text-sm">
                     Monto Total
-                  </p>
+                  </Text>
                   <p className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
                     {formatCurrency(expenseAmount, currencyConfig)}
                   </p>
@@ -139,17 +161,17 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
           </Card>
 
           {/* Additional Meta Info */}
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 bg-card/50 shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">Información de Sistema</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-6 text-sm sm:grid-cols-2">
               <div className="space-y-1">
-                <p className="text-muted-foreground">Creado el</p>
+                <Text>Creado el</Text>
                 <p className="font-medium">{formatDate(expense.createdAt)}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-muted-foreground">Última actualización</p>
+                <Text>Última actualización</Text>
                 <p className="font-medium">{formatDate(expense.updatedAt)}</p>
               </div>
             </CardContent>
@@ -157,9 +179,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
         </div>
 
         {/* Sidebar Column (1/3 width) - Impact & Context */}
-        <div className="space-y-6">
+        <div className="space-y-6 lg:sticky lg:top-20 lg:self-start">
           {/* Impact Analysis */}
-          <Card className="overflow-hidden border-0 shadow-md">
+          <Card className="overflow-hidden border-0 bg-card/50 shadow-sm">
             <CardHeader className="pt-6 pb-2">
               <CardTitle className="flex items-center gap-2 text-lg">
                 Impacto en el Sobre
@@ -169,9 +191,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
               {isUnlimited ? (
                 <div className="flex flex-col items-center gap-2 py-2 text-center">
                   <InfinityIcon className="h-6 w-6 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
+                  <Text>
                     Este sobre no tiene límite de gasto
-                  </p>
+                  </Text>
                 </div>
               ) : (
                 <div>
@@ -191,26 +213,31 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                       }}
                     />
                   </div>
-                  <p className="mt-2 text-right text-xs text-muted-foreground">
+                  <Text className="mt-2 text-right text-xs">
                     del total asignado (
                     {formatCurrency(envelopeAmount ?? 0, currencyConfig)})
-                  </p>
+                  </Text>
                 </div>
               )}
 
               <div className="space-y-3 border-t border-border/50 pt-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Estado del Sobre</span>
-                  <span
-                    className={`rounded-md border bg-muted/50 px-3 py-1 text-xs font-bold ${healthColor}`}
-                  >
+                  {/* Plain colored text, no badge box - the boxed
+                      all-caps treatment this used to have (SALUDABLE,
+                      EXCEDIDO...) had no precedent anywhere else in the
+                      app; envelope-card.tsx's own status "badge" is just
+                      a thin colored strip, and every other status here
+                      (spentColorClass, progress bar) is color-coded text
+                      too, no boxes. */}
+                  <span className={`text-sm font-semibold ${healthColor}`}>
                     {isUnlimited
-                      ? "SIN LÍMITE"
+                      ? "Sin límite"
                       : isOverLimit
-                        ? "EXCEDIDO"
+                        ? "Excedido"
                         : isHealthy
-                          ? "SALUDABLE"
-                          : "EN RIESGO"}
+                          ? "Controlado"
+                          : "En riesgo"}
                   </span>
                 </div>
                 <div className="space-y-1">

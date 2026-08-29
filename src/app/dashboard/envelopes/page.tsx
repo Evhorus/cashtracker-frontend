@@ -6,6 +6,7 @@ import { EnvelopesFilter } from "@/features/envelopes/components/envelopes-filte
 import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
 import { PageHeader } from "@/components/common/page-header";
 import { PaginationControls } from "@/components/common/pagination-controls";
+import { Text } from "@/components/common/typography";
 import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
   ENVELOPE_STATUS_FILTERS,
@@ -150,9 +151,9 @@ async function EnvelopesResults({
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-muted-foreground">
+      <Text>
         {total} {total === 1 ? "sobre" : "sobres"}
-      </p>
+      </Text>
 
       <EnvelopesGrid envelopes={data} searchQuery={search} statusFilter={status} />
 

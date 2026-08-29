@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/common/error-message";
+import { Text } from "@/components/common/typography";
 import { OAuthButtons } from "@/features/auth/components/oauth-buttons";
 import type { OAuthProvider } from "@/features/auth/types";
 import { useConnectedAccounts } from "../hooks/use-connected-accounts";
@@ -63,9 +64,9 @@ export function ConnectedAccountsSection() {
                   </Avatar>
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{account.label}</p>
-                    <p className="truncate text-xs text-muted-foreground">
+                    <Text className="truncate text-xs">
                       {account.identifier}
-                    </p>
+                    </Text>
                   </div>
                 </div>
                 <Button
@@ -89,9 +90,9 @@ export function ConnectedAccountsSection() {
 
         {hasMoreToConnect && (
           <div>
-            <p className="mb-2 text-sm font-medium text-muted-foreground">
+            <Text className="mb-2 font-medium">
               Conectar un nuevo proveedor
-            </p>
+            </Text>
             <OAuthButtons
               disabled={connectingProvider !== null}
               onSelect={connectProvider}

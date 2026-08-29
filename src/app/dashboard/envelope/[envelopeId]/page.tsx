@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { getTranslations } from "next-intl/server";
 import { getEnvelopeByIdAction } from "@/features/envelopes/actions/get-envelope-by-id.action";
 import { getExpensesAction } from "@/features/expenses/actions/get-expenses.action";
 import { DeleteEnvelopeAlertDialog } from "@/features/envelopes/components/delete-envelope-alert-dialog";
@@ -8,6 +9,8 @@ import { ExpensesFilter } from "@/features/expenses/components/expenses-filter";
 import { ExpensesList } from "@/features/expenses/components/expenses-list";
 import { EnvelopeActionsMenu } from "@/features/envelopes/components/envelope-actions-menu";
 import { PageHeader } from "@/components/common/page-header";
+import { BackLinkButton } from "@/components/common/back-link-button";
+import { Heading } from "@/components/common/typography";
 import { PaginationControls } from "@/components/common/pagination-controls";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,6 +68,7 @@ export default async function EnvelopePage({
   searchParams,
 }: EnvelopePageProps) {
   await auth.protect();
+  const t = await getTranslations("common");
   const { envelopeId } = await params;
   const {
     startDate,
@@ -144,8 +148,18 @@ export default async function EnvelopePage({
         }
         actions={
           <>
-            <UpdateEnvelopeDialog envelope={envelope} />
-            <DeleteEnvelopeAlertDialog id={envelopeId} name={envelope.name} />
+            <BackLinkButton href="/dashboard/envelopes" label={t("back")} />
+            <UpdateEnvelopeDialog
+              envelope={envelope}
+              label={t("edit")}
+              showLabelOnDesktop
+            />
+            <DeleteEnvelopeAlertDialog
+              id={envelopeId}
+              name={envelope.name}
+              label={t("delete")}
+              showLabelOnDesktop
+            />
           </>
         }
         mobileActions={<EnvelopeActionsMenu envelope={envelope} />}
@@ -159,10 +173,7 @@ export default async function EnvelopePage({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="order-2 space-y-6 lg:order-1 lg:col-span-2">
           <div className="flex flex-row items-center justify-between">
-            <h2 className="flex items-center gap-2 text-xl font-bold">
-              <DollarSign className="h-5 w-5 text-primary" />
-              Historial de Gastos
-            </h2>
+            <Heading icon={DollarSign}>Historial de Gastos</Heading>
             <CreateExpenseDialog
               envelopeId={envelope.id}
               currency={envelope.currency}

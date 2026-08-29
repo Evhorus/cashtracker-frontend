@@ -15,6 +15,7 @@ import React from "react";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { Envelope } from "@/features/envelopes/types";
 import { CardHoverActions } from "@/components/common/card-hover-actions";
+import { Text } from "@/components/common/typography";
 import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
 import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
 import { EnvelopeActionsMenu } from "./envelope-actions-menu";
@@ -94,7 +95,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
                 commonly reused across years (e.g. a recurring "Agosto
                 NUU" every year), so without this there'd be no way to
                 tell which year's card is which in the list. */}
-            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
+            <Text className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
               <span>{formatMonthYear(envelope.createdAt)}</span>
               {envelope.category && (
                 <>
@@ -111,7 +112,7 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
               <span className="rounded-sm bg-secondary px-1 py-0.5 font-mono text-[10px] text-secondary-foreground">
                 {envelope.currency}
               </span>
-            </p>
+            </Text>
           </div>
         </div>
 

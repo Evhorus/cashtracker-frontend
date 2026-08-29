@@ -9,6 +9,7 @@ import {
   ENVELOPE_STATUS_FILTERS,
   type EnvelopeStatusFilter,
 } from "@/features/envelopes/lib/envelope-helpers";
+import { Text } from "@/components/common/typography";
 
 interface EnvelopesGridProps {
   envelopes: Envelope[];
@@ -71,10 +72,10 @@ export const EnvelopesGrid = ({
                 <h3 className="font-serif text-2xl font-semibold text-balance">
                   Organiza tus gastos por sobres
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <Text>
                   Crea un sobre para cada categoría — mercado, transporte,
                   ocio — y CashTracker te avisa antes de que te excedas.
-                </p>
+                </Text>
               </div>
               <div className="flex justify-center pt-1">
                 <CreateEnvelopeDialog />

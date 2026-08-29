@@ -13,6 +13,7 @@ import { resolveCategory } from "../lib/category-palette";
 import { resolveIcon } from "../lib/icon-registry";
 import { withAlpha } from "../lib/with-alpha";
 import { useCategories } from "@/providers/categories-provider";
+import { Text } from "@/components/common/typography";
 import { CreateCategoryDialog } from "./create-category-dialog";
 
 // Same minimal explicit prop shape as currency-selector.tsx (not the full
@@ -149,9 +150,9 @@ export function CategoryPicker({
           })}
 
           {filtered.length === 0 && (
-            <p className="px-2 py-3 text-center text-sm text-muted-foreground">
+            <Text className="px-2 py-3 text-center">
               Sin resultados
-            </p>
+            </Text>
           )}
         </div>
 

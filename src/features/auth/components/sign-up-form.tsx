@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/components/common/submit-button";
 import { ErrorMessage } from "@/components/common/error-message";
 import { FormInput } from "@/components/common/form-input";
+import { Text } from "@/components/common/typography";
 import {
   Card,
   CardContent,
@@ -203,7 +204,7 @@ export function SignUpForm() {
         )}
       </CardContent>
       <CardFooter>
-        <p className="w-full text-center text-sm text-muted-foreground">
+        <Text className="w-full text-center">
           ¿Ya tienes cuenta?{" "}
           <Link
             href="/sign-in"
@@ -211,7 +212,7 @@ export function SignUpForm() {
           >
             Inicia sesión
           </Link>
-        </p>
+        </Text>
       </CardFooter>
     </Card>
   );

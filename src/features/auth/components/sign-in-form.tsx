@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/common/submit-button";
 import { ErrorMessage } from "@/components/common/error-message";
 import { FormInput } from "@/components/common/form-input";
+import { Text } from "@/components/common/typography";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   Card,
@@ -217,12 +218,12 @@ export function SignInForm() {
                 onSubmit={codeVerifyForm.handleSubmit(onVerifyCode)}
                 className="grid gap-y-4"
               >
-                <p className="text-sm text-muted-foreground">
+                <Text>
                   Enviamos un código a{" "}
                   <span className="font-medium text-foreground">
                     {sentTo}
                   </span>
-                </p>
+                </Text>
                 <FormInput
                   control={codeVerifyForm.control}
                   name="code"
@@ -254,7 +255,7 @@ export function SignInForm() {
         </Tabs>
       </CardContent>
       <CardFooter>
-        <p className="w-full text-center text-sm text-muted-foreground">
+        <Text className="w-full text-center">
           ¿No tienes cuenta?{" "}
           <Link
             href="/sign-up"
@@ -262,7 +263,7 @@ export function SignInForm() {
           >
             Crea una
           </Link>
-        </p>
+        </Text>
       </CardFooter>
     </Card>
   );

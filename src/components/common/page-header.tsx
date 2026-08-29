@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { Heading } from "@/components/common/typography";
 
 interface PageHeaderProps {
   title: string;
@@ -39,7 +40,9 @@ export const PageHeader = ({
           // such persistent nav next to the content, just the bottom tab
           // bar (Resumen/Sobres/Estadísticas/Cuenta, no "back" of its
           // own), so it's the one place this button actually earns its
-          // spot.
+          // spot. (Desktop's own "back" need - a nested detail view the
+          // sidebar has no direct link to - is met differently: see
+          // BackButton, placed in this header's `actions` instead.)
           <Link href={backUrl} className="md:hidden">
             {/* Same rounded/translucent-card/subtle-border treatment as
                 the nav-pill groups elsewhere (custom-header.tsx's
@@ -71,9 +74,9 @@ export const PageHeader = ({
             same criterion as sessions-section.tsx and
             envelope-card.tsx's meta line. */}
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold tracking-tight break-words md:text-3xl">
+          <Heading as="h1" size="lg">
             {title}
-          </h1>
+          </Heading>
           {description && (
             <div className="flex items-center gap-2 text-muted-foreground">
               {description}

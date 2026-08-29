@@ -13,6 +13,7 @@ import {
   CATEGORY_TYPE_FILTERS as TYPE_FILTERS,
   useCategoriesFilter,
 } from "./categories-filter-context";
+import { Text } from "@/components/common/typography";
 
 interface CategoriesSectionProps {
   /** Per-category envelope count, keyed by CategoryDef.id - computed in
@@ -79,11 +80,11 @@ export function CategoriesSection({ categoryCounts }: CategoriesSectionProps) {
         renderSearch={(className) => <CategoriesSearch className={className} />}
       />
 
-      <p className="text-sm text-muted-foreground">
+      <Text>
         {filtered.length} {filtered.length === 1 ? "categoría" : "categorías"}
         {" · "}
         {totalEnvelopesCategorized} sobres clasificados
-      </p>
+      </Text>
 
       {filtered.length === 0 ? (
         <Card className="animate-fade-in border-0 bg-card/50 p-12 text-center shadow-sm">
