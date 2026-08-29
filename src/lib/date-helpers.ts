@@ -83,7 +83,7 @@ function toDeviceTimeZone(dateInput: Date): Date {
 /**
  * Formats a canonical UTC-anchored calendar date (see `parseCalendarDate`)
  * for display - reading its UTC wall-clock, never the ambient/device
- * timezone `formatDate`/`formatShortDate` use for real instants
+ * timezone `formatDate`/`formatMonthYear` use for real instants
  * (createdAt/updatedAt, where ambient-timezone conversion is exactly what
  * you want). A calendar date has to render identically no matter which
  * environment does the formatting - use this, not formatDate, for
@@ -95,8 +95,11 @@ export function formatCalendarDate(date: Date): string {
   });
 }
 
-/** Compact "d MMM" form of formatCalendarDate - see formatShortDate for
- * the equivalent over a real instant, and why the two need to differ. */
+/** Compact "d MMM" form of formatCalendarDate. Unlike formatDate/
+ * formatMonthYear (which convert a real instant into the device's
+ * timezone), this reads the date's UTC wall-clock - see
+ * formatCalendarDate above for why a calendar date must not be
+ * timezone-converted. */
 export function formatCalendarDateShort(date: Date): string {
   return format(new TZDate(date, "UTC"), "d MMM", { locale: es });
 }
@@ -113,16 +116,6 @@ export function formatDate(dateInput: Date | string | number): string {
  * where the full formatDate() output ("miércoles, 15 de julio de 2026") doesn't fit. */
 export function formatMonthYear(dateInput: Date | string | number): string {
   return format(toDeviceTimeZone(parseDateInput(dateInput)), "MMM yyyy", {
-    locale: es,
-  });
-}
-
-/** Compact "d MMM" form (e.g. "12 ago") - for a dense list of dated rows
- * (the dashboard's "Actividad reciente" widget), where even
- * formatMonthYear's "mmm yyyy" is more than the row needs: same year is
- * implied by context, the day is what actually varies row to row. */
-export function formatShortDate(dateInput: Date | string | number): string {
-  return format(toDeviceTimeZone(parseDateInput(dateInput)), "d MMM", {
     locale: es,
   });
 }

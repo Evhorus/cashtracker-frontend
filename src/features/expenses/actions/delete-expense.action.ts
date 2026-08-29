@@ -1,59 +1,43 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { authenticatedFetch } from "@/lib/authenticated-fetch";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { ExpensesService } from "../services/expenses.service";
+import { createSafeAction } from "@/lib/safe-action";
 
-// Previously misnamed `DeleteBudgetActionState` (copy-paste from the
-// envelope delete action) - this state actually belongs to deleting an
-// expense, not an envelope.
-type DeleteExpenseActionState = {
-  errors: string[];
-  success: string;
-};
-
-export const deleteExpenseAction = async (
-  prevState: DeleteExpenseActionState,
-  { envelopeId, expenseId }: { envelopeId: string; expenseId: string },
-): Promise<DeleteExpenseActionState> => {
-  await auth.protect();
-
-  try {
-    const req = await authenticatedFetch(
-      `/envelopes/${envelopeId}/expenses/${expenseId}`,
-      {
-        method: "DELETE",
-        next: {
-          tags: ["all-envelopes"],
-        },
-      },
-    );
-
-    const json = await req.json();
-
-    if (!req.ok) {
-      const errorMessage = json.message as string;
-      return {
-        success: "",
-        errors: [errorMessage],
-      };
-    }
+// Goes through ExpensesService + createSafeAction like every other
+// mutation - see delete-envelope.action.ts for why the raw
+// authenticatedFetch this used to use was worth removing.
+//
+// Unlike the envelope/category deletes, this endpoint really does
+// return `{ message: 'Gasto eliminado' }` (expenses.service.ts's
+// `remove()` in cashtracker-backend), so the backend's own wording is
+// used when present - with a fallback so a future contract change can't
+// silently leave the dialog open with no toast.
+// eslint-disable-next-line @clerk/next/require-auth-protection -- Protected inside createSafeAction wrapper by calling auth.protect() in the handler.
+export const deleteExpenseAction = createSafeAction(
+  async ({
+    envelopeId,
+    expenseId,
+  }: {
+    envelopeId: string;
+    expenseId: string;
+  }) => {
+    await auth.protect();
+    const response = await ExpensesService.delete(envelopeId, expenseId);
 
     revalidatePath("/dashboard");
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
-    revalidateTag("all-envelopes", "max");
-    revalidateTag("dashboard-summary", "max");
-    revalidateTag("dashboard-recent-expenses", "max");
+    // updateTag (not revalidateTag) - read-your-own-writes; see
+    // categories/actions/delete-category.action.ts for the why.
+    updateTag("all-envelopes");
+    // Same detail-tag gap the envelope delete had.
+    updateTag("expense");
+    updateTag("dashboard-summary");
+    updateTag("dashboard-recent-expenses");
 
     return {
-      success: "Gasto eliminado correctamente.",
-      errors: [],
+      successMessage: response.message || "Gasto eliminado correctamente.",
     };
-  } catch (error) {
-    console.error("Error deleting expense:", error);
-    return {
-      success: "",
-      errors: ["No se pudo eliminar el gasto. Intenta más tarde."],
-    };
-  }
-};
+  },
+);

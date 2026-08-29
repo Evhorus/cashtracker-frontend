@@ -49,8 +49,10 @@ export const CategoriesService = {
     });
   },
 
+  // Returns the removed entity, not a `{ message }` envelope - same as
+  // the envelope delete, see EnvelopesService.delete for the details.
   delete: (id: string) => {
-    return fetchApi<{ message: string }>(`/categories/${id}`, {
+    return fetchApi<unknown>(`/categories/${id}`, {
       method: "DELETE",
     });
   },

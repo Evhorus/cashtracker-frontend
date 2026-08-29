@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export const CATEGORY_TYPE_FILTERS = [
   { value: "all", label: "Todas" },
@@ -34,13 +34,13 @@ export function CategoriesFilterProvider({
   const [search, setSearch] = useState("");
   const [type, setType] = useState<CategoryTypeFilter>("all");
 
-  const value = useMemo(
-    () => ({ search, setSearch, type, setType }),
-    [search, type],
-  );
-
+  // No useMemo: the React Compiler (reactCompiler: true in
+  // next.config.ts) memoizes this object on the same dependencies it
+  // would have been given by hand.
   return (
-    <CategoriesFilterContext.Provider value={value}>
+    <CategoriesFilterContext.Provider
+      value={{ search, setSearch, type, setType }}
+    >
       {children}
     </CategoriesFilterContext.Provider>
   );

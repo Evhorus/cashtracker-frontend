@@ -1,6 +1,7 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
-import { getEnvelopesAction } from "@/features/envelopes/actions/get-envelopes.action";
+import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
 import { EnvelopesFilter } from "@/features/envelopes/components/envelopes-filter";
 import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
@@ -13,6 +14,8 @@ import {
   EnvelopeHelpers,
   type EnvelopeStatusFilter,
 } from "@/features/envelopes/lib/envelope-helpers";
+
+export const metadata: Metadata = { title: "Sobres" };
 
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
@@ -107,7 +110,7 @@ async function EnvelopesResults({
   let meta;
 
   if (status === "all") {
-    const envelopes = await getEnvelopesAction({
+    const envelopes = await getEnvelopes({
       page,
       limit: ENVELOPES_PER_PAGE,
       search,
@@ -117,7 +120,7 @@ async function EnvelopesResults({
   } else {
     // Fetch every matching envelope, filter by status, then paginate
     // in-memory - see ALL_ENVELOPES_LIMIT above.
-    const envelopes = await getEnvelopesAction({
+    const envelopes = await getEnvelopes({
       limit: ALL_ENVELOPES_LIMIT,
       search,
     });

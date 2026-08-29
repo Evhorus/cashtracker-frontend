@@ -14,8 +14,10 @@ import {
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+// metadataBase is inherited from the root layout (it used to be
+// declared here, pointing at port 3000 while the dev server runs on
+// 3001). Everything below is landing-page specific and stays.
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || "http://localhost:3000"),
   title: "CashTracker - Control de Finanzas Personales",
   description:
     "Gestiona tus gastos, crea sobres inteligentes y alcanza tus metas financieras con CashTracker. Interfaz moderna y fácil de usar. 100% gratis para empezar.",

@@ -2,6 +2,23 @@ import "server-only";
 
 import { auth } from "@clerk/nextjs/server";
 
+/**
+ * Checked before use rather than interpolated blind.
+ * A missing API_URL used to produce request URLs like
+ * "undefined/envelopes", which surfaced as an opaque fetch failure
+ * several layers away from the actual cause (a .env that was never
+ * filled in). Failing here names the problem.
+ */
+function getApiBaseUrl(): string {
+  const apiUrl = process.env.API_URL;
+  if (!apiUrl) {
+    throw new Error(
+      "API_URL is not set. Copy .env.template to .env and point API_URL at the cashtracker-backend instance (e.g. http://localhost:4000/api).",
+    );
+  }
+  return apiUrl;
+}
+
 export type AuthenticatedFetchOptions = Omit<RequestInit, "headers"> & {
   headers?: Record<string, string>;
 };
@@ -22,7 +39,7 @@ export async function authenticatedFetch(
   const token = await getToken();
 
   // Build full URL if path is relative
-  const url = path.startsWith("http") ? path : `${process.env.API_URL}${path}`;
+  const url = path.startsWith("http") ? path : `${getApiBaseUrl()}${path}`;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",

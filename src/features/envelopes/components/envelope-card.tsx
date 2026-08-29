@@ -10,8 +10,6 @@ import {
 } from "@/features/categories/components/category-badge";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import React from "react";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { Envelope } from "@/features/envelopes/types";
 import { CardHoverActions } from "@/components/common/card-hover-actions";
@@ -24,21 +22,25 @@ interface EnvelopeCardProps {
   envelope: Envelope;
 }
 
-export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
+// No React.memo/useMemo here any more: this is a Server Component (it
+// has no "use client", and EnvelopesGrid renders it on the server), and
+// in the RSC renderer both are inert - memo() never gets a chance to
+// skip anything because there is no re-render, and the Flight
+// dispatcher's useMemo just calls the factory every time. They read as
+// client-side optimizations on a component that never runs on the
+// client.
+export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
   const envelopeId = envelope.id;
   const currencyConfig = CURRENCY_MAP[envelope.currency];
 
-  const calculations = useMemo(() => {
-    const status = EnvelopeHelpers.getProgressStatus(envelope);
-    return {
-      remaining: EnvelopeHelpers.getRemaining(envelope),
-      percentage: EnvelopeHelpers.getPercentage(envelope),
-      status,
-      isExceeded: status === "exceeded",
-      isWarning: status === "warning",
-      isUnlimited: status === "unlimited",
-    };
-  }, [envelope]);
+  const status = EnvelopeHelpers.getProgressStatus(envelope);
+  const calculations = {
+    remaining: EnvelopeHelpers.getRemaining(envelope),
+    percentage: EnvelopeHelpers.getPercentage(envelope),
+    status,
+    isExceeded: status === "exceeded",
+    isUnlimited: status === "unlimited",
+  };
 
   const progressColorClass = EnvelopeHelpers.getStatusProgressBarColorClass(
     calculations.status,
@@ -193,6 +195,4 @@ export const EnvelopeCard = React.memo(({ envelope }: EnvelopeCardProps) => {
       )}
     </Card>
   );
-});
-
-EnvelopeCard.displayName = "EnvelopeCard";
+};

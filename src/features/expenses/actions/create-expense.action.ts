@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { ExpenseFormValues } from "../schemas/expense.schema";
 import { ExpensesService } from "../services/expenses.service";
 import { createSafeAction } from "@/lib/safe-action";
@@ -18,9 +18,11 @@ export const createExpenseAction = createSafeAction(
 
     revalidatePath("/dashboard");
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
-    revalidateTag("all-envelopes", "max");
-    revalidateTag("dashboard-summary", "max");
-    revalidateTag("dashboard-recent-expenses", "max");
+    // updateTag (not revalidateTag) - read-your-own-writes; see
+    // categories/actions/delete-category.action.ts for the why.
+    updateTag("all-envelopes");
+    updateTag("dashboard-summary");
+    updateTag("dashboard-recent-expenses");
 
     return { successMessage: response.message };
   },

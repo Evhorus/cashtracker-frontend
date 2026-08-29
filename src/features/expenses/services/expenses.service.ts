@@ -44,6 +44,10 @@ export const ExpensesService = {
     const response = await fetchApi<ExpensesResponseApi>(
       `/envelopes/${envelopeId}/expenses${qs ? `?${qs}` : ""}`,
       {
+        // revalidate: 0 means this is never cached, which is why the tag
+        // below has no effect - and indeed no action invalidates it. The
+        // expense list is filtered/sorted/paginated per request, so not
+        // caching it is the right call; the tag is vestigial.
         next: { tags: [`expenses-${envelopeId}`], revalidate: 0 },
       },
       ExpensesAPIResponseSchema,
@@ -59,6 +63,10 @@ export const ExpensesService = {
     const expense = await fetchApi<ExpenseApi>(
       `/envelopes/${envelopeId}/expenses/${expenseId}`,
       {
+        // NOTE: this tag is global, not per-id, so invalidating it on a
+        // mutation drops every cached expense detail rather than just the
+        // one that changed. Correct but wasteful - should become
+        // `expense-${id}`. Left as-is for now; see the audit follow-ups.
         next: { tags: ["expense"], revalidate: 60 },
       },
       ExpenseAPIResponseSchema,

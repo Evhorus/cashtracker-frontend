@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { EnvelopeFormValues } from "../schemas/envelope.schema";
 import { EnvelopesService } from "../services/envelopes.service";
 import { createSafeAction } from "@/lib/safe-action";
@@ -17,9 +17,11 @@ export const updateEnvelopeAction = createSafeAction(
     );
 
     revalidatePath("/dashboard");
-    revalidateTag("all-envelopes", "max");
-    revalidateTag("envelope", "max");
-    revalidateTag("dashboard-summary", "max");
+    // updateTag (not revalidateTag) - read-your-own-writes; see
+    // categories/actions/delete-category.action.ts for the why.
+    updateTag("all-envelopes");
+    updateTag("envelope");
+    updateTag("dashboard-summary");
 
     return { successMessage: response.message };
   },

@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { PageHeader } from "@/components/common/page-header";
 import { AccountView } from "@/features/account/components/account-view";
+
+export const metadata: Metadata = { title: "Mi cuenta" };
 
 // Force dynamic rendering because this page uses Clerk auth, same as
 // dashboard/envelopes/page.tsx.

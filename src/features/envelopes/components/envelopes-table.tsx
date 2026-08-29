@@ -97,7 +97,14 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
                     </span>
                   ) : (
                     <div className="flex items-center gap-2.5">
-                      <div className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-secondary/60">
+                      {/* Decorative: the same percentage is spelled out
+                          in the text right next to it, so a
+                          role="progressbar" here would just make a
+                          screen reader announce it twice. */}
+                      <div
+                        aria-hidden="true"
+                        className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-secondary/60"
+                      >
                         <div
                           className={cn("h-full rounded-full", barColorClass)}
                           style={{ width: `${Math.min(percentage ?? 0, 100)}%` }}

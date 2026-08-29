@@ -33,7 +33,10 @@ export function ReverificationProvider({
   // Stable identity - it's a dependency of useReverificationFlow's own
   // effect (via ReverificationDialog), so a fresh function every render
   // would re-run that effect (and re-call session.startVerification) any
-  // time this provider re-renders for an unrelated reason.
+  // time this provider re-renders for an unrelated reason. That makes
+  // this (and openReverificationDialog above) correctness rather than
+  // performance, so both stay explicit even with the React Compiler
+  // enabled - don't "clean them up" as redundant memoization.
   const handleSuccess = useCallback(() => setRequest(null), []);
 
   function handleOpenChange(open: boolean) {

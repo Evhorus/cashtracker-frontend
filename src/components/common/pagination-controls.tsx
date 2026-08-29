@@ -71,9 +71,19 @@ export const PaginationControls = ({
     <Pagination>
       <PaginationContent>
         <PaginationItem>
+          {/* tabIndex={-1} alongside aria-disabled: pointer-events-none
+              only stops the mouse, so a disabled arrow was still
+              reachable with Tab and still activated with Enter, taking a
+              keyboard user to page 0 or past the last page. Spanish
+              text/labels because the shadcn primitive defaults to
+              English ("Previous"/"Next", "Go to previous page") and
+              components/ui is generated code we don't hand-edit. */}
           <PaginationPrevious
             href={buildHref(basePath, Math.max(1, page - 1), searchParams)}
+            text="Anterior"
+            aria-label="Ir a la página anterior"
             aria-disabled={!hasPreviousPage}
+            tabIndex={hasPreviousPage ? undefined : -1}
             className={
               hasPreviousPage ? undefined : "pointer-events-none opacity-50"
             }
@@ -90,6 +100,7 @@ export const PaginationControls = ({
               <PaginationLink
                 href={buildHref(basePath, entry, searchParams)}
                 isActive={entry === page}
+                aria-label={`Ir a la página ${entry}`}
               >
                 {entry}
               </PaginationLink>
@@ -104,7 +115,10 @@ export const PaginationControls = ({
               Math.min(totalPages, page + 1),
               searchParams,
             )}
+            text="Siguiente"
+            aria-label="Ir a la página siguiente"
             aria-disabled={!hasNextPage}
+            tabIndex={hasNextPage ? undefined : -1}
             className={
               hasNextPage ? undefined : "pointer-events-none opacity-50"
             }

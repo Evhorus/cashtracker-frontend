@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarArrowDown, CalendarArrowUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/common/search-input";
+import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,14 +30,22 @@ export const ExpensesFilter = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
-  const searchTimeout = useRef<number | null>(null);
+
+  // Debounce/URL plumbing shared with the envelopes list - see
+  // useDebouncedSearchParam. `applyTo` is what lets the sort and
+  // page-size handlers below carry a half-typed search into their own
+  // navigation instead of dropping it (or having the pending write land
+  // afterwards and undo them).
+  const {
+    value: search,
+    onChange: handleSearchChange,
+    applyTo: applyPendingSearch,
+  } = useDebouncedSearchParam();
 
   // Most recent first by default - matches the backend's own default
   // (expenses.repository.ts) now that it's DESC too, so the button
   // label is right even when the URL carries no ?sort= at all.
   const sort = searchParams.get("sort") || "DESC";
-  const initialSearch = searchParams.get("search") || "";
-  const [search, setSearch] = useState(initialSearch);
 
   const limitParam = Number(searchParams.get("limit"));
   const pageSize = EXPENSES_PAGE_SIZE_OPTIONS.some(
@@ -45,38 +54,10 @@ export const ExpensesFilter = () => {
     ? limitParam
     : EXPENSES_DEFAULT_PAGE_SIZE;
 
-  const clearSearchTimeout = () => {
-    if (searchTimeout.current) {
-      window.clearTimeout(searchTimeout.current);
-      searchTimeout.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      clearSearchTimeout();
-    };
-  }, []);
-
-  const applyFilters = (newSort: string, newSearch: string) => {
-    const params = new URLSearchParams(searchParams);
-
-    if (newSort) {
-      params.set("sort", newSort);
-    } else {
-      params.delete("sort");
-    }
-
-    if (newSearch) {
-      params.set("search", newSearch);
-    } else {
-      params.delete("search");
-    }
-
+  const navigate = (params: URLSearchParams) => {
     // Changing a filter can shrink the result set - start back at page 1
-    // instead of leaving the user stuck on a now out-of-range page.
+    // instead of leaving the user stranded on a now out-of-range page.
     params.delete("page");
-
     startTransition(() => {
       const query = params.toString();
       router.replace(`${pathname}${query ? `?${query}` : ""}`);
@@ -84,39 +65,24 @@ export const ExpensesFilter = () => {
   };
 
   const handleSortChange = (newSort: string) => {
-    applyFilters(newSort, search);
+    const params = new URLSearchParams(searchParams);
+    applyPendingSearch(params);
+    params.set("sort", newSort);
+    navigate(params);
   };
 
   const handlePageSizeChange = (value: string | null) => {
     if (!value) return;
     const params = new URLSearchParams(searchParams);
-    const newLimit = Number(value);
+    applyPendingSearch(params);
 
-    if (newLimit === EXPENSES_DEFAULT_PAGE_SIZE) {
+    if (Number(value) === EXPENSES_DEFAULT_PAGE_SIZE) {
       params.delete("limit");
     } else {
       params.set("limit", value);
     }
 
-    // Same reasoning as applyFilters - a bigger/smaller page can put the
-    // current page out of range.
-    params.delete("page");
-
-    startTransition(() => {
-      const query = params.toString();
-      router.replace(`${pathname}${query ? `?${query}` : ""}`);
-    });
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-
-    clearSearchTimeout();
-
-    searchTimeout.current = window.setTimeout(() => {
-      applyFilters(sort, value);
-      searchTimeout.current = null;
-    }, 500);
+    navigate(params);
   };
 
   return (

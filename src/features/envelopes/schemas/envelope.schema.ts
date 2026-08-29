@@ -59,12 +59,3 @@ export const envelopeFormSchema = z
   });
 
 export type EnvelopeFormValues = z.infer<typeof envelopeFormSchema>;
-
-// Password validation
-export const PasswordValidationSchema = z.object({
-  password: z.string().min(1, { message: "Contraseña no válida" }),
-});
-
-export type PasswordValidationFormInputs = z.infer<
-  typeof PasswordValidationSchema
->;
