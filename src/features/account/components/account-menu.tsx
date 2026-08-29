@@ -73,7 +73,7 @@ export function AccountMenu({ trigger }: AccountMenuProps = {}) {
           </DropdownMenuLabel>
           <DropdownMenuItem render={<Link href="/dashboard/account" />}>
             <Settings />
-            Mi cuenta
+            {t("title")}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

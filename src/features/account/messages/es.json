@@ -43,14 +43,16 @@
     "connected": {
       "title": "Cuentas conectadas",
       "subtitle": "Vincula otros proveedores para iniciar sesión más rápido",
-      "connectNew": "Conectar un nuevo proveedor"
+      "connectNew": "Conectar un nuevo proveedor",
+      "disconnect": "Desconectar"
     },
     "danger": {
       "title": "Eliminar cuenta",
       "confirmTitle": "¿Eliminar tu cuenta?",
       "yourEmail": "Tu email",
       "body": "Elimina tu cuenta y todos tus datos de forma permanente. Esta acción no se puede deshacer.",
-      "confirmBody": "Esta acción no se puede deshacer. Se eliminará tu cuenta y todos tus sobres y gastos."
+      "confirmBody": "Esta acción no se puede deshacer. Se eliminará tu cuenta y todos tus sobres y gastos.",
+      "confirmPrompt": "Escribe <email></email> para confirmar:"
     },
     "reverification": {
       "title": "Confirma que eres tú",

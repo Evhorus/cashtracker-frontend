@@ -63,7 +63,7 @@ export const CategoryForm = ({
               control={control}
               name="label"
               label={t("name")}
-              placeholder="Ej: Suscripciones"
+              placeholder={t("namePlaceholder")}
               autoComplete="off"
               autoFocus
               disabled={isLoading}

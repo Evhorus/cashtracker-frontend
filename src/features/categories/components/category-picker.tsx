@@ -40,6 +40,7 @@ export function CategoryPicker({
   "aria-invalid": ariaInvalid,
 }: CategoryPickerProps) {
   const t = useTranslations("categories");
+  const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
@@ -158,7 +159,9 @@ export function CategoryPicker({
           })}
 
           {filtered.length === 0 && (
-            <Text className="px-2 py-3 text-center">Sin resultados</Text>
+            <Text className="px-2 py-3 text-center">
+              {tCommon("noResults")}
+            </Text>
           )}
         </div>
 

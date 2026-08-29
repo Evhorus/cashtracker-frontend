@@ -117,7 +117,7 @@ export function ProfileSection({ user }: ProfileSectionProps) {
           <div>
             <p className="text-sm font-medium">{user.fullName}</p>
             <p className="text-xs text-muted-foreground">
-              Haz clic en la foto para cambiarla
+              {t("changePhotoHint")}
             </p>
           </div>
         </div>
@@ -146,7 +146,7 @@ export function ProfileSection({ user }: ProfileSectionProps) {
             isLoading={isUpdatingProfile}
             className="w-fit"
           >
-            Guardar cambios
+            {t("save")}
           </SubmitButton>
         </form>
       </CardContent>

@@ -11,7 +11,9 @@
     "emptyTitle": "Crea tu primer sobre",
     "emptyBody": "Un sobre por categoría — mercado, transporte, ocio — con el límite que decidas. CashTracker te avisa antes de que te excedas.",
     "availableThisMonth": "Disponible este mes",
-    "spent": "Gastado"
+    "spent": "Gastado",
+    "percentVsPrevMonth": "% vs mes anterior",
+    "percentOfBudget": "% del presupuesto"
   },
   "statistics": {
     "title": "Estadísticas",
