@@ -33,6 +33,7 @@ export const deleteEnvelopeAction = createSafeAction(
     // than per-id today - see the note in envelopes.service.ts.)
     updateTag("envelope");
     updateTag("dashboard-summary");
+    updateTag("dashboard-category-breakdown");
 
     return { successMessage: "Sobre eliminado correctamente." };
   },

@@ -22,6 +22,7 @@ export const createExpenseAction = createSafeAction(
     // categories/actions/delete-category.action.ts for the why.
     updateTag("all-envelopes");
     updateTag("dashboard-summary");
+    updateTag("dashboard-category-breakdown");
     updateTag("dashboard-recent-expenses");
 
     return { successMessage: response.message };

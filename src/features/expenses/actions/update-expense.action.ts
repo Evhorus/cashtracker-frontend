@@ -26,6 +26,7 @@ export const updateExpenseAction = createSafeAction(
     updateTag("all-envelopes");
     updateTag("expense");
     updateTag("dashboard-summary");
+    updateTag("dashboard-category-breakdown");
     updateTag("dashboard-recent-expenses");
 
     return { successMessage: response.message };

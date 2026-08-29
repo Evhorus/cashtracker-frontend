@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
-import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
+import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-breakdown";
 import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
 import { CurrencyFilterSelect } from "@/features/dashboard/components/currency-filter-select";
 import nextDynamic from "next/dynamic";
@@ -118,6 +118,7 @@ export default async function StatisticsPage({
           totals={totals}
           chartCurrency={chartCurrency}
           hasMultipleCurrencies={hasMultipleCurrencies}
+          year={year}
         />
       </Suspense>
     </div>
@@ -128,34 +129,28 @@ interface BreakdownSectionProps {
   totals: (DashboardSummary["totals"][number] & { currency: CurrencyCode })[];
   chartCurrency: CurrencyCode;
   hasMultipleCurrencies: boolean;
+  /** Same year filter the summary was fetched with, so the breakdown
+   * covers the same period as the chart above it. */
+  year?: number;
 }
 
 /**
- * The two breakdown cards. Split out of the page body because these are
- * the only things needing the full envelope list, which is by far the
- * slowest fetch on this route - keeping it here means the header,
- * filters and chart no longer wait on it.
+ * The two breakdown cards. Split out of the page body so the header,
+ * the filters and the chart render without waiting on this section's own
+ * fetch.
  */
 async function BreakdownSection({
   totals,
   chartCurrency,
   hasMultipleCurrencies,
+  year,
 }: BreakdownSectionProps) {
-  // Only the category breakdown still needs this: it sums `spent` per
-  // category, which no endpoint reports yet. 100 is the backend's hard
-  // cap on `limit`, so an account past that silently loses envelopes
-  // from the breakdown - the last place in the app where that is still
-  // true, and the reason a GROUP BY endpoint is the next thing to build.
-  //
-  // The per-currency counts beside it used to be derived from this same
-  // list; they come from the summary's own uncapped aggregate now.
-  const envelopesResult = await getEnvelopes({ limit: 100 });
-
-  // Same currency the chart itself is scoped to, so the two widgets tell
-  // one consistent story instead of mixing currencies in one sum.
-  const envelopesInChartCurrency = envelopesResult.data.filter(
-    (envelope) => envelope.currency === chartCurrency,
-  );
+  // Aggregated by the backend, scoped to the same currency the chart
+  // is, so the two widgets tell one consistent story. This used to fetch
+  // every envelope (capped at 100) and reduce over it, which silently
+  // dropped categories once an account passed that cap - the last place
+  // in the app that did so.
+  const breakdownRows = await getCategoryBreakdown(chartCurrency, year);
 
   return (
     <div
@@ -173,10 +168,7 @@ async function BreakdownSection({
           <CardTitle>Gasto por categoría</CardTitle>
         </CardHeader>
         <CardContent>
-          <CategoryBreakdown
-            envelopes={envelopesInChartCurrency}
-            currency={chartCurrency}
-          />
+          <CategoryBreakdown rows={breakdownRows} currency={chartCurrency} />
         </CardContent>
       </Card>
 
