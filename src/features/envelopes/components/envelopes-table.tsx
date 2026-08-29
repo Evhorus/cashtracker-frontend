@@ -60,7 +60,7 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
         </TableHeader>
         <TableBody>
           {envelopes.map((envelope) => {
-            const status = EnvelopeHelpers.getProgressStatus(envelope);
+            const status = envelope.status;
             const percentage = EnvelopeHelpers.getPercentage(envelope);
             const remaining = EnvelopeHelpers.getRemaining(envelope);
             const currencyConfig = CURRENCY_MAP[envelope.currency];

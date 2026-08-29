@@ -12,11 +12,17 @@ import {
 } from "../schemas/envelope.schema";
 import { Envelope, EnvelopesResponse } from "../types";
 import { EnvelopeMapper } from "../mappers/envelope.mapper";
+import type { EnvelopeStatusFilter } from "../lib/envelope-helpers";
 
 // Mirrors GetExpensesParams (expenses.service.ts): the backend has no sort
-// or date range for envelopes (they have no date of their own), just search.
+// or date range for envelopes (they have no date of their own), just
+// search and the derived spending status.
 export interface GetEnvelopesParams extends PaginationParams {
   search?: string;
+  /** Filtered in SQL by the backend, so `meta.total` counts the filtered
+   * set - see EnvelopeStatusFilter and cashtracker-backend's
+   * buildEnvelopeStatusPredicate. */
+  status?: EnvelopeStatusFilter;
 }
 
 export const EnvelopesService = {
@@ -25,6 +31,10 @@ export const EnvelopesService = {
   ): Promise<EnvelopesResponse> => {
     const query = new URLSearchParams();
     if (params?.search) query.set("search", params.search);
+    // "all" is the default; sending it would just be noise in the URL.
+    if (params?.status && params.status !== "all") {
+      query.set("status", params.status);
+    }
     if (params) appendPaginationParams(query, params);
     const qs = query.toString();
 

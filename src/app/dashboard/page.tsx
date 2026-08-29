@@ -26,10 +26,12 @@ export const metadata: Metadata = { title: "Resumen" };
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
-// Same cap the envelopes/statistics/categories pages use for "give me
-// every envelope to compute something over" - the alert list below is
-// derived from spent/amount, which the summary endpoint doesn't return.
-const ALL_ENVELOPES_LIMIT = 100;
+// The alert widget shows the three worst envelopes, so it needs them
+// ordered by how far over they are - which the backend doesn't sort by.
+// It asks for the alerting ones only (a much smaller set than every
+// envelope) and sorts those. The COUNT on the tile comes from
+// `meta.total`, so it is exact regardless of this cap.
+const ALERT_ENVELOPES_LIMIT = 100;
 
 /**
  * Resumen (glanceable overview): the hero balance card(s) - one per
@@ -82,7 +84,11 @@ async function Greeting() {
 async function DashboardSummarySection() {
   const [summary, envelopesResult, recentExpenses] = await Promise.all([
     getDashboardSummary(),
-    getEnvelopes({ limit: ALL_ENVELOPES_LIMIT }),
+    // Filtered in SQL - see cashtracker-backend's status predicate. This
+    // used to fetch every envelope and filter in memory, so the "En
+    // alerta" count silently under-reported once an account passed the
+    // cap.
+    getEnvelopes({ status: "alert", limit: ALERT_ENVELOPES_LIMIT }),
     // The last few expenses across every envelope - its own endpoint,
     // since that's cross-envelope data the summary/envelope-list
     // responses don't carry.
@@ -106,7 +112,11 @@ async function DashboardSummarySection() {
   // Real month-over-month change, never a placeholder - and only ever
   // shown against the one currency the chart is scoped to.
   const deltaPercent = getMonthOverMonthDelta(summary.chart);
+  // Already only alerting envelopes; this just orders them worst-first.
   const alertEnvelopes = getAlertEnvelopes(envelopesResult.data);
+  // From the filtered query's own count, not the length of the page we
+  // happened to fetch.
+  const alertCount = envelopesResult.meta.total;
 
   const tiles = (
     <>
@@ -118,8 +128,8 @@ async function DashboardSummarySection() {
       <SummaryTile
         icon={TriangleAlert}
         label="En alerta"
-        value={alertEnvelopes.length}
-        tone={alertEnvelopes.length > 0 ? "alert" : "muted"}
+        value={alertCount}
+        tone={alertCount > 0 ? "alert" : "muted"}
       />
     </>
   );

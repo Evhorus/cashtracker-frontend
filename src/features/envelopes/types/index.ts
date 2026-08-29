@@ -1,6 +1,7 @@
 import { Expense } from "@/features/expenses/types";
 import type { CurrencyCode } from "@/lib/format-currency";
 import type { PaginationMeta } from "@/lib/pagination";
+import type { EnvelopeProgressStatus } from "../lib/envelope-helpers";
 
 export interface EnvelopesResponse {
   data: Envelope[];
@@ -21,6 +22,13 @@ export interface Envelope {
    */
   currency: CurrencyCode;
   spent: string;
+  /**
+   * Reported by the API, not derived here. The backend owns the warning
+   * threshold and the edge cases so every client - this one, a future
+   * mobile app - shows the same status for the same envelope. See
+   * src/envelopes/utils/envelope-status.ts in cashtracker-backend.
+   */
+  status: EnvelopeProgressStatus;
   category?: string;
   description?: string;
   expenses: Expense[];

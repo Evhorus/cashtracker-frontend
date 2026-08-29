@@ -11,7 +11,7 @@ import type { EnvelopeProgressStatus } from "@/features/envelopes/lib/envelope-h
 interface EnvelopeChartProps {
   spent: number;
   total: number;
-  /** From EnvelopeHelpers.getProgressStatus(envelope) - the chart colors
+  /** From `envelope.status`, reported by the API - the chart colors
    * itself off the same status every other view (the envelopes list's
    * progress bars, envelope-card.tsx, this same page's own "Gastado"
    * figure right next to it) uses, instead of a bespoke `spent > total`

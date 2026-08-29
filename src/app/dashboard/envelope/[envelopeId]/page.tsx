@@ -118,7 +118,7 @@ export default async function EnvelopePage({
   const isUnlimited = envelope.amount === null;
   const remaining = EnvelopeHelpers.getRemaining(envelope);
   const percentage = EnvelopeHelpers.getPercentage(envelope);
-  const status = EnvelopeHelpers.getProgressStatus(envelope);
+  const status = envelope.status;
   const currencyConfig = CURRENCY_MAP[envelope.currency];
   const spentColorClass = EnvelopeHelpers.getStatusTextColorClass(status);
 

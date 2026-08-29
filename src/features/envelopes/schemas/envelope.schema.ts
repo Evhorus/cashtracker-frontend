@@ -10,6 +10,11 @@ export const EnvelopeAPIResponseSchema = z.object({
   amount: z.string().nullable(),
   currency: z.string().default("COP"),
   spent: z.string(),
+  // Derived by the backend from amount/spent, not stored. Validated as a
+  // strict enum, unlike `currency` above: this one is the API's own
+  // vocabulary rather than a value the app's form wrote, so an unknown
+  // value means the contract moved and should fail loudly here.
+  status: z.enum(["unlimited", "normal", "warning", "exceeded"]),
   // The API sends explicit `null` (not just an absent key) when these are
   // unset, so `.optional()` alone rejects them - needs `.nullable()` too.
   category: z.string().nullable().optional(),

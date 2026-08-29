@@ -61,7 +61,7 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
   const expenseAmount = ExpenseHelpers.getAmount(expense);
   const currencyConfig = CURRENCY_MAP[envelope.currency];
   const impactPercentage = ExpenseHelpers.getImpactPercentage(expense, envelope);
-  const progressStatus = EnvelopeHelpers.getProgressStatus(envelope);
+  const progressStatus = envelope.status;
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-10">

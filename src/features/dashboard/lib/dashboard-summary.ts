@@ -26,7 +26,7 @@ export function getAlertEnvelopes(envelopes: Envelope[]): AlertEnvelope[] {
   return envelopes
     .map((envelope) => ({
       envelope,
-      status: EnvelopeHelpers.getProgressStatus(envelope),
+      status: envelope.status,
       percentage: EnvelopeHelpers.getPercentage(envelope) ?? 0,
     }))
     .filter(
