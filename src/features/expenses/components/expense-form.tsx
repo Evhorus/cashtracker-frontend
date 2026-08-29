@@ -146,6 +146,7 @@ export const ExpenseForm = ({
                         <Calendar
                           mode="single"
                           selected={field.value}
+                          defaultMonth={field.value}
                           onSelect={(date) => {
                             field.onChange(date);
                             setIsCalendarOpen(false);

@@ -1,7 +1,11 @@
 import { ExpenseFormValues } from "../schemas/expense.schema";
 import { Expense } from "../types";
 import { ExpenseAPIResponseSchema } from "../schemas/expense.schema";
-import { parseDateInput } from "@/lib/date-helpers";
+import {
+  parseDateInput,
+  parseCalendarDate,
+  formatCalendarDateForApi,
+} from "@/lib/date-helpers";
 import { z } from "zod";
 
 type ApiExpense = z.infer<typeof ExpenseAPIResponseSchema>;
@@ -9,13 +13,16 @@ type ApiExpense = z.infer<typeof ExpenseAPIResponseSchema>;
 export const ExpenseMapper = {
   /**
    * UI -> API (Outbound)
-   * Handles Colombian currency formatting (removing dots) before converting to number
+   * Handles Colombian currency formatting (removing dots) before converting to number.
+   * `date` is a pure calendar date (no time-of-day) - sent as a plain
+   * "yyyy-MM-dd" string built from local components so the selected day
+   * survives the trip regardless of the device's timezone.
    */
   toApiRequest: (data: ExpenseFormValues) => ({
     name: data.name,
     amount: Number(data.amount),
     currency: data.currency,
-    date: data.date,
+    date: formatCalendarDateForApi(data.date),
     description: data.description,
   }),
 
@@ -28,7 +35,7 @@ export const ExpenseMapper = {
       id: apiExpense.id,
       name: apiExpense.name,
       amount: apiExpense.amount,
-      date: parseDateInput(apiExpense.date),
+      date: parseCalendarDate(apiExpense.date),
       description: apiExpense.description ?? undefined,
       createdAt: parseDateInput(apiExpense.createdAt),
       updatedAt: parseDateInput(apiExpense.updatedAt),

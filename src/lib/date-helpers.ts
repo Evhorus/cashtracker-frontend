@@ -13,6 +13,42 @@ export function parseDateInput(dateInput: Date | string | number): Date {
   return new Date(dateInput);
 }
 
+/**
+ * Parses a value that represents a pure calendar date (no meaningful
+ * time-of-day) - e.g. an expense's `date`, backed by a Postgres `date`
+ * column - into a `Date` at LOCAL midnight for that day, region-agnostic.
+ *
+ * Unlike `parseDateInput`, this never treats the value as an instant: the
+ * API can (and does) echo a date-only value as a full UTC timestamp (e.g.
+ * "2026-09-22T00:00:00.000Z"), so anything that runs it through
+ * `parseISO` + device-timezone conversion (as `formatDate` does for real
+ * instants like `createdAt`) shifts the day backward for any timezone
+ * behind UTC (Bogotá, UTC-5, included). Reading only the "yyyy-MM-dd"
+ * prefix and rebuilding the date from local components sidesteps that
+ * entirely - the calendar day is fixed, regardless of device timezone.
+ */
+export function parseCalendarDate(dateInput: Date | string): Date {
+  if (typeof dateInput === "string") {
+    const [year, month, day] = dateInput.slice(0, 10).split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+  return new Date(
+    dateInput.getFullYear(),
+    dateInput.getMonth(),
+    dateInput.getDate(),
+  );
+}
+
+/**
+ * Formats a calendar date (see `parseCalendarDate`) for the API as a plain
+ * "yyyy-MM-dd" string, using LOCAL date components - never `toISOString()`,
+ * which would convert through UTC and can shift the day for timezones
+ * ahead of UTC before the request ever reaches the backend.
+ */
+export function formatCalendarDateForApi(date: Date): string {
+  return format(date, "yyyy-MM-dd");
+}
+
 function toDeviceTimeZone(dateInput: Date): Date {
   return new TZDate(dateInput, getDeviceTimeZone());
 }

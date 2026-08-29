@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { parseDateInput } from "@/lib/date-helpers";
+import { parseCalendarDate } from "@/lib/date-helpers";
 import { Edit } from "lucide-react";
 import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
 import { Button } from "@/components/ui/button";
@@ -68,7 +68,7 @@ export const UpdateExpenseDialog = ({
           name: expense.name,
           amount: expense.amount,
           description: expense.description || "",
-          date: parseDateInput(expense.date),
+          date: parseCalendarDate(expense.date),
         }}
         onSubmit={handleCreate}
         isLoading={isPending}
