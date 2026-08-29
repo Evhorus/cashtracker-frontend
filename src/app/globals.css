@@ -254,16 +254,3 @@
     @apply bg-background font-sans text-foreground;
   }
 }
-
-/* Hides the scrollbar on a container that scrolls sideways on purpose,
-   without disabling the scrolling itself. Used by the filter tab row,
-   which is swipeable on touch and shows its overflow through the cut-off
-   tab at the edge - a persistent native bar under a 5-tab row reads as
-   breakage rather than affordance. Not applied to vertical scrollers,
-   where the bar is the only cue that there is more below. */
-@utility scrollbar-none {
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}

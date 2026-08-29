@@ -31,8 +31,8 @@ export default async function CategoriesPage() {
 
   return (
     // CategoriesFilterProvider holds the search/type state shared between
-    // the search box (rendered inside CategoriesSection, next to the
-    // type tabs) and the filtering logic there - see that context file's
+    // the search box (rendered inside CategoriesSection) and the type
+    // filter (in the PageHeader on desktop) and the filtering logic - see that context file's
     // comment for why a context instead of local state, now that the
     // search box isn't a sibling of CategoriesSection anymore.
     <CategoriesFilterProvider>
@@ -46,14 +46,26 @@ export default async function CategoriesPage() {
             it isolated top-right with a lot of empty space around it on
             a wide viewport, far from both the title and the table it
             filters. */}
-        <PageHeader
-          title={t("title")}
-          backUrl="/dashboard"
-          actions={<CreateCategoryDialog />}
-          mobileActions={<CreateCategoryDialog />}
-        />
+        {/* Mobile only: the app header carries the section name on
+            desktop (see CustomHeader), so a second copy here was the same
+            word three times on one screen - header, highlighted sidebar
+            item, and this. Mobile's header shows the logo instead, so the
+            name is not duplicated there, and this row also carries the
+            back arrow and the create button on that breakpoint. */}
+        <div className="md:hidden">
+          <PageHeader
+            title={t("title")}
+            backUrl="/dashboard"
+            // Same as the envelopes list: desktop's create button sits on
+            // the filter row below, mobile keeps it here beside the title.
+            mobileActions={<CreateCategoryDialog />}
+          />
+        </div>
 
-        <CategoriesSection categoryCounts={categoryCounts} />
+        <CategoriesSection
+          categoryCounts={categoryCounts}
+          actions={<CreateCategoryDialog />}
+        />
       </div>
     </CategoriesFilterProvider>
   );
