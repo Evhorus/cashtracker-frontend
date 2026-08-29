@@ -119,7 +119,14 @@ export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
           <span
             className={`shrink-0 font-mono text-sm font-bold ${amountTextColorClass}`}
           >
-            {Math.min(calculations.percentage ?? 0, 100).toFixed(0)}%
+            {/* The real figure, not capped at 100. The bar below has to
+                cap - it cannot draw 133% of its own width - but the
+                number must not: "you are 33% over" is the single most
+                useful thing this card can say, and rounding it down to
+                100% hid it. The desktop table always showed the true
+                value, so the same envelope read 100% on a phone and 133%
+                on a laptop. */}
+            {(calculations.percentage ?? 0).toFixed(0)}%
           </span>
         )}
 
