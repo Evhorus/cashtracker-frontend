@@ -73,10 +73,25 @@ export type DashboardRecentExpenseApi = z.infer<
   typeof DashboardRecentExpenseAPISchema
 >;
 
+// The filters shared by all four "breakdown" endpoints below - a period
+// (an exact startDate/endDate range, or a whole `year`, or neither for
+// all-time) plus the currency they're scoped to. Picking a range clears
+// `year` and vice versa (see date-range-filter.tsx/year-filter-select.tsx),
+// so the two are never both set from this app's own UI, but the shape
+// allows either.
+export interface DashboardBreakdownFilters {
+  currency: string;
+  year?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
 // GET /dashboard/category-breakdown - spending grouped by category for
-// one currency, aggregated in SQL. Grouped by the category itself now
-// that envelopes reference it by id, so one category is one row and the
-// client has nothing left to merge.
+// one currency/period, aggregated in SQL from each matching expense's
+// own date (not the envelope's creation date - see the backend's
+// DashboardRepository.withUserCurrencyAndDateRange). Grouped by the
+// category itself now that envelopes reference it by id, so one
+// category is one row and the client has nothing left to merge.
 export const DashboardCategoryBreakdownRowSchema = z.object({
   category: z
     .object({
@@ -87,7 +102,7 @@ export const DashboardCategoryBreakdownRowSchema = z.object({
     })
     .nullable(),
   spent: z.number(),
-  envelopeCount: z.number(),
+  expenseCount: z.number(),
 });
 
 export const DashboardCategoryBreakdownAPIResponseSchema = z.array(
@@ -96,4 +111,49 @@ export const DashboardCategoryBreakdownAPIResponseSchema = z.array(
 
 export type DashboardCategoryBreakdownRow = z.infer<
   typeof DashboardCategoryBreakdownRowSchema
+>;
+
+// GET /dashboard/envelope-breakdown - same aggregation, grouped by
+// envelope instead of category.
+export const DashboardEnvelopeBreakdownRowSchema = z.object({
+  envelopeId: z.string(),
+  envelopeName: z.string(),
+  spent: z.number(),
+  expenseCount: z.number(),
+});
+
+export const DashboardEnvelopeBreakdownAPIResponseSchema = z.array(
+  DashboardEnvelopeBreakdownRowSchema,
+);
+
+export type DashboardEnvelopeBreakdownRow = z.infer<
+  typeof DashboardEnvelopeBreakdownRowSchema
+>;
+
+// GET /dashboard/name-breakdown - same aggregation, grouped by the
+// expense's own (already-normalized) name - surfaces recurring expenses
+// like "Arriendo" as a single total instead of one row per month.
+export const DashboardNameBreakdownRowSchema = z.object({
+  name: z.string(),
+  spent: z.number(),
+  expenseCount: z.number(),
+});
+
+export const DashboardNameBreakdownAPIResponseSchema = z.array(
+  DashboardNameBreakdownRowSchema,
+);
+
+export type DashboardNameBreakdownRow = z.infer<
+  typeof DashboardNameBreakdownRowSchema
+>;
+
+// GET /dashboard/breakdown-total - the same set of expenses the three
+// breakdowns above group differently, collapsed to one number.
+export const DashboardBreakdownTotalAPIResponseSchema = z.object({
+  spent: z.number(),
+  expenseCount: z.number(),
+});
+
+export type DashboardBreakdownTotal = z.infer<
+  typeof DashboardBreakdownTotalAPIResponseSchema
 >;

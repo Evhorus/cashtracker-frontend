@@ -6,14 +6,18 @@ import { Breadcrumb } from "@/components/common/breadcrumb";
 import { formatMonthKey } from "@/lib/date-helpers";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-breakdown";
+import { getEnvelopeBreakdown } from "@/features/dashboard/data/get-envelope-breakdown";
+import { getNameBreakdown } from "@/features/dashboard/data/get-name-breakdown";
+import { getBreakdownTotal } from "@/features/dashboard/data/get-breakdown-total";
 import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
 import { CurrencyFilterSelect } from "@/features/dashboard/components/currency-filter-select";
+import { DateRangeFilter } from "@/features/dashboard/components/date-range-filter";
 import nextDynamic from "next/dynamic";
 import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heading } from "@/components/common/typography";
-import { CategoryBreakdown } from "@/features/categories/components/category-breakdown";
+import { BreakdownTabs } from "@/features/dashboard/components/breakdown-tabs";
 import { CurrencyBreakdown } from "@/features/dashboard/components/currency-breakdown";
 import { cn } from "@/lib/utils";
 import type { CurrencyCode } from "@/lib/format-currency";
@@ -39,7 +43,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = "force-dynamic";
 
 interface StatisticsPageProps {
-  searchParams: Promise<{ year?: string; currency?: string }>;
+  searchParams: Promise<{
+    year?: string;
+    currency?: string;
+    startDate?: string;
+    endDate?: string;
+  }>;
 }
 
 // The year/currency-filterable monthly trend, split out of "/dashboard"
@@ -52,8 +61,18 @@ export default async function StatisticsPage({
   await auth.protect();
   const locale = await getLocale();
   const t = await getTranslations("statistics");
-  const { year: yearParam, currency: currencyParam } = await searchParams;
+  const {
+    year: yearParam,
+    currency: currencyParam,
+    startDate,
+    endDate,
+  } = await searchParams;
   const year = yearParam ? parseInt(yearParam, 10) || undefined : undefined;
+  // An exact range wins over the year shortcut when the URL somehow
+  // carries both (hand-edited, stale) - same precedence the backend
+  // applies (see BreakdownQueryDto), so the chart above and the
+  // breakdown tabs below can never disagree about which one is active.
+  const hasDateRange = Boolean(startDate && endDate);
 
   // Only the summary is on the critical path. It's a precomputed
   // backend aggregate and it's what the header's filters and the chart
@@ -101,13 +120,14 @@ export default async function StatisticsPage({
           <Breadcrumb current={t("title")} className="hidden md:block" />
 
           {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {summary.availableYears.length > 0 && (
                 <YearFilterSelect
                   years={summary.availableYears}
                   selectedYear={year}
                 />
               )}
+              <DateRangeFilter startDate={startDate} endDate={endDate} />
               {hasMultipleCurrencies && (
                 <CurrencyFilterSelect
                   currencies={totals.map((total) => total.currency)}
@@ -126,20 +146,22 @@ export default async function StatisticsPage({
         hasOtherCurrencies={hasMultipleCurrencies}
       />
 
-      {/* Keyed on the active filters so changing year/currency re-shows
-          the fallback instead of silently swapping content once ready -
-          the same visible "yes, that click registered" feedback the
-          envelopes list uses, and the reason the filter controls above
-          sit outside this boundary. */}
+      {/* Keyed on the active filters so changing year/currency/date
+          range re-shows the fallback instead of silently swapping
+          content once ready - the same visible "yes, that click
+          registered" feedback the envelopes list uses, and the reason
+          the filter controls above sit outside this boundary. */}
       <Suspense
-        key={`${year ?? ""}-${chartCurrency}`}
+        key={`${year ?? ""}-${chartCurrency}-${startDate ?? ""}-${endDate ?? ""}`}
         fallback={<BreakdownSkeleton multiCurrency={hasMultipleCurrencies} />}
       >
         <BreakdownSection
           totals={totals}
           chartCurrency={chartCurrency}
           hasMultipleCurrencies={hasMultipleCurrencies}
-          year={year}
+          year={hasDateRange ? undefined : year}
+          startDate={hasDateRange ? startDate : undefined}
+          endDate={hasDateRange ? endDate : undefined}
         />
       </Suspense>
     </div>
@@ -150,29 +172,41 @@ interface BreakdownSectionProps {
   totals: (DashboardSummary["totals"][number] & { currency: CurrencyCode })[];
   chartCurrency: CurrencyCode;
   hasMultipleCurrencies: boolean;
-  /** Same year filter the summary was fetched with, so the breakdown
-   * covers the same period as the chart above it. */
+  /** The period every breakdown tab is scoped to - an exact range wins
+   * over `year` (page body above already resolves that), either or
+   * neither may be set. */
   year?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 /**
- * The two breakdown cards. Split out of the page body so the header,
- * the filters and the chart render without waiting on this section's own
- * fetch.
+ * The breakdown card (four tabs) plus the currency card. Split out of
+ * the page body so the header, the filters and the chart render
+ * without waiting on this section's own fetch.
  */
 async function BreakdownSection({
   totals,
   chartCurrency,
   hasMultipleCurrencies,
   year,
+  startDate,
+  endDate,
 }: BreakdownSectionProps) {
   const t = await getTranslations("statistics");
-  // Aggregated by the backend, scoped to the same currency the chart
-  // is, so the two widgets tell one consistent story. This used to fetch
-  // every envelope (capped at 100) and reduce over it, which silently
-  // dropped categories once an account passed that cap - the last place
-  // in the app that did so.
-  const breakdownRows = await getCategoryBreakdown(chartCurrency, year);
+  const filters = { currency: chartCurrency, year, startDate, endDate };
+  // All four aggregated by the backend, scoped to the same
+  // currency/period so every tab and the currency card beside it tell
+  // one consistent story. Category breakdown used to fetch every
+  // envelope (capped at 100) and reduce over it, which silently dropped
+  // categories once an account passed that cap - the last place in the
+  // app that did so.
+  const [categoryRows, envelopeRows, nameRows, total] = await Promise.all([
+    getCategoryBreakdown(filters),
+    getEnvelopeBreakdown(filters),
+    getNameBreakdown(filters),
+    getBreakdownTotal(filters),
+  ]);
 
   return (
     <div
@@ -187,10 +221,16 @@ async function BreakdownSection({
         )}
       >
         <CardHeader>
-          <CardTitle>{t("byCategory")}</CardTitle>
+          <CardTitle>{t("breakdownTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <CategoryBreakdown rows={breakdownRows} currency={chartCurrency} />
+          <BreakdownTabs
+            categoryRows={categoryRows}
+            envelopeRows={envelopeRows}
+            nameRows={nameRows}
+            total={total}
+            currency={chartCurrency}
+          />
         </CardContent>
       </Card>
 

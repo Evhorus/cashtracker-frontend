@@ -39,6 +39,11 @@ export const YearFilterSelect = ({
       params.delete("year");
     } else {
       params.set("year", value);
+      // A year is a shortcut for an exact date range - the two answer
+      // the same question, so picking one clears the other (see
+      // DateRangeFilter.handleSelect for the reverse direction).
+      params.delete("startDate");
+      params.delete("endDate");
     }
     const qs = params.toString();
     // Same route this control is actually rendered on (statistics/page.tsx

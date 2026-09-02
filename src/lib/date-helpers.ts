@@ -16,7 +16,11 @@ import { TZDate } from "@date-fns/tz";
  * The API-facing and parsing helpers take no locale: their output is a
  * wire format or a Date, not something anybody reads.
  */
-const DATE_FNS_LOCALES = { es, en: enUS } as const satisfies Record<
+/** Exported so callers that hand a date-fns Locale object straight to a
+ * third-party component (e.g. react-day-picker's Calendar) can look one
+ * up per-locale instead of hardcoding `es` the way expense-form.tsx's
+ * date picker still does today. */
+export const DATE_FNS_LOCALES = { es, en: enUS } as const satisfies Record<
   SupportedLocale,
   unknown
 >;
