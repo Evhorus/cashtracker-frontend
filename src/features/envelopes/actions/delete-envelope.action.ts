@@ -43,6 +43,9 @@ export const deleteEnvelopeAction = createSafeAction(
     updateTag("envelope");
     updateTag("dashboard-summary");
     updateTag("dashboard-category-breakdown");
+    updateTag("dashboard-envelope-breakdown");
+    updateTag("dashboard-name-breakdown");
+    updateTag("dashboard-breakdown-total");
 
     const t = await getTranslations("envelopes.toast");
 

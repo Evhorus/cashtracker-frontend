@@ -4,9 +4,9 @@ import { DashboardService } from "@/features/dashboard/services/dashboard.servic
 import type { DashboardBreakdownFilters } from "@/features/dashboard/schemas/dashboard.schema";
 
 /**
- * Spending grouped by category for one currency/period - see
+ * Spending grouped by envelope for one currency/period - see
  * envelopes/data/get-envelopes.ts for why this is a plain server-only
  * function rather than a Server Action.
  */
-export const getCategoryBreakdown = (filters: DashboardBreakdownFilters) =>
-  DashboardService.getCategoryBreakdown(filters);
+export const getEnvelopeBreakdown = (filters: DashboardBreakdownFilters) =>
+  DashboardService.getEnvelopeBreakdown(filters);

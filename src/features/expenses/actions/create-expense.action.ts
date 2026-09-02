@@ -27,6 +27,9 @@ export const createExpenseAction = createSafeAction(
     updateTag("all-envelopes");
     updateTag("dashboard-summary");
     updateTag("dashboard-category-breakdown");
+    updateTag("dashboard-envelope-breakdown");
+    updateTag("dashboard-name-breakdown");
+    updateTag("dashboard-breakdown-total");
     updateTag("dashboard-recent-expenses");
 
     const t = await getTranslations("expenses.toast");
