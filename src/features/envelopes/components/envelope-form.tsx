@@ -43,7 +43,7 @@ export const EnvelopeForm = ({
     resolver: zodResolver(buildEnvelopeFormSchema(tValidation)),
     defaultValues: {
       name: "",
-      hasLimit: true,
+      hasLimit: false,
       amount: "",
       currency: "COP",
       categoryId: "",
