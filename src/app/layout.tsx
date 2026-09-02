@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(
-      process.env.NEXT_PUBLIC_URL || "http://localhost:3001",
+      process.env.NEXT_PUBLIC_URL || "http://localhost:4001",
     ),
     title: {
       default: t("title"),

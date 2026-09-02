@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 // Only the publicly reachable routes. Everything under /dashboard needs
 // a session, so it has no place here.
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3001";
+  const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:4001";
 
   return [
     {
