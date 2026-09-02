@@ -43,8 +43,13 @@ export function ExpenseNameBreakdown({
                   </span>
                 )}
               </span>
-              <span className="font-mono text-xs text-muted-foreground">
-                {formatCurrency(row.spent, config)} · {percentage.toFixed(0)}%
+              <span className="flex items-baseline gap-1.5 font-mono">
+                <span className="text-sm font-semibold">
+                  {formatCurrency(row.spent, config)}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {percentage.toFixed(0)}%
+                </span>
               </span>
             </div>
             <div
