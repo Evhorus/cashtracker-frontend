@@ -29,6 +29,7 @@
     "ofBudgeted": "de {amount} presupuestados",
     "inUnlimited": "en sobres sin límite",
     "noSpendingYet": "Aún no hay gastos este período para desglosar por categoría.",
+  "notEnoughTrendData": "Necesitas gastos en al menos 2 meses distintos para ver una tendencia aquí.",
     "spent": "Gastado",
     "available": "Disponible"
   }

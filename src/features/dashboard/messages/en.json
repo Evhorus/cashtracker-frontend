@@ -29,6 +29,7 @@
     "ofBudgeted": "of {amount} budgeted",
     "inUnlimited": "in unlimited envelopes",
     "noSpendingYet": "No spending this period to break down by category yet.",
+  "notEnoughTrendData": "You need expenses in at least 2 different months to see a trend here.",
     "spent": "Spent",
     "available": "Available"
   }
