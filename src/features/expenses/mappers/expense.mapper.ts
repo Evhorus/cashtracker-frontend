@@ -7,6 +7,7 @@ import {
   formatCalendarDateForApi,
   toFormCalendarDate,
 } from "@/lib/date-helpers";
+import { capitalize } from "@/lib/utils";
 import { z } from "zod";
 
 type ApiExpense = z.infer<typeof ExpenseAPIResponseSchema>;
@@ -34,7 +35,11 @@ export const ExpenseMapper = {
   fromApi: (apiExpense: ApiExpense): Expense => {
     return {
       id: apiExpense.id,
-      name: apiExpense.name,
+      // The backend stores this lowercase now (its own matching/
+      // grouping needs the normalized form) - capitalize it here, once,
+      // for every consumer of the domain model, rather than at each
+      // render site.
+      name: capitalize(apiExpense.name),
       amount: apiExpense.amount,
       date: parseCalendarDate(apiExpense.date),
       description: apiExpense.description ?? undefined,
