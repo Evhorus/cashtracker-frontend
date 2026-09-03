@@ -7,6 +7,7 @@
     "searchPlaceholder": "Buscar por nombre...",
     "searchAria": "Buscar gastos por nombre",
     "perPage": "Gastos por página",
+    "filteredSummary": "{count, plural, one {# gasto} other {# gastos}} · {amount}",
     "sortAria": "Ordenar gastos por fecha",
     "newestFirst": "Más recientes primero",
     "oldestFirst": "Más antiguos primero",

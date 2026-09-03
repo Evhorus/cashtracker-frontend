@@ -364,9 +364,24 @@ async function ExpensesResults({
     page,
     limit,
   });
+  const t = await getTranslations("expenses");
 
   return (
     <>
+      {/* Sum of the filtered set (server-computed, spans every page -
+          see meta.totalAmount), not just what's on screen. Only makes
+          sense once there's something to sum. */}
+      {expensesResult.meta.total > 0 && (
+        <p className="mb-3 text-sm text-muted-foreground">
+          {t("filteredSummary", {
+            count: expensesResult.meta.total,
+            amount: formatCurrency(
+              expensesResult.meta.totalAmount,
+              CURRENCY_MAP[currency],
+            ),
+          })}
+        </p>
+      )}
       <ExpensesList expenses={expensesResult.data} currency={currency} />
       <PaginationControls
         page={expensesResult.meta.page}

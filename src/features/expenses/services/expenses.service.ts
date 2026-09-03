@@ -2,7 +2,6 @@ import { fetchApi } from "@/lib/api-client";
 import { Expense } from "@/features/expenses/types";
 import {
   appendPaginationParams,
-  type PaginationMeta,
   type PaginationParams,
 } from "@/lib/pagination";
 import {
@@ -11,6 +10,7 @@ import {
   ExpensesAPIResponseSchema,
   ExpenseApi,
   ExpensesResponseApi,
+  type ExpensesPaginationMeta,
 } from "../schemas/expense.schema";
 import { ExpenseMapper } from "../mappers/expense.mapper";
 
@@ -24,7 +24,7 @@ export interface GetExpensesParams extends PaginationParams {
 
 export interface ExpensesResponse {
   data: Expense[];
-  meta: PaginationMeta;
+  meta: ExpensesPaginationMeta;
 }
 
 export const ExpensesService = {

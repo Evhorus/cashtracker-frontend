@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { CurrencyCode } from "@/lib/format-currency";
-import { paginatedSchema } from "@/lib/pagination";
+import { PaginationMetaSchema } from "@/lib/pagination";
 import type { ValidationTranslator } from "@/lib/validation";
 
 export const ExpenseAPIResponseSchema = z.object({
@@ -17,10 +17,29 @@ export const ExpenseAPIResponseSchema = z.object({
 });
 
 export type ExpenseApi = z.infer<typeof ExpenseAPIResponseSchema>;
-export const ExpensesAPIResponseSchema = paginatedSchema(
-  ExpenseAPIResponseSchema,
-);
+
+/**
+ * Expenses-only `meta` block: adds `totalAmount`, the SUM(amount) over
+ * the full filtered set (same search/startDate/endDate as the list),
+ * computed server-side before pagination - not the page in hand, not
+ * the envelope's global `spent`. Kept off the shared
+ * `PaginationMetaSchema` (mirrors the backend's own
+ * ExpensesPaginationMetaDto) since no other paginated list has an
+ * amount to sum. `z.coerce.number()` because, like every other money
+ * field in this API, a numeric aggregate can come back as a string.
+ */
+const ExpensesPaginationMetaSchema = PaginationMetaSchema.extend({
+  totalAmount: z.coerce.number(),
+});
+
+export const ExpensesAPIResponseSchema = z.object({
+  data: z.array(ExpenseAPIResponseSchema),
+  meta: ExpensesPaginationMetaSchema,
+});
 export type ExpensesResponseApi = z.infer<typeof ExpensesAPIResponseSchema>;
+export type ExpensesPaginationMeta = z.infer<
+  typeof ExpensesPaginationMetaSchema
+>;
 
 /**
  * Expense form schema, built per-envelope. The currency is never chosen
