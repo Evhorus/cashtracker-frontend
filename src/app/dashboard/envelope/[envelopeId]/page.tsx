@@ -375,15 +375,27 @@ async function ExpensesResults({
   return (
     <>
       {/* Sum of the filtered set (server-computed, spans every page -
-          see meta.totalAmount), not just what's on screen. Only shown
-          with an active search/date filter - with none, this is the
-          same number as "Gastado" in the envelope summary sidebar,
-          just repeated. That sidebar total, unlike this one, must never
-          follow the filter: it's the envelope's real spent/available
-          against its real limit, and narrowing it to match a search
-          would silently misstate how much budget is actually left. */}
-      {hasActiveFilter && expensesResult.meta.total > 0 && (
-        <div className="mb-3 flex items-center justify-between gap-4 rounded-lg border border-border/60 bg-secondary/40 px-3.5 py-2.5">
+          see meta.totalAmount), not just what's on screen. Content only
+          MEANS something with an active search/date filter - with none,
+          it's the same number as "Gastado" in the envelope summary
+          sidebar, just repeated. That sidebar total, unlike this one,
+          must never follow the filter: it's the envelope's real
+          spent/available against its real limit, and narrowing it to
+          match a search would silently misstate how much budget is
+          actually left.
+
+          Still always MOUNTED (just `invisible` without a filter)
+          rather than conditionally rendered - toggling a filter on/off
+          used to pop this box in/out and shove the table down/up by its
+          height. `invisible` keeps the reserved space so the table's
+          position never moves, without painting a duplicate number. */}
+      {expensesResult.meta.total > 0 && (
+        <div
+          className={cn(
+            "mb-3 flex items-center justify-between gap-4 rounded-lg border border-border/60 bg-secondary/40 px-3.5 py-2.5",
+            !hasActiveFilter && "invisible",
+          )}
+        >
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <Sigma className="h-4 w-4 shrink-0" />
             {t("filteredCount", { count: expensesResult.meta.total })}
