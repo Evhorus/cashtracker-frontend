@@ -73,25 +73,29 @@ export const DashboardService = {
     ),
 
   /** Same aggregation as getCategoryBreakdown, grouped by envelope. */
-  getEnvelopeBreakdown: (
+  getEnvelopeBreakdown: async (
     filters: DashboardBreakdownFilters,
-  ): Promise<DashboardEnvelopeBreakdownRow[]> =>
-    fetchApi<DashboardEnvelopeBreakdownRow[]>(
+  ): Promise<DashboardEnvelopeBreakdownRow[]> => {
+    const rows = await fetchApi<DashboardEnvelopeBreakdownRow[]>(
       `/dashboard/envelope-breakdown?${breakdownQueryString(filters)}`,
       { next: { tags: ["dashboard-envelope-breakdown"], revalidate: 60 } },
       DashboardEnvelopeBreakdownAPIResponseSchema,
-    ),
+    );
+    return rows.map(DashboardMapper.envelopeBreakdownRowFromApi);
+  },
 
   /** Same aggregation, grouped by the expense's own name - surfaces
    * recurring expenses (e.g. "Arriendo") as a single total. */
-  getNameBreakdown: (
+  getNameBreakdown: async (
     filters: DashboardBreakdownFilters,
-  ): Promise<DashboardNameBreakdownRow[]> =>
-    fetchApi<DashboardNameBreakdownRow[]>(
+  ): Promise<DashboardNameBreakdownRow[]> => {
+    const rows = await fetchApi<DashboardNameBreakdownRow[]>(
       `/dashboard/name-breakdown?${breakdownQueryString(filters)}`,
       { next: { tags: ["dashboard-name-breakdown"], revalidate: 60 } },
       DashboardNameBreakdownAPIResponseSchema,
-    ),
+    );
+    return rows.map(DashboardMapper.nameBreakdownRowFromApi);
+  },
 
   /** The grand total across the same set of expenses the three
    * breakdowns above each group differently. */

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { buildEnvelopeFormSchema } from "../schemas/envelope.schema";
+import type { EnvelopeApi } from "../schemas/envelope.schema";
 import { EnvelopeMapper } from "./envelope.mapper";
 import type { ValidationTranslator } from "@/lib/validation";
 
@@ -121,5 +122,28 @@ describe("the rest of the outbound shape", () => {
     );
 
     expect(request.categoryId).toBe("cat-1");
+  });
+});
+
+describe("fromApi", () => {
+  const apiEnvelope: EnvelopeApi = {
+    id: "e1",
+    name: "mercado y despensa del mes",
+    amount: "500000",
+    currency: "COP",
+    spent: "0",
+    status: "normal",
+    category: null,
+    description: null,
+    createdAt: "2026-08-01T00:00:00.000Z",
+    updatedAt: "2026-08-01T00:00:00.000Z",
+  };
+
+  it("capitalizes just the first letter of the name the backend stores lowercase", () => {
+    // Sentence case, not per-word title case - "Mercado y despensa del
+    // mes" is correct Spanish, "Mercado Y Despensa Del Mes" is not.
+    expect(EnvelopeMapper.fromApi(apiEnvelope).name).toBe(
+      "Mercado y despensa del mes",
+    );
   });
 });

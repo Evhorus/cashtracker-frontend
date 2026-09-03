@@ -56,6 +56,13 @@ describe("fromApi", () => {
     // actually needed.
     expect(ExpenseMapper.fromApi(apiExpense).amount).toBe("192500.00");
   });
+
+  it("capitalizes just the first letter of the name the backend stores lowercase", () => {
+    // Sentence case, not per-word title case.
+    expect(
+      ExpenseMapper.fromApi({ ...apiExpense, name: "gasolina terpel" }).name,
+    ).toBe("Gasolina terpel");
+  });
 });
 
 describe("toApiRequest", () => {
