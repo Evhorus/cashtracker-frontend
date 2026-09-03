@@ -124,6 +124,10 @@ export default async function EnvelopePage({
   const status = envelope.status;
   const currencyConfig = CURRENCY_MAP[envelope.currency];
   const spentColorClass = EnvelopeHelpers.getStatusTextColorClass(status);
+  const hasActiveFilter = Boolean(search || startDate || endDate);
+  // Shared by both Suspense boundaries below so they remount and
+  // re-stream together on every filter change.
+  const filterKey = `${page}-${limit}-${search ?? ""}-${sort ?? ""}-${startDate ?? ""}-${endDate ?? ""}`;
 
   return (
     <div className="space-y-8">
@@ -199,14 +203,7 @@ export default async function EnvelopePage({
           {/* key remounts the boundary on every filter change, so the
               fallback re-appears instead of the old list sitting there
               looking unchanged - same pattern as the envelopes list. */}
-          <Suspense
-            key={`${page}-${limit}-${search ?? ""}-${sort ?? ""}-${startDate ?? ""}-${endDate ?? ""}`}
-            fallback={
-              <ExpensesListSkeleton
-                hasActiveFilter={Boolean(search || startDate || endDate)}
-              />
-            }
-          >
+          <Suspense key={filterKey} fallback={<ExpensesListSkeleton />}>
             <ExpensesResults
               envelopeId={envelopeId}
               currency={envelope.currency}
@@ -323,6 +320,27 @@ export default async function EnvelopePage({
                     {envelope.expenses.length}
                   </dd>
                 </div>
+
+                {/* Own Suspense, only mounted with an active filter -
+                    streams independently of the envelope fetch above so
+                    the rest of this card still paints instantly, and
+                    reuses ExpensesResults' exact getExpenses(...) call
+                    (identical params) so Next's fetch memoization
+                    collapses them into one request instead of two. */}
+                {hasActiveFilter && (
+                  <Suspense key={filterKey} fallback={null}>
+                    <FilteredExpensesSummary
+                      envelopeId={envelopeId}
+                      currency={envelope.currency}
+                      startDate={startDate}
+                      endDate={endDate}
+                      search={search}
+                      sort={sortOrder}
+                      page={page}
+                      limit={limit}
+                    />
+                  </Suspense>
+                )}
               </dl>
             </CardContent>
           </Card>
@@ -369,54 +387,9 @@ async function ExpensesResults({
     page,
     limit,
   });
-  const t = await getTranslations("expenses");
-  const hasActiveFilter = Boolean(search || startDate || endDate);
 
   return (
     <>
-      {/* Sum of the filtered set (server-computed, spans every page -
-          see meta.totalAmount), not just what's on screen. Content only
-          MEANS something with an active search/date filter - with none,
-          it's the same number as "Gastado" in the envelope summary
-          sidebar, just repeated. That sidebar total, unlike this one,
-          must never follow the filter: it's the envelope's real
-          spent/available against its real limit, and narrowing it to
-          match a search would silently misstate how much budget is
-          actually left.
-
-          Still always MOUNTED (just `invisible` without a filter)
-          rather than conditionally rendered - toggling a filter on/off
-          used to pop this box in/out and shove the table down/up by its
-          height. `invisible` keeps the reserved space so the table's
-          position never moves, without painting a duplicate number. */}
-      {expensesResult.meta.total > 0 && (
-        <div
-          className={cn(
-            "mb-3 flex items-center justify-between gap-4 rounded-lg border border-border/60 bg-secondary/40 px-3.5 py-2.5",
-            !hasActiveFilter && "invisible",
-          )}
-        >
-          <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Sigma className="h-4 w-4 shrink-0" />
-            {t("filteredCount", { count: expensesResult.meta.total })}
-          </p>
-          {/* An unlabeled bold number next to a count read as
-              ambiguous - could be a max, an average, anything - so the
-              amount gets its own explicit label rather than relying on
-              position alone to say what it is. */}
-          <p className="text-right">
-            <span className="block text-xs text-muted-foreground">
-              {t("filteredTotalLabel")}
-            </span>
-            <span className="text-base font-bold">
-              {formatCurrency(
-                expensesResult.meta.totalAmount,
-                CURRENCY_MAP[currency],
-              )}
-            </span>
-          </p>
-        </div>
-      )}
       <ExpensesList expenses={expensesResult.data} currency={currency} />
       <PaginationControls
         page={expensesResult.meta.page}
@@ -434,5 +407,72 @@ async function ExpensesResults({
         }}
       />
     </>
+  );
+}
+
+interface FilteredExpensesSummaryProps {
+  envelopeId: string;
+  currency: CurrencyCode;
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+  sort?: "ASC" | "DESC";
+  page: number;
+  limit: number;
+}
+
+/**
+ * Extra row in the Resumen sidebar, only mounted with an active
+ * search/date filter (see the `hasActiveFilter` check at the call
+ * site) - the count/total this shows only means something as a
+ * *filtered* result. The card's other rows (Disponible/Gastado/Límite)
+ * never follow the filter: they're the envelope's real numbers against
+ * its real limit, and narrowing them to match a search would silently
+ * misstate how much budget is actually left.
+ *
+ * Takes the exact same params ExpensesResults passes to getExpenses -
+ * Next dedupes identical `fetch` calls within one request, so this
+ * doesn't cost a second round trip, it just reads the same response's
+ * meta.totalAmount from a second call site.
+ */
+async function FilteredExpensesSummary({
+  envelopeId,
+  currency,
+  startDate,
+  endDate,
+  search,
+  sort,
+  page,
+  limit,
+}: FilteredExpensesSummaryProps) {
+  const t = await getTranslations("expenses");
+  const { meta } = await getExpenses(envelopeId, {
+    startDate,
+    endDate,
+    search,
+    sort,
+    page,
+    limit,
+  });
+
+  // A filter with zero matches has nothing to sum - and ExpensesList
+  // is already showing its own "no results" empty state for it.
+  if (meta.total === 0) return null;
+
+  return (
+    <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+      <dt className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Sigma className="h-4 w-4 shrink-0" />
+        {t("filteredCount", { count: meta.total })}
+      </dt>
+      <dd className="text-right">
+        <span className="block text-xs text-muted-foreground">
+          {t("filteredTotalLabel")}
+        </span>
+        <span className="text-base font-bold">
+          {formatCurrency(meta.totalAmount, CURRENCY_MAP[currency])}
+        </span>
+      </dd>
+    </div>
   );
 }

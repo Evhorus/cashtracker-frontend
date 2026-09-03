@@ -1,6 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 // Mirrors ExpenseCard's real (compact, single-row) shape - was a
 // taller two-row skeleton (stacked on mobile) that shrunk once real
@@ -49,29 +48,9 @@ const ExpensesTableSkeleton = () => {
   );
 };
 
-interface ExpensesListSkeletonProps {
-  /** Mirrors ExpensesResults' own check - the filtered-total box stays
-   * `invisible` (not unmounted) without an active search/date filter,
-   * so its reserved height matches the real content exactly and the
-   * list below never jumps between the skeleton and the real page, or
-   * between a filtered and unfiltered result. */
-  hasActiveFilter?: boolean;
-}
-
-export const ExpensesListSkeleton = ({
-  hasActiveFilter = false,
-}: ExpensesListSkeletonProps = {}) => {
+export const ExpensesListSkeleton = () => {
   return (
     <>
-      {/* Mirrors the filtered-total box in ExpensesResults - always
-          mounted so the fallback's height matches the real content's,
-          filter or no filter. */}
-      <Skeleton
-        className={cn(
-          "mb-3 h-11 w-full rounded-lg sm:w-64",
-          !hasActiveFilter && "invisible",
-        )}
-      />
       <div className="space-y-2 md:hidden">
         {[1, 2, 3, 4, 5].map((i) => (
           <ExpenseCardSkeleton key={i} />
