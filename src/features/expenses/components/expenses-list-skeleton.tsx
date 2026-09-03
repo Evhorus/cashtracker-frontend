@@ -48,9 +48,27 @@ const ExpensesTableSkeleton = () => {
   );
 };
 
-export const ExpensesListSkeleton = () => {
+interface ExpensesListSkeletonProps {
+  /** Mirrors ExpensesResults' own check - the filtered-total box only
+   * renders with an active search/date filter, so its skeleton
+   * placeholder must match or a page-size/sort-only change would show
+   * a loading bar for a box that isn't about to appear. */
+  hasActiveFilter?: boolean;
+}
+
+export const ExpensesListSkeleton = ({
+  hasActiveFilter = false,
+}: ExpensesListSkeletonProps = {}) => {
   return (
     <>
+      {/* Mirrors the filtered-total box in ExpensesResults - without
+          this, that box just vanishes for the duration of the request
+          (the whole Suspense boundary swaps to this fallback) and pops
+          back with a new number, which read as nothing having happened
+          rather than as a recalculation in progress. */}
+      {hasActiveFilter && (
+        <Skeleton className="mb-3 h-11 w-full rounded-lg sm:w-64" />
+      )}
       <div className="space-y-2 md:hidden">
         {[1, 2, 3, 4, 5].map((i) => (
           <ExpenseCardSkeleton key={i} />

@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import {
   DollarSign,
   Infinity as InfinityIcon,
+  Sigma,
   TriangleAlert,
 } from "lucide-react";
 import {
@@ -200,7 +201,11 @@ export default async function EnvelopePage({
               looking unchanged - same pattern as the envelopes list. */}
           <Suspense
             key={`${page}-${limit}-${search ?? ""}-${sort ?? ""}-${startDate ?? ""}-${endDate ?? ""}`}
-            fallback={<ExpensesListSkeleton />}
+            fallback={
+              <ExpensesListSkeleton
+                hasActiveFilter={Boolean(search || startDate || endDate)}
+              />
+            }
           >
             <ExpensesResults
               envelopeId={envelopeId}
@@ -365,22 +370,40 @@ async function ExpensesResults({
     limit,
   });
   const t = await getTranslations("expenses");
+  const hasActiveFilter = Boolean(search || startDate || endDate);
 
   return (
     <>
       {/* Sum of the filtered set (server-computed, spans every page -
-          see meta.totalAmount), not just what's on screen. Only makes
-          sense once there's something to sum. */}
-      {expensesResult.meta.total > 0 && (
-        <p className="mb-3 text-sm text-muted-foreground">
-          {t("filteredSummary", {
-            count: expensesResult.meta.total,
-            amount: formatCurrency(
-              expensesResult.meta.totalAmount,
-              CURRENCY_MAP[currency],
-            ),
-          })}
-        </p>
+          see meta.totalAmount), not just what's on screen. Only shown
+          with an active search/date filter - with none, this is the
+          same number as "Gastado" in the envelope summary sidebar,
+          just repeated. That sidebar total, unlike this one, must never
+          follow the filter: it's the envelope's real spent/available
+          against its real limit, and narrowing it to match a search
+          would silently misstate how much budget is actually left. */}
+      {hasActiveFilter && expensesResult.meta.total > 0 && (
+        <div className="mb-3 flex items-center justify-between gap-4 rounded-lg border border-border/60 bg-secondary/40 px-3.5 py-2.5">
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Sigma className="h-4 w-4 shrink-0" />
+            {t("filteredCount", { count: expensesResult.meta.total })}
+          </p>
+          {/* An unlabeled bold number next to a count read as
+              ambiguous - could be a max, an average, anything - so the
+              amount gets its own explicit label rather than relying on
+              position alone to say what it is. */}
+          <p className="text-right">
+            <span className="block text-xs text-muted-foreground">
+              {t("filteredTotalLabel")}
+            </span>
+            <span className="text-base font-bold">
+              {formatCurrency(
+                expensesResult.meta.totalAmount,
+                CURRENCY_MAP[currency],
+              )}
+            </span>
+          </p>
+        </div>
       )}
       <ExpensesList expenses={expensesResult.data} currency={currency} />
       <PaginationControls
