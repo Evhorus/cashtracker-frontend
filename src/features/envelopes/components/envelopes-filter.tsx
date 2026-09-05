@@ -10,6 +10,9 @@ import { ListFilterBar } from "@/components/common/list-filter-bar";
 import { FilterSelect } from "@/components/common/filter-select";
 import {
   ENVELOPE_STATUS_TAB_VALUES,
+  ENVELOPES_DEFAULT_PAGE_SIZE,
+  ENVELOPES_MAX_PAGE_SIZE,
+  ENVELOPES_PAGE_SIZE_OPTIONS,
   type EnvelopeStatusTab,
 } from "@/features/envelopes/lib/envelope-helpers";
 
@@ -102,6 +105,61 @@ export const EnvelopesStatusFilter = () => {
   );
 };
 
+// The largest option means "everything" rather than a literal count, so
+// it reads as a word; the other two are just their number. Mirrors
+// ExpensesFilter's pageSizeLabel.
+const pageSizeLabel = (
+  t: ReturnType<typeof useTranslations<"envelopes">>,
+  size: number,
+) => (size === ENVELOPES_MAX_PAGE_SIZE ? t("pageSizeAll") : String(size));
+
+export const EnvelopesPageSizeFilter = () => {
+  const t = useTranslations("envelopes");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
+
+  const limitParam = Number(searchParams.get("limit"));
+  const pageSize = ENVELOPES_PAGE_SIZE_OPTIONS.some(
+    (option) => option === limitParam,
+  )
+    ? limitParam
+    : ENVELOPES_DEFAULT_PAGE_SIZE;
+
+  const handlePageSizeChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+
+    if (Number(value) === ENVELOPES_DEFAULT_PAGE_SIZE) {
+      params.delete("limit");
+    } else {
+      params.set("limit", value);
+    }
+
+    // Same reasoning as the status handler above - a bigger page can
+    // land past the last one the previous page size had.
+    params.delete("page");
+
+    startTransition(() => {
+      const query = params.toString();
+      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+    });
+  };
+
+  return (
+    <FilterSelect
+      label={t("perPage")}
+      value={String(pageSize)}
+      onValueChange={handlePageSizeChange}
+      className="w-full sm:w-auto"
+      options={ENVELOPES_PAGE_SIZE_OPTIONS.map((option) => ({
+        value: String(option),
+        label: pageSizeLabel(t, option),
+      }))}
+    />
+  );
+};
+
 // Search full-width above the status tabs on mobile; the two sharing
 // one row on desktop, right above the table they filter - see
 // ListFilterBar for why this is a shared shell, not bespoke markup.
@@ -114,7 +172,12 @@ export const EnvelopesFilter = ({
   return (
     <ListFilterBar
       actions={actions}
-      filters={<EnvelopesStatusFilter />}
+      filters={
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <EnvelopesStatusFilter />
+          <EnvelopesPageSizeFilter />
+        </div>
+      }
       renderSearch={(className) => <EnvelopesSearch className={className} />}
     />
   );

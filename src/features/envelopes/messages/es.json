@@ -9,6 +9,8 @@
     "deleteAria": "Eliminar sobre",
     "searchPlaceholder": "Buscar por nombre o categoría...",
     "searchAria": "Buscar sobres por nombre o categoría",
+    "perPage": "Por página",
+    "pageSizeAll": "Todo",
     "filters": {
       "all": "Todos",
       "alert": "Necesitan atención"
