@@ -12,6 +12,8 @@ import { Text } from "@/components/common/typography";
 import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
   ENVELOPE_STATUS_TAB_VALUES,
+  ENVELOPES_DEFAULT_PAGE_SIZE,
+  ENVELOPES_PAGE_SIZE_OPTIONS,
   type EnvelopeStatusTab,
 } from "@/features/envelopes/lib/envelope-helpers";
 
@@ -27,10 +29,13 @@ export async function generateMetadata(): Promise<Metadata> {
 // Force dynamic rendering because this page uses Clerk auth
 export const dynamic = "force-dynamic";
 
-const ENVELOPES_PER_PAGE = 12;
-
 interface EnvelopesPageProps {
-  searchParams: Promise<{ page?: string; search?: string; status?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    search?: string;
+    status?: string;
+    limit?: string;
+  }>;
 }
 
 export default async function EnvelopesPage({
@@ -38,13 +43,24 @@ export default async function EnvelopesPage({
 }: EnvelopesPageProps) {
   await auth.protect();
   const t = await getTranslations("envelopes");
-  const { page: pageParam, search, status: statusParam } = await searchParams;
+  const {
+    page: pageParam,
+    search,
+    status: statusParam,
+    limit: limitParam,
+  } = await searchParams;
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
   const status: EnvelopeStatusTab = ENVELOPE_STATUS_TAB_VALUES.some(
     (filter) => filter === statusParam,
   )
     ? (statusParam as EnvelopeStatusTab)
     : "all";
+  const limitValue = Number(limitParam);
+  const limit = ENVELOPES_PAGE_SIZE_OPTIONS.some(
+    (option) => option === limitValue,
+  )
+    ? limitValue
+    : ENVELOPES_DEFAULT_PAGE_SIZE;
 
   return (
     <div className="space-y-6">
@@ -76,14 +92,19 @@ export default async function EnvelopesPage({
           the visible "yes, that click registered" feedback the tabs
           alone can't give while the new list is still loading. */}
       <Suspense
-        key={`${page}-${search ?? ""}-${status}`}
+        key={`${page}-${search ?? ""}-${status}-${limit}`}
         fallback={
           <div className="space-y-6">
             <EnvelopesResultsSkeleton />
           </div>
         }
       >
-        <EnvelopesResults page={page} search={search} status={status} />
+        <EnvelopesResults
+          page={page}
+          search={search}
+          status={status}
+          limit={limit}
+        />
       </Suspense>
     </div>
   );
@@ -93,12 +114,14 @@ interface EnvelopesResultsProps {
   page: number;
   search?: string;
   status: EnvelopeStatusTab;
+  limit: number;
 }
 
 async function EnvelopesResults({
   page,
   search,
   status,
+  limit,
 }: EnvelopesResultsProps) {
   const t = await getTranslations("envelopes");
   // The backend applies the status filter in SQL, so `meta` counts the
@@ -109,7 +132,7 @@ async function EnvelopesResults({
   // worst kind of wrong.
   const { data, meta } = await getEnvelopes({
     page,
-    limit: ENVELOPES_PER_PAGE,
+    limit,
     search,
     status,
   });
@@ -139,7 +162,11 @@ async function EnvelopesResults({
         hasNextPage={meta.hasNextPage}
         hasPreviousPage={meta.hasPreviousPage}
         basePath="/dashboard/envelopes"
-        searchParams={{ search, status: status === "all" ? undefined : status }}
+        searchParams={{
+          search,
+          status: status === "all" ? undefined : status,
+          limit: limit === ENVELOPES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
+        }}
       />
     </div>
   );

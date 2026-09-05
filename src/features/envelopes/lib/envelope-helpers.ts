@@ -63,6 +63,26 @@ export const ENVELOPE_STATUS_TAB_VALUES = [
 /** A tab, as opposed to any filter the API accepts. */
 export type EnvelopeStatusTab = (typeof ENVELOPE_STATUS_TAB_VALUES)[number];
 
+// Backend's hard cap on `limit` (PaginationQueryDto, shared by every
+// paginated list endpoint) - the ceiling the "all" option can ask for.
+// Same constant expenses uses (see EXPENSES_MAX_PAGE_SIZE) - it's a
+// property of the endpoint, not of what's being listed.
+export const ENVELOPES_MAX_PAGE_SIZE = 100;
+
+export const ENVELOPES_DEFAULT_PAGE_SIZE = 10;
+
+/**
+ * Page sizes offered by the envelopes list. Numbers only: two of the
+ * three render as themselves, and the largest renders as the word for
+ * "all" (`envelopes.pageSizeAll`), which is a translation rather than
+ * data and so can't live here. Mirrors EXPENSES_PAGE_SIZE_OPTIONS.
+ */
+export const ENVELOPES_PAGE_SIZE_OPTIONS = [
+  10,
+  20,
+  ENVELOPES_MAX_PAGE_SIZE,
+] as const;
+
 export const EnvelopeHelpers = {
   /**
    * Get envelope amount as a number, or null if this envelope has no

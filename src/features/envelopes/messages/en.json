@@ -9,6 +9,8 @@
     "deleteAria": "Delete envelope",
     "searchPlaceholder": "Search by name or category...",
     "searchAria": "Search envelopes by name or category",
+    "perPage": "Per page",
+    "pageSizeAll": "All",
     "filters": {
       "all": "All",
       "alert": "Needs attention"
