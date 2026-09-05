@@ -61,6 +61,16 @@ describe("formatCurrency", () => {
   it("defaults to COP when given no config", () => {
     expect(normalize(formatCurrency(1000))).toBe("$ 1.000");
   });
+
+  it("rounds COP cents away instead of showing them - nobody reads/writes COP with cents day to day", () => {
+    expect(normalize(formatCurrency(440500.5, COP))).toBe("$ 440.501");
+    expect(normalize(formatCurrency(440500.49, COP))).toBe("$ 440.500");
+  });
+
+  it("still shows USD/EUR cents unaffected by COP's display rounding", () => {
+    expect(normalize(formatCurrency(12.5, USD))).toBe("$12.50");
+    expect(normalize(formatCurrency(12.5, EUR))).toBe("12,50 €");
+  });
 });
 
 describe("formatNumber", () => {

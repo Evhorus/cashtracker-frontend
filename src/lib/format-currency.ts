@@ -29,6 +29,16 @@ export interface CurrencyConfig {
    * (currency-selector.tsx, the statistics filters).
    */
   decimalDigits: number;
+  /**
+   * How many fraction digits `formatCurrency` actually shows, as opposed
+   * to `decimalDigits` (what the backend accepts and what PriceInput lets
+   * you type). Separate on purpose: COP is stored with up to 2 decimal
+   * places same as any currency, but nobody in Colombia reads or writes
+   * COP amounts with cents day-to-day, so every card/table/chart rounds
+   * it to a whole number for display while the exact value still round-
+   * trips to the backend untouched. USD/EUR keep showing their cents.
+   */
+  displayDecimalDigits: number;
 }
 
 export const CURRENCY_MAP: Record<CurrencyCode, CurrencyConfig> = {
@@ -37,18 +47,21 @@ export const CURRENCY_MAP: Record<CurrencyCode, CurrencyConfig> = {
     currency: "COP",
     symbol: "$",
     decimalDigits: 2,
+    displayDecimalDigits: 0,
   },
   USD: {
     locale: "en-US",
     currency: "USD",
     symbol: "$",
     decimalDigits: 2,
+    displayDecimalDigits: 2,
   },
   EUR: {
     locale: "de-DE",
     currency: "EUR",
     symbol: "€",
     decimalDigits: 2,
+    displayDecimalDigits: 2,
   },
 };
 
@@ -64,10 +77,13 @@ export const formatCurrency = (
   // minimumFractionDigits pinned to 0 let Intl drop a trailing zero
   // decimal whenever the value "fit" in fewer digits - e.g. 12.50 (USD)
   // rendered as "$12.5", silently reading as a different amount.
-  // Rounding to decimalDigits first (rather than checking `quantity`
-  // itself) absorbs any float noise from upstream arithmetic (e.g.
-  // totalAssigned - totalSpent) before deciding whether it's a whole
-  // number.
+  // Rounding to displayDecimalDigits first (rather than checking
+  // `quantity` itself) absorbs any float noise from upstream arithmetic
+  // (e.g. totalAssigned - totalSpent) before deciding whether it's a
+  // whole number. Rounding to displayDecimalDigits, not decimalDigits,
+  // is what makes COP always show as a whole number here - the stored
+  // amount can still carry cents (decimalDigits), this only rounds what
+  // gets rendered.
   //
   // `|| 0` normalizes negative zero. That same float noise can land a
   // value a hair BELOW zero (e.g. 300 - 199.99 - 100.01 is about
@@ -75,10 +91,10 @@ export const formatCurrency = (
   // negative zero balance shown to the user. Reachable wherever the app
   // subtracts two backend numbers, e.g. totalSpent - totalSpentCapped in
   // hero-balance-card.tsx.
-  const rounded = Number(quantity.toFixed(config.decimalDigits)) || 0;
+  const rounded = Number(quantity.toFixed(config.displayDecimalDigits)) || 0;
   const minimumFractionDigits = Number.isInteger(rounded)
     ? 0
-    : config.decimalDigits;
+    : config.displayDecimalDigits;
 
   // Formats `rounded`, not `quantity` - otherwise the -0 normalization
   // above would decide the fraction-digit count while Intl still
@@ -87,7 +103,7 @@ export const formatCurrency = (
     style: "currency",
     currency: config.currency,
     minimumFractionDigits,
-    maximumFractionDigits: config.decimalDigits,
+    maximumFractionDigits: config.displayDecimalDigits,
   }).format(rounded);
 };
 
