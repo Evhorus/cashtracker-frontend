@@ -230,7 +230,12 @@ export const PeriodFilterSelect = ({
         >
           <SelectValue>{() => t(`periodType.${selectedType}`)}</SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        {/* alignItemWithTrigger off: its default lines the *selected*
+            item up with the trigger, which can open the popup upward
+            past it once that item sits mid-list (e.g. "Trimestre",
+            4th of 6 types) - always opening straight down below the
+            trigger reads more predictably for a short list like this. */}
+        <SelectContent alignItemWithTrigger={false}>
           <SelectItem value={ALL_VALUE}>{t("periodType.all")}</SelectItem>
           {yearOptionAvailable && (
             <SelectItem value={YEAR_VALUE}>{t("periodType.year")}</SelectItem>
@@ -252,7 +257,7 @@ export const PeriodFilterSelect = ({
           >
             <SelectValue>{(value: string) => value}</SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false}>
             {[...effectiveYears]
               .filter(yearFits)
               .sort((a, b) => a - b)
@@ -276,7 +281,7 @@ export const PeriodFilterSelect = ({
               {() => instanceLabel(instances, instanceValue, locale)}
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false}>
             {instances.map((instance) => (
               <SelectItem key={instance.value} value={instance.value}>
                 {instanceLabel(instances, instance.value, locale)}
