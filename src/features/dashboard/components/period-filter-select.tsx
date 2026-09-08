@@ -144,7 +144,8 @@ export const PeriodFilterSelect = ({
 
   // Preserves ?currency= (and markedStart/markedEnd, by never touching
   // them) - the filters are independent, changing one shouldn't reset
-  // the other.
+  // the other. No ALL_VALUE branch here - there's no rendered item for
+  // it (see SelectContent above), so onValueChange never receives it.
   function handleTypeChange(value: string | null) {
     if (!value) return;
     const params = new URLSearchParams(searchParams);
@@ -154,45 +155,36 @@ export const PeriodFilterSelect = ({
     params.delete("period");
     params.delete("periodValue");
 
-    if (value === ALL_VALUE) {
-      // "Todo el tiempo" clears the marked boundary too - it's the
-      // explicit "no filter" choice, so a stale mark silently reapplying
-      // itself the next time a period type is picked would surprise
-      // more than help.
-      params.delete("markedStart");
-      params.delete("markedEnd");
-    } else {
-      // Anchor the new type on whatever period is already active - a
-      // prior period pick, or a manual DateRangeFilter range - so
-      // switching from "1 jul 2025 – 30 jun 2026" to "Semestre" lands
-      // on the semester containing that range's *start*, not today's.
-      // Only once nothing at all is active does "today" take over.
-      const anchor = resolveAnchorDate(startDate, selectedYear);
+    // Anchor the new type on whatever period is already active - a
+    // prior period pick, or a manual DateRangeFilter range - so
+    // switching from "1 jul 2025 – 30 jun 2026" to "Semestre" lands on
+    // the semester containing that range's *start*, not today's. Only
+    // once nothing at all is active does "today" take over.
+    const anchor = resolveAnchorDate(startDate, selectedYear);
 
-      if (value === YEAR_VALUE) {
-        const anchorYear = parseCalendarDate(anchor).getUTCFullYear();
-        const targetYear = effectiveYears.includes(anchorYear)
-          ? anchorYear
-          : effectiveYears.length > 0
-            ? Math.max(...effectiveYears)
-            : undefined;
-        if (targetYear) params.set("year", String(targetYear));
-      } else {
-        const candidates = clipToMarkedRange(
-          getPeriodInstances(value as PeriodType, effectiveYears),
-          markedStart,
-          markedEnd,
-        );
-        const defaultInstance =
-          candidates.find(
-            (i) => i.startDate <= anchor && anchor <= i.endDate,
-          ) ?? candidates[candidates.length - 1];
-        if (defaultInstance) {
-          params.set("period", value);
-          params.set("periodValue", defaultInstance.value);
-          params.set("startDate", defaultInstance.startDate);
-          params.set("endDate", defaultInstance.endDate);
-        }
+    if (value === YEAR_VALUE) {
+      const anchorYear = parseCalendarDate(anchor).getUTCFullYear();
+      const targetYear = effectiveYears.includes(anchorYear)
+        ? anchorYear
+        : effectiveYears.length > 0
+          ? Math.max(...effectiveYears)
+          : undefined;
+      if (targetYear) params.set("year", String(targetYear));
+    } else {
+      const candidates = clipToMarkedRange(
+        getPeriodInstances(value as PeriodType, effectiveYears),
+        markedStart,
+        markedEnd,
+      );
+      const defaultInstance =
+        candidates.find(
+          (i) => i.startDate <= anchor && anchor <= i.endDate,
+        ) ?? candidates[candidates.length - 1];
+      if (defaultInstance) {
+        params.set("period", value);
+        params.set("periodValue", defaultInstance.value);
+        params.set("startDate", defaultInstance.startDate);
+        params.set("endDate", defaultInstance.endDate);
       }
     }
     navigate(params);
@@ -235,8 +227,15 @@ export const PeriodFilterSelect = ({
             past it once that item sits mid-list (e.g. "Trimestre",
             4th of 6 types) - always opening straight down below the
             trigger reads more predictably for a short list like this. */}
+        {/* No "Todo el tiempo" item here on purpose - DateRangeFilter's
+            own X/"Limpiar rango" is the one explicit way to drop the
+            marked range; picking a value in *this* select should only
+            ever narrow it, never quietly erase it. selectedType still
+            falls back to ALL_VALUE (see above) for the instant right
+            after marking a range and before a type is chosen - the
+            trigger just shows that as a label, nothing here can select
+            back into it. */}
         <SelectContent alignItemWithTrigger={false}>
-          <SelectItem value={ALL_VALUE}>{t("periodType.all")}</SelectItem>
           {yearOptionAvailable && (
             <SelectItem value={YEAR_VALUE}>{t("periodType.year")}</SelectItem>
           )}
