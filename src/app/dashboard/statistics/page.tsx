@@ -112,6 +112,13 @@ export default async function StatisticsPage({
   }));
   const hasMultipleCurrencies = totals.length > 1;
   const chartCurrency = (summary.chartCurrency ?? "COP") as CurrencyCode;
+  // PeriodFilterSelect only makes sense once there's a boundary to
+  // narrow - showing "Semestre"/"Trimestre"/etc. before the user has
+  // drawn any range invites picking one with nothing marked to anchor
+  // it to. It appears once DateRangeFilter has applied something
+  // (markedStart/markedEnd), or for a still-valid `year`/`period` link
+  // from before this control existed.
+  const canShowPeriodFilter = Boolean(markedStart && markedEnd) || Boolean(year) || Boolean(period);
 
   return (
     <div className="space-y-6">
@@ -132,22 +139,24 @@ export default async function StatisticsPage({
 
           {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
             <div className="flex flex-wrap items-center gap-2">
-              <PeriodFilterSelect
-                years={summary.availableYears}
-                selectedYear={year}
-                period={period}
-                periodValue={periodValue}
-                startDate={startDate}
-                endDate={endDate}
-                markedStart={markedStart}
-                markedEnd={markedEnd}
-              />
               <DateRangeFilter
                 startDate={startDate}
                 endDate={endDate}
                 markedStart={markedStart}
                 markedEnd={markedEnd}
               />
+              {canShowPeriodFilter && (
+                <PeriodFilterSelect
+                  years={summary.availableYears}
+                  selectedYear={year}
+                  period={period}
+                  periodValue={periodValue}
+                  startDate={startDate}
+                  endDate={endDate}
+                  markedStart={markedStart}
+                  markedEnd={markedEnd}
+                />
+              )}
               {hasMultipleCurrencies && (
                 <CurrencyFilterSelect
                   currencies={totals.map((total) => total.currency)}
