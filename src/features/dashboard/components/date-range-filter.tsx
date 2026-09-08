@@ -18,6 +18,7 @@ import {
   formatCalendarDateForApi,
   formatCalendarDateShort,
   parseCalendarDate,
+  toFormCalendarDate,
 } from "@/lib/date-helpers";
 import type { SupportedLocale } from "@/i18n/config";
 
@@ -52,21 +53,43 @@ export const DateRangeFilter = ({
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
 
+  // UTC-anchored - correct for the *label* below (formatCalendarDateShort
+  // reads it that way), but NOT for feeding the Calendar widgets: those
+  // read a Date's LOCAL getters, and this app's TZ (America/Bogota) sits
+  // behind UTC - reading e.g. "2025-07-01T00:00:00Z" locally lands on 30
+  // June. See appliedRangeForCalendar below, and toFormCalendarDate's
+  // own doc comment (date-helpers.ts) for the general hazard - the
+  // expense form already routes through it for the same reason.
   const appliedRange: DateRange | undefined =
     startDate && endDate
       ? { from: parseCalendarDate(startDate), to: parseCalendarDate(endDate) }
       : undefined;
 
+  // The same range, converted to browser-local-anchored Dates - what the
+  // Calendar widgets below actually need (their `selected`/`defaultMonth`
+  // and the draft state derived from it), so reopening the popover shows
+  // the day you actually picked instead of the one before it.
+  const appliedRangeForCalendar: DateRange | undefined = appliedRange
+    ? {
+        from: toFormCalendarDate(appliedRange.from!),
+        to: toFormCalendarDate(appliedRange.to!),
+      }
+    : undefined;
+
   // The in-progress selection while the popover is open - only written
-  // to the URL on "Aplicar".
-  const [draftRange, setDraftRange] = useState(appliedRange);
+  // to the URL on "Aplicar". Local-anchored throughout: a fresh pick
+  // from the Calendar is already local-anchored, and appliedRangeForCalendar
+  // (below) keeps a reopen consistent with that, so handleApply's
+  // formatCalendarDateForApi (itself local-anchored, see date-helpers.ts)
+  // never has to guess which kind of Date it was handed.
+  const [draftRange, setDraftRange] = useState(appliedRangeForCalendar);
 
   // Reset the draft from the applied range right as the popover opens
   // (not in an effect - there's no external system to synchronize
   // with, just an event to react to), so a cancelled edit never leaks
   // into the next open.
   const handleOpenChange = (next: boolean) => {
-    if (next) setDraftRange(appliedRange);
+    if (next) setDraftRange(appliedRangeForCalendar);
     setOpen(next);
   };
 
