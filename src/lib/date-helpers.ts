@@ -130,18 +130,22 @@ export function formatCalendarDate(
   });
 }
 
-/** Compact "d MMM" form of formatCalendarDate. Unlike formatDate/
- * formatMonthYear (which convert a real instant into the device's
- * timezone), this reads the date's UTC wall-clock - see
- * formatCalendarDate above for why a calendar date must not be
- * timezone-converted. */
+/** Compact "d MMM" form of formatCalendarDate (or "d MMM yyyy" with
+ * `includeYear`, for a range whose two ends can span different years -
+ * see date-range-filter.tsx). Unlike formatDate/formatMonthYear (which
+ * convert a real instant into the device's timezone), this reads the
+ * date's UTC wall-clock - see formatCalendarDate above for why a
+ * calendar date must not be timezone-converted. */
 export function formatCalendarDateShort(
   date: Date,
   locale: SupportedLocale,
+  includeYear = false,
 ): string {
-  return format(new TZDate(date, "UTC"), "d MMM", {
-    locale: DATE_FNS_LOCALES[locale],
-  });
+  return format(
+    new TZDate(date, "UTC"),
+    includeYear ? "d MMM yyyy" : "d MMM",
+    { locale: DATE_FNS_LOCALES[locale] },
+  );
 }
 
 export function formatDate(
