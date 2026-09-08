@@ -40,8 +40,11 @@ interface PeriodFilterSelectProps {
   /** Whatever range is currently active - from a prior period pick or
    * from DateRangeFilter's own calendar - used as the anchor when
    * switching period type, so "Semestre" after a manual Jul 2025 range
-   * lands on the semester containing that start, not today's. */
+   * lands on the semester containing that start, not today's. Their
+   * years are also folded into the instance lists below (see
+   * `effectiveYears`). */
   startDate?: string;
+  endDate?: string;
 }
 
 // Replaces the plain year-only YearFilterSelect: a "period type" select
@@ -57,6 +60,7 @@ export const PeriodFilterSelect = ({
   period,
   periodValue,
   startDate,
+  endDate,
 }: PeriodFilterSelectProps) => {
   const t = useTranslations("statistics");
   const locale = useLocale() as SupportedLocale;
@@ -71,9 +75,25 @@ export const PeriodFilterSelect = ({
         ? YEAR_VALUE
         : ALL_VALUE;
 
+  // `years` (summary.availableYears) is the account's envelopes' own
+  // *creation* years, not the years its expenses actually fall in - a
+  // backdated expense (e.g. logged in June 2025 under an envelope
+  // created in 2026) has no year of its own in that list. The raw
+  // calendar (DateRangeFilter) lets you pick any date regardless; these
+  // shortcuts should be just as unrestricted, so whatever range is
+  // already active always gets its own year(s) folded in too.
+  const effectiveYears = Array.from(
+    new Set([
+      ...years,
+      ...[startDate, endDate]
+        .filter((d): d is string => Boolean(d))
+        .map((d) => parseCalendarDate(d).getUTCFullYear()),
+    ]),
+  );
+
   const instances =
     selectedType !== ALL_VALUE && selectedType !== YEAR_VALUE
-      ? getPeriodInstances(selectedType, years)
+      ? getPeriodInstances(selectedType, effectiveYears)
       : [];
 
   const navigate = (params: URLSearchParams) => {
@@ -102,14 +122,14 @@ export const PeriodFilterSelect = ({
 
       if (value === YEAR_VALUE) {
         const anchorYear = parseCalendarDate(anchor).getUTCFullYear();
-        const targetYear = years.includes(anchorYear)
+        const targetYear = effectiveYears.includes(anchorYear)
           ? anchorYear
-          : years.length > 0
-            ? Math.max(...years)
+          : effectiveYears.length > 0
+            ? Math.max(...effectiveYears)
             : undefined;
         if (targetYear) params.set("year", String(targetYear));
       } else {
-        const candidates = getPeriodInstances(value as PeriodType, years);
+        const candidates = getPeriodInstances(value as PeriodType, effectiveYears);
         const defaultInstance =
           candidates.find(
             (i) => i.startDate <= anchor && anchor <= i.endDate,
@@ -159,10 +179,10 @@ export const PeriodFilterSelect = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL_VALUE}>{t("periodType.all")}</SelectItem>
-          {years.length > 0 && (
+          {effectiveYears.length > 0 && (
             <SelectItem value={YEAR_VALUE}>{t("periodType.year")}</SelectItem>
           )}
-          {years.length > 0 &&
+          {effectiveYears.length > 0 &&
             PERIOD_TYPES.map((type) => (
               <SelectItem key={type} value={type}>
                 {t(`periodType.${type}`)}
@@ -181,7 +201,7 @@ export const PeriodFilterSelect = ({
             <SelectValue>{(value: string) => value}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {[...years]
+            {[...effectiveYears]
               .sort((a, b) => a - b)
               .map((year) => (
                 <SelectItem key={year} value={String(year)}>
