@@ -197,6 +197,16 @@ export function getToday(): Date {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
+/** Whether `years` contains more than one distinct value - the shared
+ * check behind "is the year worth spelling out" (a compact month label,
+ * a date-range button, a chart axis all read fine without a year until
+ * more than one is actually in play). Callers derive their own year
+ * numbers from whatever they already have (a Date's UTC year, a "YYYY-MM"
+ * key's prefix, ...) and pass them in - this only counts distinctness. */
+export function hasMultipleYears(years: number[]): boolean {
+  return new Set(years).size > 1;
+}
+
 /**
  * Formats a "YYYY-MM" month key (the shape the dashboard summary
  * endpoint reports) as a short month name, optionally with the year.

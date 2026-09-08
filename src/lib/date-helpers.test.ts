@@ -7,6 +7,7 @@ import {
   formatMonthYear,
   formatRelativeTime,
   getToday,
+  hasMultipleYears,
   parseCalendarDate,
   toFormCalendarDate,
 } from "./date-helpers";
@@ -119,6 +120,21 @@ describe("getToday", () => {
     expect(today.getMinutes()).toBe(0);
     expect(today.getSeconds()).toBe(0);
     expect(today.getMilliseconds()).toBe(0);
+  });
+});
+
+describe("hasMultipleYears", () => {
+  it("is false when every year is the same", () => {
+    expect(hasMultipleYears([2026, 2026, 2026])).toBe(false);
+  });
+
+  it("is true once a second distinct year appears", () => {
+    expect(hasMultipleYears([2025, 2026])).toBe(true);
+  });
+
+  it("is false for a single year, or none", () => {
+    expect(hasMultipleYears([2026])).toBe(false);
+    expect(hasMultipleYears([])).toBe(false);
   });
 });
 
