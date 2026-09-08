@@ -58,22 +58,24 @@ function firstDayOfMonth(year: number, month0: number): string {
 }
 
 /**
- * Every instance of `type` across `years`, newest year first and (within
- * a year) newest period first - the order a "most recent first" dropdown
- * wants. Every year in `years` gets the full set of periods regardless
- * of whether they've happened yet or have any data - same as the
- * calendar's exact-range picker already lets you pick any date, dated or
- * not (see date-range-filter.tsx).
+ * Every instance of `type` across `years`, in calendar order - oldest
+ * year first and, within a year, earliest period first - so a dropdown
+ * built from this reads top-to-bottom the way a timeline does ("de
+ * donde inicia hasta donde termina"), not newest-first. Every year in
+ * `years` gets the full set of periods regardless of whether they've
+ * happened yet or have any data - same as the calendar's exact-range
+ * picker already lets you pick any date, dated or not (see
+ * date-range-filter.tsx).
  */
 export function getPeriodInstances(
   type: PeriodType,
   years: number[],
 ): PeriodInstance[] {
-  const sortedYears = [...years].sort((a, b) => b - a);
+  const sortedYears = [...years].sort((a, b) => a - b);
 
   if (type === "month") {
     return sortedYears.flatMap((year) =>
-      Array.from({ length: 12 }, (_, i) => 11 - i).map((month0) => ({
+      Array.from({ length: 12 }, (_, month0) => ({
         value: monthKey(year, month0),
         startMonthKey: monthKey(year, month0),
         endMonthKey: monthKey(year, month0),
@@ -87,18 +89,16 @@ export function getPeriodInstances(
   const periodsPerYear = 12 / months;
 
   return sortedYears.flatMap((year) =>
-    Array.from({ length: periodsPerYear }, (_, i) => periodsPerYear - 1 - i).map(
-      (index) => {
-        const startMonth0 = index * months;
-        const endMonth0 = startMonth0 + months - 1;
-        return {
-          value: `${year}-${prefix}${index + 1}`,
-          startMonthKey: monthKey(year, startMonth0),
-          endMonthKey: monthKey(year, endMonth0),
-          startDate: firstDayOfMonth(year, startMonth0),
-          endDate: lastDayOfMonth(year, endMonth0),
-        };
-      },
-    ),
+    Array.from({ length: periodsPerYear }, (_, index) => {
+      const startMonth0 = index * months;
+      const endMonth0 = startMonth0 + months - 1;
+      return {
+        value: `${year}-${prefix}${index + 1}`,
+        startMonthKey: monthKey(year, startMonth0),
+        endMonthKey: monthKey(year, endMonth0),
+        startDate: firstDayOfMonth(year, startMonth0),
+        endDate: lastDayOfMonth(year, endMonth0),
+      };
+    }),
   );
 }

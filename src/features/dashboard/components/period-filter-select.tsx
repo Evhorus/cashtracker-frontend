@@ -9,7 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatCalendarDateForApi, formatMonthKey, getToday } from "@/lib/date-helpers";
+import {
+  formatCalendarDateForApi,
+  formatMonthKey,
+  getToday,
+  parseCalendarDate,
+} from "@/lib/date-helpers";
 import {
   getPeriodInstances,
   type PeriodInstance,
@@ -32,6 +37,11 @@ interface PeriodFilterSelectProps {
    * deals in year/startDate/endDate) knowing period types exist. */
   period?: string;
   periodValue?: string;
+  /** Whatever range is currently active - from a prior period pick or
+   * from DateRangeFilter's own calendar - used as the anchor when
+   * switching period type, so "Semestre" after a manual Jul 2025 range
+   * lands on the semester containing that start, not today's. */
+  startDate?: string;
 }
 
 // Replaces the plain year-only YearFilterSelect: a "period type" select
@@ -46,6 +56,7 @@ export const PeriodFilterSelect = ({
   selectedYear,
   period,
   periodValue,
+  startDate,
 }: PeriodFilterSelectProps) => {
   const t = useTranslations("statistics");
   const locale = useLocale() as SupportedLocale;
@@ -81,28 +92,34 @@ export const PeriodFilterSelect = ({
     params.delete("period");
     params.delete("periodValue");
 
-    if (value === YEAR_VALUE) {
-      // No instance picked yet - default to the most recent year so
-      // switching to "Año" always lands on something applied, the same
-      // way opening the old YearFilterSelect never left it blank.
-      const [mostRecentYear] = [...years].sort((a, b) => b - a);
-      if (mostRecentYear) params.set("year", String(mostRecentYear));
-    } else if (value !== ALL_VALUE) {
-      const candidates = getPeriodInstances(value as PeriodType, years);
-      // Default to the period that contains today, not just the newest
-      // one on the list - "Trimestre" in October should land on Q4
-      // (has this quarter's spending), not silently jump to Q1 next
-      // year just because it sorts first.
-      const todayStr = formatCalendarDateForApi(getToday());
-      const defaultInstance =
-        candidates.find(
-          (i) => i.startDate <= todayStr && todayStr <= i.endDate,
-        ) ?? candidates[0];
-      if (defaultInstance) {
-        params.set("period", value);
-        params.set("periodValue", defaultInstance.value);
-        params.set("startDate", defaultInstance.startDate);
-        params.set("endDate", defaultInstance.endDate);
+    if (value !== ALL_VALUE) {
+      // Anchor the new type on whatever period is already active - a
+      // prior period pick, or a manual DateRangeFilter range - so
+      // switching from "1 jul 2025 – 30 jun 2026" to "Semestre" lands
+      // on the semester containing that range's *start*, not today's.
+      // Only once nothing at all is active does "today" take over.
+      const anchor = resolveAnchorDate(startDate, selectedYear);
+
+      if (value === YEAR_VALUE) {
+        const anchorYear = parseCalendarDate(anchor).getUTCFullYear();
+        const targetYear = years.includes(anchorYear)
+          ? anchorYear
+          : years.length > 0
+            ? Math.max(...years)
+            : undefined;
+        if (targetYear) params.set("year", String(targetYear));
+      } else {
+        const candidates = getPeriodInstances(value as PeriodType, years);
+        const defaultInstance =
+          candidates.find(
+            (i) => i.startDate <= anchor && anchor <= i.endDate,
+          ) ?? candidates[candidates.length - 1];
+        if (defaultInstance) {
+          params.set("period", value);
+          params.set("periodValue", defaultInstance.value);
+          params.set("startDate", defaultInstance.startDate);
+          params.set("endDate", defaultInstance.endDate);
+        }
       }
     }
     navigate(params);
@@ -164,11 +181,13 @@ export const PeriodFilterSelect = ({
             <SelectValue>{(value: string) => value}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {years.map((year) => (
-              <SelectItem key={year} value={String(year)}>
-                {year}
-              </SelectItem>
-            ))}
+            {[...years]
+              .sort((a, b) => a - b)
+              .map((year) => (
+                <SelectItem key={year} value={String(year)}>
+                  {year}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       )}
@@ -199,6 +218,15 @@ export const PeriodFilterSelect = ({
 
 function isPeriodType(value: string): value is PeriodType {
   return (PERIOD_TYPES as string[]).includes(value);
+}
+
+/** "yyyy-MM-dd" to build a new period type's default instance around:
+ * the currently active range's start, then the active year's Jan 1,
+ * then - only when nothing at all is active yet - today. */
+function resolveAnchorDate(startDate?: string, selectedYear?: number): string {
+  if (startDate) return startDate;
+  if (selectedYear) return `${selectedYear}-01-01`;
+  return formatCalendarDateForApi(getToday());
 }
 
 /** "ago 2026" for a single-month instance, "ene – mar 2026" for a

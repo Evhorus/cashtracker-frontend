@@ -133,6 +133,7 @@ export default async function StatisticsPage({
                 selectedYear={year}
                 period={period}
                 periodValue={periodValue}
+                startDate={startDate}
               />
               <DateRangeFilter startDate={startDate} endDate={endDate} />
               {hasMultipleCurrencies && (
