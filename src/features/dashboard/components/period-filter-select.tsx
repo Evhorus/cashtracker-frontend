@@ -16,6 +16,7 @@ import {
   parseCalendarDate,
 } from "@/lib/date-helpers";
 import {
+  filterInstancesInRange,
   getPeriodInstances,
   type PeriodInstance,
   type PeriodType,
@@ -40,11 +41,19 @@ interface PeriodFilterSelectProps {
   /** Whatever range is currently active - from a prior period pick or
    * from DateRangeFilter's own calendar - used as the anchor when
    * switching period type, so "Semestre" after a manual Jul 2025 range
-   * lands on the semester containing that start, not today's. Their
-   * years are also folded into the instance lists below (see
-   * `effectiveYears`). */
+   * lands on the semester containing that start, not today's. */
   startDate?: string;
   endDate?: string;
+  /** The boundary the user last drew by hand in DateRangeFilter's own
+   * calendar - set (and only ever set) by that component, alongside
+   * startDate/endDate but never overwritten by this one. Unlike
+   * startDate/endDate, which this control freely rewrites to whichever
+   * month/quarter/etc. is currently selected, these stay put across
+   * every period-type switch, so "solo lo que marqué" (see
+   * `clipToMarkedRange`) keeps holding no matter how many times you
+   * change type after drawing a range - not just on the first switch. */
+  markedStart?: string;
+  markedEnd?: string;
 }
 
 // Replaces the plain year-only YearFilterSelect: a "period type" select
@@ -61,6 +70,8 @@ export const PeriodFilterSelect = ({
   periodValue,
   startDate,
   endDate,
+  markedStart,
+  markedEnd,
 }: PeriodFilterSelectProps) => {
   const t = useTranslations("statistics");
   const locale = useLocale() as SupportedLocale;
@@ -80,12 +91,13 @@ export const PeriodFilterSelect = ({
   // backdated expense (e.g. logged in June 2025 under an envelope
   // created in 2026) has no year of its own in that list. The raw
   // calendar (DateRangeFilter) lets you pick any date regardless; these
-  // shortcuts should be just as unrestricted, so whatever range is
-  // already active always gets its own year(s) folded in too.
+  // shortcuts should be just as unrestricted, so a marked range's own
+  // year(s) - or, absent one, whatever's currently active - are always
+  // folded in too.
   const effectiveYears = Array.from(
     new Set([
       ...years,
-      ...[startDate, endDate]
+      ...[markedStart, markedEnd, startDate, endDate]
         .filter((d): d is string => Boolean(d))
         .map((d) => parseCalendarDate(d).getUTCFullYear()),
     ]),
@@ -93,7 +105,11 @@ export const PeriodFilterSelect = ({
 
   const instances =
     selectedType !== ALL_VALUE && selectedType !== YEAR_VALUE
-      ? getPeriodInstances(selectedType, effectiveYears)
+      ? clipToMarkedRange(
+          getPeriodInstances(selectedType, effectiveYears),
+          markedStart,
+          markedEnd,
+        )
       : [];
 
   const navigate = (params: URLSearchParams) => {
@@ -101,8 +117,9 @@ export const PeriodFilterSelect = ({
     router.push(qs ? `${pathname}?${qs}` : pathname);
   };
 
-  // Preserves ?currency= - the filters are independent, changing one
-  // shouldn't reset which currency's chart is showing.
+  // Preserves ?currency= (and markedStart/markedEnd, by never touching
+  // them) - the filters are independent, changing one shouldn't reset
+  // the other.
   function handleTypeChange(value: string | null) {
     if (!value) return;
     const params = new URLSearchParams(searchParams);
@@ -112,7 +129,14 @@ export const PeriodFilterSelect = ({
     params.delete("period");
     params.delete("periodValue");
 
-    if (value !== ALL_VALUE) {
+    if (value === ALL_VALUE) {
+      // "Todo el tiempo" clears the marked boundary too - it's the
+      // explicit "no filter" choice, so a stale mark silently reapplying
+      // itself the next time a period type is picked would surprise
+      // more than help.
+      params.delete("markedStart");
+      params.delete("markedEnd");
+    } else {
       // Anchor the new type on whatever period is already active - a
       // prior period pick, or a manual DateRangeFilter range - so
       // switching from "1 jul 2025 – 30 jun 2026" to "Semestre" lands
@@ -129,7 +153,11 @@ export const PeriodFilterSelect = ({
             : undefined;
         if (targetYear) params.set("year", String(targetYear));
       } else {
-        const candidates = getPeriodInstances(value as PeriodType, effectiveYears);
+        const candidates = clipToMarkedRange(
+          getPeriodInstances(value as PeriodType, effectiveYears),
+          markedStart,
+          markedEnd,
+        );
         const defaultInstance =
           candidates.find(
             (i) => i.startDate <= anchor && anchor <= i.endDate,
@@ -238,6 +266,19 @@ export const PeriodFilterSelect = ({
 
 function isPeriodType(value: string): value is PeriodType {
   return (PERIOD_TYPES as string[]).includes(value);
+}
+
+/** filterInstancesInRange against the marked boundary, when there is
+ * one - the thin wrapper both call sites above (the rendered list, and
+ * handleTypeChange's own candidates) share, so neither has to repeat
+ * the "only when both ends are set" check. */
+function clipToMarkedRange(
+  instances: PeriodInstance[],
+  markedStart?: string,
+  markedEnd?: string,
+): PeriodInstance[] {
+  if (!markedStart || !markedEnd) return instances;
+  return filterInstancesInRange(instances, markedStart, markedEnd);
 }
 
 /** "yyyy-MM-dd" to build a new period type's default instance around:

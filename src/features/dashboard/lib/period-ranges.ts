@@ -102,3 +102,23 @@ export function getPeriodInstances(
     }),
   );
 }
+
+/**
+ * Instances that overlap ["yyyy-MM-dd" `rangeStart`, `rangeEnd`] -
+ * keeps a period-type dropdown limited to what a hand-picked
+ * DateRangeFilter range actually covers, instead of every period across
+ * every year that range's endpoints happen to fall in. A range starting
+ * 1 Jul only overlaps the second half of that year onward - "ene - jun"
+ * of the same year never happened as far as the marked range is
+ * concerned, so it's dropped; a period the range only partially
+ * overlaps (its last day, say) still counts and is kept.
+ */
+export function filterInstancesInRange(
+  instances: PeriodInstance[],
+  rangeStart: string,
+  rangeEnd: string,
+): PeriodInstance[] {
+  return instances.filter(
+    (instance) => instance.endDate >= rangeStart && instance.startDate <= rangeEnd,
+  );
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getPeriodInstances } from "./period-ranges";
+import { filterInstancesInRange, getPeriodInstances } from "./period-ranges";
 
 describe("getPeriodInstances", () => {
   it("returns one entry per month, in calendar order, for a single year", () => {
@@ -134,5 +134,52 @@ describe("getPeriodInstances", () => {
 
   it("returns an empty list for no years", () => {
     expect(getPeriodInstances("quarter", [])).toEqual([]);
+  });
+});
+
+describe("filterInstancesInRange", () => {
+  it("drops a semester entirely before the range's start", () => {
+    // A range starting mid-year (1 Jul 2025) shouldn't offer "ene - jun
+    // 2025" as a semester option - that half-year never happened as far
+    // as the range the user actually marked is concerned.
+    const instances = getPeriodInstances("semester", [2025, 2026]);
+
+    const filtered = filterInstancesInRange(
+      instances,
+      "2025-07-01",
+      "2026-07-01",
+    );
+
+    expect(filtered.map((i) => i.value)).toEqual([
+      "2025-S2",
+      "2026-S1",
+      "2026-S2",
+    ]);
+  });
+
+  it("keeps a period the range only partially overlaps", () => {
+    // The range ends 1 Jul 2026, one day into "2026-S2" (Jul - Dec) -
+    // that semester still overlaps the marked range, so it stays.
+    const instances = getPeriodInstances("semester", [2026]);
+
+    const filtered = filterInstancesInRange(
+      instances,
+      "2026-01-01",
+      "2026-07-01",
+    );
+
+    expect(filtered.map((i) => i.value)).toEqual(["2026-S1", "2026-S2"]);
+  });
+
+  it("keeps a period the range falls entirely inside", () => {
+    const instances = getPeriodInstances("quarter", [2026]);
+
+    const filtered = filterInstancesInRange(
+      instances,
+      "2026-08-01",
+      "2026-08-15",
+    );
+
+    expect(filtered.map((i) => i.value)).toEqual(["2026-Q3"]);
   });
 });

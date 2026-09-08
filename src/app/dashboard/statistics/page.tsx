@@ -53,6 +53,8 @@ interface StatisticsPageProps {
     // other value below still drives the actual fetches.
     period?: string;
     periodValue?: string;
+    markedStart?: string;
+    markedEnd?: string;
   }>;
 }
 
@@ -73,6 +75,8 @@ export default async function StatisticsPage({
     endDate,
     period,
     periodValue,
+    markedStart,
+    markedEnd,
   } = await searchParams;
   const year = yearParam ? parseInt(yearParam, 10) || undefined : undefined;
   // An exact range wins over the year shortcut when the URL somehow
@@ -135,6 +139,8 @@ export default async function StatisticsPage({
                 periodValue={periodValue}
                 startDate={startDate}
                 endDate={endDate}
+                markedStart={markedStart}
+                markedEnd={markedEnd}
               />
               <DateRangeFilter startDate={startDate} endDate={endDate} />
               {hasMultipleCurrencies && (
