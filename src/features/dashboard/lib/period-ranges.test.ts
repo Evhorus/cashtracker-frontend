@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { filterInstancesInRange, getPeriodInstances } from "./period-ranges";
+import {
+  filterInstancesInRange,
+  getPeriodInstances,
+  typeFitsWithinRange,
+  yearFitsWithinRange,
+} from "./period-ranges";
 
 describe("getPeriodInstances", () => {
   it("returns one entry per month, in calendar order, for a single year", () => {
@@ -181,5 +186,48 @@ describe("filterInstancesInRange", () => {
     );
 
     expect(filtered.map((i) => i.value)).toEqual(["2026-Q3"]);
+  });
+});
+
+describe("typeFitsWithinRange", () => {
+  it("rejects a type whose every instance overflows a short marked range", () => {
+    // 1 Jul - 1 Sep 2025 is 2 months - no calendar quarter (3 months)
+    // fits entirely inside it, so offering "Trimestre" here would only
+    // ever apply something wider than what was actually marked.
+    expect(
+      typeFitsWithinRange("quarter", [2025], "2025-07-01", "2025-09-01"),
+    ).toBe(false);
+  });
+
+  it("accepts a type with at least one instance fully inside the range", () => {
+    // August 2025 fits entirely inside 1 Jul - 1 Sep 2025.
+    expect(
+      typeFitsWithinRange("month", [2025], "2025-07-01", "2025-09-01"),
+    ).toBe(true);
+  });
+
+  it("accepts a semester that fits inside a full-year-plus-a-day range", () => {
+    // 1 Jul 2025 - 1 Jul 2026 fully contains "2025-S2" (Jul - Dec 2025).
+    expect(
+      typeFitsWithinRange(
+        "semester",
+        [2025, 2026],
+        "2025-07-01",
+        "2026-07-01",
+      ),
+    ).toBe(true);
+  });
+});
+
+describe("yearFitsWithinRange", () => {
+  it("rejects a year when the range starts mid-year", () => {
+    // Neither calendar year 2025 nor 2026 fits entirely inside a range
+    // that starts 1 Jul 2025 and ends 1 Jul 2026 - both spill outside it.
+    expect(yearFitsWithinRange(2025, "2025-07-01", "2026-07-01")).toBe(false);
+    expect(yearFitsWithinRange(2026, "2025-07-01", "2026-07-01")).toBe(false);
+  });
+
+  it("accepts a year the range fully contains", () => {
+    expect(yearFitsWithinRange(2026, "2025-06-01", "2027-01-01")).toBe(true);
   });
 });

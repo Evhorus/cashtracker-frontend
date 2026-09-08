@@ -18,6 +18,8 @@ import {
 import {
   filterInstancesInRange,
   getPeriodInstances,
+  typeFitsWithinRange,
+  yearFitsWithinRange,
   type PeriodInstance,
   type PeriodType,
 } from "@/features/dashboard/lib/period-ranges";
@@ -111,6 +113,29 @@ export const PeriodFilterSelect = ({
           markedEnd,
         )
       : [];
+
+  // A type only earns a spot in the dropdown if at least one of its
+  // instances actually fits inside the marked range - offering
+  // "Trimestre" for a 2-month mark would only ever apply something
+  // wider than what was drawn, which is the opposite of narrowing down.
+  // No marked range yet (a still-valid year/period link) skips the
+  // check entirely - nothing to be too big *for*. The currently
+  // selected type always renders regardless, so a stale URL can't leave
+  // the Select pointing at an option that isn't there.
+  const typeFits = (type: PeriodType) =>
+    !markedStart ||
+    !markedEnd ||
+    type === selectedType ||
+    typeFitsWithinRange(type, effectiveYears, markedStart, markedEnd);
+  const availableTypes = PERIOD_TYPES.filter(typeFits);
+
+  const yearFits = (year: number) =>
+    !markedStart ||
+    !markedEnd ||
+    year === selectedYear ||
+    yearFitsWithinRange(year, markedStart, markedEnd);
+  const yearOptionAvailable =
+    effectiveYears.length > 0 && effectiveYears.some(yearFits);
 
   const navigate = (params: URLSearchParams) => {
     const qs = params.toString();
@@ -207,15 +232,14 @@ export const PeriodFilterSelect = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={ALL_VALUE}>{t("periodType.all")}</SelectItem>
-          {effectiveYears.length > 0 && (
+          {yearOptionAvailable && (
             <SelectItem value={YEAR_VALUE}>{t("periodType.year")}</SelectItem>
           )}
-          {effectiveYears.length > 0 &&
-            PERIOD_TYPES.map((type) => (
-              <SelectItem key={type} value={type}>
-                {t(`periodType.${type}`)}
-              </SelectItem>
-            ))}
+          {availableTypes.map((type) => (
+            <SelectItem key={type} value={type}>
+              {t(`periodType.${type}`)}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
@@ -230,6 +254,7 @@ export const PeriodFilterSelect = ({
           </SelectTrigger>
           <SelectContent>
             {[...effectiveYears]
+              .filter(yearFits)
               .sort((a, b) => a - b)
               .map((year) => (
                 <SelectItem key={year} value={String(year)}>

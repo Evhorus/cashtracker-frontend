@@ -122,3 +122,34 @@ export function filterInstancesInRange(
     (instance) => instance.endDate >= rangeStart && instance.startDate <= rangeEnd,
   );
 }
+
+/**
+ * Whether `type` has at least one instance that fits entirely inside
+ * ["yyyy-MM-dd" `rangeStart`, `rangeEnd`] - stricter than
+ * filterInstancesInRange's overlap test, and what decides whether a
+ * period *type* is worth offering at all for a marked range. A 2-month
+ * mark (1 Jul - 1 Sep) can't fit a calendar quarter (3 months) no
+ * matter which one - every quarter would spill past the mark - so
+ * "Trimestre" has nothing legible to offer there, even though "Mes"
+ * (August fits) does.
+ */
+export function typeFitsWithinRange(
+  type: PeriodType,
+  years: number[],
+  rangeStart: string,
+  rangeEnd: string,
+): boolean {
+  return getPeriodInstances(type, years).some(
+    (instance) => instance.startDate >= rangeStart && instance.endDate <= rangeEnd,
+  );
+}
+
+/** Same containment test as typeFitsWithinRange, for the whole-year
+ * shortcut (which isn't a PeriodType/getPeriodInstances entry). */
+export function yearFitsWithinRange(
+  year: number,
+  rangeStart: string,
+  rangeEnd: string,
+): boolean {
+  return `${year}-01-01` >= rangeStart && `${year}-12-31` <= rangeEnd;
+}
