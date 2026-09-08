@@ -128,15 +128,50 @@ export const DateRangeFilter = ({
           }
         />
         <PopoverContent className="w-auto p-0" align="end">
-          <Calendar
-            mode="range"
-            selected={draftRange}
-            defaultMonth={draftRange?.from}
-            onSelect={setDraftRange}
-            numberOfMonths={2}
-            locale={DATE_FNS_LOCALES[locale]}
-            captionLayout="dropdown"
-          />
+          {/* Two independently-navigable single-date calendars, not one
+              range calendar with numberOfMonths={2} - that linked both
+              panels to always-adjacent months sharing one navigation
+              state, so picking the "from" year (e.g. 2025) and then
+              the "to" year (e.g. 2026) on the other panel silently
+              dragged the first panel's year along with it. Each side
+              here owns its month/year independently; `disabled` below
+              is what still keeps the pair from crossing. */}
+          <div className="flex flex-col divide-y divide-border/60 sm:flex-row sm:divide-x sm:divide-y-0">
+            <div>
+              <p className="px-3 pt-3 text-xs font-medium text-muted-foreground">
+                {t("fromDate")}
+              </p>
+              <Calendar
+                mode="single"
+                selected={draftRange?.from}
+                defaultMonth={draftRange?.from}
+                onSelect={(date) =>
+                  setDraftRange((prev) => ({ from: date, to: prev?.to }))
+                }
+                disabled={draftRange?.to ? { after: draftRange.to } : undefined}
+                locale={DATE_FNS_LOCALES[locale]}
+                captionLayout="dropdown"
+              />
+            </div>
+            <div>
+              <p className="px-3 pt-3 text-xs font-medium text-muted-foreground">
+                {t("toDate")}
+              </p>
+              <Calendar
+                mode="single"
+                selected={draftRange?.to}
+                defaultMonth={draftRange?.to ?? draftRange?.from}
+                onSelect={(date) =>
+                  setDraftRange((prev) => ({ from: prev?.from, to: date }))
+                }
+                disabled={
+                  draftRange?.from ? { before: draftRange.from } : undefined
+                }
+                locale={DATE_FNS_LOCALES[locale]}
+                captionLayout="dropdown"
+              />
+            </div>
+          </div>
           <div className="flex items-center justify-end gap-2 border-t border-border/60 p-3">
             <Button type="button" variant="ghost" size="sm" onClick={handleClear}>
               {t("clearDateRange")}

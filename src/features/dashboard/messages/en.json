@@ -39,6 +39,8 @@
     "filterCurrency": "Filter by currency",
     "filterDateRange": "Filter by date range",
     "dateRangePlaceholder": "Date range",
+    "fromDate": "From",
+    "toDate": "To",
     "clearDateRange": "Clear range",
     "applyDateRange": "Apply",
     "envelopeCount": "{count, plural, one {# envelope} other {# envelopes}}",

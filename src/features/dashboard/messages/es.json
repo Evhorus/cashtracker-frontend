@@ -39,6 +39,8 @@
     "filterCurrency": "Filtrar por moneda",
     "filterDateRange": "Filtrar por rango de fechas",
     "dateRangePlaceholder": "Rango de fechas",
+    "fromDate": "Desde",
+    "toDate": "Hasta",
     "clearDateRange": "Limpiar rango",
     "applyDateRange": "Aplicar",
     "envelopeCount": "{count, plural, one {# sobre} other {# sobres}}",
