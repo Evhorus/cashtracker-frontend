@@ -100,8 +100,15 @@ export const DateRangeFilter = ({
     setOpen(false);
   };
 
+  // "1 jul – 30 jun" reads as backwards (and is ambiguous about which
+  // year is which) once the range crosses a calendar year - only then
+  // is the year worth the extra width, same call the chart's own axis
+  // labels make (see statistics/page.tsx's spansMultipleYears).
+  const spansMultipleYears =
+    appliedRange &&
+    appliedRange.from!.getUTCFullYear() !== appliedRange.to!.getUTCFullYear();
   const label = appliedRange
-    ? `${formatCalendarDateShort(appliedRange.from!, locale)} – ${formatCalendarDateShort(appliedRange.to!, locale)}`
+    ? `${formatCalendarDateShort(appliedRange.from!, locale, spansMultipleYears)} – ${formatCalendarDateShort(appliedRange.to!, locale, spansMultipleYears)}`
     : t("dateRangePlaceholder");
 
   return (

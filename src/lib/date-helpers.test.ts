@@ -154,6 +154,11 @@ describe("locale", () => {
     expect(formatCalendarDateShort(date, "en")).toBe("22 Sep");
   });
 
+  it("appends the year only when asked to", () => {
+    expect(formatCalendarDateShort(date, "es", true)).toBe("22 sep 2026");
+    expect(formatCalendarDateShort(date, "en", true)).toBe("22 Sep 2026");
+  });
+
   it("localizes an instant's month, timezone conversion included", () => {
     // 03:00 UTC on 1 September is still August in Bogotá (TZ is pinned
     // to America/Bogota - see vitest.config.mts), and that has to stay
