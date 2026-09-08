@@ -142,7 +142,12 @@ export default async function StatisticsPage({
                 markedStart={markedStart}
                 markedEnd={markedEnd}
               />
-              <DateRangeFilter startDate={startDate} endDate={endDate} />
+              <DateRangeFilter
+                startDate={startDate}
+                endDate={endDate}
+                markedStart={markedStart}
+                markedEnd={markedEnd}
+              />
               {hasMultipleCurrencies && (
                 <CurrencyFilterSelect
                   currencies={totals.map((total) => total.currency)}
