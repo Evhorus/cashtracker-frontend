@@ -26,8 +26,16 @@
     "byCurrency": "Por moneda",
     "monthlySpending": "Gasto mensual",
     "chartTitle": "Gastos por Mes",
-    "filterYear": "Filtrar por año",
-    "allYears": "Todos los años",
+    "filterPeriodType": "Filtrar por periodo",
+    "filterPeriodInstance": "Seleccionar periodo",
+    "periodType": {
+      "all": "Todo el tiempo",
+      "year": "Año",
+      "semester": "Semestre",
+      "fourMonth": "Cuatrimestre",
+      "quarter": "Trimestre",
+      "month": "Mes"
+    },
     "filterCurrency": "Filtrar por moneda",
     "filterDateRange": "Filtrar por rango de fechas",
     "dateRangePlaceholder": "Rango de fechas",

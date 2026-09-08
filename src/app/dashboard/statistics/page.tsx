@@ -9,7 +9,7 @@ import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-bre
 import { getEnvelopeBreakdown } from "@/features/dashboard/data/get-envelope-breakdown";
 import { getNameBreakdown } from "@/features/dashboard/data/get-name-breakdown";
 import { getBreakdownTotal } from "@/features/dashboard/data/get-breakdown-total";
-import { YearFilterSelect } from "@/features/dashboard/components/year-filter-select";
+import { PeriodFilterSelect } from "@/features/dashboard/components/period-filter-select";
 import { CurrencyFilterSelect } from "@/features/dashboard/components/currency-filter-select";
 import { DateRangeFilter } from "@/features/dashboard/components/date-range-filter";
 import nextDynamic from "next/dynamic";
@@ -48,6 +48,11 @@ interface StatisticsPageProps {
     currency?: string;
     startDate?: string;
     endDate?: string;
+    // UI-only bookkeeping for PeriodFilterSelect (month/quarter/
+    // fourMonth/semester) - see that component's own doc comment. Every
+    // other value below still drives the actual fetches.
+    period?: string;
+    periodValue?: string;
   }>;
 }
 
@@ -66,6 +71,8 @@ export default async function StatisticsPage({
     currency: currencyParam,
     startDate,
     endDate,
+    period,
+    periodValue,
   } = await searchParams;
   const year = yearParam ? parseInt(yearParam, 10) || undefined : undefined;
   // An exact range wins over the year shortcut when the URL somehow
@@ -121,12 +128,12 @@ export default async function StatisticsPage({
 
           {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
             <div className="flex flex-wrap items-center gap-2">
-              {summary.availableYears.length > 0 && (
-                <YearFilterSelect
-                  years={summary.availableYears}
-                  selectedYear={year}
-                />
-              )}
+              <PeriodFilterSelect
+                years={summary.availableYears}
+                selectedYear={year}
+                period={period}
+                periodValue={periodValue}
+              />
               <DateRangeFilter startDate={startDate} endDate={endDate} />
               {hasMultipleCurrencies && (
                 <CurrencyFilterSelect

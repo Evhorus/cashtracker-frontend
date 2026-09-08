@@ -26,8 +26,16 @@
     "byCurrency": "By currency",
     "monthlySpending": "Monthly spending",
     "chartTitle": "Spending by Month",
-    "filterYear": "Filter by year",
-    "allYears": "All years",
+    "filterPeriodType": "Filter by period",
+    "filterPeriodInstance": "Select period",
+    "periodType": {
+      "all": "All time",
+      "year": "Year",
+      "semester": "Semester",
+      "fourMonth": "Four-month period",
+      "quarter": "Quarter",
+      "month": "Month"
+    },
     "filterCurrency": "Filter by currency",
     "filterDateRange": "Filter by date range",
     "dateRangePlaceholder": "Date range",
