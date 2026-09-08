@@ -105,13 +105,19 @@ export const PeriodFilterSelect = ({
     ]),
   );
 
+  // Both call sites want the same "this type's instances, clipped to
+  // whatever's marked" - one for the currently selected type, one for
+  // handleTypeChange to default into a *new* type before it's applied.
+  const getInstancesForType = (type: PeriodType) =>
+    clipToMarkedRange(
+      getPeriodInstances(type, effectiveYears),
+      markedStart,
+      markedEnd,
+    );
+
   const instances =
     selectedType !== ALL_VALUE && selectedType !== YEAR_VALUE
-      ? clipToMarkedRange(
-          getPeriodInstances(selectedType, effectiveYears),
-          markedStart,
-          markedEnd,
-        )
+      ? getInstancesForType(selectedType)
       : [];
 
   // A type only earns a spot in the dropdown if at least one of its
@@ -171,11 +177,7 @@ export const PeriodFilterSelect = ({
           : undefined;
       if (targetYear) params.set("year", String(targetYear));
     } else {
-      const candidates = clipToMarkedRange(
-        getPeriodInstances(value as PeriodType, effectiveYears),
-        markedStart,
-        markedEnd,
-      );
+      const candidates = getInstancesForType(value as PeriodType);
       const defaultInstance =
         candidates.find(
           (i) => i.startDate <= anchor && anchor <= i.endDate,
@@ -212,6 +214,23 @@ export const PeriodFilterSelect = ({
   const instanceValue =
     selectedType === YEAR_VALUE ? String(selectedYear ?? "") : (periodValue ?? "");
 
+  // Both instance selects (Año's year list, and a period type's own
+  // instance list) are the same control - one value, one label - just
+  // sourced differently. Building one shared {value, label} shape means
+  // there's a single Select block below instead of two copy-pasted ones.
+  const instanceOptions: { value: string; label: string }[] =
+    selectedType === YEAR_VALUE
+      ? [...effectiveYears]
+          .filter(yearFits)
+          .sort((a, b) => a - b)
+          .map((year) => ({ value: String(year), label: String(year) }))
+      : instances.map((instance) => ({
+          value: instance.value,
+          label: instanceLabel(instance, locale),
+        }));
+  const selectedInstanceLabel =
+    instanceOptions.find((option) => option.value === instanceValue)?.label ?? "";
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Select value={selectedType} onValueChange={handleTypeChange}>
@@ -247,43 +266,19 @@ export const PeriodFilterSelect = ({
         </SelectContent>
       </Select>
 
-      {selectedType === YEAR_VALUE && (
+      {selectedType !== ALL_VALUE && (
         <Select value={instanceValue} onValueChange={handleInstanceChange}>
           <SelectTrigger
             size="sm"
             className="w-auto gap-1.5 font-medium"
             aria-label={t("filterPeriodInstance")}
           >
-            <SelectValue>{(value: string) => value}</SelectValue>
+            <SelectValue>{() => selectedInstanceLabel}</SelectValue>
           </SelectTrigger>
           <SelectContent alignItemWithTrigger={false}>
-            {[...effectiveYears]
-              .filter(yearFits)
-              .sort((a, b) => a - b)
-              .map((year) => (
-                <SelectItem key={year} value={String(year)}>
-                  {year}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
-      )}
-
-      {selectedType !== ALL_VALUE && selectedType !== YEAR_VALUE && (
-        <Select value={instanceValue} onValueChange={handleInstanceChange}>
-          <SelectTrigger
-            size="sm"
-            className="w-auto gap-1.5 font-medium"
-            aria-label={t("filterPeriodInstance")}
-          >
-            <SelectValue>
-              {() => instanceLabel(instances, instanceValue, locale)}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
-            {instances.map((instance) => (
-              <SelectItem key={instance.value} value={instance.value}>
-                {instanceLabel(instances, instance.value, locale)}
+            {instanceOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -323,13 +318,7 @@ function resolveAnchorDate(startDate?: string, selectedYear?: number): string {
  * multi-month one - reuses the same month-key formatter the monthly
  * chart's axis labels already use, instead of inventing a new date
  * format just for this list. */
-function instanceLabel(
-  instances: PeriodInstance[],
-  value: string,
-  locale: SupportedLocale,
-): string {
-  const instance = instances.find((i) => i.value === value);
-  if (!instance) return "";
+function instanceLabel(instance: PeriodInstance, locale: SupportedLocale): string {
   if (instance.startMonthKey === instance.endMonthKey) {
     return formatMonthKey(instance.startMonthKey, locale, true);
   }

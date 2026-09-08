@@ -17,6 +17,7 @@ import {
   DATE_FNS_LOCALES,
   formatCalendarDateForApi,
   formatCalendarDateShort,
+  hasMultipleYears,
   parseCalendarDate,
   toFormCalendarDate,
 } from "@/lib/date-helpers";
@@ -160,7 +161,10 @@ export const DateRangeFilter = ({
   // labels make (see statistics/page.tsx's spansMultipleYears).
   const spansMultipleYears =
     appliedRange &&
-    appliedRange.from!.getUTCFullYear() !== appliedRange.to!.getUTCFullYear();
+    hasMultipleYears([
+      appliedRange.from!.getUTCFullYear(),
+      appliedRange.to!.getUTCFullYear(),
+    ]);
   const label = appliedRange
     ? `${formatCalendarDateShort(appliedRange.from!, locale, spansMultipleYears)} – ${formatCalendarDateShort(appliedRange.to!, locale, spansMultipleYears)}`
     : t("dateRangePlaceholder");

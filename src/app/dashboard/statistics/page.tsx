@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Breadcrumb } from "@/components/common/breadcrumb";
-import { formatMonthKey } from "@/lib/date-helpers";
+import { formatMonthKey, hasMultipleYears } from "@/lib/date-helpers";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-breakdown";
 import { getEnvelopeBreakdown } from "@/features/dashboard/data/get-envelope-breakdown";
@@ -97,8 +97,9 @@ export default async function StatisticsPage({
   // than one - within a single year "Aug" alone reads fine, and the
   // extra token is what used to make the axis labels crowd. This lived
   // in the backend until it started sending raw month keys.
-  const spansMultipleYears =
-    new Set(summary.chart.map((entry) => entry.month.slice(0, 4))).size > 1;
+  const spansMultipleYears = hasMultipleYears(
+    summary.chart.map((entry) => Number(entry.month.slice(0, 4))),
+  );
 
   const chartData = summary.chart.map((entry) => ({
     label: formatMonthKey(entry.month, locale, spansMultipleYears),
