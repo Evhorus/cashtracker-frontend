@@ -79,6 +79,11 @@ export const DateRangeFilter = ({
     if (!draftRange?.from || !draftRange?.to) return;
     const params = new URLSearchParams(searchParams);
     params.delete("year");
+    // A hand-picked range isn't any of PeriodFilterSelect's period
+    // types - drop its bookkeeping params so that control falls back to
+    // showing "Todo el tiempo" instead of a stale month/quarter/etc.
+    params.delete("period");
+    params.delete("periodValue");
     params.set("startDate", formatCalendarDateForApi(draftRange.from));
     params.set("endDate", formatCalendarDateForApi(draftRange.to));
     navigate(params);
@@ -89,6 +94,8 @@ export const DateRangeFilter = ({
     const params = new URLSearchParams(searchParams);
     params.delete("startDate");
     params.delete("endDate");
+    params.delete("period");
+    params.delete("periodValue");
     navigate(params);
     setOpen(false);
   };
