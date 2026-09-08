@@ -84,8 +84,18 @@ export const DateRangeFilter = ({
     // showing "Todo el tiempo" instead of a stale month/quarter/etc.
     params.delete("period");
     params.delete("periodValue");
-    params.set("startDate", formatCalendarDateForApi(draftRange.from));
-    params.set("endDate", formatCalendarDateForApi(draftRange.to));
+    const start = formatCalendarDateForApi(draftRange.from);
+    const end = formatCalendarDateForApi(draftRange.to);
+    params.set("startDate", start);
+    params.set("endDate", end);
+    // markedStart/markedEnd record this boundary on its own, separately
+    // from startDate/endDate - PeriodFilterSelect overwrites the latter
+    // with whatever month/quarter/etc. you land on, but keeps clipping
+    // its own instance lists to *this* pair until a new range is drawn
+    // here (or cleared below), so "solo lo que marqué" holds even after
+    // switching between period types (see that component's own notes).
+    params.set("markedStart", start);
+    params.set("markedEnd", end);
     navigate(params);
     setOpen(false);
   };
@@ -96,6 +106,8 @@ export const DateRangeFilter = ({
     params.delete("endDate");
     params.delete("period");
     params.delete("periodValue");
+    params.delete("markedStart");
+    params.delete("markedEnd");
     navigate(params);
     setOpen(false);
   };
