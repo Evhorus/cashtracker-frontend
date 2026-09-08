@@ -25,6 +25,15 @@ import type { SupportedLocale } from "@/i18n/config";
 interface DateRangeFilterProps {
   startDate?: string;
   endDate?: string;
+  /** The boundary this control itself last applied (see PeriodFilterSelect's
+   * own doc comment on the same pair) - preferred over startDate/endDate
+   * below whenever set, since PeriodFilterSelect freely overwrites those
+   * with whichever month/quarter/etc. is currently selected. Without this,
+   * picking "Semestre" after marking 1 Jul 2025 - 1 Jul 2026 made this
+   * button silently show "1 jul - 31 dic 2025" instead of the range you
+   * actually drew. */
+  markedStart?: string;
+  markedEnd?: string;
 }
 
 // An exact date range, alternative to YearFilterSelect's whole-year
@@ -44,6 +53,8 @@ interface DateRangeFilterProps {
 export const DateRangeFilter = ({
   startDate,
   endDate,
+  markedStart,
+  markedEnd,
 }: DateRangeFilterProps) => {
   const t = useTranslations("statistics");
   const tCommon = useTranslations("common");
@@ -53,6 +64,14 @@ export const DateRangeFilter = ({
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
 
+  // The boundary this control shows/edits - the marked one when there is
+  // one (it survives PeriodFilterSelect narrowing startDate/endDate to a
+  // single month/quarter/etc.), otherwise startDate/endDate themselves
+  // (a range picked with no period involved, or an old bookmarked URL
+  // from before markedStart/markedEnd existed).
+  const shownStart = markedStart ?? startDate;
+  const shownEnd = markedEnd ?? endDate;
+
   // UTC-anchored - correct for the *label* below (formatCalendarDateShort
   // reads it that way), but NOT for feeding the Calendar widgets: those
   // read a Date's LOCAL getters, and this app's TZ (America/Bogota) sits
@@ -61,8 +80,8 @@ export const DateRangeFilter = ({
   // own doc comment (date-helpers.ts) for the general hazard - the
   // expense form already routes through it for the same reason.
   const appliedRange: DateRange | undefined =
-    startDate && endDate
-      ? { from: parseCalendarDate(startDate), to: parseCalendarDate(endDate) }
+    shownStart && shownEnd
+      ? { from: parseCalendarDate(shownStart), to: parseCalendarDate(shownEnd) }
       : undefined;
 
   // The same range, converted to browser-local-anchored Dates - what the
