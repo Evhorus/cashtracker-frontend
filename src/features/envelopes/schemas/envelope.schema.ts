@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ExpenseAPIResponseSchema } from "@/features/expenses/schemas/expense.schema";
 import { CURRENCY_CODES } from "@/shared/utils/format-currency";
 import { paginatedSchema } from "@/shared/utils/pagination";
-import type { ValidationTranslator } from "@/shared/lib/validation";
+import { MAX_AMOUNT, type ValidationTranslator } from "@/shared/lib/validation";
 
 export const EnvelopeAPIResponseSchema = z.object({
   id: z.string(),
@@ -73,6 +73,16 @@ export const buildEnvelopeFormSchema = (t: ValidationTranslator) =>
         ctx.addIssue({
           code: "custom",
           message: t("amountEmpty"),
+          path: ["amount"],
+        });
+      }
+
+      // Same decimal(12, 2) ceiling the expense form has: over it, the
+      // API answers with a 500 rather than a validation error.
+      if (data.hasLimit && Number(data.amount) > MAX_AMOUNT) {
+        ctx.addIssue({
+          code: "custom",
+          message: t("amountTooLarge"),
           path: ["amount"],
         });
       }

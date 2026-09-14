@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { CurrencyCode } from "@/shared/utils/format-currency";
 import { PaginationMetaSchema } from "@/shared/utils/pagination";
-import type { ValidationTranslator } from "@/shared/lib/validation";
+import { MAX_AMOUNT, type ValidationTranslator } from "@/shared/lib/validation";
 
 export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),
@@ -56,7 +56,13 @@ export const buildExpenseSchema = (
     name: z.string().min(1, { message: t("expenseNameRequired") }),
     amount: z
       .string({ message: t("amountRequired") })
-      .min(1, { message: t("amountEmpty") }),
+      .min(1, { message: t("amountEmpty") })
+      // Without this the number reaches the API and overflows a
+      // decimal(12, 2), which comes back as a 500 and renders as
+      // "Internal server error".
+      .refine((value) => Number(value) <= MAX_AMOUNT, {
+        message: t("amountTooLarge"),
+      }),
     currency: z.literal(currency),
     date: z.coerce.date<Date>({ message: t("dateRequired") }),
 
