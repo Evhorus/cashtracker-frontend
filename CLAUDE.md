@@ -9,6 +9,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Start: `pnpm run start` (starts the production server)
 - Lint: `pnpm run lint` (runs ESLint)
 - Typecheck: `pnpm run typecheck` (`tsc --noEmit`)
+- Format: `pnpm run format` (write) / `pnpm run format:check` (verify)
+
+## Gates
+
+The five commands above are the gate set, and they run in three places:
+
+- **`.husky/pre-commit`** — typecheck, lint, format:check, test (~5s).
+- **`.husky/pre-push`** — the same four plus `build` (~9s). It repeats them because
+  commits also arrive here via merges, rebases and `--no-verify`.
+- **`.github/workflows/ci.yml`** — all five, on every PR and every push to `main`.
+
+CI is the gate that counts: a Husky hook is skippable with `--no-verify`, so it catches
+the distracted mistake but guarantees nothing. Keep the three lists in step — if you add
+a command to one, add it to the others.
+
+No `lint-staged` and no `commitlint`, deliberately: the whole set runs in under ten
+seconds on this repo, which is cheaper than maintaining the machinery to run it on only
+the staged files. Revisit when a Playwright suite exists — `pre-push` is where it goes,
+never `pre-commit`.
+
+CI's `build` step passes **placeholder** env values, not repository secrets. `env.server.ts`
+validates the environment at boot and `next build` boots the app to prerender `robots.txt`
+and `sitemap.xml`, so values of the right _shape_ are needed — but not real ones, since
+every route that talks to the API or to Clerk is dynamic. That also lets CI run on forks.
+Locally it is different: `pre-push` runs the same build against your real `.env`, so an
+incomplete one fails the push naming the missing variable.
+
 - Test: `pnpm test` (Vitest, single run) / `pnpm run test:watch`
   - Mostly unit tests of pure logic in a `node` environment:
     `date-helpers`, `format-currency`, `pagination`, `EnvelopeHelpers`,
