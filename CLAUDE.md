@@ -13,10 +13,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## End-to-end tests
 
-`pnpm test:e2e` (Playwright, `e2e/signed-out/**/*.spec.ts`). **Local only — not part of the `verify` CI
-job**, and that is deliberate: running them in CI needs a backend, a seeded database and
-Clerk test credentials as repository secrets. Until that exists, a CI suite that cannot
-pass is worse than one that lives locally.
+`pnpm test:e2e` (Playwright, `e2e/signed-out/**/*.spec.ts`). **`signed-out` runs in CI as
+its own `e2e` job; `signed-in` is local only.**
+
+The split is what each one costs. `signed-out` needs Clerk development keys and nothing
+else — no backend, no database — so it is two repository secrets
+(`CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`) away from running on every PR.
+`signed-in` needs a reachable backend and a seeded database on top of those, which is
+infrastructure rather than configuration, and a CI suite that cannot pass is worse than
+one that lives locally.
+
+**The Clerk keys must be real, unlike the placeholders `pnpm build` runs with.** A
+publishable key encodes its instance domain in base64: `pk_test_ci_placeholder` fails
+`isPublishableKey` and parses to null. The build tolerates it because every Clerk route is
+dynamic and nothing initialises Clerk at build time — but a browser loading `/sign-in`
+does, and `ClerkProvider` rejects it. Without real keys only the four tests that never
+touch Clerk (the landing page and `robots.txt`) could run, which is not worth a suite.
+
+The `e2e` job is separate from `verify` rather than a step inside it, because `verify`
+must stay runnable by a fork and this job cannot be: a fork's PR is never given secrets.
+It is skipped for forks by an `if` on the head repository. `verify` remains the only
+required check — adding `e2e` to branch protection would block every fork PR on a check
+that deliberately never runs.
 
 **The folder a spec lives in is what decides which project runs it**, and both
 projects match by glob for that reason. `signed-out/` matched an explicit list of
