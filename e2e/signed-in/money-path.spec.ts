@@ -92,31 +92,52 @@ test("an expense moves the envelope's spent amount", async ({ page }) => {
 
   // And the expense itself reached the history table.
   await expect(page.getByRole("row", { name: /e2e expense/i })).toBeVisible();
+
+  // --- the list view, which is a separate cached read ----------------
+  // The card comes from EnvelopesService.getAll, tagged ENVELOPE_TAGS.all
+  // - a different entry from the detail response asserted above, and
+  // invalidated by a different line in the action. Asserting only the
+  // detail view would leave that one uncovered, which is what an earlier
+  // version of this spec did.
+  await page.goto("/dashboard/envelopes");
+  const card = page
+    .getByRole("link", { name: ENVELOPE_RE })
+    .locator("xpath=ancestor::*[self::article or self::div][1]");
+  // Both figures the card derives: the percentage badge and the spent
+  // total. "25" alone is ambiguous - it matches both.
+  await expect(card.getByText("25%", { exact: true })).toBeVisible();
+  await expect(card.getByText(/25\.000/)).toBeVisible();
 });
 
-test("cleanup: the envelope is removed", async ({ page }) => {
-  await page.goto("/dashboard/envelopes");
-  await envelopeLink(page).click();
-  await page.waitForURL(/\/dashboard\/envelope\//);
+/**
+ * Teardown, not a final test.
+ *
+ * As a test in a serial describe it was skipped whenever the test above
+ * failed, which is not hypothetical: iterating on this spec left seven
+ * envelopes in the account before they were cleaned out by hand. A
+ * teardown hook runs either way.
+ */
+test.afterAll(async ({ browser }) => {
+  const page = await browser.newPage();
+  try {
+    await page.goto("/dashboard/envelopes?search=e2e-");
+    const link = page.getByRole("link", { name: ENVELOPE_RE });
+    if ((await link.count()) === 0) return;
 
-  await page.getByRole("button", { name: /^eliminar$/i }).click();
+    const displayed = (await link.first().innerText()).trim();
+    await link.first().click();
+    await page.waitForURL(/\/dashboard\/envelope\//);
 
-  // Delete is type-to-confirm: the action button stays disabled until
-  // the field matches the envelope's name exactly, and "exactly" means
-  // the capitalised form the UI displays, not the lowercase one that
-  // was typed when creating it.
-  await page
-    .getByPlaceholder(/nombre del sobre/i)
-    .fill(ENVELOPE.charAt(0).toUpperCase() + ENVELOPE.slice(1));
-
-  await page
-    .getByRole("button", { name: /eliminar|confirmar/i })
-    .last()
-    .click();
-
-  // Deleting redirects to the list, so the success toast is racing a
-  // navigation and is not a reliable thing to assert. What matters here
-  // is the outcome: back on the list, the envelope is gone.
-  await page.waitForURL("**/dashboard/envelopes");
-  await expect(envelopeLink(page)).toHaveCount(0);
+    await page.getByRole("button", { name: /^eliminar$/i }).click();
+    // Type-to-confirm: the action stays disabled until this matches the
+    // name exactly, and exactly means the capitalised form the UI shows.
+    await page.getByPlaceholder(/nombre del sobre/i).fill(displayed);
+    await page
+      .getByRole("button", { name: /eliminar|confirmar/i })
+      .last()
+      .click();
+    await page.waitForURL("**/dashboard/envelopes");
+  } finally {
+    await page.close();
+  }
 });
