@@ -209,12 +209,7 @@ describe("typeFitsWithinRange", () => {
   it("accepts a semester that fits inside a full-year-plus-a-day range", () => {
     // 1 Jul 2025 - 1 Jul 2026 fully contains "2025-S2" (Jul - Dec 2025).
     expect(
-      typeFitsWithinRange(
-        "semester",
-        [2025, 2026],
-        "2025-07-01",
-        "2026-07-01",
-      ),
+      typeFitsWithinRange("semester", [2025, 2026], "2025-07-01", "2026-07-01"),
     ).toBe(true);
   });
 });

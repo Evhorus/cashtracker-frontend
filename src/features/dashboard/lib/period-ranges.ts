@@ -31,7 +31,10 @@ export interface PeriodInstance {
 
 /** How many calendar months each period type spans, and the value's
  * one-letter/word prefix (month uses the "YYYY-MM" key itself instead). */
-const PERIOD_SPANS: Record<Exclude<PeriodType, "month">, { months: number; prefix: string }> = {
+const PERIOD_SPANS: Record<
+  Exclude<PeriodType, "month">,
+  { months: number; prefix: string }
+> = {
   quarter: { months: 3, prefix: "Q" },
   fourMonth: { months: 4, prefix: "F" },
   semester: { months: 6, prefix: "S" },
@@ -119,7 +122,8 @@ export function filterInstancesInRange(
   rangeEnd: string,
 ): PeriodInstance[] {
   return instances.filter(
-    (instance) => instance.endDate >= rangeStart && instance.startDate <= rangeEnd,
+    (instance) =>
+      instance.endDate >= rangeStart && instance.startDate <= rangeEnd,
   );
 }
 
@@ -140,7 +144,8 @@ export function typeFitsWithinRange(
   rangeEnd: string,
 ): boolean {
   return getPeriodInstances(type, years).some(
-    (instance) => instance.startDate >= rangeStart && instance.endDate <= rangeEnd,
+    (instance) =>
+      instance.startDate >= rangeStart && instance.endDate <= rangeEnd,
   );
 }
 
