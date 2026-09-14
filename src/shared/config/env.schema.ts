@@ -40,14 +40,20 @@ const httpUrl = (message: string) =>
  * failure being guarded against.
  */
 const appPath = (name: string, why: string) =>
-  required(`${name} is required. ${why}`).startsWith(
-    "/",
-    `${name} must be a path beginning with "/". ${why}`,
+  required(`${name} is required. ${why}`).regex(
+    // One leading slash, and the next character must not be another
+    // slash or a backslash. "//elsewhere.test/sign-in" starts with "/"
+    // and is NOT app-local: a protocol-relative URL resolves to
+    // elsewhere.test, which is the redirect this variable exists to
+    // prevent. Browsers normalise a backslash to a slash, so "/\\evil"
+    // is the same trick spelled differently.
+    /^\/(?![/\\])/,
+    `${name} must be a path beginning with "/" and pointing at this app (not "//host" or "/\\host"). ${why}`,
   );
 
 export const envSchema = z.object({
   API_URL: httpUrl(
-    "API_URL must be the cashtracker-backend base URL (e.g. http://localhost:4000/api).",
+    "API_URL must be the backend API base URL (e.g. http://localhost:4000/api).",
   ),
   CLERK_SECRET_KEY: required(
     "CLERK_SECRET_KEY is required. Copy it from the Clerk dashboard.",

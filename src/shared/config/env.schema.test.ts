@@ -63,6 +63,21 @@ describe("env schema", () => {
     expect(errorFor(incomplete, name)).toContain(name);
   });
 
+  it.each(["//elsewhere.test/sign-in", "/\\elsewhere.test/sign-in"])(
+    "rejects %s, which is not app-local despite the leading slash",
+    (value) => {
+      // A protocol-relative URL resolves to another origin, and browsers
+      // normalise the backslash form to the same thing - both defeat the
+      // guarantee this variable exists to provide.
+      const message = errorFor(
+        { ...VALID, NEXT_PUBLIC_CLERK_SIGN_IN_URL: value },
+        "NEXT_PUBLIC_CLERK_SIGN_IN_URL",
+      );
+
+      expect(message).toContain("this app");
+    },
+  );
+
   it("rejects a Clerk URL that is not a path", () => {
     // An absolute URL here would send users to another origin, which is
     // the failure this variable is supposed to prevent.

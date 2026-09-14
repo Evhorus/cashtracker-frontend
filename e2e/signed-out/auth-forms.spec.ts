@@ -154,6 +154,12 @@ test.describe("forgot password", () => {
       .first()
       .click();
 
-    await expect(page).toHaveURL(/\/sign-in|\/$/);
+    // Not /\/sign-in|\/$/ - that second branch matches any URL ending
+    // in a slash, so a regression that navigated to /sign-up/ would
+    // pass. The link is allowed to go to sign-in or to the landing page
+    // and nowhere else.
+    await expect
+      .poll(() => new URL(page.url()).pathname)
+      .toMatch(/^\/(?:sign-in)?\/?$/);
   });
 });
