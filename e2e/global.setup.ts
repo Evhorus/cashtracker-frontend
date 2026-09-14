@@ -37,9 +37,13 @@ setup("authenticate", async ({ page }) => {
 
   await clerkSetup();
 
-  // Must load a public page first so Clerk's JS is present before the
-  // helper drives it.
-  await page.goto("/");
+  // /sign-in, not "/". The helper waits for window.Clerk, and the landing
+  // page never defines it: ClerkProvider is deliberately kept out of the
+  // root layout so the public marketing routes do not ship Clerk's client
+  // bundle (see app/layout.tsx). /sign-in is public AND loads Clerk,
+  // which is the combination this needs.
+  await page.goto("/sign-in");
+  await clerk.loaded({ page });
 
   // Ticket strategy: the helper mints a sign-in token through the
   // Backend API using CLERK_SECRET_KEY, so no password is needed or

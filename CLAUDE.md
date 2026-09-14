@@ -38,11 +38,19 @@ Everything decidable without a browser stays in Vitest, which runs in two second
 `playwright.config.ts` reads `NEXT_PUBLIC_URL` from `.env` rather than hardcoding the
 port, and `webServer.reuseExistingServer` means it uses a `pnpm dev` you already have up.
 
-**Both suites were verified by mutation, and one result is worth knowing**: commenting out
-`dashboard/layout.tsx`'s `auth.protect()` does _not_ fail the auth suite, because the app
-guards in three layers (that layout, each page's own call, and `authenticatedFetch`). The
-suite therefore catches a total regression, not a partial one. The locale suite is
-decisive — breaking the cookie read in `request.ts` fails it immediately.
+**All three suites were verified by mutation, and the results differ usefully**:
+
+| Mutation                                                 | Caught?                                                                                                                                                            |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cookie read removed in `i18n/request.ts`                 | yes, immediately                                                                                                                                                   |
+| `revalidatePath` removed from `create-expense.action.ts` | yes — the money path fails on the derived percentage                                                                                                               |
+| `auth.protect()` commented out in `dashboard/layout.tsx` | **no** — the app guards in three layers (that layout, each page's own call, and `authenticatedFetch`), so that suite catches a total regression, not a partial one |
+| A cache tag renamed consistently inside its registry     | **no, and correctly** — producer and consumer both read the registry, so a consistent rename is harmless by construction. That is what the registry is for         |
+
+Assert on **derived** values where you can (`25.0% del límite`) rather than raw amounts: a
+derived figure can only be right if the value was both re-read and recalculated, and raw
+amounts are rendered several times over, some in responsive duplicates that are present
+but hidden.
 
 When you add a spec, mutate the thing it covers and watch it fail before trusting it.
 
