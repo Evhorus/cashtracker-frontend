@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --project=signed-out",
+    "test:e2e:signed-in": "playwright test --project=signed-in",
     "test:e2e:ui": "playwright test --ui",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@clerk/eslint-plugin": "^0.2.0",
+    "@clerk/testing": "^2.2.34",
     "@commitlint/cli": "^21.2.2",
     "@commitlint/config-conventional": "^21.2.2",
     "@playwright/test": "^1.63.0",

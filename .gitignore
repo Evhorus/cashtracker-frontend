@@ -42,6 +42,12 @@ yarn-error.log*
 # playwright mcp
 .playwright-mcp
 
+# playwright: the saved Clerk session holds a live token. This rule
+# lives here rather than in a nested e2e/.auth/.gitignore, because one
+# containing "*" ignores itself and so never gets committed - the
+# protection then exists only on the machine that created it.
+/e2e/.auth
+
 # playwright e2e artifacts - only written on failure
 /test-results
 /playwright-report

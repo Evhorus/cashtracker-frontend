@@ -2,6 +2,8 @@ import { loadEnvFile } from "node:process";
 
 import { defineConfig, devices } from "@playwright/test";
 
+import { STORAGE_STATE } from "./e2e/storage-state";
+
 // Playwright does not read .env the way `next dev` does, so the app's
 // own origin has to be loaded explicitly. NEXT_PUBLIC_URL is the same
 // value the app advertises in sitemap.xml and robots.txt - reading it
@@ -31,10 +33,6 @@ if (!baseURL) {
 export default defineConfig({
   testDir: "./e2e",
 
-  // Vitest owns src/**/*.test.*; these are .spec.ts under e2e/ so the
-  // two never pick up each other's files.
-  testMatch: "**/*.spec.ts",
-
   // Serial locally so a failure is readable; CI would parallelise.
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
@@ -48,7 +46,31 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
 
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    // Signed out. No fixture, nothing seeded, no Clerk credentials -
+    // runs anywhere the app runs, which is why it is the default.
+    {
+      name: "signed-out",
+      testMatch: ["auth-protection.spec.ts", "locale.spec.ts"],
+      use: { ...devices["Desktop Chrome"] },
+    },
+
+    // Signs in once and saves the session; the suite below reuses it.
+    {
+      name: "setup",
+      testMatch: "global.setup.ts",
+      use: { ...devices["Desktop Chrome"] },
+    },
+
+    // Signed in. Opt-in: without E2E_CLERK_USER_EMAIL the setup project
+    // fails with an explanation rather than these failing as redirects.
+    {
+      name: "signed-in",
+      testMatch: "signed-in/**/*.spec.ts",
+      dependencies: ["setup"],
+      use: { ...devices["Desktop Chrome"], storageState: STORAGE_STATE },
+    },
+  ],
 
   // Reuses a dev server you already have running rather than fighting
   // it for port 4001. Note this runs `next dev`, not a production
