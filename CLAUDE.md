@@ -11,6 +11,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Typecheck: `pnpm run typecheck` (`tsc --noEmit`)
 - Format: `pnpm run format` (write) / `pnpm run format:check` (verify)
 
+## End-to-end tests
+
+`pnpm test:e2e` (Playwright, `e2e/*.spec.ts`). **Local only — not part of the `verify` CI
+job**, and that is deliberate: running them in CI needs a backend, a seeded database and
+Clerk test credentials as repository secrets. Until that exists, a CI suite that cannot
+pass is worse than one that lives locally.
+
+Scoped to what only a browser can answer — that `auth.protect()` really redirects a
+signed-out visitor, and that the `NEXT_LOCALE` cookie survives a reload and a navigation.
+Everything decidable without a browser stays in Vitest, which runs in two seconds.
+`playwright.config.ts` reads `NEXT_PUBLIC_URL` from `.env` rather than hardcoding the
+port, and `webServer.reuseExistingServer` means it uses a `pnpm dev` you already have up.
+
+**Both suites were verified by mutation, and one result is worth knowing**: commenting out
+`dashboard/layout.tsx`'s `auth.protect()` does _not_ fail the auth suite, because the app
+guards in three layers (that layout, each page's own call, and `authenticatedFetch`). The
+suite therefore catches a total regression, not a partial one. The locale suite is
+decisive — breaking the cookie read in `request.ts` fails it immediately.
+
+When you add a spec, mutate the thing it covers and watch it fail before trusting it.
+
 ## Gates
 
 The five commands above are the gate set, and they run in two places:
