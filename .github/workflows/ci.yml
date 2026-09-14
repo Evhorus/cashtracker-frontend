@@ -1,0 +1,57 @@
+name: CI
+
+# Pull requests and anything that lands on main. Husky runs the same
+# commands locally, but a local hook is skippable with --no-verify -
+# this is the copy nobody can skip.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A new push to the same PR makes the previous run's answer irrelevant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    # One job, not five parallel ones: the gates total about eight
+    # seconds, so five jobs would each pay the install cost to save
+    # nothing. Split them when one of them starts dominating the wall
+    # clock - most likely the Playwright suite, when it exists.
+    steps:
+      - uses: actions/checkout@v5
+
+      # Before setup-node, which needs pnpm on PATH to resolve its cache.
+      # Version comes from package.json's `packageManager` field.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # --frozen-lockfile: CI must fail on a lockfile that disagrees with
+      # package.json rather than quietly resolving something else.
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+
+      # Placeholders, not secrets. src/shared/config/env.server.ts
+      # validates these at boot, and `next build` boots the app to
+      # prerender robots.txt and sitemap.xml - so the build needs values
+      # of the right shape. It does not need real ones: every route that
+      # talks to the API or to Clerk is dynamic, so nothing here reaches
+      # a real service. Keeping them inline rather than in repository
+      # secrets is deliberate - it means a fork's PR can run CI too.
+      - run: pnpm build
+        env:
+          API_URL: http://localhost:4000/api
+          NEXT_PUBLIC_URL: http://localhost:4001
+          CLERK_SECRET_KEY: sk_test_ci_placeholder
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci_placeholder
