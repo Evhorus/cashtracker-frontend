@@ -49,7 +49,8 @@
     "dateRequired": "La fecha es obligatoria",
     "descriptionTooLong": "La descripción es muy larga",
     "colorRequired": "Elige un color",
-    "iconRequired": "Elige un ícono"
+    "iconRequired": "Elige un ícono",
+    "amountTooLarge": "El monto supera el máximo permitido"
   },
   "nav": {
     "summary": "Resumen",

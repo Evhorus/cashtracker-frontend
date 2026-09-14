@@ -164,7 +164,7 @@ test("deleting it removes it from the table", async ({ page }) => {
  * reproduced the cause of. Remove .fixme when it is fixed - this test
  * is the reproduction.
  */
-test.fixme("a deleted category is gone on the very next navigation", async ({
+test("a deleted category is gone on the very next navigation", async ({
   page,
 }) => {
   const doomed = uniqueName("cat-stale");

@@ -144,3 +144,27 @@ test("a category with no name is refused", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByText(/categoría creada/i)).toHaveCount(0);
 });
+
+test("an envelope limit above what the API can store is refused", async ({
+  page,
+}) => {
+  await page.goto("/dashboard/envelopes");
+  await page
+    .getByRole("button", { name: /nuevo sobre|crear/i })
+    .first()
+    .click();
+
+  const form = page.getByRole("dialog");
+  await form.getByLabel(/nombre del sobre/i).fill(uniqueName("too-big"));
+  await form.getByRole("switch").click();
+  await form.getByLabel(/^monto/i).fill("999999999999999");
+  await form
+    .getByRole("button", { name: /guardar|crear/i })
+    .last()
+    .click();
+
+  // decimal(12, 2) in the backend. Over it the insert fails and the API
+  // returns a bare 500, so the form has to catch it first.
+  await expect(form.getByText(/supera el máximo permitido/i)).toBeVisible();
+  await expect(page.getByText(/sobre creado/i)).toHaveCount(0);
+});

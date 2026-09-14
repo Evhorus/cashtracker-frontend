@@ -14,3 +14,18 @@ import type { useTranslations } from "next-intl";
 export type ValidationTranslator = ReturnType<
   typeof useTranslations<"validation">
 >;
+
+/**
+ * The largest amount the API can store.
+ *
+ * Both `expense.amount` and `envelope.amount` are `decimal(12, 2)` in
+ * the backend, which tops out at ten integer digits. Above that the
+ * insert fails and the response is a bare 500, which the UI shows
+ * verbatim as "Internal server error" - in English, in a Spanish app,
+ * for what is really a validation failure.
+ *
+ * Here rather than in either feature because both forms share the
+ * limit, and it is a property of the column, not of envelopes or of
+ * expenses.
+ */
+export const MAX_AMOUNT = 9_999_999_999.99;

@@ -147,7 +147,7 @@ test("deleting it returns the envelope to zero", async ({ page }) => {
  * column precision belongs to the other repo. Any validation message
  * satisfies this; a 500 does not.
  */
-test.fixme("an impossible amount is refused by the form", async ({ page }) => {
+test("an impossible amount is refused by the form", async ({ page }) => {
   await openEnvelope(page);
 
   await page.getByRole("button", { name: /agregar gasto/i }).click();
@@ -159,5 +159,8 @@ test.fixme("an impossible amount is refused by the form", async ({ page }) => {
     .last()
     .click();
 
+  // Both halves: a message the user can read, and no 500 behind it.
+  await expect(form.getByText(/supera el máximo permitido/i)).toBeVisible();
   await expect(page.getByText(/internal server error/i)).toHaveCount(0);
+  await expect(page.getByText(/gasto creado/i)).toHaveCount(0);
 });
