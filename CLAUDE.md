@@ -15,6 +15,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The five commands above are the gate set, and they run in three places:
 
+- **`.husky/commit-msg`** — `commitlint`, Conventional Commits. Milliseconds, and it is
+  the one check guarding something the others cannot reach: a malformed message is in
+  the history the instant it lands, and removing it means rewriting history.
 - **`.husky/pre-commit`** — typecheck, lint, format:check, test (~5s).
 - **`.husky/pre-push`** — the same four plus `build` (~9s). It repeats them because
   commits also arrive here via merges, rebases and `--no-verify`.
@@ -24,10 +27,17 @@ CI is the gate that counts: a Husky hook is skippable with `--no-verify`, so it 
 the distracted mistake but guarantees nothing. Keep the three lists in step — if you add
 a command to one, add it to the others.
 
-No `lint-staged` and no `commitlint`, deliberately: the whole set runs in under ten
-seconds on this repo, which is cheaper than maintaining the machinery to run it on only
-the staged files. Revisit when a Playwright suite exists — `pre-push` is where it goes,
-never `pre-commit`.
+No `lint-staged`, deliberately: the whole set runs in under ten seconds on this repo,
+which is cheaper than maintaining the machinery to run it on only the staged files.
+Revisit when a Playwright suite exists — `pre-push` is where that goes, never
+`pre-commit`. Note that speed is the argument against `lint-staged` only; it was never
+the argument against `commitlint`, which gates the message rather than the tree.
+
+`commitlint` runs stock `config-conventional` with no overrides — the history already
+matched it before it was added. Expect occasional **warnings** (`footer-leading-blank`,
+`body-leading-blank`) on commits whose prose contains a line starting with `word:`; the
+conventional-commits parser reads that as the start of a footer. Warnings exit 0 and
+never block. Errors — a missing or unknown type, an empty subject — exit 1 and do.
 
 CI's `build` step passes **placeholder** env values, not repository secrets. `env.server.ts`
 validates the environment at boot and `next build` boots the app to prerender `robots.txt`
