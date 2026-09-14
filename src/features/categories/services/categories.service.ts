@@ -10,13 +10,14 @@ import {
 } from "../schemas/category.schema";
 import { Category, CategoryOptions } from "../types";
 import { CategoryMapper } from "../mappers/category.mapper";
+import { CATEGORY_TAGS } from "../lib/cache-tags";
 
 export const CategoriesService = {
   getAll: async (): Promise<Category[]> => {
     const response = await fetchApi<CategoriesResponseApi>(
       "/categories",
       {
-        next: { tags: ["all-categories"], revalidate: 60 },
+        next: { tags: [CATEGORY_TAGS.all], revalidate: 60 },
       },
       CategoriesAPIResponseSchema,
     );
@@ -31,7 +32,7 @@ export const CategoriesService = {
     return fetchApi<CategoryOptionsApi>(
       "/categories/options",
       {
-        next: { tags: ["category-options"], revalidate: 3600 },
+        next: { tags: [CATEGORY_TAGS.options], revalidate: 3600 },
       },
       CategoryOptionsAPIResponseSchema,
     );
@@ -45,7 +46,7 @@ export const CategoriesService = {
   getUsage: async (): Promise<Record<string, number>> => {
     const rows = await fetchApi<CategoryUsageApi>(
       "/categories/usage",
-      { next: { tags: ["category-usage"], revalidate: 60 } },
+      { next: { tags: [CATEGORY_TAGS.usage], revalidate: 60 } },
       CategoryUsageAPIResponseSchema,
     );
 

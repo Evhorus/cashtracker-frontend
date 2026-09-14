@@ -16,6 +16,7 @@ import {
 } from "../schemas/dashboard.schema";
 import { DashboardMapper } from "../mappers/dashboard.mapper";
 import type { DashboardRecentExpense } from "../types";
+import { DASHBOARD_TAGS } from "../lib/cache-tags";
 
 /** Shared by the four breakdown fetchers below - turns the filters
  * object into the query string every one of them sends. */
@@ -51,7 +52,7 @@ export const DashboardService = {
 
     return fetchApi<DashboardSummary>(
       `/dashboard/summary${qs}`,
-      { next: { tags: ["dashboard-summary"], revalidate: 60 } },
+      { next: { tags: [DASHBOARD_TAGS.summary], revalidate: 60 } },
       DashboardSummaryAPIResponseSchema,
     );
   },
@@ -68,7 +69,7 @@ export const DashboardService = {
   ): Promise<DashboardCategoryBreakdownRow[]> =>
     fetchApi<DashboardCategoryBreakdownRow[]>(
       `/dashboard/category-breakdown?${breakdownQueryString(filters)}`,
-      { next: { tags: ["dashboard-category-breakdown"], revalidate: 60 } },
+      { next: { tags: [DASHBOARD_TAGS.categoryBreakdown], revalidate: 60 } },
       DashboardCategoryBreakdownAPIResponseSchema,
     ),
 
@@ -78,7 +79,7 @@ export const DashboardService = {
   ): Promise<DashboardEnvelopeBreakdownRow[]> => {
     const rows = await fetchApi<DashboardEnvelopeBreakdownRow[]>(
       `/dashboard/envelope-breakdown?${breakdownQueryString(filters)}`,
-      { next: { tags: ["dashboard-envelope-breakdown"], revalidate: 60 } },
+      { next: { tags: [DASHBOARD_TAGS.envelopeBreakdown], revalidate: 60 } },
       DashboardEnvelopeBreakdownAPIResponseSchema,
     );
     return rows.map(DashboardMapper.envelopeBreakdownRowFromApi);
@@ -91,7 +92,7 @@ export const DashboardService = {
   ): Promise<DashboardNameBreakdownRow[]> => {
     const rows = await fetchApi<DashboardNameBreakdownRow[]>(
       `/dashboard/name-breakdown?${breakdownQueryString(filters)}`,
-      { next: { tags: ["dashboard-name-breakdown"], revalidate: 60 } },
+      { next: { tags: [DASHBOARD_TAGS.nameBreakdown], revalidate: 60 } },
       DashboardNameBreakdownAPIResponseSchema,
     );
     return rows.map(DashboardMapper.nameBreakdownRowFromApi);
@@ -104,7 +105,7 @@ export const DashboardService = {
   ): Promise<DashboardBreakdownTotal> =>
     fetchApi<DashboardBreakdownTotal>(
       `/dashboard/breakdown-total?${breakdownQueryString(filters)}`,
-      { next: { tags: ["dashboard-breakdown-total"], revalidate: 60 } },
+      { next: { tags: [DASHBOARD_TAGS.breakdownTotal], revalidate: 60 } },
       DashboardBreakdownTotalAPIResponseSchema,
     ),
 
@@ -121,7 +122,7 @@ export const DashboardService = {
     const qs = limit ? `?limit=${limit}` : "";
     const expenses = await fetchApi<DashboardRecentExpenseApi[]>(
       `/dashboard/recent-expenses${qs}`,
-      { next: { tags: ["dashboard-recent-expenses"], revalidate: 60 } },
+      { next: { tags: [DASHBOARD_TAGS.recentExpenses], revalidate: 60 } },
       DashboardRecentExpensesAPIResponseSchema,
     );
 

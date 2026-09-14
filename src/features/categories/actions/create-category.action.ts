@@ -7,6 +7,7 @@ import { CategoriesService } from "../services/categories.service";
 import { getTranslations } from "next-intl/server";
 
 import { createSafeAction } from "@/shared/lib/safe-action";
+import { CATEGORY_TAGS } from "../lib/cache-tags";
 
 // The success toast is written here, not read off the API response.
 // The backend's `{ message }` is Spanish and has no idea who's reading
@@ -21,7 +22,7 @@ export const createCategoryAction = createSafeAction(
 
     // updateTag (not revalidateTag) - read-your-own-writes; see
     // categories/actions/delete-category.action.ts for the why.
-    updateTag("all-categories");
+    updateTag(CATEGORY_TAGS.all);
 
     const t = await getTranslations("categories.toast");
 
