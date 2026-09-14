@@ -35,6 +35,17 @@ export default defineConfig({
 
   // Serial locally so a failure is readable; CI would parallelise.
   fullyParallel: false,
+
+  // One worker, because fullyParallel: false was not enough on its own -
+  // it serialises tests *within* a file, while separate spec files still
+  // ran in parallel workers against a single `next dev`. Five files
+  // submitting forms at once queued their Server Actions behind
+  // on-demand compiles, and the failure looked nothing like contention:
+  // the create dialog sat with every field disabled until the 5s
+  // assertion gave up. Five tests failed and fifteen never ran; with one
+  // worker the same suite passes. Revisit when these run against a
+  // production build rather than a dev server.
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: 0,
   reporter: [["list"]],
