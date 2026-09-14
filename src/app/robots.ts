@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
 
+import { env } from "@/shared/config/env.server";
+
 // The public marketing page is the only thing worth crawling; /dashboard
 // is behind auth and /sso-callback is a transient OAuth landing strip.
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:4001";
+  const baseUrl = env.NEXT_PUBLIC_URL;
 
   return {
     rules: {

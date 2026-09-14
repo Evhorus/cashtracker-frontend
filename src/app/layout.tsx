@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ScrollToTop } from "@/components/common/scroll-to-top";
+import { env } from "@/shared/config/env.server";
 
 import "./globals.css";
 
@@ -22,9 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("home.meta");
 
   return {
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_URL || "http://localhost:4001",
-    ),
+    metadataBase: new URL(env.NEXT_PUBLIC_URL),
     title: {
       default: t("title"),
       template: "%s | CashTracker",
