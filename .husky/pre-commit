@@ -3,9 +3,16 @@
 # them on only the staged files would cost to maintain. Revisit if the
 # suite grows.
 #
-# format:check rather than `pnpm format`: a hook that rewrites files
-# mid-commit leaves them unstaged, so the commit ships the unformatted
-# version anyway. Failing and telling you to run `pnpm format` is honest.
+# format:check rather than `pnpm format`, and the reason is specific to
+# there being no lint-staged here: a bare `pnpm format` in a hook
+# rewrites the whole tree and leaves those changes unstaged, so the
+# commit ships the unformatted version anyway. Failing and asking you to
+# run `pnpm format` is honest.
+#
+# This is NOT an argument against `prettier --write` inside lint-staged -
+# lint-staged has added its tasks' modifications to the commit by itself
+# since v10, and warns if you add a manual `git add`. If lint-staged ever
+# earns its place here, --write is the right call there.
 pnpm typecheck
 pnpm lint
 pnpm format:check
