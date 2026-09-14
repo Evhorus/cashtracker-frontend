@@ -91,6 +91,18 @@ reading the diff. `commit-message.prefix` is set because Dependabot's default ("
 y to z") has no Conventional Commits type, and squash-merging takes the PR title — so
 without it, `commitlint` would reject the merge.
 
+**Minor and patch bumps merge themselves; majors wait for a human.**
+`.github/workflows/dependabot-auto-merge.yml` reads the semver jump with
+`dependabot/fetch-metadata` and, for anything below a major, runs `gh pr merge --squash
+--auto`. That is the weekly decision written down, not a bypass: auto-merge queues the PR
+behind the same branch protection a human PR goes through, so a red `verify` just leaves it
+open. Two details make it work — `allow_auto_merge` on the repo (off by default; without it
+the `gh` call fails), and the explicit `permissions:` block, because a workflow Dependabot
+triggers gets a read-only `GITHUB_TOKEN` and can read no repository secret. On a **grouped**
+PR `update-type` is the highest jump in the group, which is what covers the `github-actions`
+group: unlike `npm` it is not restricted to minor and patch, so one major there holds the
+whole PR back.
+
 The `dependencies` and `github-actions` labels have to exist in the repo; Dependabot
 silently skips labels it cannot find.
 
