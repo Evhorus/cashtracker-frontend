@@ -141,32 +141,41 @@ test("deleting it removes it from the table", async ({ page }) => {
 });
 
 /**
- * A real defect, and an intermittent one - which is why it is recorded
- * here rather than fixed from a guess.
+ * A real defect, and it is in the backend - not in this app's caching,
+ * which is where two earlier attempts looked.
  *
- * Deleting a category updates the page you are on, but a navigation
- * straight afterwards can still render the pre-delete list, with the
- * deleted row back. It does not always: running this test on its own it
- * passes every time, and running the whole file it failed two runs out
- * of three. The difference is the create/rename/delete churn the tests
- * above it leave behind, which is what opens the window.
+ * Deleting a category updates the page you are on, but for roughly two
+ * seconds afterwards the API keeps returning it, so a user who deletes
+ * and navigates straight away sees it listed again.
  *
- * That intermittency is exactly what made it easy to dismiss - an
- * earlier pass at this repeated the single test five times, saw five
- * passes, and concluded the defect was imagined. It is not.
+ * Measured, with the frontend taken out of the picture entirely: after
+ * the UI delete resolves, calling GET /categories directly against the
+ * backend with the same session token returns the deleted category, and
+ * stops returning it about 2.5s later. Three runs out of three:
  *
- * What it is NOT: a tag mismatch. CategoriesService.getAll tags
- * CATEGORY_TAGS.all and delete-category.action invalidates that exact
- * tag; updateTag is the right call here per
- * node_modules/next/dist/docs, and it does apply to next.tags fetches.
- * The entry is expired and then repopulated with a pre-delete response
- * before the next render reads it - a race between the revalidation and
- * the navigation, not a wrong name.
+ *     BACKEND immediately  status=200 deletedCategoryStillReturned=true
+ *     BACKEND after 2.5s   status=200 deletedCategoryStillReturned=false
  *
- * Left as fixme deliberately. A fix guessed at from here would be a
- * change to invalidation whose cause nobody has isolated, and the honest
- * state of this is "reproducible about two runs in three". Remove
- * .fixme when it is fixed - this test is the reproduction.
+ * What it is NOT, each ruled out by experiment rather than by reading:
+ *
+ *   - Not a tag mismatch. CategoriesService.getAll tags
+ *     CATEGORY_TAGS.all and delete-category.action invalidates that
+ *     exact tag.
+ *   - Not a route-level cache. A URL nothing had ever rendered or
+ *     prefetched (/dashboard/categories?nocache=<now>) was stale too.
+ *   - Not fixable with revalidatePath: adding
+ *     revalidatePath("/dashboard", "layout") changed nothing.
+ *   - Not Next's Data Cache at all. With cache: "no-store" on that
+ *     fetch - no caching anywhere in this app - the first read was
+ *     still stale.
+ *
+ * It is time-based rather than navigation-based: the same unique URL
+ * read 2.5s later is correct.
+ *
+ * Left as fixme because the fix belongs in cashtracker-backend, not
+ * here. Nothing this app can do makes a read return data the API is
+ * still serving. Remove .fixme once the backend stops doing it - this
+ * test is the reproduction from the user's side.
  */
 test.fixme("a deleted category is gone on the very next navigation", async ({
   page,
