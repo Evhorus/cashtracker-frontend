@@ -10,7 +10,9 @@
 # either silencing output nobody reads or telling it what this repo
 # actually cares about, so that when it does speak it is because it
 # found something.
-language: "es-ES"
+# en-US, not es-ES: the reviews are English on purpose, same reason the
+# commit messages and this file's own comments are.
+language: "en-US"
 
 reviews:
   # chill, not assertive: the complaint was volume. A reviewer people
