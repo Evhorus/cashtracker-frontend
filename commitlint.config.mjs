@@ -11,4 +11,9 @@
  * before this was added - 30 of 30 commits, longest subject 88 chars
  * against the 100 allowed - so there is nothing to relax.
  */
-export default { extends: ["@commitlint/config-conventional"] };
+// Named rather than exported anonymously, so eslint's
+// import/no-anonymous-default-export stays quiet. A standing warning is
+// how people learn to stop reading warnings.
+const config = { extends: ["@commitlint/config-conventional"] };
+
+export default config;
