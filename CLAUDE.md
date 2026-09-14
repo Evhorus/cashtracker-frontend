@@ -179,7 +179,18 @@ This is a Next.js 16 project using the App Router and TypeScript.
 
 - **Safe Actions**: Wrap all actions with `createSafeAction` (`src/shared/lib/safe-action.ts`) for standardized error handling.
 - **Service Layer**: Actions must delegate business logic to a Service class (e.g., `EnvelopesService`) rather than implementing it directly. (Exception: `auth`, see Domain Organization below.)
-- **Cache Invalidation**: Use `revalidatePath` or `revalidateTag` in actions to ensure the UI remains current.
+- **Cache Invalidation**: `revalidatePath` for a route, `updateTag` for a tagged read.
+  `updateTag`, not `revalidateTag`: these are all Server Actions, and the user has to see
+  their own write on the very next render — see `categories/actions/delete-category.action.ts`.
+- **Tag names are never written twice.** Every tag lives in its feature's
+  `lib/cache-tags.ts` (`ENVELOPE_TAGS`, `EXPENSE_TAGS`, `CATEGORY_TAGS`, `DASHBOARD_TAGS`),
+  and other features import from there. A tag name that doesn't match its producer is not
+  an error — `updateTag` on a name nothing is cached under silently invalidates nothing,
+  and shows up much later as a stale number nobody can trace to a typo. Detail endpoints
+  are tagged **per id** (`ENVELOPE_TAGS.detail(id)`), never with one global tag for the
+  whole collection. Where several tags are always invalidated together, the bundle is
+  exported too (`DASHBOARD_ENVELOPE_WRITE_TAGS` / `DASHBOARD_EXPENSE_WRITE_TAGS`) rather
+  than re-listed in each action.
 - **UI Feedback**: Use `useActionWithToast` (`src/shared/hooks/useActionWithToast.tsx`) to handle success/error notifications and trigger `router.refresh()`.
 
 #### Domain Organization
