@@ -1,0 +1,3 @@
+# Milliseconds, and it runs on the message, not the tree - so unlike the
+# other hooks there is nothing here worth splitting or skipping.
+pnpm exec commitlint --edit "$1"

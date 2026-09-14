@@ -40,6 +40,8 @@
   },
   "devDependencies": {
     "@clerk/eslint-plugin": "^0.2.0",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
     "@tailwindcss/postcss": "^4.3.3",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.6",
