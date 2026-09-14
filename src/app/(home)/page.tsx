@@ -22,7 +22,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("home.meta");
 
   return {
-    title: t("title"),
+    // No `title` here on purpose. The root layout's `default` is already
+    // t("home.meta.title") - this same string - and setting it again sends
+    // it through that layout's "%s | CashTracker" template, which rendered
+    // "CashTracker - Control de Finanzas Personales | CashTracker".
+    // openGraph.title below is separate and unaffected: it has no template.
     description: t("description"),
     keywords: t("keywords").split(", "),
     authors: [{ name: "CashTracker Team" }],
