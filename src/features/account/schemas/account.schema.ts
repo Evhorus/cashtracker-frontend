@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { codeSchema } from "@/features/auth/schemas/auth.schema";
-import type { ValidationTranslator } from "@/lib/validation";
+import type { ValidationTranslator } from "@/shared/lib/validation";
 
 // Mirrors the floor set in features/auth/schemas/auth.schema.ts - not
 // Clerk's actual password policy (server-side, configurable in the

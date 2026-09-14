@@ -6,13 +6,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { DateRange } from "react-day-picker";
 import { CalendarIcon, X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/shared/components/ui/button";
+import { Calendar } from "@/shared/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/shared/components/ui/popover";
 import {
   DATE_FNS_LOCALES,
   formatCalendarDateForApi,
@@ -20,8 +20,8 @@ import {
   hasMultipleYears,
   parseCalendarDate,
   toFormCalendarDate,
-} from "@/lib/date-helpers";
-import type { SupportedLocale } from "@/i18n/config";
+} from "@/shared/utils/date-helpers";
+import type { SupportedLocale } from "@/shared/config/i18n/config";
 
 interface DateRangeFilterProps {
   startDate?: string;
@@ -231,10 +231,20 @@ export const DateRangeFilter = ({
             </div>
           </div>
           <div className="flex items-center justify-end gap-2 border-t border-border/60 p-3">
-            <Button type="button" variant="ghost" size="sm" onClick={handleClear}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleClear}
+            >
               {t("clearDateRange")}
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setOpen(false)}
+            >
               {tCommon("cancel")}
             </Button>
             <Button

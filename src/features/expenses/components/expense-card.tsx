@@ -4,16 +4,16 @@ import { useTranslations, useLocale } from "next-intl";
 import { Expense } from "@/features/expenses/types";
 import { Calendar, ChevronRight, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { formatCalendarDate } from "@/lib/date-helpers";
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { Card, CardContent } from "@/components/ui/card";
-import { CardHoverActions } from "@/components/common/card-hover-actions";
-import { CardActionButton } from "@/components/common/card-action-button";
+import { formatCalendarDate } from "@/shared/utils/date-helpers";
+import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
+import { Card, CardContent } from "@/shared/components/ui/card";
+import { CardHoverActions } from "@/shared/components/common/card-hover-actions";
+import { CardActionButton } from "@/shared/components/common/card-action-button";
 import { useState } from "react";
 import { UpdateExpenseDialog } from "./update-expense-dialog";
 import { DeleteExpenseAlertDialog } from "./delete-expense-alert-dialog";
 import { ExpenseActionsMenu } from "./expense-actions-menu";
-import type { CurrencyCode } from "@/lib/format-currency";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 
 interface ExpenseCardProps {
   expense: Expense;

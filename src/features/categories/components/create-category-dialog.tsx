@@ -2,9 +2,9 @@
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
-import { useActionDialog } from "@/hooks/useActionDialog";
+import { Button } from "@/shared/components/ui/button";
+import { ResponsiveFormSheet } from "@/shared/components/common/responsive-form-sheet";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { CategoryForm } from "./category-form";
 import { CategoryFormValues } from "@/features/categories/schemas/category.schema";
 import { createCategoryAction } from "@/features/categories/actions/create-category.action";

@@ -1,11 +1,11 @@
 "use client";
-import { CardActionButton } from "@/components/common/card-action-button";
-import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
+import { CardActionButton } from "@/shared/components/common/card-action-button";
+import { ResponsiveFormSheet } from "@/shared/components/common/responsive-form-sheet";
 import { Edit } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { EnvelopeForm } from "./envelope-form";
-import { useActionDialog } from "@/hooks/useActionDialog";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { EnvelopeFormValues } from "@/features/envelopes/schemas/envelope.schema";
 import { Envelope } from "@/features/envelopes/types";
 import { updateEnvelopeAction } from "@/features/envelopes/actions/update-envelope.action";

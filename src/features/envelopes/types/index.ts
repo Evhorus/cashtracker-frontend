@@ -1,6 +1,6 @@
 import { Expense } from "@/features/expenses/types";
-import type { CurrencyCode } from "@/lib/format-currency";
-import type { PaginationMeta } from "@/lib/pagination";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
+import type { PaginationMeta } from "@/shared/utils/pagination";
 import type { EnvelopeProgressStatus } from "../lib/envelope-helpers";
 
 export interface EnvelopesResponse {

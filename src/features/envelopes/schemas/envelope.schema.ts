@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { ExpenseAPIResponseSchema } from "@/features/expenses/schemas/expense.schema";
-import { CURRENCY_CODES } from "@/lib/format-currency";
-import { paginatedSchema } from "@/lib/pagination";
-import type { ValidationTranslator } from "@/lib/validation";
+import { CURRENCY_CODES } from "@/shared/utils/format-currency";
+import { paginatedSchema } from "@/shared/utils/pagination";
+import type { ValidationTranslator } from "@/shared/lib/validation";
 
 export const EnvelopeAPIResponseSchema = z.object({
   id: z.string(),

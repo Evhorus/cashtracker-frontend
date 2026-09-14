@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import type { LucideIcon } from "lucide-react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import type { Category } from "../types";
 import { CategoryIconBadge } from "./category-icon-badge";
 import { UpdateCategoryDialog } from "./update-category-dialog";

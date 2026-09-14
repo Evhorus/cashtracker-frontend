@@ -6,13 +6,13 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SubmitButton } from "@/components/common/submit-button";
-import { ErrorMessage } from "@/components/common/error-message";
-import { FormInput } from "@/components/common/form-input";
-import { Text } from "@/components/common/typography";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
+import { SubmitButton } from "@/shared/components/common/submit-button";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { FormInput } from "@/shared/components/common/form-input";
+import { Text } from "@/shared/components/common/typography";
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import {
   Card,
   CardContent,
@@ -20,8 +20,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@/shared/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 import { OAuthButtons } from "./oauth-buttons";
 import { useSignIn } from "../hooks/use-sign-in";
 import {

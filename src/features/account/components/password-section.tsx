@@ -11,10 +11,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { ErrorMessage } from "@/components/common/error-message";
-import { FormInput } from "@/components/common/form-input";
-import { SubmitButton } from "@/components/common/submit-button";
+} from "@/shared/components/ui/card";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { FormInput } from "@/shared/components/common/form-input";
+import { SubmitButton } from "@/shared/components/common/submit-button";
 import { useUpdatePassword } from "../hooks/use-update-password";
 import {
   type PasswordFormValues,

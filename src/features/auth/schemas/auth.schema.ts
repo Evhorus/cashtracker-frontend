@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { ValidationTranslator } from "@/lib/validation";
+import type { ValidationTranslator } from "@/shared/lib/validation";
 
 /**
  * Auth form schemas. Every export is a factory taking the `validation`

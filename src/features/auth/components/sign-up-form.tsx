@@ -5,11 +5,11 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
-import { SubmitButton } from "@/components/common/submit-button";
-import { ErrorMessage } from "@/components/common/error-message";
-import { FormInput } from "@/components/common/form-input";
-import { Text } from "@/components/common/typography";
+import { Button } from "@/shared/components/ui/button";
+import { SubmitButton } from "@/shared/components/common/submit-button";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { FormInput } from "@/shared/components/common/form-input";
+import { Text } from "@/shared/components/common/typography";
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/components/ui/card";
 import { OAuthButtons } from "./oauth-buttons";
 import { useSignUp } from "../hooks/use-sign-up";
 import {

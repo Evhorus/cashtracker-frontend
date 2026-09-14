@@ -2,8 +2,8 @@ import { EnvelopeFormValues } from "../schemas/envelope.schema";
 import { Envelope } from "../types";
 import { EnvelopeApi } from "../schemas/envelope.schema";
 import { ExpenseMapper } from "@/features/expenses/mappers/expense.mapper";
-import type { CurrencyCode } from "@/lib/format-currency";
-import { capitalize } from "@/lib/utils";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
+import { capitalize } from "@/shared/lib/utils";
 
 export const EnvelopeMapper = {
   /**

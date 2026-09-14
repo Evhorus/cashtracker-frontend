@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Breadcrumb } from "@/components/common/breadcrumb";
-import { formatMonthKey, hasMultipleYears } from "@/lib/date-helpers";
+import { Breadcrumb } from "@/features/dashboard/components/breadcrumb";
+import { formatMonthKey, hasMultipleYears } from "@/shared/utils/date-helpers";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-breakdown";
 import { getEnvelopeBreakdown } from "@/features/dashboard/data/get-envelope-breakdown";
@@ -13,14 +13,19 @@ import { PeriodFilterSelect } from "@/features/dashboard/components/period-filte
 import { CurrencyFilterSelect } from "@/features/dashboard/components/currency-filter-select";
 import { DateRangeFilter } from "@/features/dashboard/components/date-range-filter";
 import nextDynamic from "next/dynamic";
-import { MonthlySpendingChartSkeleton } from "@/components/common/monthly-spending-chart-skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Heading } from "@/components/common/typography";
+import { MonthlySpendingChartSkeleton } from "@/features/dashboard/components/monthly-spending-chart-skeleton";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Heading } from "@/shared/components/common/typography";
 import { BreakdownTabs } from "@/features/dashboard/components/breakdown-tabs";
 import { CurrencyBreakdown } from "@/features/dashboard/components/currency-breakdown";
-import { cn } from "@/lib/utils";
-import type { CurrencyCode } from "@/lib/format-currency";
+import { cn } from "@/shared/lib/utils";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 import type { DashboardSummary } from "@/features/dashboard/schemas/dashboard.schema";
 
 // recharts is a heavy dependency - code-split it into its own chunk, same
@@ -28,7 +33,7 @@ import type { DashboardSummary } from "@/features/dashboard/schemas/dashboard.sc
 // that file's history).
 const MonthlySpendingChart = nextDynamic(
   () =>
-    import("@/components/common/monthly-spending-chart").then(
+    import("@/features/dashboard/components/monthly-spending-chart").then(
       (mod) => mod.MonthlySpendingChart,
     ),
   { loading: () => <MonthlySpendingChartSkeleton /> },
@@ -119,7 +124,8 @@ export default async function StatisticsPage({
   // it to. It appears once DateRangeFilter has applied something
   // (markedStart/markedEnd), or for a still-valid `year`/`period` link
   // from before this control existed.
-  const canShowPeriodFilter = Boolean(markedStart && markedEnd) || Boolean(year) || Boolean(period);
+  const canShowPeriodFilter =
+    Boolean(markedStart && markedEnd) || Boolean(year) || Boolean(period);
 
   return (
     <div className="space-y-6">

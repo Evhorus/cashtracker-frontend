@@ -1,7 +1,7 @@
 import { z } from "zod";
-import type { CurrencyCode } from "@/lib/format-currency";
-import { PaginationMetaSchema } from "@/lib/pagination";
-import type { ValidationTranslator } from "@/lib/validation";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
+import { PaginationMetaSchema } from "@/shared/utils/pagination";
+import type { ValidationTranslator } from "@/shared/lib/validation";
 
 export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),

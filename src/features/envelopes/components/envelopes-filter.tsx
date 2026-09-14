@@ -4,10 +4,10 @@ import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { SearchInput } from "@/components/common/search-input";
-import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
-import { ListFilterBar } from "@/components/common/list-filter-bar";
-import { FilterSelect } from "@/components/common/filter-select";
+import { SearchInput } from "@/shared/components/common/search-input";
+import { useDebouncedSearchParam } from "@/shared/hooks/use-debounced-search-param";
+import { ListFilterBar } from "@/shared/components/common/list-filter-bar";
+import { FilterSelect } from "@/shared/components/common/filter-select";
 import {
   ENVELOPE_STATUS_TAB_VALUES,
   ENVELOPES_DEFAULT_PAGE_SIZE,

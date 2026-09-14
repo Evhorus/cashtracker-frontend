@@ -1,9 +1,9 @@
-import { fetchApi } from "@/lib/api-client";
+import { fetchApi } from "@/shared/lib/api-client";
 import { Expense } from "@/features/expenses/types";
 import {
   appendPaginationParams,
   type PaginationParams,
-} from "@/lib/pagination";
+} from "@/shared/utils/pagination";
 import {
   ExpenseFormValues,
   ExpenseAPIResponseSchema,

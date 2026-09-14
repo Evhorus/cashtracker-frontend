@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +14,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { ErrorMessage } from "@/components/common/error-message";
-import { FormInput } from "@/components/common/form-input";
-import { OtpInput } from "@/components/common/otp-input";
-import { SubmitButton } from "@/components/common/submit-button";
+} from "@/shared/components/ui/dialog";
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { FormInput } from "@/shared/components/common/form-input";
+import { OtpInput } from "@/shared/components/common/otp-input";
+import { SubmitButton } from "@/shared/components/common/submit-button";
 import { useReverificationFlow } from "../hooks/use-reverification-flow";
 import {
   type ReverificationCodeFormValues,

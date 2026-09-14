@@ -6,9 +6,9 @@ import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
 import { EnvelopesGrid } from "@/features/envelopes/components/envelopes-grid";
 import { EnvelopesFilter } from "@/features/envelopes/components/envelopes-filter";
 import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
-import { PageHeader } from "@/components/common/page-header";
-import { PaginationControls } from "@/components/common/pagination-controls";
-import { Text } from "@/components/common/typography";
+import { PageHeader } from "@/features/dashboard/components/page-header";
+import { PaginationControls } from "@/shared/components/common/pagination-controls";
+import { Text } from "@/shared/components/common/typography";
 import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
   ENVELOPE_STATUS_TAB_VALUES,
@@ -165,7 +165,8 @@ async function EnvelopesResults({
         searchParams={{
           search,
           status: status === "all" ? undefined : status,
-          limit: limit === ENVELOPES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
+          limit:
+            limit === ENVELOPES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
         }}
       />
     </div>

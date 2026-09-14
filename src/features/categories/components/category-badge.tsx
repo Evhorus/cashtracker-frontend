@@ -1,5 +1,5 @@
 import { Wallet } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { resolveIcon } from "../lib/icon-registry";
 import { withAlpha } from "../lib/with-alpha";
 import type { EnvelopeCategory } from "@/features/envelopes/types";

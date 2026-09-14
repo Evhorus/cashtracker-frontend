@@ -11,11 +11,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { CardActionButton } from "@/components/common/card-action-button";
-import { Text } from "@/components/common/typography";
-import { useActionDialog } from "@/hooks/useActionDialog";
+} from "@/shared/components/ui/alert-dialog";
+import { Input } from "@/shared/components/ui/input";
+import { CardActionButton } from "@/shared/components/common/card-action-button";
+import { Text } from "@/shared/components/common/typography";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { Loader2, Trash2 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";

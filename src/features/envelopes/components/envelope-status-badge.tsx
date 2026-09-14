@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import {
   EnvelopeHelpers,
   type EnvelopeProgressStatus,

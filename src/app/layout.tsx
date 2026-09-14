@@ -4,9 +4,9 @@ import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { manrope, plexMono, sourceSerif } from "./fonts";
 import { Analytics } from "@vercel/analytics/next";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/providers/theme-provider";
-import { ScrollToTop } from "@/components/common/scroll-to-top";
+import { Toaster } from "@/shared/components/ui/sonner";
+import { ThemeProvider } from "@/shared/providers/theme-provider";
+import { ScrollToTop } from "@/shared/components/common/scroll-to-top";
 import { env } from "@/shared/config/env.server";
 
 import "./globals.css";
@@ -42,7 +42,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // No `[locale]` route segment (see src/i18n/request.ts) - the locale
+  // No `[locale]` route segment (see src/shared/config/i18n/request.ts) - the locale
   // is resolved from a cookie server-side, so `<html lang>` has to ask
   // for it explicitly rather than reading a route param.
   const locale = await getLocale();

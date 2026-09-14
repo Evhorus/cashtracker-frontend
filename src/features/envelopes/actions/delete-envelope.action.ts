@@ -5,7 +5,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { EnvelopesService } from "../services/envelopes.service";
 import { getTranslations } from "next-intl/server";
 
-import { createSafeAction } from "@/lib/safe-action";
+import { createSafeAction } from "@/shared/lib/safe-action";
 
 // Goes through EnvelopesService + createSafeAction like every other
 // mutation, instead of the raw authenticatedFetch + hand-rolled

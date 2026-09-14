@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { buildEnvelopeFormSchema } from "../schemas/envelope.schema";
 import type { EnvelopeApi } from "../schemas/envelope.schema";
 import { EnvelopeMapper } from "./envelope.mapper";
-import type { ValidationTranslator } from "@/lib/validation";
+import type { ValidationTranslator } from "@/shared/lib/validation";
 
 /**
  * The spending-limit toggle, end to end on this side of the wire.

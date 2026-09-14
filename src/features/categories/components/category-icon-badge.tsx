@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { withAlpha } from "../lib/with-alpha";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface CategoryIconBadgeProps {
   /** Already resolved (via resolveIcon()) by the caller - never resolved

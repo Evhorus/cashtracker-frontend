@@ -1,5 +1,10 @@
 import { useTranslations } from "next-intl";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 import { CategoryBreakdown } from "@/features/categories/components/category-breakdown";
 import { EnvelopeBreakdown } from "./envelope-breakdown";
 import { ExpenseNameBreakdown } from "./expense-name-breakdown";
@@ -10,7 +15,7 @@ import type {
   DashboardNameBreakdownRow,
   DashboardBreakdownTotal as DashboardBreakdownTotalRow,
 } from "@/features/dashboard/schemas/dashboard.schema";
-import type { CurrencyCode } from "@/lib/format-currency";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 
 interface BreakdownTabsProps {
   categoryRows: DashboardCategoryBreakdownRow[];

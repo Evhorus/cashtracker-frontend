@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { CustomHeader } from "@/components/common/custom-header";
-import { MobileNav } from "@/components/common/mobile-nav";
-import { DashboardSidebar } from "@/components/common/dashboard-sidebar";
+import { CustomHeader } from "@/features/dashboard/components/custom-header";
+import { MobileNav } from "@/features/dashboard/components/mobile-nav";
+import { DashboardSidebar } from "@/features/dashboard/components/dashboard-sidebar";
 import { ClerkProvider } from "@clerk/nextjs";
-import { getClerkLocalization } from "@/i18n/clerk-localization";
+import { getClerkLocalization } from "@/shared/config/i18n/clerk-localization";
 import { auth } from "@clerk/nextjs/server";
-import { CategoriesProvider } from "@/providers/categories-provider";
+import { CategoriesProvider } from "@/features/categories/providers/categories-provider";
 import { getCategories } from "@/features/categories/data/get-categories";
 import { getCategoryOptions } from "@/features/categories/data/get-category-options";
 

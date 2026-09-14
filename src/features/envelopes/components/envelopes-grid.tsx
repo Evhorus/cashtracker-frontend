@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslations } from "next-intl";
 import { Envelope } from "@/features/envelopes/types";
 import { SearchX, Wallet } from "lucide-react";
-import { EmptyState } from "@/components/common/empty-state";
+import { EmptyState } from "@/shared/components/common/empty-state";
 import { CreateEnvelopeDialog } from "./create-envelope-dialog";
 import { statusFilterLabel } from "./envelopes-filter";
 import { EnvelopeCard } from "./envelope-card";

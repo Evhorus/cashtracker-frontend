@@ -3,17 +3,17 @@
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { Check, ChevronDown, Plus, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
+import { cn } from "@/shared/lib/utils";
+import { Input } from "@/shared/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/shared/components/ui/popover";
 import { resolveIcon } from "../lib/icon-registry";
 import { withAlpha } from "../lib/with-alpha";
-import { useCategories } from "@/providers/categories-provider";
-import { Text } from "@/components/common/typography";
+import { useCategories } from "@/features/categories/providers/categories-provider";
+import { Text } from "@/shared/components/common/typography";
 import { CreateCategoryDialog } from "./create-category-dialog";
 
 // Same minimal explicit prop shape as currency-selector.tsx (not the full

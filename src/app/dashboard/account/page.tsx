@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
-import { PageHeader } from "@/components/common/page-header";
+import { PageHeader } from "@/features/dashboard/components/page-header";
 import { AccountView } from "@/features/account/components/account-view";
 
 export async function generateMetadata(): Promise<Metadata> {

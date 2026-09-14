@@ -1,6 +1,6 @@
-import { PageHeaderSkeleton } from "@/components/common/page-header-skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeaderSkeleton } from "@/features/dashboard/components/page-header-skeleton";
+import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 import { ExpensesListSkeleton } from "@/features/expenses/components/expenses-list-skeleton";
 import { EnvelopeChartSkeleton } from "@/features/envelopes/components/envelope-chart-skeleton";
 

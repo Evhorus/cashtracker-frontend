@@ -6,8 +6,11 @@ import { Edit, Trash2 } from "lucide-react";
 import { Expense } from "@/features/expenses/types";
 import { UpdateExpenseDialog } from "./update-expense-dialog";
 import { DeleteExpenseAlertDialog } from "./delete-expense-alert-dialog";
-import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
-import type { CurrencyCode } from "@/lib/format-currency";
+import {
+  ActionsDrawer,
+  ActionItem,
+} from "@/shared/components/common/actions-drawer";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 
 interface ExpenseActionsMenuProps {
   envelopeId: string;

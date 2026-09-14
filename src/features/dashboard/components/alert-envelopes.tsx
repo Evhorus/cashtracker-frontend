@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Heading } from "@/components/common/typography";
+import { Heading } from "@/shared/components/common/typography";
 import { CategoryIcon } from "@/features/categories/components/category-badge";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { cn } from "@/lib/utils";
+import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
+import { cn } from "@/shared/lib/utils";
 import type { AlertEnvelope } from "../lib/dashboard-summary";
 
 interface AlertEnvelopesProps {

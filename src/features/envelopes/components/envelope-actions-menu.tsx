@@ -6,7 +6,10 @@ import { useTranslations } from "next-intl";
 import { Envelope } from "@/features/envelopes/types";
 import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
 import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
-import { ActionsDrawer, ActionItem } from "@/components/common/actions-drawer";
+import {
+  ActionsDrawer,
+  ActionItem,
+} from "@/shared/components/common/actions-drawer";
 
 interface EnvelopeActionsMenuProps {
   envelope: Envelope;

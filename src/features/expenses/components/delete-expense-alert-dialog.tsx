@@ -11,7 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/shared/components/ui/alert-dialog";
 import {
   Drawer,
   DrawerClose,
@@ -21,14 +21,14 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { CardActionButton } from "@/components/common/card-action-button";
-import { cn } from "@/lib/utils";
+} from "@/shared/components/ui/drawer";
+import { Button } from "@/shared/components/ui/button";
+import { CardActionButton } from "@/shared/components/common/card-action-button";
+import { cn } from "@/shared/lib/utils";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { useActionDialog } from "@/hooks/useActionDialog";
+import { useMediaQuery } from "@/shared/hooks/use-media-query";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 
 interface DeleteExpenseAlertDialogProps {
   envelopeId: string;

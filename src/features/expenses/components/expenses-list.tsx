@@ -3,10 +3,10 @@ import { useTranslations } from "next-intl";
 import { Expense } from "@/features/expenses/types";
 import { useParams, useSearchParams } from "next/navigation";
 import { Receipt, SearchX } from "lucide-react";
-import { EmptyState } from "@/components/common/empty-state";
+import { EmptyState } from "@/shared/components/common/empty-state";
 import { ExpenseCard } from "./expense-card";
 import { ExpensesTable } from "./expenses-table";
-import type { CurrencyCode } from "@/lib/format-currency";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 
 interface ExpensesGridProps {
   expenses: Expense[];

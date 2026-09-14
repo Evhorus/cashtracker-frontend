@@ -5,7 +5,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { ExpensesService } from "../services/expenses.service";
 import { getTranslations } from "next-intl/server";
 
-import { createSafeAction } from "@/lib/safe-action";
+import { createSafeAction } from "@/shared/lib/safe-action";
 
 // Goes through ExpensesService + createSafeAction like every other
 // mutation - see delete-envelope.action.ts for why the raw

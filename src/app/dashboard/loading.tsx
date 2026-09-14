@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 // Mirrors the Resumen page's own shell and its two Suspense fallbacks
 // (see dashboard/page.tsx), so this route-level skeleton hands over to

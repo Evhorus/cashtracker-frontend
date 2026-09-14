@@ -14,17 +14,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+} from "@/shared/components/ui/alert-dialog";
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { ErrorMessage } from "@/components/common/error-message";
-import { Input } from "@/components/ui/input";
+} from "@/shared/components/ui/card";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { Input } from "@/shared/components/ui/input";
 import { useDeleteAccount } from "../hooks/use-delete-account";
 import type { AccountUser } from "../types";
 

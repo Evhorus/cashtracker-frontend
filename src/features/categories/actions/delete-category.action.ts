@@ -5,7 +5,7 @@ import { updateTag } from "next/cache";
 import { CategoriesService } from "../services/categories.service";
 import { getTranslations } from "next-intl/server";
 
-import { createSafeAction } from "@/lib/safe-action";
+import { createSafeAction } from "@/shared/lib/safe-action";
 
 // The success toast is written here, not read off the API response.
 // The backend's `{ message }` is Spanish and has no idea who's reading

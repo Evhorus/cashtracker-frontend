@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { FacebookIcon, GoogleIcon } from "./icons";
 import type { OAuthProvider } from "../types";
 

@@ -15,7 +15,7 @@ import {
  * No auth.protect() here - authenticatedFetch (which every service call
  * goes through) already calls it, so it's impossible to reach the API
  * without a verified session, and the pages calling this protect
- * themselves too. See src/lib/authenticated-fetch.ts.
+ * themselves too. See src/shared/lib/authenticated-fetch.ts.
  *
  * Errors propagate on purpose: a failed fetch should reach
  * dashboard/error.tsx, not be swallowed into an empty list that reads

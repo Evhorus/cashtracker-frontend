@@ -11,19 +11,24 @@ import { ExpensesFilter } from "@/features/expenses/components/expenses-filter";
 import { ExpensesList } from "@/features/expenses/components/expenses-list";
 import { ExpensesListSkeleton } from "@/features/expenses/components/expenses-list-skeleton";
 import { EnvelopeActionsMenu } from "@/features/envelopes/components/envelope-actions-menu";
-import { PageHeader } from "@/components/common/page-header";
-import { BackLinkButton } from "@/components/common/back-link-button";
-import { Heading } from "@/components/common/typography";
-import { PaginationControls } from "@/components/common/pagination-controls";
+import { PageHeader } from "@/features/dashboard/components/page-header";
+import { BackLinkButton } from "@/shared/components/common/back-link-button";
+import { Heading } from "@/shared/components/common/typography";
+import { PaginationControls } from "@/shared/components/common/pagination-controls";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import {
   CURRENCY_MAP,
   formatCurrency,
   type CurrencyCode,
-} from "@/lib/format-currency";
-import { formatMonthYear } from "@/lib/date-helpers";
-import { cn } from "@/lib/utils";
+} from "@/shared/utils/format-currency";
+import { formatMonthYear } from "@/shared/utils/date-helpers";
+import { cn } from "@/shared/lib/utils";
 
 import {
   DollarSign,

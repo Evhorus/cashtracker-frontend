@@ -3,7 +3,7 @@ import {
   CURRENCY_MAP,
   formatCurrency,
   type CurrencyCode,
-} from "@/lib/format-currency";
+} from "@/shared/utils/format-currency";
 import type { DashboardBreakdownTotal as DashboardBreakdownTotalRow } from "@/features/dashboard/schemas/dashboard.schema";
 
 interface BreakdownTotalProps {

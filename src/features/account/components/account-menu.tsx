@@ -4,7 +4,11 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Loader2, LogOut, Settings } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +17,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/shared/components/ui/dropdown-menu";
 import { useAccountUser } from "../hooks/use-account-user";
 
 interface AccountMenuProps {

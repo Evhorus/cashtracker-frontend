@@ -12,15 +12,20 @@ import {
   UserRound,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@/shared/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 import { useAccountUser } from "../hooks/use-account-user";
 import { ProfileSection } from "./profile-section";
 import { PasswordSection } from "./password-section";

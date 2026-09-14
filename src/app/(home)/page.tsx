@@ -1,6 +1,6 @@
 import { features } from "@/features/home/constants/features";
-import { LandingHeader } from "@/components/common/landing-header";
-import { Button } from "@/components/ui/button";
+import { LandingHeader } from "@/features/home/components/landing-header";
+import { Button } from "@/shared/components/ui/button";
 import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -11,7 +11,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/components/ui/card";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 

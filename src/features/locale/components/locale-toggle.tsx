@@ -9,14 +9,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+} from "@/shared/components/ui/dropdown-menu";
+import { Button } from "@/shared/components/ui/button";
+import { cn } from "@/shared/lib/utils";
 import {
   LOCALE_LABELS,
   SUPPORTED_LOCALES,
   type SupportedLocale,
-} from "@/i18n/config";
+} from "@/shared/config/i18n/config";
 import { setLocaleAction } from "../actions/set-locale.action";
 
 /**

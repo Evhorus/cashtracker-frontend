@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { FilterSelect } from "@/components/common/filter-select";
+import { FilterSelect } from "@/shared/components/common/filter-select";
 import {
   CATEGORY_TYPE_FILTERS,
   useCategoriesFilter,

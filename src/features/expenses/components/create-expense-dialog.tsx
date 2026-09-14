@@ -2,16 +2,16 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
-import { Button } from "@/components/ui/button";
-import { useActionDialog } from "@/hooks/useActionDialog";
+import { ResponsiveFormSheet } from "@/shared/components/common/responsive-form-sheet";
+import { Button } from "@/shared/components/ui/button";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { ExpenseForm } from "./expense-form";
 import { createExpenseAction } from "@/features/expenses/actions/create-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
 import { resolveIcon } from "@/features/categories/lib/icon-registry";
 import type { EnvelopeCategory } from "@/features/envelopes/types";
 import { withAlpha } from "@/features/categories/lib/with-alpha";
-import type { CurrencyCode } from "@/lib/format-currency";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 
 interface CreateExpenseDialogProps {
   envelopeId: string;

@@ -4,9 +4,9 @@ import type {
   DashboardNameBreakdownRow,
 } from "../schemas/dashboard.schema";
 import type { DashboardRecentExpense } from "../types";
-import type { CurrencyCode } from "@/lib/format-currency";
-import { parseCalendarDate } from "@/lib/date-helpers";
-import { capitalize } from "@/lib/utils";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
+import { parseCalendarDate } from "@/shared/utils/date-helpers";
+import { capitalize } from "@/shared/lib/utils";
 
 export const DashboardMapper = {
   /**

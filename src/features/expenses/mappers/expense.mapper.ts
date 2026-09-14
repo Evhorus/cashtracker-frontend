@@ -6,8 +6,8 @@ import {
   parseCalendarDate,
   formatCalendarDateForApi,
   toFormCalendarDate,
-} from "@/lib/date-helpers";
-import { capitalize } from "@/lib/utils";
+} from "@/shared/utils/date-helpers";
+import { capitalize } from "@/shared/lib/utils";
 import { z } from "zod";
 
 type ApiExpense = z.infer<typeof ExpenseAPIResponseSchema>;
