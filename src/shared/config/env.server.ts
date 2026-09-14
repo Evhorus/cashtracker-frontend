@@ -2,6 +2,8 @@ import "server-only";
 
 import { z } from "zod";
 
+import { envSchema } from "./env.schema";
+
 /**
  * The single place `process.env` is read on the server.
  *
@@ -13,27 +15,16 @@ import { z } from "zod";
  * client schema on purpose. A missing publishable key should break the
  * server render with a message that names it, not leave a blank screen
  * after the bundle has already travelled.
+ *
+ * The three Clerk URLs are here for a sharper reason: nothing in this
+ * codebase reads them - Clerk's SDK picks them up from process.env
+ * itself - so when one is missing there is no crash and no error. Clerk
+ * simply falls back to its hosted Account Portal, and a user who clicks
+ * "sign in" lands on Clerk's own prebuilt English form instead of this
+ * app's Spanish one. That URL also contains "/sign-in", so even an e2e
+ * test asserting the redirect passes while showing the wrong page. A
+ * defect that silent is worth refusing to boot over.
  */
-const envSchema = z.object({
-  API_URL: z.url({
-    error:
-      "API_URL must be the cashtracker-backend base URL (e.g. http://localhost:4000/api).",
-  }),
-  CLERK_SECRET_KEY: z
-    .string()
-    .min(1, "CLERK_SECRET_KEY is required. Copy it from the Clerk dashboard."),
-  NEXT_PUBLIC_URL: z.url({
-    error:
-      "NEXT_PUBLIC_URL must be this app's own public origin (e.g. http://localhost:4001). It is what sitemap.xml and robots.txt advertise.",
-  }),
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
-    .string()
-    .min(
-      1,
-      "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is required. Copy it from the Clerk dashboard.",
-    ),
-});
-
 function parseEnv() {
   const result = envSchema.safeParse(process.env);
 

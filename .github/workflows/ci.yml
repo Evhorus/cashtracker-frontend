@@ -55,6 +55,15 @@ jobs:
           NEXT_PUBLIC_URL: http://localhost:4001
           CLERK_SECRET_KEY: sk_test_ci_placeholder
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci_placeholder
+          # env.server.ts validates these now, so the build needs them
+          # even though nothing here follows a redirect. Real values,
+          # not placeholders, because they are paths rather than
+          # credentials - and keeping them identical to .env.template is
+          # the point: a build that passes with the wrong ones would
+          # defeat the check.
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
+          NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL: /dashboard
+          NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL: /dashboard
 
   # The signed-out browser suite. A separate job from `verify` on
   # purpose: `verify` is the required check and must stay runnable by a
