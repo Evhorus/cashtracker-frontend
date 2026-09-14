@@ -18,17 +18,39 @@ job**, and that is deliberate: running them in CI needs a backend, a seeded data
 Clerk test credentials as repository secrets. Until that exists, a CI suite that cannot
 pass is worse than one that lives locally.
 
+Two projects, because they cost different things to run:
+
+- **`signed-out`** (`pnpm test:e2e`) — no fixture, no credentials, nothing seeded. Runs
+  anywhere the app runs, which is why it is the default.
+- **`signed-in`** (`pnpm test:e2e:signed-in`) — needs `E2E_CLERK_USER_EMAIL` and a running
+  backend. `e2e/global.setup.ts` signs in once via `@clerk/testing` (ticket strategy, so
+  no password is stored anywhere) and saves the session for the suite to reuse.
+  **These tests create and delete real rows** against whatever account that variable
+  names, so point it at a dedicated test user — never at production.
+
 Scoped to what only a browser can answer — that `auth.protect()` really redirects a
-signed-out visitor, and that the `NEXT_LOCALE` cookie survives a reload and a navigation.
+signed-out visitor, that the `NEXT_LOCALE` cookie survives a reload and a navigation, and
+that an expense actually moves its envelope's spent amount. That last one is the only
+thing that verifies the cache tags: `updateTag` on a name nothing is cached under is not
+an error, so a wrong tag is invisible to typecheck, lint and Vitest alike and shows up
+only as a number that failed to move.
 Everything decidable without a browser stays in Vitest, which runs in two seconds.
 `playwright.config.ts` reads `NEXT_PUBLIC_URL` from `.env` rather than hardcoding the
 port, and `webServer.reuseExistingServer` means it uses a `pnpm dev` you already have up.
 
-**Both suites were verified by mutation, and one result is worth knowing**: commenting out
-`dashboard/layout.tsx`'s `auth.protect()` does _not_ fail the auth suite, because the app
-guards in three layers (that layout, each page's own call, and `authenticatedFetch`). The
-suite therefore catches a total regression, not a partial one. The locale suite is
-decisive — breaking the cookie read in `request.ts` fails it immediately.
+**All three suites were verified by mutation, and the results differ usefully**:
+
+| Mutation                                                 | Caught?                                                                                                                                                            |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cookie read removed in `i18n/request.ts`                 | yes, immediately                                                                                                                                                   |
+| `revalidatePath` removed from `create-expense.action.ts` | yes — the money path fails on the derived percentage                                                                                                               |
+| `auth.protect()` commented out in `dashboard/layout.tsx` | **no** — the app guards in three layers (that layout, each page's own call, and `authenticatedFetch`), so that suite catches a total regression, not a partial one |
+| A cache tag renamed consistently inside its registry     | **no, and correctly** — producer and consumer both read the registry, so a consistent rename is harmless by construction. That is what the registry is for         |
+
+Assert on **derived** values where you can (`25.0% del límite`) rather than raw amounts: a
+derived figure can only be right if the value was both re-read and recalculated, and raw
+amounts are rendered several times over, some in responsive duplicates that are present
+but hidden.
 
 When you add a spec, mutate the thing it covers and watch it fail before trusting it.
 
