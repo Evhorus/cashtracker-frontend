@@ -46,7 +46,17 @@ export const ActionsDrawer = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger
         render={
-          <Button variant="ghost" size="icon" className={triggerClassName}>
+          // aria-label, because the trigger is an icon with no text: a
+          // screen reader announced it as an unnamed button, and there is
+          // one per row, so "button" was all a user got. `title` is
+          // already the drawer's own heading ("Opciones de Sobre"), so
+          // reusing it keeps the name and the panel saying the same thing.
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={title}
+            className={triggerClassName}
+          >
             <MoreVertical className="h-5 w-5" />
           </Button>
         }
