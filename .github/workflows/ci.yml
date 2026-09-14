@@ -55,3 +55,62 @@ jobs:
           NEXT_PUBLIC_URL: http://localhost:4001
           CLERK_SECRET_KEY: sk_test_ci_placeholder
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci_placeholder
+
+  # The signed-out browser suite. A separate job from `verify` on
+  # purpose: `verify` is the required check and must stay runnable by a
+  # fork, and this one cannot be - it needs Clerk keys, which a fork's PR
+  # is never given. Hence the `if` below rather than a step inside
+  # verify, which would turn every fork PR red.
+  #
+  # Only the signed-out project. The signed-in one needs a backend and a
+  # seeded database on top of these keys, which is real infrastructure
+  # rather than two secrets.
+  e2e:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Chromium only - playwright.config.ts defines every project on
+      # Desktop Chrome, so the other browsers would be downloaded and
+      # never launched.
+      - run: pnpm exec playwright install --with-deps chromium
+
+      # playwright.config.ts reads .env itself (Playwright does not load
+      # it the way `next dev` does), and throws by design when
+      # NEXT_PUBLIC_URL is missing, so the file has to exist here.
+      #
+      # The Clerk keys are real development ones, unlike the build step's
+      # placeholders above: `next build` never initialises Clerk, but a
+      # browser visiting /sign-in does, and ClerkProvider rejects a key
+      # it cannot parse. API_URL stays a placeholder - no signed-out page
+      # talks to the backend.
+      - name: Write .env for the suite
+        run: |
+          cat > .env <<EOF
+          API_URL=http://localhost:4000/api
+          NEXT_PUBLIC_URL=http://localhost:4001
+          CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          EOF
+
+      # webServer in playwright.config.ts starts `pnpm dev` and waits for
+      # it; reuseExistingServer is off under CI, so this owns the server.
+      - run: pnpm test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
