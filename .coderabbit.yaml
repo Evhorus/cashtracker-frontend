@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit runs with the ceremony turned off.
+#
+# On its defaults it posted a summary, a walkthrough, a sequence diagram
+# and a status table on every pull request - and across the first three
+# PRs of this repo it produced exactly zero actual review comments, two
+# of them because the free tier ran out of review quota before it got
+# there. The cost was arriving without the benefit. Everything below is
+# either silencing output nobody reads or telling it what this repo
+# actually cares about, so that when it does speak it is because it
+# found something.
+language: "es-ES"
+
+reviews:
+  # chill, not assertive: the complaint was volume. A reviewer people
+  # scroll past is worse than no reviewer, because the day it is right
+  # nobody reads that either.
+  profile: "chill"
+
+  # The PR description says what the change is. None of this adds to it.
+  high_level_summary: false
+  changed_files_summary: false
+  sequence_diagrams: false
+  poem: false
+  review_status: false
+  collapse_walkthrough: true
+
+  auto_review:
+    enabled: true
+    # A draft PR is work in progress by definition.
+    drafts: false
+
+  path_filters:
+    # Vendored shadcn output, regenerable with `shadcn add --overwrite`.
+    # Not code we hand-write, so review findings on it are unactionable -
+    # eslint already exempts the same folder for the same reason.
+    - "!src/shared/components/ui/**"
+    # Translation catalogues. messages.test.ts already enforces what
+    # matters here (no drift between languages, no duplicate namespaces,
+    # matching ICU placeholders) and does it better than prose review.
+    - "!src/**/messages/*.json"
+
+  # The conventions a reviewer has to know to be useful here. Without
+  # these it reviews generic TypeScript; with them it can catch the
+  # things this codebase actually goes wrong on.
+  path_instructions:
+    - path: "src/shared/**"
+      instructions: >
+        This is the cross-cutting layer. No domain word may appear here
+        and nothing may import from `@/features/*`. Flag any Envelope,
+        Expense or Category type, and any component naming a business
+        concept - those belong in the feature that owns them. The one
+        deliberate exception is `config/i18n/messages.ts`, which merges
+        each feature's catalogue and is expected to import from all of
+        them.
+    - path: "src/**/*.tsx"
+      instructions: >
+        No user-facing string may be hardcoded; everything a reader sees
+        arrives through `t(...)` from next-intl. Flag literal prose in
+        JSX text nodes and in label/placeholder/title/aria-label props.
+    - path: "src/features/*/{actions,services}/**"
+      instructions: >
+        Cache tag names are never written as string literals. They live
+        in the feature's `lib/cache-tags.ts` and are imported from there,
+        including across features. A tag that does not match its producer
+        fails silently - `updateTag` on a name nothing is cached under
+        invalidates nothing and surfaces much later as stale data. Detail
+        endpoints must be tagged per id, never with one global tag for a
+        whole collection.
+    - path: "src/features/*/data/**"
+      instructions: >
+        These are `server-only` SSR reads. Errors must propagate to
+        `error.tsx` rather than being swallowed into an empty result - a
+        backend outage must not be indistinguishable from "you have no
+        envelopes". Flag any catch that returns `[]` or `null`.
