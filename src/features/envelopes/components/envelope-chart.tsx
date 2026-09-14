@@ -161,7 +161,7 @@ export const EnvelopeChart = ({ spent, total, status }: EnvelopeChartProps) => {
               isExceeded ? "bg-destructive" : "bg-muted-foreground/35"
             }`}
           />
-          {isExceeded ? "Excedido" : "Disponible"}
+          {isExceeded ? t("exceeded") : t("available")}
         </span>
       </div>
     </div>
