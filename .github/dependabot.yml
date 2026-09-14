@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://json.schemastore.org/dependabot-2.0.json
+#
+# Dependency updates as pull requests, which is only worth doing because
+# `verify` already runs on every PR: a bump either passes the same five
+# gates a human change does, or it does not, and the decision is one
+# click either way.
+#
+# Dependabot rather than Renovate: native to GitHub, no app to install,
+# and grouping is now good enough for a repo this size. Revisit if the
+# grouping rules below start needing exceptions.
+version: 2
+
+updates:
+  # ---------------------------------------------------------------- npm
+  # Reads pnpm-lock.yaml (lockfileVersion 9.0) - the "npm" ecosystem
+  # covers pnpm, there is no separate "pnpm" value.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      # Monday morning: the PRs are waiting at the start of the week
+      # rather than landing on a Friday afternoon.
+      day: monday
+      time: "08:00"
+      timezone: America/Bogota
+
+    # The whole point of the grouping below. Ungrouped, a quiet week
+    # still opens a dozen separate PRs, and a dozen PRs nobody reads is
+    # how people end up turning Dependabot off.
+    groups:
+      # One PR for everything low-risk. If `verify` is green, this is a
+      # merge without reading the diff.
+      patch-and-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+    # Majors are deliberately NOT grouped: each one is a migration that
+    # deserves its own PR, its own CI run and its own decision. Next,
+    # React and Clerk majors in particular have codemods and breaking
+    # changes worth reading.
+    open-pull-requests-limit: 5
+    commit-message:
+      # Conventional Commits, because commitlint runs on commit-msg and
+      # Dependabot's default ("Bump x from y to z") has no type prefix.
+      # Squash-merging a PR takes its title, so this matters.
+      prefix: chore
+      prefix-development: chore
+      include: scope
+    labels: ["dependencies"]
+
+  # ------------------------------------------------------- GitHub Actions
+  # The workflow pins actions/checkout@v5, pnpm/action-setup@v4 and
+  # actions/setup-node@v5. Those go stale silently - the Node 20
+  # deprecation warning currently printed by pnpm/action-setup is exactly
+  # the kind of thing that gets fixed upstream and never picked up here.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/Bogota
+    groups:
+      actions:
+        patterns: ["*"]
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: ci
+      include: scope
+    labels: ["dependencies", "github-actions"]
