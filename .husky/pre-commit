@@ -1,0 +1,12 @@
+# The fast gates, on everything. No lint-staged: these four total about
+# five seconds on this repo, which is less than the machinery to run
+# them on only the staged files would cost to maintain. Revisit if the
+# suite grows.
+#
+# format:check rather than `pnpm format`: a hook that rewrites files
+# mid-commit leaves them unstaged, so the commit ships the unformatted
+# version anyway. Failing and telling you to run `pnpm format` is honest.
+pnpm typecheck
+pnpm lint
+pnpm format:check
+pnpm test
