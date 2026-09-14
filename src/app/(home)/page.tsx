@@ -1,4 +1,4 @@
-import { features } from "./_data/features";
+import { features } from "@/features/home/constants/features";
 import { LandingHeader } from "@/components/common/landing-header";
 import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs/server";

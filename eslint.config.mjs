@@ -17,6 +17,10 @@ const eslintConfig = defineConfig([
           public: [
             "src/app/(auth)/**",
             "src/app/(home)/**",
+            // The landing page's feature, same reasoning as the route
+            // it serves: it renders for signed-out visitors by
+            // definition.
+            "src/features/home/**",
             // Changing language needs no session - the landing page and
             // the sign-in screen both offer the switcher, so requiring
             // auth here would break it for exactly the visitors most
