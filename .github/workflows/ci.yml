@@ -93,6 +93,28 @@ jobs:
       # browser visiting /sign-in does, and ClerkProvider rejects a key
       # it cannot parse. API_URL stays a placeholder - no signed-out page
       # talks to the backend.
+      # An empty secret is not an error to GitHub - it substitutes an
+      # empty string and the run continues, so the first sign of trouble
+      # was env.server.ts throwing from the instrumentation hook inside
+      # Playwright's webServer output. Checking the length here says
+      # which secret is missing, without printing either one.
+      - name: Check the Clerk secrets are set
+        env:
+          SECRET: ${{ secrets.CLERK_SECRET_KEY }}
+          PUBLISHABLE: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+        run: |
+          missing=""
+          [ -n "$SECRET" ] || missing="$missing CLERK_SECRET_KEY"
+          [ -n "$PUBLISHABLE" ] || missing="$missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Empty or unset repository secret(s):$missing"
+            echo "Set them from a Clerk DEVELOPMENT instance, e.g."
+            echo '  gh secret set CLERK_SECRET_KEY --body "sk_test_..."'
+            echo "Note that 'gh secret set NAME' with no --body reads the value from"
+            echo "stdin, and stores an empty string when stdin is empty."
+            exit 1
+          fi
+
       - name: Write .env for the suite
         run: |
           cat > .env <<EOF
