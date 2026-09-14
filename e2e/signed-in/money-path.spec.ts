@@ -99,7 +99,14 @@ test("an expense moves the envelope's spent amount", async ({ page }) => {
   // invalidated by a different line in the action. Asserting only the
   // detail view would leave that one uncovered, which is what an earlier
   // version of this spec did.
-  await page.goto("/dashboard/envelopes");
+  // Filtered to this envelope. Unfiltered, the card locator below picks
+  // an ancestor that can contain a neighbouring card too, so a second
+  // envelope sitting at the same percentage made "25%" ambiguous and
+  // failed this on strict mode - a failure about the list's contents
+  // rather than about anything this test is checking.
+  await page.goto(
+    `/dashboard/envelopes?search=${encodeURIComponent(ENVELOPE)}`,
+  );
   const card = page
     .getByRole("link", { name: ENVELOPE_RE })
     .locator("xpath=ancestor::*[self::article or self::div][1]");
