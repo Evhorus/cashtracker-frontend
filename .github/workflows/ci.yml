@@ -62,12 +62,23 @@ jobs:
   # is never given. Hence the `if` below rather than a step inside
   # verify, which would turn every fork PR red.
   #
+  # Dependabot is excluded for the same reason and it is not obvious: a
+  # workflow Dependabot triggers gets a read-only GITHUB_TOKEN and can
+  # read no repository secret, so this job saw two empty Clerk keys and
+  # failed every dependency PR until the exclusion was added. `verify` is
+  # the required check, so auto-merge was never actually blocked - but a
+  # red check on every weekly bump is how people learn to ignore red
+  # checks.
+  #
   # Only the signed-out project. The signed-in one needs a backend and a
   # seeded database on top of these keys, which is real infrastructure
   # rather than two secrets.
   e2e:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      github.event_name == 'push' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]')
 
     steps:
       - uses: actions/checkout@v5

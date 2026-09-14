@@ -32,7 +32,10 @@ touch Clerk (the landing page and `robots.txt`) could run, which is not worth a 
 
 The `e2e` job is separate from `verify` rather than a step inside it, because `verify`
 must stay runnable by a fork and this job cannot be: a fork's PR is never given secrets.
-It is skipped for forks by an `if` on the head repository. `verify` remains the only
+It is skipped for forks by an `if` on the head repository — **and for Dependabot, for the
+same reason and less obviously**: a workflow Dependabot triggers gets a read-only
+`GITHUB_TOKEN` and can read no repository secret, so without the exclusion every weekly
+dependency PR goes red on a job that cannot possibly pass. `verify` remains the only
 required check — adding `e2e` to branch protection would block every fork PR on a check
 that deliberately never runs.
 
