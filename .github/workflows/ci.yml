@@ -22,13 +22,13 @@ jobs:
     # nothing. Split them when one of them starts dominating the wall
     # clock - most likely the Playwright suite, when it exists.
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Before setup-node, which needs pnpm on PATH to resolve its cache.
       # Version comes from package.json's `packageManager` field.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
