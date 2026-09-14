@@ -13,17 +13,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## End-to-end tests
 
-`pnpm test:e2e` (Playwright, `e2e/*.spec.ts`). **Local only — not part of the `verify` CI
+`pnpm test:e2e` (Playwright, `e2e/signed-out/**/*.spec.ts`). **Local only — not part of the `verify` CI
 job**, and that is deliberate: running them in CI needs a backend, a seeded database and
 Clerk test credentials as repository secrets. Until that exists, a CI suite that cannot
 pass is worse than one that lives locally.
+
+**The folder a spec lives in is what decides which project runs it**, and both
+projects match by glob for that reason. `signed-out/` matched an explicit list of
+filenames until it didn't: a spec added at `e2e/` root belonged to no project and
+silently never ran. Infrastructure (`global.setup.ts`, `storage-state.ts`) sits in
+`support/`, which matches neither suite's glob.
 
 Two projects, because they cost different things to run:
 
 - **`signed-out`** (`pnpm test:e2e`) — no fixture, no credentials, nothing seeded. Runs
   anywhere the app runs, which is why it is the default.
 - **`signed-in`** (`pnpm test:e2e:signed-in`) — needs `E2E_CLERK_USER_EMAIL` and a running
-  backend. `e2e/global.setup.ts` signs in once via `@clerk/testing` (ticket strategy, so
+  backend. `e2e/support/global.setup.ts` signs in once via `@clerk/testing` (ticket strategy, so
   no password is stored anywhere) and saves the session for the suite to reuse.
   **These tests create and delete real rows** against whatever account that variable
   names, so point it at a dedicated test user — never at production.
