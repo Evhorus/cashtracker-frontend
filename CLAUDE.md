@@ -27,6 +27,32 @@ CI is the gate that counts: a Husky hook is skippable with `--no-verify`, so it 
 the distracted mistake but guarantees nothing. Keep the three lists in step — if you add
 a command to one, add it to the others.
 
+## Branch protection
+
+`main` is protected, and **direct pushes to it are rejected — including for admins**
+(`enforce_admins`). Every change goes through a pull request:
+
+```
+git checkout -b type/short-name     # work, commit (hooks run)
+git push -u origin type/short-name
+gh pr create --fill                 # CI runs
+gh pr merge --squash --delete-branch # merges once `verify` is green
+```
+
+The required check is named **`verify`** — that is `jobs.verify` in `ci.yml`, not the
+workflow's `name: CI`. Renaming that job breaks the rule silently: GitHub waits forever
+for a check that never arrives and every PR blocks. If you rename it, update the
+protection rule in the same change.
+
+Other settings and why: `strict` (the branch must be up to date with `main` before
+merging, so the check ran against what actually lands), `required_linear_history` (squash
+or rebase, no merge commits), `required_conversation_resolution`, and no force-push or
+deletion of `main`. Approvals are set to **0** on purpose — GitHub does not let you
+approve your own PR, so requiring one would leave a solo maintainer unable to merge
+anything. The PR is the gate; the approval is not.
+
+Read it back with `gh api repos/Evhorus/cashtracker-frontend/branches/main/protection`.
+
 No `lint-staged`, deliberately: the whole set runs in under ten seconds on this repo,
 which is cheaper than maintaining the machinery to run it on only the staged files.
 Revisit when a Playwright suite exists — `pre-push` is where that goes, never
