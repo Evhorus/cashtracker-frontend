@@ -13,19 +13,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Gates
 
-The five commands above are the gate set, and they run in three places:
+The five commands above are the gate set, and they run in two places:
 
 - **`.husky/commit-msg`** — `commitlint`, Conventional Commits. Milliseconds, and it is
   the one check guarding something the others cannot reach: a malformed message is in
   the history the instant it lands, and removing it means rewriting history.
 - **`.husky/pre-commit`** — typecheck, lint, format:check, test (~5s).
-- **`.husky/pre-push`** — the same four plus `build` (~9s). It repeats them because
-  commits also arrive here via merges, rebases and `--no-verify`.
 - **`.github/workflows/ci.yml`** — all five, on every PR and every push to `main`.
 
 CI is the gate that counts: a Husky hook is skippable with `--no-verify`, so it catches
-the distracted mistake but guarantees nothing. Keep the three lists in step — if you add
-a command to one, add it to the others.
+the distracted mistake but guarantees nothing. Keep both lists in step — if you add a
+command to one, add it to the other.
+
+**There is no `pre-push` hook, deliberately.** There was one, and branch protection made
+it redundant: every push now goes to a feature branch that CI checks anyway, and nothing
+can merge without `verify` green. All it bought was learning about a failure ~80 seconds
+sooner, at the cost of ~9 seconds on every push — including pushes of half-finished work
+you only want backed up. Re-adding it would need a reason that isn't "belt and braces".
 
 ## Branch protection
 
