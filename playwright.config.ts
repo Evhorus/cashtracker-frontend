@@ -2,7 +2,7 @@ import { loadEnvFile } from "node:process";
 
 import { defineConfig, devices } from "@playwright/test";
 
-import { STORAGE_STATE } from "./e2e/storage-state";
+import { STORAGE_STATE } from "./e2e/support/storage-state";
 
 // Playwright does not read .env the way `next dev` does, so the app's
 // own origin has to be loaded explicitly. NEXT_PUBLIC_URL is the same
@@ -51,14 +51,20 @@ export default defineConfig({
     // runs anywhere the app runs, which is why it is the default.
     {
       name: "signed-out",
-      testMatch: ["auth-protection.spec.ts", "locale.spec.ts"],
+      // A glob over the folder, not a list of filenames. The list was a
+      // trap: a spec added at e2e/ root matched no project at all and
+      // silently never ran - no error, no warning, just a file that
+      // looks like a test and never executes. Both projects now match
+      // the same way, so where a spec lives is what decides which
+      // session it runs under.
+      testMatch: "signed-out/**/*.spec.ts",
       use: { ...devices["Desktop Chrome"] },
     },
 
     // Signs in once and saves the session; the suite below reuses it.
     {
       name: "setup",
-      testMatch: "global.setup.ts",
+      testMatch: "support/global.setup.ts",
       use: { ...devices["Desktop Chrome"] },
     },
 
