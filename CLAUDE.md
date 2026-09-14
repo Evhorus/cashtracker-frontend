@@ -74,6 +74,26 @@ can merge without `verify` green. All it bought was learning about a failure ~80
 sooner, at the cost of ~9 seconds on every push — including pushes of half-finished work
 you only want backed up. Re-adding it would need a reason that isn't "belt and braces".
 
+## Dependency updates
+
+`.github/dependabot.yml`, weekly on Monday. Two ecosystems: `npm` (which is what covers
+pnpm — there is no separate `pnpm` value, and it reads `pnpm-lock.yaml` at lockfileVersion
+9.0) and `github-actions`, so the workflow's own pinned actions do not go stale silently.
+
+**Minor and patch updates arrive as one grouped PR; majors are deliberately not grouped.**
+Ungrouped, a quiet week still opens a dozen PRs, and a dozen PRs nobody reads is how
+Dependabot ends up switched off. A major, by contrast, is a migration that deserves its
+own PR and its own decision — Next, React and Clerk especially.
+
+This is only worth having because `verify` runs on every PR: a bump either passes the same
+five gates a human change does or it does not, so the grouped PR is usually a merge without
+reading the diff. `commit-message.prefix` is set because Dependabot's default ("Bump x from
+y to z") has no Conventional Commits type, and squash-merging takes the PR title — so
+without it, `commitlint` would reject the merge.
+
+The `dependencies` and `github-actions` labels have to exist in the repo; Dependabot
+silently skips labels it cannot find.
+
 ## Branch protection
 
 `main` is protected, and **direct pushes to it are rejected — including for admins**
