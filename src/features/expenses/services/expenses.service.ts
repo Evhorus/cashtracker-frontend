@@ -13,6 +13,7 @@ import {
   type ExpensesPaginationMeta,
 } from "../schemas/expense.schema";
 import { ExpenseMapper } from "../mappers/expense.mapper";
+import { EXPENSE_TAGS } from "../lib/cache-tags";
 
 export interface GetExpensesParams extends PaginationParams {
   startDate?: string;
@@ -48,7 +49,7 @@ export const ExpensesService = {
         // below has no effect - and indeed no action invalidates it. The
         // expense list is filtered/sorted/paginated per request, so not
         // caching it is the right call; the tag is vestigial.
-        next: { tags: [`expenses-${envelopeId}`], revalidate: 0 },
+        next: { tags: [EXPENSE_TAGS.list(envelopeId)], revalidate: 0 },
       },
       ExpensesAPIResponseSchema,
     );
@@ -63,11 +64,7 @@ export const ExpensesService = {
     const expense = await fetchApi<ExpenseApi>(
       `/envelopes/${envelopeId}/expenses/${expenseId}`,
       {
-        // NOTE: this tag is global, not per-id, so invalidating it on a
-        // mutation drops every cached expense detail rather than just the
-        // one that changed. Correct but wasteful - should become
-        // `expense-${id}`. Left as-is for now; see the audit follow-ups.
-        next: { tags: ["expense"], revalidate: 60 },
+        next: { tags: [EXPENSE_TAGS.detail(expenseId)], revalidate: 60 },
       },
       ExpenseAPIResponseSchema,
     );

@@ -6,6 +6,7 @@ import { CategoriesService } from "../services/categories.service";
 import { getTranslations } from "next-intl/server";
 
 import { createSafeAction } from "@/shared/lib/safe-action";
+import { CATEGORY_TAGS } from "../lib/cache-tags";
 
 // The success toast is written here, not read off the API response.
 // The backend's `{ message }` is Spanish and has no idea who's reading
@@ -25,9 +26,9 @@ export const deleteCategoryAction = createSafeAction(async (id: string) => {
   // category left the deleted row on screen until a manual reload).
   // updateTag expires the entry outright so the next request waits for
   // fresh data. It's Server-Action-only, which every action here is.
-  updateTag("all-categories");
+  updateTag(CATEGORY_TAGS.all);
   // Deleting a category unclassifies its envelopes (ON DELETE SET NULL).
-  updateTag("category-usage");
+  updateTag(CATEGORY_TAGS.usage);
 
   const t = await getTranslations("categories.toast");
 

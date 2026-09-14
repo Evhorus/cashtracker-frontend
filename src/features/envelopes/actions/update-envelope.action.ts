@@ -7,6 +7,9 @@ import { EnvelopesService } from "../services/envelopes.service";
 import { getTranslations } from "next-intl/server";
 
 import { createSafeAction } from "@/shared/lib/safe-action";
+import { ENVELOPE_TAGS } from "../lib/cache-tags";
+import { CATEGORY_TAGS } from "@/features/categories/lib/cache-tags";
+import { DASHBOARD_ENVELOPE_WRITE_TAGS } from "@/features/dashboard/lib/cache-tags";
 
 // The success toast is written here, not read off the API response.
 // The backend's `{ message }` is Spanish and has no idea who's reading
@@ -23,15 +26,11 @@ export const updateEnvelopeAction = createSafeAction(
     revalidatePath("/dashboard");
     // updateTag (not revalidateTag) - read-your-own-writes; see
     // categories/actions/delete-category.action.ts for the why.
-    updateTag("all-envelopes");
+    updateTag(ENVELOPE_TAGS.all);
     // Per-category envelope counts change with any envelope write.
-    updateTag("category-usage");
-    updateTag("envelope");
-    updateTag("dashboard-summary");
-    updateTag("dashboard-category-breakdown");
-    updateTag("dashboard-envelope-breakdown");
-    updateTag("dashboard-name-breakdown");
-    updateTag("dashboard-breakdown-total");
+    updateTag(CATEGORY_TAGS.usage);
+    updateTag(ENVELOPE_TAGS.detail(id));
+    DASHBOARD_ENVELOPE_WRITE_TAGS.forEach((tag) => updateTag(tag));
 
     const t = await getTranslations("envelopes.toast");
 

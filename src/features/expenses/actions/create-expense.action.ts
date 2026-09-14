@@ -7,6 +7,8 @@ import { ExpensesService } from "../services/expenses.service";
 import { getTranslations } from "next-intl/server";
 
 import { createSafeAction } from "@/shared/lib/safe-action";
+import { ENVELOPE_TAGS } from "@/features/envelopes/lib/cache-tags";
+import { DASHBOARD_EXPENSE_WRITE_TAGS } from "@/features/dashboard/lib/cache-tags";
 
 // The success toast is written here, not read off the API response.
 // The backend's `{ message }` is Spanish and has no idea who's reading
@@ -24,13 +26,8 @@ export const createExpenseAction = createSafeAction(
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
     // updateTag (not revalidateTag) - read-your-own-writes; see
     // categories/actions/delete-category.action.ts for the why.
-    updateTag("all-envelopes");
-    updateTag("dashboard-summary");
-    updateTag("dashboard-category-breakdown");
-    updateTag("dashboard-envelope-breakdown");
-    updateTag("dashboard-name-breakdown");
-    updateTag("dashboard-breakdown-total");
-    updateTag("dashboard-recent-expenses");
+    updateTag(ENVELOPE_TAGS.all);
+    DASHBOARD_EXPENSE_WRITE_TAGS.forEach((tag) => updateTag(tag));
 
     const t = await getTranslations("expenses.toast");
 

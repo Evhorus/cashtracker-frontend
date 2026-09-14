@@ -13,6 +13,7 @@ import {
 import { Envelope, EnvelopesResponse } from "../types";
 import { EnvelopeMapper } from "../mappers/envelope.mapper";
 import type { EnvelopeStatusFilter } from "../lib/envelope-helpers";
+import { ENVELOPE_TAGS } from "../lib/cache-tags";
 
 // Mirrors GetExpensesParams (expenses.service.ts): the backend has no sort
 // or date range for envelopes (they have no date of their own), just
@@ -39,7 +40,7 @@ export const EnvelopesService = {
     const response = await fetchApi<EnvelopesResponseApi>(
       `/envelopes${qs ? `?${qs}` : ""}`,
       {
-        next: { tags: ["all-envelopes"], revalidate: 60 },
+        next: { tags: [ENVELOPE_TAGS.all], revalidate: 60 },
       },
       EnvelopesAPIResponseSchema,
     );
@@ -54,11 +55,7 @@ export const EnvelopesService = {
     const envelope = await fetchApi<EnvelopeApi>(
       `/envelopes/${id}`,
       {
-        // NOTE: this tag is global, not per-id, so invalidating it on a
-        // mutation drops every cached envelope detail rather than just the
-        // one that changed. Correct but wasteful - should become
-        // `envelope-${id}`. Left as-is for now; see the audit follow-ups.
-        next: { tags: ["envelope"], revalidate: 60 },
+        next: { tags: [ENVELOPE_TAGS.detail(id)], revalidate: 60 },
       },
       EnvelopeAPIResponseSchema,
     );

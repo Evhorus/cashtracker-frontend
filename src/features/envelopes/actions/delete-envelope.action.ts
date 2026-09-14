@@ -6,6 +6,9 @@ import { EnvelopesService } from "../services/envelopes.service";
 import { getTranslations } from "next-intl/server";
 
 import { createSafeAction } from "@/shared/lib/safe-action";
+import { ENVELOPE_TAGS } from "../lib/cache-tags";
+import { CATEGORY_TAGS } from "@/features/categories/lib/cache-tags";
+import { DASHBOARD_ENVELOPE_WRITE_TAGS } from "@/features/dashboard/lib/cache-tags";
 
 // Goes through EnvelopesService + createSafeAction like every other
 // mutation, instead of the raw authenticatedFetch + hand-rolled
@@ -34,18 +37,13 @@ export const deleteEnvelopeAction = createSafeAction(
     revalidatePath("/dashboard/envelopes");
     // updateTag (not revalidateTag) - read-your-own-writes; see
     // categories/actions/delete-category.action.ts for the why.
-    updateTag("all-envelopes");
+    updateTag(ENVELOPE_TAGS.all);
     // Per-category envelope counts change with any envelope write.
-    updateTag("category-usage");
+    updateTag(CATEGORY_TAGS.usage);
     // Also the detail-endpoint tag: without it a deleted envelope's own
-    // cached detail response stayed servable. (That tag is global rather
-    // than per-id today - see the note in envelopes.service.ts.)
-    updateTag("envelope");
-    updateTag("dashboard-summary");
-    updateTag("dashboard-category-breakdown");
-    updateTag("dashboard-envelope-breakdown");
-    updateTag("dashboard-name-breakdown");
-    updateTag("dashboard-breakdown-total");
+    // cached detail response stayed servable.
+    updateTag(ENVELOPE_TAGS.detail(envelopeId));
+    DASHBOARD_ENVELOPE_WRITE_TAGS.forEach((tag) => updateTag(tag));
 
     const t = await getTranslations("envelopes.toast");
 

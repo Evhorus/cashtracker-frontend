@@ -6,6 +6,9 @@ import { ExpensesService } from "../services/expenses.service";
 import { getTranslations } from "next-intl/server";
 
 import { createSafeAction } from "@/shared/lib/safe-action";
+import { EXPENSE_TAGS } from "../lib/cache-tags";
+import { ENVELOPE_TAGS } from "@/features/envelopes/lib/cache-tags";
+import { DASHBOARD_EXPENSE_WRITE_TAGS } from "@/features/dashboard/lib/cache-tags";
 
 // Goes through ExpensesService + createSafeAction like every other
 // mutation - see delete-envelope.action.ts for why the raw
@@ -37,15 +40,10 @@ export const deleteExpenseAction = createSafeAction(
     revalidatePath(`/dashboard/envelope/${envelopeId}`);
     // updateTag (not revalidateTag) - read-your-own-writes; see
     // categories/actions/delete-category.action.ts for the why.
-    updateTag("all-envelopes");
+    updateTag(ENVELOPE_TAGS.all);
     // Same detail-tag gap the envelope delete had.
-    updateTag("expense");
-    updateTag("dashboard-summary");
-    updateTag("dashboard-category-breakdown");
-    updateTag("dashboard-envelope-breakdown");
-    updateTag("dashboard-name-breakdown");
-    updateTag("dashboard-breakdown-total");
-    updateTag("dashboard-recent-expenses");
+    updateTag(EXPENSE_TAGS.detail(expenseId));
+    DASHBOARD_EXPENSE_WRITE_TAGS.forEach((tag) => updateTag(tag));
 
     const t = await getTranslations("expenses.toast");
 
