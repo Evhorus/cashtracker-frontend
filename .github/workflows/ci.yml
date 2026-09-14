@@ -93,6 +93,16 @@ jobs:
       # browser visiting /sign-in does, and ClerkProvider rejects a key
       # it cannot parse. API_URL stays a placeholder - no signed-out page
       # talks to the backend.
+      #
+      # The three SIGN_IN/SIGN_UP URLs are not optional decoration, and
+      # env.server.ts does not validate them, so leaving them out fails
+      # silently in a way that looks like a test bug: without
+      # NEXT_PUBLIC_CLERK_SIGN_IN_URL, auth.protect() redirects to
+      # Clerk's hosted Account Portal instead of this app's own
+      # /sign-in. That URL also contains "/sign-in", so the redirect
+      # assertion passes and the page is Clerk's prebuilt English form
+      # rather than the app's custom Spanish one. Keep this list in step
+      # with .env.template.
       # An empty secret is not an error to GitHub - it substitutes an
       # empty string and the run continues, so the first sign of trouble
       # was env.server.ts throwing from the instrumentation hook inside
@@ -122,6 +132,9 @@ jobs:
           NEXT_PUBLIC_URL=http://localhost:4001
           CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+          NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/dashboard
+          NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/dashboard
           EOF
 
       # webServer in playwright.config.ts starts `pnpm dev` and waits for
