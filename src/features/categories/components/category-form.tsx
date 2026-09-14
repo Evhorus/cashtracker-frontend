@@ -4,23 +4,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Check } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { SubmitButton } from "@/components/common/submit-button";
-import { FormInput } from "@/components/common/form-input";
+import { Button } from "@/shared/components/ui/button";
+import { SubmitButton } from "@/shared/components/common/submit-button";
+import { FormInput } from "@/shared/components/common/form-input";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "@/components/ui/field";
+} from "@/shared/components/ui/field";
 import {
   buildCategoryFormSchema,
   CategoryFormValues,
 } from "@/features/categories/schemas/category.schema";
 import { resolveIcon } from "@/features/categories/lib/icon-registry";
-import { useCategoryOptions } from "@/providers/categories-provider";
-import { cn } from "@/lib/utils";
+import { useCategoryOptions } from "@/features/categories/providers/categories-provider";
+import { cn } from "@/shared/lib/utils";
 
 interface CategoryFormProps {
   defaultValues?: Partial<CategoryFormValues>;

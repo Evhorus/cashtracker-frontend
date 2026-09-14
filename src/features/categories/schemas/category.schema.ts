@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { ValidationTranslator } from "@/lib/validation";
+import type { ValidationTranslator } from "@/shared/lib/validation";
 
 export const CategoryAPIResponseSchema = z.object({
   id: z.string(),

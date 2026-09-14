@@ -3,35 +3,38 @@ import { useTranslations, useLocale } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
-import { formatDate, getToday } from "@/lib/date-helpers";
+import { formatDate, getToday } from "@/shared/utils/date-helpers";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
-import { Button } from "@/components/ui/button";
-import { SubmitButton } from "@/components/common/submit-button";
-import { FormInput } from "@/components/common/form-input";
+import { Button } from "@/shared/components/ui/button";
+import { SubmitButton } from "@/shared/components/common/submit-button";
+import { FormInput } from "@/shared/components/common/form-input";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "@/components/ui/field";
+} from "@/shared/components/ui/field";
 
 import {
   ExpenseFormValues,
   buildExpenseSchema,
 } from "@/features/expenses/schemas/expense.schema";
-import { Textarea } from "@/components/ui/textarea";
-import { PriceInput } from "@/components/common/price-input";
-import { CURRENCY_MAP, type CurrencyCode } from "@/lib/format-currency";
-import { Calendar } from "@/components/ui/calendar";
+import { Textarea } from "@/shared/components/ui/textarea";
+import { PriceInput } from "@/shared/components/common/price-input";
+import {
+  CURRENCY_MAP,
+  type CurrencyCode,
+} from "@/shared/utils/format-currency";
+import { Calendar } from "@/shared/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/shared/components/ui/popover";
 
 interface ExpenseFormProps {
   /**

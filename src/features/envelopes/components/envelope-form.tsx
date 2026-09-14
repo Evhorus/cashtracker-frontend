@@ -3,25 +3,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { SubmitButton } from "@/components/common/submit-button";
-import { FormInput } from "@/components/common/form-input";
+import { Switch } from "@/shared/components/ui/switch";
+import { Button } from "@/shared/components/ui/button";
+import { SubmitButton } from "@/shared/components/common/submit-button";
+import { FormInput } from "@/shared/components/common/form-input";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "@/components/ui/field";
+} from "@/shared/components/ui/field";
 import {
   buildEnvelopeFormSchema,
   EnvelopeFormValues,
 } from "@/features/envelopes/schemas/envelope.schema";
-import { PriceInput } from "@/components/common/price-input";
-import { CurrencySelector } from "@/components/common/currency-selector";
+import { PriceInput } from "@/shared/components/common/price-input";
+import { CurrencySelector } from "@/features/envelopes/components/currency-selector";
 import { CategoryPicker } from "@/features/categories/components/category-picker";
-import { CURRENCY_MAP, DEFAULT_CURRENCY_CONFIG } from "@/lib/format-currency";
+import {
+  CURRENCY_MAP,
+  DEFAULT_CURRENCY_CONFIG,
+} from "@/shared/utils/format-currency";
 
 interface EnvelopeFormProps {
   defaultValues?: Partial<EnvelopeFormValues>;

@@ -1,8 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { formatMonthYear } from "@/lib/date-helpers";
+import { Button } from "@/shared/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
+import { Progress } from "@/shared/components/ui/progress";
+import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
+import { formatMonthYear } from "@/shared/utils/date-helpers";
 import { ArrowRight, Infinity as InfinityIcon } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import {
@@ -13,8 +18,8 @@ import {
 import Link from "next/link";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { Envelope } from "@/features/envelopes/types";
-import { CardHoverActions } from "@/components/common/card-hover-actions";
-import { Text } from "@/components/common/typography";
+import { CardHoverActions } from "@/shared/components/common/card-hover-actions";
+import { Text } from "@/shared/components/common/typography";
 import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
 import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
 import { EnvelopeActionsMenu } from "./envelope-actions-menu";

@@ -7,17 +7,21 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Camera, Loader2 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { ErrorMessage } from "@/components/common/error-message";
-import { FormInput } from "@/components/common/form-input";
-import { SubmitButton } from "@/components/common/submit-button";
+} from "@/shared/components/ui/card";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { FormInput } from "@/shared/components/common/form-input";
+import { SubmitButton } from "@/shared/components/common/submit-button";
 import { useUpdateProfile } from "../hooks/use-update-profile";
 import {
   type ProfileFormValues,

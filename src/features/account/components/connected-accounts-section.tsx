@@ -3,17 +3,21 @@
 import { useTranslations } from "next-intl";
 import { Loader2, Unlink } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { ErrorMessage } from "@/components/common/error-message";
-import { Text } from "@/components/common/typography";
+} from "@/shared/components/ui/card";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { Text } from "@/shared/components/common/typography";
 import { OAuthButtons } from "@/features/auth/components/oauth-buttons";
 import type { OAuthProvider } from "@/features/auth/types";
 import { useConnectedAccounts } from "../hooks/use-connected-accounts";

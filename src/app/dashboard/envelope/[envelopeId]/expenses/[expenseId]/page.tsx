@@ -6,14 +6,19 @@ import { getExpenseById } from "@/features/expenses/data/get-expense-by-id";
 import { DeleteExpenseAlertDialog } from "@/features/expenses/components/delete-expense-alert-dialog";
 import { UpdateExpenseDialog } from "@/features/expenses/components/update-expense-dialog";
 import { ExpenseActionsMenu } from "@/features/expenses/components/expense-actions-menu";
-import { PageHeader } from "@/components/common/page-header";
-import { BackLinkButton } from "@/components/common/back-link-button";
-import { Text } from "@/components/common/typography";
+import { PageHeader } from "@/features/dashboard/components/page-header";
+import { BackLinkButton } from "@/shared/components/common/back-link-button";
+import { Text } from "@/shared/components/common/typography";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { formatDate, formatCalendarDate } from "@/lib/date-helpers";
+import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
+import { formatDate, formatCalendarDate } from "@/shared/utils/date-helpers";
 import {
   Calendar,
   FileText,

@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { RotateCw, TriangleAlert } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/common/typography";
+import { Button } from "@/shared/components/ui/button";
+import { Text } from "@/shared/components/common/typography";
 
 // Catches any render/data error anywhere under /dashboard that doesn't
 // handle it itself - none of these routes had an error boundary before

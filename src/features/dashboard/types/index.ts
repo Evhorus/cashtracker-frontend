@@ -1,4 +1,4 @@
-import type { CurrencyCode } from "@/lib/format-currency";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 
 /**
  * One row of the "Actividad reciente" widget on Resumen - the expense

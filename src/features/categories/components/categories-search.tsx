@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { SearchInput } from "@/components/common/search-input";
+import { SearchInput } from "@/shared/components/common/search-input";
 import { useCategoriesFilter } from "./categories-filter-context";
 
 // Plain local-state search, unlike envelopes-filter.tsx's debounced URL

@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 
 // Mirrors EnvelopeCard's actual shape (icon + title/meta line, status row +
 // bar, 2-column stats, "Ver detalles" row) so there's no layout shift when

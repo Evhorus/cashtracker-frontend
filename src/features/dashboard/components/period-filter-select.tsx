@@ -8,13 +8,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/components/ui/select";
 import {
   formatCalendarDateForApi,
   formatMonthKey,
   getToday,
   parseCalendarDate,
-} from "@/lib/date-helpers";
+} from "@/shared/utils/date-helpers";
 import {
   filterInstancesInRange,
   getPeriodInstances,
@@ -23,13 +23,18 @@ import {
   type PeriodInstance,
   type PeriodType,
 } from "@/features/dashboard/lib/period-ranges";
-import type { SupportedLocale } from "@/i18n/config";
+import type { SupportedLocale } from "@/shared/config/i18n/config";
 
 const ALL_VALUE = "all";
 const YEAR_VALUE = "year";
 type SelectedType = typeof ALL_VALUE | typeof YEAR_VALUE | PeriodType;
 
-const PERIOD_TYPES: PeriodType[] = ["semester", "fourMonth", "quarter", "month"];
+const PERIOD_TYPES: PeriodType[] = [
+  "semester",
+  "fourMonth",
+  "quarter",
+  "month",
+];
 
 interface PeriodFilterSelectProps {
   years: number[];
@@ -179,9 +184,8 @@ export const PeriodFilterSelect = ({
     } else {
       const candidates = getInstancesForType(value as PeriodType);
       const defaultInstance =
-        candidates.find(
-          (i) => i.startDate <= anchor && anchor <= i.endDate,
-        ) ?? candidates[candidates.length - 1];
+        candidates.find((i) => i.startDate <= anchor && anchor <= i.endDate) ??
+        candidates[candidates.length - 1];
       if (defaultInstance) {
         params.set("period", value);
         params.set("periodValue", defaultInstance.value);
@@ -212,7 +216,9 @@ export const PeriodFilterSelect = ({
   }
 
   const instanceValue =
-    selectedType === YEAR_VALUE ? String(selectedYear ?? "") : (periodValue ?? "");
+    selectedType === YEAR_VALUE
+      ? String(selectedYear ?? "")
+      : (periodValue ?? "");
 
   // Both instance selects (Año's year list, and a period type's own
   // instance list) are the same control - one value, one label - just
@@ -229,7 +235,8 @@ export const PeriodFilterSelect = ({
           label: instanceLabel(instance, locale),
         }));
   const selectedInstanceLabel =
-    instanceOptions.find((option) => option.value === instanceValue)?.label ?? "";
+    instanceOptions.find((option) => option.value === instanceValue)?.label ??
+    "";
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -318,7 +325,10 @@ function resolveAnchorDate(startDate?: string, selectedYear?: number): string {
  * multi-month one - reuses the same month-key formatter the monthly
  * chart's axis labels already use, instead of inventing a new date
  * format just for this list. */
-function instanceLabel(instance: PeriodInstance, locale: SupportedLocale): string {
+function instanceLabel(
+  instance: PeriodInstance,
+  locale: SupportedLocale,
+): string {
   if (instance.startMonthKey === instance.endMonthKey) {
     return formatMonthKey(instance.startMonthKey, locale, true);
   }

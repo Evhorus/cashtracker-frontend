@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
-import { PageHeader } from "@/components/common/page-header";
+import { PageHeader } from "@/features/dashboard/components/page-header";
 import { getCategoryUsage } from "@/features/categories/data/get-category-usage";
 import { CategoriesSection } from "@/features/categories/components/categories-section";
 import { CategoriesFilterProvider } from "@/features/categories/components/categories-filter-context";

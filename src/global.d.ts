@@ -1,5 +1,5 @@
-import type { SupportedLocale } from "@/i18n/config";
-import type { Messages } from "@/i18n/messages";
+import type { SupportedLocale } from "@/shared/config/i18n/config";
+import type { Messages } from "@/shared/config/i18n/messages";
 
 /**
  * Types every `t("...")` call against the Spanish catalogue, which is

@@ -1,6 +1,6 @@
-import { PageHeaderSkeleton } from "@/components/common/page-header-skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { PageHeaderSkeleton } from "@/features/dashboard/components/page-header-skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 
 // Mirrors AccountView's layout (a Select on mobile, a horizontal top-tab
 // row on desktop, above a content column, full page width) so nothing

@@ -8,8 +8,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { CardHoverActions } from "@/components/common/card-hover-actions";
+} from "@/shared/components/ui/table";
+import { CardHoverActions } from "@/shared/components/common/card-hover-actions";
 import { CategoryIconBadge } from "./category-icon-badge";
 import { UpdateCategoryDialog } from "./update-category-dialog";
 import { DeleteCategoryAlertDialog } from "./delete-category-alert-dialog";

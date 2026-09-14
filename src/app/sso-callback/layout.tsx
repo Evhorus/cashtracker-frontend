@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { getClerkLocalization } from "@/i18n/clerk-localization";
+import { getClerkLocalization } from "@/shared/config/i18n/clerk-localization";
 
 // Scoped ClerkProvider, same reasoning as (auth)/layout.tsx and
 // dashboard/layout.tsx. This route is intentionally its own top-level

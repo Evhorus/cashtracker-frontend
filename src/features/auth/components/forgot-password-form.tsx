@@ -6,10 +6,10 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
-import { SubmitButton } from "@/components/common/submit-button";
-import { ErrorMessage } from "@/components/common/error-message";
-import { FormInput } from "@/components/common/form-input";
-import { OtpInput } from "@/components/common/otp-input";
+import { SubmitButton } from "@/shared/components/common/submit-button";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { FormInput } from "@/shared/components/common/form-input";
+import { OtpInput } from "@/shared/components/common/otp-input";
 import {
   Card,
   CardContent,
@@ -17,8 +17,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+} from "@/shared/components/ui/card";
+import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
 import { useForgotPassword } from "../hooks/use-forgot-password";
 import {
   type CodeFormValues,

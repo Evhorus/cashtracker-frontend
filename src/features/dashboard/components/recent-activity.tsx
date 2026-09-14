@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { formatCalendarDateShort } from "@/lib/date-helpers";
-import { cn } from "@/lib/utils";
-import { Heading } from "@/components/common/typography";
+import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
+import { formatCalendarDateShort } from "@/shared/utils/date-helpers";
+import { cn } from "@/shared/lib/utils";
+import { Heading } from "@/shared/components/common/typography";
 import type { DashboardRecentExpense } from "../types";
 
 interface RecentActivityProps {

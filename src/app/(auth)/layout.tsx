@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { ChevronLeft } from "lucide-react";
 import { ClerkProvider } from "@clerk/nextjs";
-import { getClerkLocalization } from "@/i18n/clerk-localization";
+import { getClerkLocalization } from "@/shared/config/i18n/clerk-localization";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";

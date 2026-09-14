@@ -9,8 +9,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { type CurrencyCode } from "@/lib/format-currency";
+} from "@/shared/components/ui/select";
+import { type CurrencyCode } from "@/shared/utils/format-currency";
 
 interface CurrencyFilterSelectProps {
   currencies: CurrencyCode[];

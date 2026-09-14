@@ -7,7 +7,7 @@ import {
   isSupportedLocale,
   LOCALE_COOKIE,
   type SupportedLocale,
-} from "@/i18n/config";
+} from "@/shared/config/i18n/config";
 
 /**
  * Writes the locale cookie. A Server Action rather than a client-side

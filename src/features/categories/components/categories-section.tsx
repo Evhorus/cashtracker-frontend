@@ -1,16 +1,16 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { SearchX } from "lucide-react";
-import { EmptyState } from "@/components/common/empty-state";
+import { EmptyState } from "@/shared/components/common/empty-state";
 import { CategoriesTypeFilter } from "./categories-type-filter";
-import { ListFilterBar } from "@/components/common/list-filter-bar";
-import { useCategories } from "@/providers/categories-provider";
+import { ListFilterBar } from "@/shared/components/common/list-filter-bar";
+import { useCategories } from "@/features/categories/providers/categories-provider";
 import { resolveIcon } from "../lib/icon-registry";
 import { CategoryCard } from "./category-card";
 import { CategoriesTable } from "./categories-table";
 import { CategoriesSearch } from "./categories-search";
 import { useCategoriesFilter } from "./categories-filter-context";
-import { Text } from "@/components/common/typography";
+import { Text } from "@/shared/components/common/typography";
 
 interface CategoriesSectionProps {
   /** Per-category envelope count, keyed by CategoryDef.id - computed in

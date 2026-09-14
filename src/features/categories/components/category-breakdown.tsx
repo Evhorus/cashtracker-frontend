@@ -4,9 +4,9 @@ import {
   CURRENCY_MAP,
   formatCurrency,
   type CurrencyCode,
-} from "@/lib/format-currency";
+} from "@/shared/utils/format-currency";
 import { resolveIcon } from "../lib/icon-registry";
-import { Text } from "@/components/common/typography";
+import { Text } from "@/shared/components/common/typography";
 import type { DashboardCategoryBreakdownRow } from "@/features/dashboard/schemas/dashboard.schema";
 
 interface CategoryBreakdownProps {

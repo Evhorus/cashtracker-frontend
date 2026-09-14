@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { ApiError } from "@/lib/api-client";
+import { ApiError } from "@/shared/lib/api-client";
 import { ExpensesService } from "@/features/expenses/services/expenses.service";
 
 /**

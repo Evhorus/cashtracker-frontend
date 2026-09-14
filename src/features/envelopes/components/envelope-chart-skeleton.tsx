@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 // Mirrors EnvelopeChart's own layout (no Card wrapper - it's embedded
 // inside the envelope detail page's summary panel), so swapping between

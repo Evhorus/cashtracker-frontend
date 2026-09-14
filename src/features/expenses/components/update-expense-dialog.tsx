@@ -2,15 +2,15 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Edit } from "lucide-react";
-import { ResponsiveFormSheet } from "@/components/common/responsive-form-sheet";
-import { CardActionButton } from "@/components/common/card-action-button";
-import { useActionDialog } from "@/hooks/useActionDialog";
+import { ResponsiveFormSheet } from "@/shared/components/common/responsive-form-sheet";
+import { CardActionButton } from "@/shared/components/common/card-action-button";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { ExpenseForm } from "./expense-form";
 import { Expense } from "@/features/expenses/types";
 import { updateExpenseAction } from "@/features/expenses/actions/update-expense.action";
 import { ExpenseFormValues } from "@/features/expenses/schemas/expense.schema";
 import { ExpenseMapper } from "@/features/expenses/mappers/expense.mapper";
-import type { CurrencyCode } from "@/lib/format-currency";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 
 interface UpdateExpenseDialogProps {
   envelopeId: string;

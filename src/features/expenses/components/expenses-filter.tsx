@@ -4,24 +4,24 @@ import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarArrowDown, CalendarArrowUp } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import { useTranslations } from "next-intl";
 
-import { SearchInput } from "@/components/common/search-input";
-import { useDebouncedSearchParam } from "@/hooks/use-debounced-search-param";
+import { SearchInput } from "@/shared/components/common/search-input";
+import { useDebouncedSearchParam } from "@/shared/hooks/use-debounced-search-param";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/shared/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/components/ui/select";
 import {
   EXPENSES_MAX_PAGE_SIZE,
   EXPENSES_DEFAULT_PAGE_SIZE,

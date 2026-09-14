@@ -12,9 +12,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { CardActionButton } from "@/components/common/card-action-button";
-import { useActionDialog } from "@/hooks/useActionDialog";
+} from "@/shared/components/ui/alert-dialog";
+import { CardActionButton } from "@/shared/components/common/card-action-button";
+import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { deleteCategoryAction } from "@/features/categories/actions/delete-category.action";
 
 interface DeleteCategoryAlertDialogProps {

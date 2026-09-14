@@ -1,4 +1,4 @@
-import { fetchApi } from "@/lib/api-client";
+import { fetchApi } from "@/shared/lib/api-client";
 import {
   DashboardCategoryBreakdownAPIResponseSchema,
   DashboardEnvelopeBreakdownAPIResponseSchema,

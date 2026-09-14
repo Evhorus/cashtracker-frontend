@@ -6,10 +6,10 @@ import { TriangleAlert, Wallet } from "lucide-react";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getRecentExpenses } from "@/features/dashboard/data/get-recent-expenses";
 import { getEnvelopes } from "@/features/envelopes/data/get-envelopes";
-import { HeroBalanceCard } from "@/components/common/hero-balance-card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { EmptyState } from "@/components/common/empty-state";
-import { Heading } from "@/components/common/typography";
+import { HeroBalanceCard } from "@/features/dashboard/components/hero-balance-card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { EmptyState } from "@/shared/components/common/empty-state";
+import { Heading } from "@/shared/components/common/typography";
 import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-envelope-dialog";
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { AlertEnvelopes } from "@/features/dashboard/components/alert-envelopes";
@@ -18,9 +18,9 @@ import {
   getAlertEnvelopes,
   getMonthOverMonthDelta,
 } from "@/features/dashboard/lib/dashboard-summary";
-import { formatDate } from "@/lib/date-helpers";
-import { type CurrencyCode } from "@/lib/format-currency";
-import { cn } from "@/lib/utils";
+import { formatDate } from "@/shared/utils/date-helpers";
+import { type CurrencyCode } from "@/shared/utils/format-currency";
+import { cn } from "@/shared/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("dashboard");

@@ -18,13 +18,13 @@
         "name": "next"
       }
     ],
+    // One alias, deliberately. The five specific ones that used to sit
+    // here abbreviated paths that no longer exist, and keeping them
+    // would have let a stale "@/lib/..." import resolve to something
+    // during the move to src/shared - which is exactly the failure this
+    // needed to surface. vitest.config.mts already aliases only "@".
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/features/*": ["./src/features/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/providers/*": ["./src/providers/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

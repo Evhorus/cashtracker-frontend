@@ -3,16 +3,16 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Laptop, Loader2, LogOut, Smartphone } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { ErrorMessage } from "@/components/common/error-message";
-import { formatRelativeTime } from "@/lib/date-helpers";
+} from "@/shared/components/ui/card";
+import { ErrorMessage } from "@/shared/components/common/error-message";
+import { formatRelativeTime } from "@/shared/utils/date-helpers";
 import { useSessions } from "../hooks/use-sessions";
 
 export function SessionsSection() {

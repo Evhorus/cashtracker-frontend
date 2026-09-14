@@ -1,9 +1,9 @@
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { Expense } from "@/features/expenses/types";
-import { formatCalendarDate } from "@/lib/date-helpers";
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import type { CurrencyCode } from "@/lib/format-currency";
+import { formatCalendarDate } from "@/shared/utils/date-helpers";
+import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
+import type { CurrencyCode } from "@/shared/utils/format-currency";
 import {
   Table,
   TableBody,
@@ -11,8 +11,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { CardHoverActions } from "@/components/common/card-hover-actions";
+} from "@/shared/components/ui/table";
+import { CardHoverActions } from "@/shared/components/common/card-hover-actions";
 import { UpdateExpenseDialog } from "./update-expense-dialog";
 import { DeleteExpenseAlertDialog } from "./delete-expense-alert-dialog";
 

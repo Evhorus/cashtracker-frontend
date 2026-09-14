@@ -3,8 +3,8 @@ import { Infinity as InfinityIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Envelope } from "@/features/envelopes/types";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
-import { CURRENCY_MAP, formatCurrency } from "@/lib/format-currency";
-import { cn } from "@/lib/utils";
+import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
+import { cn } from "@/shared/lib/utils";
 import {
   CategoryIcon,
   CategoryLabel,
@@ -16,8 +16,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { CardHoverActions } from "@/components/common/card-hover-actions";
+} from "@/shared/components/ui/table";
+import { CardHoverActions } from "@/shared/components/common/card-hover-actions";
 import { UpdateEnvelopeDialog } from "./update-envelope-dialog";
 import { DeleteEnvelopeAlertDialog } from "./delete-envelope-alert-dialog";
 import { EnvelopeStatusBadge } from "./envelope-status-badge";

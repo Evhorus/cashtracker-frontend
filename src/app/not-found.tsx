@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Compass } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/common/typography";
+import { Button } from "@/shared/components/ui/button";
+import { Text } from "@/shared/components/common/typography";
 
 // A real 404, not a redirect. This used to `redirect("/")`, which turned
 // every wrong URL into a silent bounce to the marketing page: the user
