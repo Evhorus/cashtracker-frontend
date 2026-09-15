@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchX } from "lucide-react";
 import { EmptyState } from "@/shared/components/common/empty-state";
@@ -8,6 +9,10 @@ import { useCategories } from "@/features/categories/providers/categories-provid
 import { resolveIcon } from "../lib/icon-registry";
 import { CategoryCard } from "./category-card";
 import { CategoriesTable } from "./categories-table";
+import {
+  DeleteCategoryAlertDialog,
+  type CategoryToDelete,
+} from "./delete-category-alert-dialog";
 import { CategoriesSearch } from "./categories-search";
 import { useCategoriesFilter } from "./categories-filter-context";
 import { Text } from "@/shared/components/common/typography";
@@ -35,6 +40,9 @@ export function CategoriesSection({
   actions,
 }: CategoriesSectionProps) {
   const t = useTranslations("categories");
+  // One dialog for the whole list, owned here. A per-row dialog lost its
+  // own success toast - see delete-category-alert-dialog.tsx.
+  const [toDelete, setToDelete] = useState<CategoryToDelete | null>(null);
   const categories = useCategories();
   const { search, type } = useCategoriesFilter();
 
@@ -98,15 +106,24 @@ export function CategoriesSection({
                 category={category}
                 count={categoryCounts[category.id] ?? 0}
                 Icon={resolveIcon(category.icon)}
+                onDelete={setToDelete}
               />
             ))}
           </div>
           <CategoriesTable
             categories={filtered}
             categoryCounts={categoryCounts}
+            onDelete={setToDelete}
           />
         </>
       )}
+
+      <DeleteCategoryAlertDialog
+        category={toDelete}
+        onOpenChange={(open) => {
+          if (!open) setToDelete(null);
+        }}
+      />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { Loader2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,52 +10,60 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/shared/components/ui/alert-dialog";
-import { CardActionButton } from "@/shared/components/common/card-action-button";
 import { useActionDialog } from "@/shared/hooks/useActionDialog";
 import { deleteCategoryAction } from "@/features/categories/actions/delete-category.action";
 
-interface DeleteCategoryAlertDialogProps {
+export interface CategoryToDelete {
   id: string;
   label: string;
 }
 
-// Simpler than DeleteEnvelopeAlertDialog (no "type the name to confirm")
-// - deleting a category doesn't cascade-delete anything (envelope.category
-// stays free text; existing envelopes just fall back to the neutral look,
-// same as any unrecognized category text already does).
+interface DeleteCategoryAlertDialogProps {
+  /** The category awaiting confirmation, or null when nothing is. */
+  category: CategoryToDelete | null;
+  onOpenChange: (open: boolean) => void;
+}
+
+/**
+ * Controlled, and rendered ONCE by CategoriesSection rather than per
+ * row - which is a correctness requirement, not a tidiness one.
+ *
+ * It used to render inside each row, owning its own trigger and open
+ * state. Deleting then produced no success toast at all: the row
+ * unmounts when the list re-renders, and useActionState delivers its
+ * result to a component that is no longer there, so the effect in
+ * useActionWithToast never ran with the success state. Instrumented, it
+ * only ever saw {"errors":[],"success":""} - never an error either, so
+ * nothing looked broken. The delete worked; it just never said so.
+ *
+ * CategoriesSection stays mounted across the refresh, so the toast
+ * survives. The rows now only ask for the dialog to open.
+ */
 export const DeleteCategoryAlertDialog = ({
-  id,
-  label,
+  category,
+  onOpenChange,
 }: DeleteCategoryAlertDialogProps) => {
   const t = useTranslations("categories");
   const tCommon = useTranslations("common");
-  const [open, setOpen] = useState(false);
+
   const { dispatch, isPending } = useActionDialog(
     deleteCategoryAction,
     { errors: [], success: "" },
-    { setOpen },
+    { setOpen: onOpenChange },
   );
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger
-        render={
-          <CardActionButton
-            icon={Trash2}
-            label={t("deleteAria")}
-            tone="destructive"
-          />
-        }
-      />
+    <AlertDialog open={category !== null} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
           <AlertDialogDescription>
             {t.rich("deleteDialog.description", {
               name: () => (
-                <span className="font-medium text-foreground">{label}</span>
+                <span className="font-medium text-foreground">
+                  {category?.label}
+                </span>
               ),
             })}
           </AlertDialogDescription>
@@ -67,7 +74,7 @@ export const DeleteCategoryAlertDialog = ({
             className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90 sm:w-auto"
             onClick={(e) => {
               e.preventDefault();
-              dispatch(id);
+              if (category) dispatch(category.id);
             }}
             disabled={isPending}
           >

@@ -4,7 +4,8 @@ import { Card, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import type { Category } from "../types";
 import { CategoryIconBadge } from "./category-icon-badge";
 import { UpdateCategoryDialog } from "./update-category-dialog";
-import { DeleteCategoryAlertDialog } from "./delete-category-alert-dialog";
+import { DeleteCategoryButton } from "./delete-category-button";
+import type { CategoryToDelete } from "./delete-category-alert-dialog";
 
 interface CategoryCardProps {
   category: Category;
@@ -12,6 +13,7 @@ interface CategoryCardProps {
   /** Already resolved by the caller's .map() (categories-section.tsx) -
    * see category-icon-badge.tsx for why it's never resolved in here. */
   Icon: LucideIcon;
+  onDelete: (category: CategoryToDelete) => void;
 }
 
 // Mobile-only (see categories-section.tsx). Same visual language as
@@ -20,7 +22,12 @@ interface CategoryCardProps {
 // title - just without a progress bar/amount, since a category has
 // neither. The default/custom chip mirrors
 // EnvelopeCard's always-shown currency chip.
-export function CategoryCard({ category, count, Icon }: CategoryCardProps) {
+export function CategoryCard({
+  category,
+  count,
+  Icon,
+  onDelete,
+}: CategoryCardProps) {
   const t = useTranslations("categories");
   return (
     <Card className="group relative h-full overflow-hidden border-border/60 bg-card/50 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-card hover:shadow-lg md:hidden">
@@ -59,9 +66,10 @@ export function CategoryCard({ category, count, Icon }: CategoryCardProps) {
         {!category.isDefault && (
           <div className="flex shrink-0 items-center">
             <UpdateCategoryDialog category={category} />
-            <DeleteCategoryAlertDialog
-              id={category.id}
-              label={category.label}
+            <DeleteCategoryButton
+              onClick={() =>
+                onDelete({ id: category.id, label: category.label })
+              }
             />
           </div>
         )}
