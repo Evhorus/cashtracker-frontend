@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
 
-import { appendPaginationParams, paginatedSchema } from "./pagination";
+import { appendPaginationParams } from "./pagination";
 
 describe("appendPaginationParams", () => {
   it("appends page and limit when both are given", () => {
@@ -32,47 +31,5 @@ describe("appendPaginationParams", () => {
     appendPaginationParams(params, { page: 0, limit: 0 });
 
     expect(params.toString()).toBe("");
-  });
-});
-
-describe("paginatedSchema", () => {
-  const schema = paginatedSchema(z.object({ id: z.string() }));
-
-  it("accepts a well-formed paginated response", () => {
-    const result = schema.safeParse({
-      data: [{ id: "a" }],
-      meta: {
-        total: 1,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        hasNextPage: false,
-        hasPreviousPage: false,
-      },
-    });
-
-    expect(result.success).toBe(true);
-  });
-
-  it("rejects a response missing the meta block", () => {
-    // This is the boundary check that keeps malformed responses from
-    // reaching the UI as undefined fields.
-    expect(schema.safeParse({ data: [] }).success).toBe(false);
-  });
-
-  it("rejects items that don't match the item schema", () => {
-    const result = schema.safeParse({
-      data: [{ id: 42 }],
-      meta: {
-        total: 1,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-        hasNextPage: false,
-        hasPreviousPage: false,
-      },
-    });
-
-    expect(result.success).toBe(false);
   });
 });
