@@ -109,7 +109,7 @@ src/
 `@/features/*`. That single sentence is the rule, and it is checkable at a glance.
 
 Full conventions — form patterns, error handling, cache invalidation, i18n rules — are in
-[`CLAUDE.md`](./CLAUDE.md).
+[`AGENTS.md`](./AGENTS.md).
 
 ## How a change lands
 

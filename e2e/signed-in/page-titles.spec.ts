@@ -8,7 +8,7 @@ import { expect, test } from "@playwright/test";
  *
  * Read-only: it navigates and reads document.title, nothing else. That
  * matters in this repo, where the local .env points the backend at the
- * production database (see CLAUDE.md), so a spec that created rows
+ * production database (see AGENTS.md), so a spec that created rows
  * would be creating them for real.
  */
 
