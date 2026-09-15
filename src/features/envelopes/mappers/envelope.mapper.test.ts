@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { buildEnvelopeFormSchema } from "../schemas/envelope.schema";
 import type { EnvelopeApi } from "../schemas/envelope.schema";
 import { EnvelopeMapper } from "./envelope.mapper";
+import { MAX_AMOUNT } from "@/shared/lib/validation";
 import type { ValidationTranslator } from "@/shared/lib/validation";
 
 /**
@@ -88,6 +89,33 @@ describe("the spending-limit toggle", () => {
     );
 
     expect(request.amount).toBe(500000);
+  });
+
+  it("accepts an amount exactly at the decimal(12, 2) ceiling", () => {
+    expect(schema.safeParse(form({ amount: String(MAX_AMOUNT) })).success).toBe(
+      true,
+    );
+  });
+
+  it("rejects an amount over the ceiling, on the amount field", () => {
+    // The backend does not bound this: CreateEnvelopeDto has
+    // @IsPositive and @IsNumber but no @Max, so the value reaches a
+    // decimal(12, 2) column and the insert fails as a bare 500. The
+    // form is what has to stop it, with a message on the right field.
+    const result = schema.safeParse(form({ amount: "10000000000" }));
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual(["amount"]);
+    expect(result.error?.issues[0]?.message).toBe("amountTooLarge");
+  });
+
+  it("does not apply the ceiling to an uncapped envelope", () => {
+    // hasLimit false discards the amount entirely, so there is nothing
+    // left to be over a limit.
+    expect(
+      schema.safeParse(form({ hasLimit: false, amount: "10000000000" }))
+        .success,
+    ).toBe(true);
   });
 
   it("keeps cents rather than truncating them", () => {
