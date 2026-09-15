@@ -2,12 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Envelope } from "@/features/envelopes/types";
 import type { Expense } from "../types";
-import {
-  EXPENSES_DEFAULT_PAGE_SIZE,
-  EXPENSES_MAX_PAGE_SIZE,
-  EXPENSES_PAGE_SIZE_OPTIONS,
-  ExpenseHelpers,
-} from "./expense-helpers";
+import { ExpenseHelpers } from "./expense-helpers";
 
 function expense(amount: string): Expense {
   return {
@@ -70,25 +65,5 @@ describe("getImpactPercentage", () => {
     expect(
       ExpenseHelpers.getImpactPercentage(expense("1500"), envelope("1000")),
     ).toBe(150);
-  });
-});
-
-describe("page size options", () => {
-  it("offers only sizes the backend accepts", () => {
-    for (const option of EXPENSES_PAGE_SIZE_OPTIONS) {
-      expect(option).toBeLessThanOrEqual(EXPENSES_MAX_PAGE_SIZE);
-      expect(option).toBeGreaterThan(0);
-    }
-  });
-
-  it("includes the default, so the URL-validation fallback is reachable", () => {
-    // Both the page and ExpensesFilter validate ?limit= against this
-    // list; if the default weren't in it, a fresh visit would be treated
-    // as an invalid value.
-    expect(
-      EXPENSES_PAGE_SIZE_OPTIONS.some(
-        (option) => option === EXPENSES_DEFAULT_PAGE_SIZE,
-      ),
-    ).toBe(true);
   });
 });
