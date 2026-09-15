@@ -37,9 +37,8 @@ async function deleteCategory(
   // Scoped to the alert dialog: its confirm button is labelled just
   // "Eliminar", while the row behind it still has "Eliminar categoría".
   // An unscoped match picks the row and reopens the same dialog.
-  const confirm = page
-    .getByRole("alertdialog")
-    .getByRole("button", { name: /^eliminar$/i });
+  const dialog = page.getByRole("alertdialog");
+  const confirm = dialog.getByRole("button", { name: /^eliminar$/i });
   // Wait for the dialog before clicking it. click() auto-waits for the
   // element, but the alert dialog animates in, and a click that lands
   // mid-animation is dispatched at a element that has not settled -
@@ -47,16 +46,24 @@ async function deleteCategory(
   await expect(confirm).toBeVisible();
   await confirm.click();
 
+  // The dialog closing is what says the Server Action resolved. The row
+  // vanishing does not: an open modal marks the page behind it
+  // aria-hidden, so the row leaves the accessibility tree the moment
+  // the dialog opens - about 800ms before the DELETE is processed.
+  // Measured, polling the API with curl from the click:
+  //
+  //     +190ms  api_deleted=false  rowsMatching=0
+  //     +969ms  api_deleted=true   rowsMatching=0
+  //
+  // An earlier version waited on the row and read the API immediately
+  // after, which is how this suite "proved" a backend stale-read defect
+  // that does not exist.
+  await expect(dialog).toHaveCount(0);
+
   // The row going away, not the toast. A toast is transient by design -
   // asserting it turns a timing difference into a failure about
   // something the test does not care about.
   await expect(row).toHaveCount(0);
-
-  // A second navigation, because the first one after a delete still
-  // serves the old list - see the fixme at the bottom of this file.
-  // Without it a caller that re-reads the page sees the row it just
-  // deleted and concludes the delete failed.
-  await page.goto("/dashboard/categories");
 }
 
 test.afterAll(async ({ browser }) => {
@@ -130,54 +137,30 @@ test("renaming it updates the table", async ({ page }) => {
 test("deleting it removes it from the table", async ({ page }) => {
   await deleteCategory(page, RENAMED);
 
-  // reload(), not goto(): a navigation straight after a delete still
-  // renders the pre-delete list, which is its own defect and has its
-  // own test below. Asserting it here would only be re-reporting that
-  // one from a test about whether delete works at all - and it does.
   await page.goto("/dashboard/categories");
-  await page.reload();
   await onScreen(page.getByPlaceholder(/buscar categoría/i)).fill(RENAMED);
   await expect(page.getByRole("row", { name: nameRe(RENAMED) })).toHaveCount(0);
 });
 
 /**
- * A real defect, and it is in the backend - not in this app's caching,
- * which is where two earlier attempts looked.
+ * That a delete is durable, not just visually applied.
  *
- * Deleting a category updates the page you are on, but for roughly two
- * seconds afterwards the API keeps returning it, so a user who deletes
- * and navigates straight away sees it listed again.
+ * This test spent a while marked fixme against a backend defect that
+ * turned out not to exist. The reproduction behind it waited for the
+ * deleted row to disappear and then read the API, and "row gone" is not
+ * "delete finished" - an open alert dialog makes the page behind it
+ * aria-hidden, so the row leaves the accessibility tree as soon as the
+ * dialog opens, roughly 800ms before the DELETE is processed. Every
+ * "stale read" was a read taken before the delete had happened.
  *
- * Measured, with the frontend taken out of the picture entirely: after
- * the UI delete resolves, calling GET /categories directly against the
- * backend with the same session token returns the deleted category, and
- * stops returning it about 2.5s later. Three runs out of three:
+ * Verified from the other side with plain curl, no JS HTTP client in the
+ * loop: curl DELETE followed by curl GET shows the category gone at
+ * t+0. There is no stale-read window.
  *
- *     BACKEND immediately  status=200 deletedCategoryStillReturned=true
- *     BACKEND after 2.5s   status=200 deletedCategoryStillReturned=false
- *
- * What it is NOT, each ruled out by experiment rather than by reading:
- *
- *   - Not a tag mismatch. CategoriesService.getAll tags
- *     CATEGORY_TAGS.all and delete-category.action invalidates that
- *     exact tag.
- *   - Not a route-level cache. A URL nothing had ever rendered or
- *     prefetched (/dashboard/categories?nocache=<now>) was stale too.
- *   - Not fixable with revalidatePath: adding
- *     revalidatePath("/dashboard", "layout") changed nothing.
- *   - Not Next's Data Cache at all. With cache: "no-store" on that
- *     fetch - no caching anywhere in this app - the first read was
- *     still stale.
- *
- * It is time-based rather than navigation-based: the same unique URL
- * read 2.5s later is correct.
- *
- * Left as fixme because the fix belongs in cashtracker-backend, not
- * here. Nothing this app can do makes a read return data the API is
- * still serving. Remove .fixme once the backend stops doing it - this
- * test is the reproduction from the user's side.
+ * Keeping the test because the guarantee is still worth holding: a
+ * delete has to survive a fresh navigation, not merely close a dialog.
  */
-test.fixme("a deleted category is gone on the very next navigation", async ({
+test("a deleted category is gone on the very next navigation", async ({
   page,
 }) => {
   const doomed = uniqueName("cat-stale");
