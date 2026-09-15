@@ -26,6 +26,7 @@ const RENAMED = `${NAME}-edit`;
 async function deleteCategory(
   page: import("@playwright/test").Page,
   name: string,
+  options?: { expectToast?: boolean },
 ) {
   await page.goto("/dashboard/categories");
   await onScreen(page.getByPlaceholder(/buscar categoría/i)).fill(name);
@@ -45,6 +46,16 @@ async function deleteCategory(
   // the dialog stays open and the row never goes away.
   await expect(confirm).toBeVisible();
   await confirm.click();
+
+  if (options?.expectToast) {
+    // Deleting used to succeed silently: the dialog rendered per row, so
+    // useActionState delivered its result to a component the re-render
+    // had already unmounted and the toast effect never ran. Create and
+    // update announced themselves; delete did not. Asserted only where a
+    // delete is the subject - the cleanup calls must tolerate a row that
+    // is already gone.
+    await expect(page.getByText(/categoría eliminada/i)).toBeVisible();
+  }
 
   // The dialog closing is what says the Server Action resolved. The row
   // vanishing does not: an open modal marks the page behind it
@@ -135,7 +146,7 @@ test("renaming it updates the table", async ({ page }) => {
 });
 
 test("deleting it removes it from the table", async ({ page }) => {
-  await deleteCategory(page, RENAMED);
+  await deleteCategory(page, RENAMED, { expectToast: true });
 
   await page.goto("/dashboard/categories");
   await onScreen(page.getByPlaceholder(/buscar categoría/i)).fill(RENAMED);

@@ -12,11 +12,13 @@ import {
 import { CardHoverActions } from "@/shared/components/common/card-hover-actions";
 import { CategoryIconBadge } from "./category-icon-badge";
 import { UpdateCategoryDialog } from "./update-category-dialog";
-import { DeleteCategoryAlertDialog } from "./delete-category-alert-dialog";
+import { DeleteCategoryButton } from "./delete-category-button";
+import type { CategoryToDelete } from "./delete-category-alert-dialog";
 
 interface CategoriesTableProps {
   categories: Category[];
   categoryCounts: Record<string, number>;
+  onDelete: (category: CategoryToDelete) => void;
 }
 
 // Desktop-only (see categories-section.tsx - the card list still covers
@@ -30,6 +32,7 @@ interface CategoriesTableProps {
 export function CategoriesTable({
   categories,
   categoryCounts,
+  onDelete,
 }: CategoriesTableProps) {
   const t = useTranslations("categories");
   return (
@@ -89,9 +92,13 @@ export function CategoriesTable({
                   {!category.isDefault && (
                     <CardHoverActions className="justify-end" alwaysVisible>
                       <UpdateCategoryDialog category={category} />
-                      <DeleteCategoryAlertDialog
-                        id={category.id}
-                        label={category.label}
+                      <DeleteCategoryButton
+                        onClick={() =>
+                          onDelete({
+                            id: category.id,
+                            label: category.label,
+                          })
+                        }
                       />
                     </CardHoverActions>
                   )}
