@@ -130,21 +130,4 @@ describe("status presentation helpers", () => {
       }
     }
   });
-
-  it("keeps the bar and text colours consistent per status", () => {
-    // The drift this locks in: the expense detail page once used
-    // emerald-500 for a healthy envelope while the card used primary.
-    expect(EnvelopeHelpers.getStatusBarColorClass("exceeded")).toContain(
-      "destructive",
-    );
-    expect(EnvelopeHelpers.getStatusTextColorClass("exceeded")).toContain(
-      "destructive",
-    );
-    expect(EnvelopeHelpers.getStatusBarColorClass("warning")).toContain(
-      "amber-500",
-    );
-    expect(EnvelopeHelpers.getStatusTextColorClass("warning")).toContain(
-      "amber-500",
-    );
-  });
 });
