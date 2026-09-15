@@ -1,142 +1,149 @@
 # CashTracker Frontend
 
-Proyecto [Next.js](https://nextjs.org) creado con [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Personal finance app built with [Next.js](https://nextjs.org) 16 (App Router), React 19 and
+TypeScript. Users organise spending into **envelopes**, record **expenses** against them, and
+classify them with **categories**.
 
-## Requisitos Previos
+Ships in Spanish and English.
 
-- Node.js 20.x o superior
-- npm, yarn, pnpm o bun
+## Requirements
 
-## Instalación
+- **Node.js 22.x** (`>=22 <25`)
+- **pnpm 11.x** — the package manager is pinned in `package.json`, and the lockfile is
+  `pnpm-lock.yaml`. Other package managers will resolve a different dependency tree, and CI
+  installs with `--frozen-lockfile`.
+- A running [cashtracker-backend](https://github.com/Evhorus/cashtracker-backend) on port 4000
+- A [Clerk](https://clerk.com) development instance
 
-1. Clona el repositorio:
+## Setup
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/Evhorus/cashtracker-frontend.git
 cd cashtracker-frontend
-```
-
-2. Instala las dependencias:
-
-```bash
-npm install
-# o
-yarn install
-# o
 pnpm install
-# o
-bun install
+cp .env.template .env      # then fill it in - see below
+pnpm dev                   # http://localhost:4001
 ```
 
-3. Configura las variables de entorno:
-   - Crea un archivo `.env` en la raíz del proyecto (tomar como referencia el env.template)
-   - Agrega las variables necesarias (Clerk API keys, etc.)
+### Environment
 
-## Ejecutar el Proyecto
+`.env.template` lists every variable. They are validated at boot by
+`src/shared/config/env.server.ts`, so an incomplete `.env` fails immediately with a message
+naming the variable rather than erroring later on some request.
 
-### Modo Desarrollo
+| Variable                                       | What it is                                                                                               |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `API_URL`                                      | Backend base URL, e.g. `http://localhost:4000/api`                                                       |
+| `NEXT_PUBLIC_URL`                              | This app's own origin — what `sitemap.xml` and `robots.txt` advertise                                    |
+| `CLERK_SECRET_KEY`                             | Clerk secret key (`sk_test_…`)                                                                           |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`            | Clerk publishable key (`pk_test_…`)                                                                      |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL`                | `/sign-in` — **not optional**: without it Clerk sends users to its own hosted page instead of this app's |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL` | Where a user lands after signing in                                                                      |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL` | Where a user lands after signing up                                                                      |
+| `E2E_CLERK_USER_EMAIL`                         | Only for the signed-in e2e suite — point it at a dedicated test user                                     |
 
-Inicia el servidor de desarrollo:
+## Commands
 
-```bash
-npm run dev
-# o
-yarn dev
-# o
-pnpm dev
-# o
-bun dev
-```
+| Command                             | What it does                                                    |
+| ----------------------------------- | --------------------------------------------------------------- |
+| `pnpm dev`                          | Dev server with Turbopack on **port 4001**                      |
+| `pnpm build` / `pnpm start`         | Production build / serve                                        |
+| `pnpm typecheck`                    | `tsc --noEmit`                                                  |
+| `pnpm lint`                         | ESLint                                                          |
+| `pnpm format` / `pnpm format:check` | Prettier write / verify                                         |
+| `pnpm test` / `pnpm test:watch`     | Vitest                                                          |
+| `pnpm test:e2e`                     | Playwright, signed-out suite                                    |
+| `pnpm test:e2e:signed-in`           | Playwright, signed-in suite (needs the backend and a test user) |
 
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación.
+## Tests
 
-La página se actualiza automáticamente al editar los archivos.
+**Vitest** covers logic that would be expensive to get wrong — money formatting, calendar
+dates, pagination, status derivation, the price input's typing rules, and that the two
+message catalogues agree. It runs in about two seconds and is part of CI.
 
-### Compilar para Producción
+**Playwright** covers what only a browser can answer, split by what each suite costs to run:
 
-Genera una versión optimizada para producción:
+- **`e2e/signed-out/`** (`pnpm test:e2e`) — auth redirects, the locale cookie, page titles and
+  the sign-in/sign-up forms. Needs Clerk keys and nothing else, so **this suite runs in CI on
+  every pull request**.
+- **`e2e/signed-in/`** (`pnpm test:e2e:signed-in`) — envelope, expense and category
+  lifecycles, plus form validation. Signs in once via a Clerk ticket (no password stored
+  anywhere) and reuses the session. **These tests create and delete real rows**, so point
+  `E2E_CLERK_USER_EMAIL` at a dedicated test account, never at production.
 
-```bash
-npm run build
-# o
-yarn build
-# o
-pnpm build
-# o
-bun build
-```
+Which folder a spec lives in decides which suite runs it — both projects match by glob, so a
+spec is never silently left out.
 
-### Ejecutar en Producción
+## Project structure
 
-Después de compilar, inicia el servidor de producción:
-
-```bash
-npm start
-# o
-yarn start
-# o
-pnpm start
-# o
-bun start
-```
-
-## Estructura del Proyecto
-
-La app sigue una arquitectura orientada a dominios (domain-driven). En vez de mantener aquí un
-árbol literal de carpetas (que se desactualiza cada vez que se agrega una feature), esto es el
-patrón que se replica por cada dominio de negocio — hoy `envelopes`, `expenses`, `dashboard`,
-`auth`, y así con lo que se agregue después:
+Domain-driven. Rather than a literal tree that goes stale with every feature, this is the
+pattern each business domain repeats — today `envelopes`, `expenses`, `categories`,
+`dashboard`, `auth`, `account`, `home`, `locale`:
 
 ```
 src/
-├── app/                    # Next.js App Router: rutas, layouts, route groups
-│   ├── (auth)/             # Rutas públicas de autenticación
-│   ├── (home)/             # Landing page pública
-│   └── dashboard/          # Rutas protegidas (auth.protect() a nivel de layout/page)
+├── app/                    # App Router: routes, layouts, route groups
+│   ├── (auth)/             # Public authentication routes
+│   ├── (home)/             # Public landing page
+│   └── dashboard/          # Protected routes (auth.protect() per layout/page)
 ├── features/
-│   └── <dominio>/          # Un módulo por dominio de negocio, mismo patrón siempre:
-│       ├── actions/        # Server Actions (orquestación)
-│       ├── components/     # Componentes propios del dominio
-│       ├── schemas/        # Validación con Zod
-│       ├── services/       # Llamadas a la API / lógica externa
-│       │                   #   (features como `auth`, atadas a un provider con hooks
-│       │                   #   de React en vez de funciones planas, usan hooks/ aquí)
-│       ├── mappers/        # Transformación API <-> modelo de dominio
-│       └── types/          # Tipos TypeScript del dominio
-├── components/
-│   ├── ui/                 # Primitivas base estilo shadcn (sobre Base UI)
-│   └── common/             # Componentes compuestos reutilizables entre features
-├── hooks/                  # Hooks compartidos
-├── lib/                    # Utilidades generales (cliente API, fetch autenticado, formatos...)
-├── providers/              # Context providers de la app (tema, etc.)
-└── proxy.ts                # Middleware de Clerk (solo routing, la protección de sesión
-                             # vive en cada layout/page, no aquí)
+│   └── <domain>/           # One module per business domain, same shape throughout:
+│       ├── actions/        # Server Actions (orchestration)
+│       ├── components/     # Domain-specific components
+│       ├── data/           # server-only read functions for SSR
+│       ├── schemas/        # Zod validation
+│       ├── services/       # API calls and external logic
+│       │                   #   (auth uses hooks/ instead: its provider exposes
+│       │                   #   React hooks rather than plain async functions)
+│       ├── mappers/        # API <-> domain model transformation
+│       ├── messages/       # This domain's es.json / en.json
+│       └── types/          # Domain TypeScript types
+└── shared/                 # Everything belonging to no domain.
+    ├── components/ui/      #   shadcn-style primitives, built on Base UI
+    ├── components/common/  #   Composition primitives with no domain knowledge
+    ├── config/             #   env.server.ts and i18n
+    ├── hooks/  lib/  utils/  providers/
 ```
 
-Detalle completo de convenciones (qué va en cada carpeta, patrones de forms, manejo de
-errores, etc.) en [`CLAUDE.md`](./CLAUDE.md).
+**No domain word is allowed under `src/shared/`** — no `Envelope` type, no import from
+`@/features/*`. That single sentence is the rule, and it is checkable at a glance.
 
-## Tecnologías
+Full conventions — form patterns, error handling, cache invalidation, i18n rules — are in
+[`CLAUDE.md`](./CLAUDE.md).
 
-- **Framework:** Next.js 16
-- **React:** 19
-- **Autenticación:** Clerk
-- **UI Components:** Base UI (vía shadcn/ui)
-- **Estilos:** Tailwind CSS
-- **Validación:** Zod
-- **Forms:** React Hook Form
-- **Gráficas:** Recharts
-- **Internacionalización:** @clerk/localizations
-- **Utilidades de fechas:** date-fns
+## How a change lands
 
-## Recursos
+`main` is protected and direct pushes are rejected, including for admins:
 
-- [Documentación de Next.js](https://nextjs.org/docs)
-- [Tutorial de Next.js](https://nextjs.org/learn)
-- [Documentación de Clerk](https://clerk.com/docs)
+```bash
+git checkout -b type/short-name
+git push -u origin type/short-name
+gh pr create --fill
+gh pr merge --squash --delete-branch    # once `verify` is green
+```
 
-## Deploy
+Husky runs typecheck, lint, format:check and Vitest before each commit, and commitlint checks
+the message against Conventional Commits. CI runs the same set — a local hook is skippable
+with `--no-verify`, so CI is the gate that counts.
 
-La forma más fácil de desplegar tu aplicación Next.js es usando [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+Dependabot opens grouped minor/patch updates weekly and merges them itself once `verify`
+passes; majors wait for a human.
 
-Consulta la [documentación de deployment de Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
+## Tech
+
+|               |                                                                           |
+| ------------- | ------------------------------------------------------------------------- |
+| Framework     | Next.js 16 (App Router), React 19                                         |
+| Auth          | Clerk (`@clerk/nextjs` v7), custom UI on Clerk's hooks                    |
+| UI            | Base UI via shadcn/ui, Tailwind CSS 4                                     |
+| Validation    | Zod 4 + React Hook Form 7                                                 |
+| i18n          | next-intl 4 — locale is a cookie, so URLs are identical in both languages |
+| Charts        | Recharts 3                                                                |
+| Dates         | date-fns 4                                                                |
+| Notifications | Sonner 2                                                                  |
+| Tests         | Vitest, Playwright                                                        |
+
+## Deployment
+
+Deployed on [Vercel](https://vercel.com). Every push to a branch gets its own preview
+deployment; every merge to `main` deploys to production.
