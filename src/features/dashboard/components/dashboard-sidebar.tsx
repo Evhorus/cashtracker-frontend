@@ -28,7 +28,7 @@ export function DashboardSidebar() {
   const { isLoaded, user } = useAccountUser();
 
   return (
-    <aside className="hidden h-full w-62 shrink-0 flex-col border-r border-border/60 bg-card/30 p-4 md:flex">
+    <aside className="hidden h-full w-62 shrink-0 flex-col border-r border-border/60 bg-card/30 p-4 md:flex print:hidden">
       {/* Logo only. The theme and language toggles moved to
           CustomHeader - they are app-wide chrome, and three controls in
           a 248px row was tight. */}

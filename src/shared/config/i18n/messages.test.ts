@@ -112,6 +112,8 @@ describe("message catalogues", () => {
       "locale.label",
       "auth.oauth.google",
       "auth.oauth.facebook",
+      // Only placeholders and an arrow.
+      "expensesReport.summary.range",
     ]);
 
     const spanish = leaves(es);

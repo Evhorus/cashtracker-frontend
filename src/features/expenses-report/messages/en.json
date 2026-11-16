@@ -1,0 +1,58 @@
+{
+  "expensesReport": {
+    "title": "Expenses",
+    "subtitle": "All your expenses, across every envelope, by payment method",
+    "statisticsLink": "See expenses by payment method",
+    "filters": {
+      "methods": "Payment methods",
+      "allMethods": "All",
+      "noPaymentMethod": "No payment method",
+      "period": "Period",
+      "periods": {
+        "month": "Calendar month",
+        "cycle": "Statement period",
+        "custom": "Custom range"
+      },
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "from": "From",
+      "to": "To",
+      "view": "View",
+      "views": {
+        "single": "As one list",
+        "split": "Split by method"
+      }
+    },
+    "summary": {
+      "total": "Total",
+      "count": "{count, plural, one {# expense} other {# expenses}}",
+      "cycleNote": "Each card with a cut-off day uses its own statement period; everything else uses the calendar month.",
+      "range": "{start} → {end}"
+    },
+    "table": {
+      "date": "Date",
+      "expense": "Expense",
+      "envelope": "Envelope",
+      "paymentMethod": "Payment method",
+      "amount": "Amount"
+    },
+    "empty": {
+      "title": "No expenses in this period",
+      "description": "Try another month, period or payment methods."
+    },
+    "actions": {
+      "csv": "Download CSV",
+      "print": "Print / PDF",
+      "fileName": "expenses"
+    },
+    "csv": {
+      "date": "Date",
+      "name": "Expense",
+      "envelope": "Envelope",
+      "paymentMethod": "Payment method",
+      "amount": "Amount",
+      "currency": "Currency",
+      "description": "Description"
+    }
+  }
+}

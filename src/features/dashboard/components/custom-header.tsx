@@ -27,7 +27,7 @@ import { LocaleToggle } from "@/features/locale/components/locale-toggle";
  */
 export const CustomHeader = () => {
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur print:hidden">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Sidebar owns the logo on desktop. */}
         <div className="md:hidden">

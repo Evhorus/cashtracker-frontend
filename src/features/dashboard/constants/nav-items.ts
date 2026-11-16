@@ -1,4 +1,11 @@
-import { ChartNoAxesColumn, Home, Tag, UserRound, Wallet } from "lucide-react";
+import {
+  ChartNoAxesColumn,
+  Home,
+  ReceiptText,
+  Tag,
+  UserRound,
+  Wallet,
+} from "lucide-react";
 
 /**
  * The dashboard's navigation, in order. One list rather than the copy
@@ -12,6 +19,7 @@ import { ChartNoAxesColumn, Home, Tag, UserRound, Wallet } from "lucide-react";
 export const DASHBOARD_NAV_ITEMS = [
   { key: "summary", href: "/dashboard", icon: Home },
   { key: "envelopes", href: "/dashboard/envelopes", icon: Wallet },
+  { key: "expenses", href: "/dashboard/expenses", icon: ReceiptText },
   { key: "categories", href: "/dashboard/categories", icon: Tag },
   { key: "statistics", href: "/dashboard/statistics", icon: ChartNoAxesColumn },
   { key: "account", href: "/dashboard/account", icon: UserRound },
@@ -26,4 +34,13 @@ export const DASHBOARD_NAV_ITEMS = [
  */
 export const MAIN_NAV_ITEMS = DASHBOARD_NAV_ITEMS.filter(
   (item) => item.key !== "account",
+);
+
+/**
+ * The mobile bottom bar has room for four tabs, so it leaves out
+ * Expenses as well; on a phone that page is reached from Statistics
+ * (its "see expenses by payment method" link).
+ */
+export const MOBILE_NAV_ITEMS = MAIN_NAV_ITEMS.filter(
+  (item) => item.key !== "expenses",
 );

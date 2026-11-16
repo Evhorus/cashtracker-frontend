@@ -46,7 +46,7 @@ export default async function DashboardLayout({
     <ClerkProvider localization={clerkLocalization}>
       <CategoriesProvider categories={categories} options={options}>
         <PaymentMethodsProvider paymentMethods={paymentMethods}>
-          <div className="fixed inset-0 flex overflow-hidden bg-background">
+          <div className="fixed inset-0 flex overflow-hidden bg-background print:static print:block print:overflow-visible">
             <DashboardSidebar />
             {/* min-w-0 so this column can actually shrink below its content's
               intrinsic width next to the sidebar - without it a wide child
@@ -54,9 +54,9 @@ export default async function DashboardLayout({
               the viewport instead of scrolling internally. overflow-y-auto
               makes this column its own scroll container now that the shell
               above is a fixed-height, overflow-hidden viewport. */}
-            <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+            <div className="flex min-w-0 flex-1 flex-col overflow-y-auto print:overflow-visible">
               <CustomHeader />
-              <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
+              <main className="container mx-auto px-4 py-6 pb-24 md:pb-6 print:max-w-none print:p-0">
                 {children}
               </main>
               <MobileNav />

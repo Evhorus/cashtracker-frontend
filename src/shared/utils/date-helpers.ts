@@ -229,3 +229,19 @@ export function formatMonthKey(
     { locale: DATE_FNS_LOCALES[locale] },
   );
 }
+
+/** "octubre 2026": the full month name and year of a "YYYY-MM" key, for
+ * a control that shows one month at a time. Same UTC parsing as
+ * formatMonthKey. */
+export function formatMonthKeyLong(
+  monthKey: string,
+  locale: SupportedLocale,
+): string {
+  const [year, month] = monthKey.split("-").map(Number);
+
+  if (!year || !month) return monthKey;
+
+  return format(new TZDate(Date.UTC(year, month - 1, 1), "UTC"), "LLLL yyyy", {
+    locale: DATE_FNS_LOCALES[locale],
+  });
+}

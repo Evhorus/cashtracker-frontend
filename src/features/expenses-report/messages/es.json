@@ -1,0 +1,58 @@
+{
+  "expensesReport": {
+    "title": "Gastos",
+    "subtitle": "Todos tus gastos, de todos los sobres, por medio de pago",
+    "statisticsLink": "Ver gastos por medio de pago",
+    "filters": {
+      "methods": "Medios de pago",
+      "allMethods": "Todos",
+      "noPaymentMethod": "Sin medio de pago",
+      "period": "Periodo",
+      "periods": {
+        "month": "Mes calendario",
+        "cycle": "Periodo de corte",
+        "custom": "Rango personalizado"
+      },
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "from": "Desde",
+      "to": "Hasta",
+      "view": "Vista",
+      "views": {
+        "single": "Como una sola",
+        "split": "Separado por medio"
+      }
+    },
+    "summary": {
+      "total": "Total",
+      "count": "{count, plural, one {# gasto} other {# gastos}}",
+      "cycleNote": "Cada tarjeta con día de corte usa su propio periodo; lo demás usa el mes calendario.",
+      "range": "{start} → {end}"
+    },
+    "table": {
+      "date": "Fecha",
+      "expense": "Gasto",
+      "envelope": "Sobre",
+      "paymentMethod": "Medio de pago",
+      "amount": "Monto"
+    },
+    "empty": {
+      "title": "No hay gastos en este periodo",
+      "description": "Prueba con otro mes, otro periodo u otros medios de pago."
+    },
+    "actions": {
+      "csv": "Descargar CSV",
+      "print": "Imprimir / PDF",
+      "fileName": "gastos"
+    },
+    "csv": {
+      "date": "Fecha",
+      "name": "Gasto",
+      "envelope": "Sobre",
+      "paymentMethod": "Medio de pago",
+      "amount": "Monto",
+      "currency": "Moneda",
+      "description": "Descripción"
+    }
+  }
+}

@@ -12,6 +12,8 @@ import envelopesEn from "@/features/envelopes/messages/en.json";
 import envelopesEs from "@/features/envelopes/messages/es.json";
 import expensesEn from "@/features/expenses/messages/en.json";
 import expensesEs from "@/features/expenses/messages/es.json";
+import expensesReportEn from "@/features/expenses-report/messages/en.json";
+import expensesReportEs from "@/features/expenses-report/messages/es.json";
 import localeEn from "@/features/locale/messages/en.json";
 import localeEs from "@/features/locale/messages/es.json";
 import homeEn from "@/features/home/messages/en.json";
@@ -54,6 +56,7 @@ export const MESSAGE_SOURCES = {
     dashboardEs,
     envelopesEs,
     expensesEs,
+    expensesReportEs,
     categoriesEs,
     accountEs,
     paymentMethodsEs,
@@ -66,6 +69,7 @@ export const MESSAGE_SOURCES = {
     dashboardEn,
     envelopesEn,
     expensesEn,
+    expensesReportEn,
     categoriesEn,
     accountEn,
     paymentMethodsEn,
@@ -87,6 +91,7 @@ export const MESSAGES = {
     ...dashboardEs,
     ...envelopesEs,
     ...expensesEs,
+    ...expensesReportEs,
     ...categoriesEs,
     ...accountEs,
     ...paymentMethodsEs,
@@ -99,6 +104,7 @@ export const MESSAGES = {
     ...dashboardEn,
     ...envelopesEn,
     ...expensesEn,
+    ...expensesReportEn,
     ...categoriesEn,
     ...accountEn,
     ...paymentMethodsEn,
