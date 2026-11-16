@@ -38,6 +38,12 @@ updates:
     # deserves its own PR, its own CI run and its own decision. Next,
     # React and Clerk majors in particular have codemods and breaking
     # changes worth reading.
+    ignore:
+      # @types/node must match the Node major the app runs on (22, see
+      # engines/Dockerfile/CI), not the latest Node. A newer major types
+      # APIs that do not exist at runtime. Bump it with the runtime.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 5
     commit-message:
       # Conventional Commits, because commitlint runs on commit-msg and
