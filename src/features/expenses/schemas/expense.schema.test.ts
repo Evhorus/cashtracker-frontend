@@ -57,3 +57,21 @@ describe("the amount ceiling", () => {
     expect(result.error?.issues[0]?.message).toBe("amountEmpty");
   });
 });
+
+describe("the amount floor", () => {
+  it("rejects zero, which a non-empty check alone let through", () => {
+    const result = schema.safeParse(form({ amount: "0" }));
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual(["amount"]);
+    expect(result.error?.issues[0]?.message).toBe("amountMustBePositive");
+  });
+
+  it("rejects a zero written with decimals", () => {
+    expect(schema.safeParse(form({ amount: "0.00" })).success).toBe(false);
+  });
+
+  it("accepts the smallest positive amount", () => {
+    expect(schema.safeParse(form({ amount: "0.01" })).success).toBe(true);
+  });
+});
