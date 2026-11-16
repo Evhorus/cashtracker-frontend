@@ -167,12 +167,11 @@ describe("fromApi", () => {
     updatedAt: "2026-08-01T00:00:00.000Z",
   };
 
-  it("capitalizes just the first letter of the name the backend stores lowercase", () => {
-    // Sentence case, not per-word title case - "Mercado y despensa del
-    // mes" is correct Spanish, "Mercado Y Despensa Del Mes" is not.
-    expect(EnvelopeMapper.fromApi(apiEnvelope).name).toBe(
-      "Mercado y despensa del mes",
-    );
+  it("shows the name exactly as stored", () => {
+    expect(
+      EnvelopeMapper.fromApi({ ...apiEnvelope, name: "MAYO Davi - Scoti" })
+        .name,
+    ).toBe("MAYO Davi - Scoti");
   });
 
   it("takes the expense date range the list endpoint reports", () => {

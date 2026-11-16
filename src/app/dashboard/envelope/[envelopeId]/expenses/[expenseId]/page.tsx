@@ -80,6 +80,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
       <PageHeader
         title={t("detail.title")}
         backUrl={`/dashboard/envelope/${envelopeId}`}
+        breadcrumbParents={[
+          { href: `/dashboard/envelope/${envelopeId}`, label: envelope.name },
+        ]}
         description={
           <>
             <span className="text-sm">{t("detail.inEnvelope")}</span>

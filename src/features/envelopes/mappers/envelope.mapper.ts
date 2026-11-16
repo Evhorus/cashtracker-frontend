@@ -3,7 +3,6 @@ import { Envelope } from "../types";
 import { EnvelopeApi } from "../schemas/envelope.schema";
 import { ExpenseMapper } from "@/features/expenses/mappers/expense.mapper";
 import type { CurrencyCode } from "@/shared/utils/format-currency";
-import { capitalize } from "@/shared/lib/utils";
 import { parseCalendarDate } from "@/shared/utils/date-helpers";
 import type { Expense } from "@/features/expenses/types";
 
@@ -53,11 +52,8 @@ export const EnvelopeMapper = {
     const expenses = apiEnvelope.expenses?.map(ExpenseMapper.fromApi) ?? [];
     return {
       id: apiEnvelope.id,
-      // The backend stores this lowercase now (its own matching/
-      // grouping needs the normalized form) - capitalize it here, once,
-      // for every consumer of the domain model, rather than at each
-      // render site.
-      name: capitalize(apiEnvelope.name),
+      // Exactly as the user typed it.
+      name: apiEnvelope.name,
       amount: apiEnvelope.amount,
       // The API schema types this as a loose string (z.string().default);
       // the domain model narrows it to the known currency codes, since
