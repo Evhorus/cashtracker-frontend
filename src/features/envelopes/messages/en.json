@@ -62,7 +62,10 @@
       "spent": "Spent",
       "percentOfLimit": "{percent}% of the limit",
       "totalLimit": "Total limit",
-      "transactions": "Transactions"
+      "transactions": "Transactions",
+      "filtered": "With the filter",
+      "wholeEnvelope": "Whole envelope (no filters)",
+      "filteredCount": "{count, plural, one {# expense} other {# expenses}}"
     },
     "empty": {
       "noResultsTitle": "No results for \"{query}\"",

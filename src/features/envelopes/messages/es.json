@@ -62,7 +62,10 @@
       "spent": "Gastado",
       "percentOfLimit": "{percent}% del límite",
       "totalLimit": "Límite total",
-      "transactions": "Transacciones"
+      "transactions": "Transacciones",
+      "filtered": "Con el filtro",
+      "wholeEnvelope": "Todo el sobre (sin filtros)",
+      "filteredCount": "{count, plural, one {# gasto} other {# gastos}}"
     },
     "empty": {
       "noResultsTitle": "Sin resultados para \"{query}\"",

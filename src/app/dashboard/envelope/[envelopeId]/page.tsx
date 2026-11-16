@@ -22,7 +22,6 @@ import { ExpensesList } from "@/features/expenses/components/expenses-list";
 import { ExpensesListSkeleton } from "@/features/expenses/components/expenses-list-skeleton";
 import { EnvelopeActionsMenu } from "@/features/envelopes/components/envelope-actions-menu";
 import { PageHeader } from "@/features/dashboard/components/page-header";
-import { BackLinkButton } from "@/shared/components/common/back-link-button";
 import { Heading } from "@/shared/components/common/typography";
 import { PaginationControls } from "@/shared/components/common/pagination-controls";
 
@@ -178,7 +177,6 @@ export default async function EnvelopePage({
         }
         actions={
           <>
-            <BackLinkButton href="/dashboard/envelopes" label={t("back")} />
             <UpdateEnvelopeDialog
               envelope={envelope}
               label={t("edit")}
@@ -249,6 +247,31 @@ export default async function EnvelopePage({
               <CardTitle>{tEnvelope("detail.summary")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
+              {/* With a filter on, the filtered total comes first and
+                  the envelope's own numbers are labelled as such - the
+                  big figure below never follows the filter, and read on
+                  its own it passed for the filtered one. */}
+              {hasActiveFilter && (
+                <>
+                  <Suspense key={filterKey} fallback={null}>
+                    <FilteredSummary
+                      envelopeId={envelopeId}
+                      currency={envelope.currency}
+                      startDate={startDate}
+                      endDate={endDate}
+                      search={search}
+                      methods={methods}
+                      order={order}
+                      page={page}
+                      limit={limit}
+                      methodOptions={methodOptions}
+                    />
+                  </Suspense>
+                  <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                    {tEnvelope("detail.wholeEnvelope")}
+                  </p>
+                </>
+              )}
               {status === "unlimited" ? (
                 <div className="flex flex-col items-center gap-1.5 rounded-lg bg-secondary/40 px-4 py-6 text-center">
                   <InfinityIcon className="h-7 w-7 text-muted-foreground" />
@@ -389,15 +412,13 @@ async function ExpensesResults({
   limit,
   filterBanner,
 }: ExpensesResultsProps) {
-  const { paymentMethodIds, includeUnassigned } = parseMethodFilter(methods);
-  const expensesResult = await getExpenses(envelopeId, {
+  const expensesResult = await getFilteredExpenses({
+    envelopeId,
     startDate,
     endDate,
     search,
-    paymentMethodIds,
-    includeUnassigned,
-    sort: order.sort,
-    sortBy: order.sortBy,
+    methods,
+    order,
     page,
     limit,
   });
@@ -425,8 +446,6 @@ async function ExpensesResults({
         <FilteredExpensesBanner
           shown={expensesResult.meta.total}
           total={filterBanner.envelopeExpenseCount}
-          totalAmount={expensesResult.meta.totalAmount}
-          currency={currency}
           chips={banner?.chips ?? []}
           clearHref={banner?.clearHref ?? `/dashboard/envelope/${envelopeId}`}
         />
@@ -516,4 +535,91 @@ async function buildFilterBanner({
       endDate: undefined,
     }),
   };
+}
+
+interface FilteredExpensesQuery {
+  envelopeId: string;
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+  methods?: string;
+  order: { sort: "ASC" | "DESC"; sortBy: "date" | "amount" };
+  page: number;
+  limit: number;
+}
+
+/**
+ * The one way this page fetches its filtered expenses. The list and the
+ * summary card both call it, so their requests are identical - Next
+ * dedupes them into one, and the two can never show different numbers.
+ */
+function getFilteredExpenses({
+  envelopeId,
+  methods,
+  order,
+  ...rest
+}: FilteredExpensesQuery) {
+  const { paymentMethodIds, includeUnassigned } = parseMethodFilter(methods);
+  return getExpenses(envelopeId, {
+    ...rest,
+    paymentMethodIds,
+    includeUnassigned,
+    sort: order.sort,
+    sortBy: order.sortBy,
+  });
+}
+
+/**
+ * The summary card's filtered block: what is filtered (payment methods
+ * by colour and name, the search), how many expenses and their total.
+ */
+async function FilteredSummary({
+  currency,
+  methodOptions,
+  ...query
+}: FilteredExpensesQuery & {
+  currency: CurrencyCode;
+  methodOptions: MethodOption[];
+}) {
+  const t = await getTranslations("envelopes.detail");
+  const tMethods = await getTranslations("paymentMethods.filter");
+  const tBanner = await getTranslations("expenses.filteredBanner");
+  const { meta } = await getFilteredExpenses(query);
+  const selected = parseMethodFilter(query.methods).selected;
+  const methods = methodOptions.filter((option) =>
+    selected.includes(option.id),
+  );
+
+  return (
+    <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
+      <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+        {t("filtered")}
+      </p>
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        {methods.map((method) => (
+          <span key={method.id} className="inline-flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className={
+                method.color
+                  ? "h-2 w-2 shrink-0 rounded-full"
+                  : "h-2 w-2 shrink-0 rounded-full border border-dashed border-muted-foreground"
+              }
+              style={method.color ? { background: method.color } : undefined}
+            />
+            {method.name ?? tMethods("none")}
+          </span>
+        ))}
+        {query.search && (
+          <span>{tBanner("search", { term: query.search })}</span>
+        )}
+      </div>
+      <p className="mt-2 font-mono text-2xl font-bold tabular-nums">
+        {formatCurrency(meta.totalAmount, CURRENCY_MAP[currency])}
+      </p>
+      <p className="text-sm text-muted-foreground">
+        {t("filteredCount", { count: meta.total })}
+      </p>
+    </div>
+  );
 }

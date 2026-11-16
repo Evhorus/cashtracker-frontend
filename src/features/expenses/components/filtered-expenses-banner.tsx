@@ -2,11 +2,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
-import {
-  CURRENCY_MAP,
-  formatCurrency,
-  type CurrencyCode,
-} from "@/shared/utils/format-currency";
 
 interface FilterChip {
   key: string;
@@ -20,25 +15,20 @@ interface FilterChip {
 interface FilteredExpensesBannerProps {
   shown: number;
   total: number;
-  totalAmount: number;
-  currency: CurrencyCode;
   chips: FilterChip[];
   /** The same page without any filter. */
   clearHref: string;
 }
 
 /**
- * Says, right above the list, what the list is showing: which filters
- * (each removable on its own), how many of the envelope's expenses that
- * leaves, and what they add up to. Replaces a "Σ N gastos encontrados"
- * row at the foot of the summary card - away from the list, behind a
- * symbol not everyone reads, and silent about which filter it was.
+ * Says, right above the list, what is filtered - each filter a chip
+ * that removes it - and how many of the envelope's expenses that
+ * leaves. The filtered total lives in the summary card beside it, so it
+ * is not repeated here.
  */
 export function FilteredExpensesBanner({
   shown,
   total,
-  totalAmount,
-  currency,
   chips,
   clearHref,
 }: FilteredExpensesBannerProps) {
@@ -47,23 +37,10 @@ export function FilteredExpensesBanner({
   return (
     <section
       aria-label={t("label")}
-      className="mb-4 rounded-2xl border border-primary/30 bg-primary/5 p-4"
+      className="mb-4 flex items-start justify-between gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-3 sm:items-center sm:p-4"
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
         <p className="text-sm font-medium">{t("showing", { shown, total })}</p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="shrink-0"
-          nativeButton={false}
-          render={<Link href={clearHref} />}
-        >
-          <X />
-          {t("clear")}
-        </Button>
-      </div>
-
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <ul className="flex flex-wrap gap-1.5">
           {chips.map((chip) => (
             <li key={chip.key}>
@@ -89,14 +66,17 @@ export function FilteredExpensesBanner({
             </li>
           ))}
         </ul>
-
-        <div className="sm:text-right">
-          <p className="text-xs text-muted-foreground">{t("total")}</p>
-          <p className="font-mono text-xl font-bold tabular-nums">
-            {formatCurrency(totalAmount, CURRENCY_MAP[currency])}
-          </p>
-        </div>
       </div>
+      <Button
+        variant="outline"
+        size="sm"
+        className="shrink-0"
+        nativeButton={false}
+        render={<Link href={clearHref} />}
+      >
+        <X />
+        {t("clear")}
+      </Button>
     </section>
   );
 }

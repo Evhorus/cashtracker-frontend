@@ -7,7 +7,6 @@ import { DeleteExpenseAlertDialog } from "@/features/expenses/components/delete-
 import { UpdateExpenseDialog } from "@/features/expenses/components/update-expense-dialog";
 import { ExpenseActionsMenu } from "@/features/expenses/components/expense-actions-menu";
 import { PageHeader } from "@/features/dashboard/components/page-header";
-import { BackLinkButton } from "@/shared/components/common/back-link-button";
 import { Text } from "@/shared/components/common/typography";
 
 import {
@@ -99,10 +98,6 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
         }
         actions={
           <>
-            <BackLinkButton
-              href={`/dashboard/envelope/${envelopeId}`}
-              label={tCommon("back")}
-            />
             <UpdateExpenseDialog
               envelopeId={envelopeId}
               currency={envelope.currency}
