@@ -9,6 +9,7 @@ import { SubmitButton } from "@/shared/components/common/submit-button";
 import { FormInput } from "@/shared/components/common/form-input";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -31,6 +32,9 @@ interface EnvelopeFormProps {
   isLoading: boolean;
   onSubmit: (envelopeFormValues: EnvelopeFormValues) => Promise<void>;
   onCloseDialog: () => void;
+  /** The envelope already has expenses, so its currency is fixed: `spent`
+   * is a sum in that currency, and the API rejects the change (409). */
+  isCurrencyLocked?: boolean;
 }
 
 export const EnvelopeForm = ({
@@ -38,6 +42,7 @@ export const EnvelopeForm = ({
   isLoading,
   onSubmit,
   onCloseDialog,
+  isCurrencyLocked = false,
 }: EnvelopeFormProps) => {
   const tValidation = useTranslations("validation");
   const t = useTranslations("envelopes.form");
@@ -90,8 +95,16 @@ export const EnvelopeForm = ({
                       {...field}
                       id="currency"
                       aria-invalid={fieldState.invalid}
-                      disabled={isLoading}
+                      aria-describedby={
+                        isCurrencyLocked ? "currency-locked" : undefined
+                      }
+                      disabled={isLoading || isCurrencyLocked}
                     />
+                    {isCurrencyLocked && (
+                      <FieldDescription id="currency-locked">
+                        {t("currencyLocked")}
+                      </FieldDescription>
+                    )}
                     <FieldError errors={[fieldState.error]} />
                   </Field>
                 )}

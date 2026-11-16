@@ -116,6 +116,42 @@ test("an expense moves the envelope's spent amount", async ({ page }) => {
   await expect(card.getByText(/25\.000/)).toBeVisible();
 });
 
+test("an envelope with expenses keeps its currency on edit", async ({
+  page,
+}) => {
+  // Its spent is a sum in that currency, so the API refuses a change
+  // (409). The form has to say so up front instead of failing on save -
+  // and saving the rest of the form must still work, which proves the
+  // unchanged currency is sent back rather than dropped.
+  await page.goto(
+    `/dashboard/envelopes?search=${encodeURIComponent(ENVELOPE)}`,
+  );
+  await envelopeLink(page).click();
+  await page.waitForURL(/\/dashboard\/envelope\//);
+
+  await page.getByRole("button", { name: /^editar$/i }).click();
+
+  const currency = page.getByLabel(/^moneda$/i);
+  await expect(currency).toBeDisabled();
+  await expect(currency).toHaveAccessibleDescription(/ya tiene gastos/i);
+
+  // Click first: PriceInput swaps its formatted text for an editable one
+  // on focus, and fill() focuses, selects and types in one tick - before
+  // React re-renders - so its selection is lost and the new digits get
+  // appended. A person always has a render between focusing and typing.
+  const amount = page.getByLabel(/^monto/i);
+  await amount.click();
+  await amount.fill("200000");
+  await page
+    .getByRole("button", { name: /guardar|actualizar/i })
+    .last()
+    .click();
+
+  await expect(page.getByText(/sobre actualizado/i)).toBeVisible();
+  // 25.000 of the new 200.000 limit.
+  await expect(page.getByText(/12[.,]5\s*% del límite/i)).toBeVisible();
+});
+
 /**
  * Teardown, not a final test.
  *
