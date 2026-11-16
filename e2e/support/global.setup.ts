@@ -1,3 +1,6 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
+
 import { clerk, clerkSetup } from "@clerk/testing/playwright";
 import { test as setup } from "@playwright/test";
 
@@ -56,5 +59,21 @@ setup("authenticate", async ({ page }) => {
   await page.goto("/dashboard");
   await page.waitForURL("**/dashboard");
 
-  await page.context().storageState({ path: STORAGE_STATE });
+  // Saved without the session token. It lives 60 seconds, so a saved one
+  // is stale for most of the suite, and Clerk accepts an expired token
+  // for 5 more seconds of clock skew without refreshing it. A test whose
+  // first page load landed in that window got through the goto, then
+  // its next navigation was signed out and bounced via /sign-in to
+  // /dashboard. Without the cookie, Clerk always refreshes on the first
+  // load ("client-uat-but-no-session-token" -> handshake), so every test
+  // starts with a token minted for it.
+  const state = await page.context().storageState();
+  const withoutSessionToken = {
+    ...state,
+    cookies: state.cookies.filter(
+      (cookie) => !cookie.name.startsWith("__session"),
+    ),
+  };
+  await mkdir(dirname(STORAGE_STATE), { recursive: true });
+  await writeFile(STORAGE_STATE, JSON.stringify(withoutSessionToken, null, 2));
 });
