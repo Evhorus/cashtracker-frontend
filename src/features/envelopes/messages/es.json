@@ -64,8 +64,9 @@
       "totalLimit": "Límite total",
       "transactions": "Transacciones",
       "filtered": "Con el filtro",
-      "wholeEnvelope": "Todo el sobre (sin filtros)",
-      "filteredCount": "{count, plural, one {# gasto} other {# gastos}}"
+      "wholeEnvelope": "Todo el sobre",
+      "filteredCount": "{count, plural, one {# gasto} other {# gastos}}",
+      "noLimitShort": "Sin límite"
     },
     "empty": {
       "noResultsTitle": "Sin resultados para \"{query}\"",

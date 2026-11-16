@@ -64,8 +64,9 @@
       "totalLimit": "Total limit",
       "transactions": "Transactions",
       "filtered": "With the filter",
-      "wholeEnvelope": "Whole envelope (no filters)",
-      "filteredCount": "{count, plural, one {# expense} other {# expenses}}"
+      "wholeEnvelope": "Whole envelope",
+      "filteredCount": "{count, plural, one {# expense} other {# expenses}}",
+      "noLimitShort": "No limit"
     },
     "empty": {
       "noResultsTitle": "No results for \"{query}\"",

@@ -247,47 +247,79 @@ export default async function EnvelopePage({
               <CardTitle>{tEnvelope("detail.summary")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
-              {/* With a filter on, the filtered total comes first and
-                  the envelope's own numbers are labelled as such - the
-                  big figure below never follows the filter, and read on
-                  its own it passed for the filtered one. */}
-              {hasActiveFilter && (
-                <>
-                  <Suspense key={filterKey} fallback={null}>
-                    <FilteredSummary
-                      envelopeId={envelopeId}
-                      currency={envelope.currency}
-                      startDate={startDate}
-                      endDate={endDate}
-                      search={search}
-                      methods={methods}
-                      order={order}
-                      page={page}
-                      limit={limit}
-                      methodOptions={methodOptions}
-                    />
-                  </Suspense>
-                  <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                    {tEnvelope("detail.wholeEnvelope")}
-                  </p>
-                </>
-              )}
+              {/* With a filter on, the filtered figure joins the
+                  envelope's own - never a second big box: the unlimited
+                  block splits in two, and a capped envelope (whose chart
+                  is about its limit) gets one slim line above the chart.
+                  On its own the big unfiltered figure passed for the
+                  filtered one. */}
               {status === "unlimited" ? (
-                <div className="flex flex-col items-center gap-1.5 rounded-lg bg-secondary/40 px-4 py-6 text-center">
-                  <InfinityIcon className="h-7 w-7 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    {tEnvelope("detail.noSpendingLimit")}
-                  </p>
-                  <p className="text-2xl font-bold">
-                    {formatCurrency(+envelope.spent, currencyConfig)}
-                  </p>
-                </div>
+                hasActiveFilter ? (
+                  <div className="grid grid-cols-2 overflow-hidden rounded-lg bg-secondary/40">
+                    <Suspense key={filterKey} fallback={<div />}>
+                      <FilteredSummary
+                        layout="half"
+                        envelopeId={envelopeId}
+                        currency={envelope.currency}
+                        startDate={startDate}
+                        endDate={endDate}
+                        search={search}
+                        methods={methods}
+                        order={order}
+                        page={page}
+                        limit={limit}
+                        methodOptions={methodOptions}
+                      />
+                    </Suspense>
+                    <div className="flex flex-col justify-center gap-0.5 px-4 py-5 text-right">
+                      <p className="text-xs text-muted-foreground">
+                        {tEnvelope("detail.wholeEnvelope")}
+                      </p>
+                      <p className="text-lg font-bold">
+                        {formatCurrency(+envelope.spent, currencyConfig)}
+                      </p>
+                      <p className="flex items-center justify-end gap-1 text-xs whitespace-nowrap text-muted-foreground">
+                        <InfinityIcon className="h-3.5 w-3.5 shrink-0" />
+                        {tEnvelope("detail.noLimitShort")}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-1.5 rounded-lg bg-secondary/40 px-4 py-6 text-center">
+                    <InfinityIcon className="h-7 w-7 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">
+                      {tEnvelope("detail.noSpendingLimit")}
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {formatCurrency(+envelope.spent, currencyConfig)}
+                    </p>
+                  </div>
+                )
               ) : (
-                <EnvelopeChart
-                  spent={+envelope.spent}
-                  total={+envelope.amount!}
-                  status={status}
-                />
+                <>
+                  {hasActiveFilter && (
+                    <Suspense key={filterKey} fallback={null}>
+                      <FilteredSummary
+                        layout="line"
+                        envelopeId={envelopeId}
+                        currency={envelope.currency}
+                        startDate={startDate}
+                        endDate={endDate}
+                        search={search}
+                        methods={methods}
+                        order={order}
+                        page={page}
+                        limit={limit}
+                        methodOptions={methodOptions}
+                      />
+                    </Suspense>
+                  )}
+                  <EnvelopeChart
+                    spent={+envelope.spent}
+                    total={+envelope.amount!}
+                    status={status}
+                  />
+                </>
               )}
 
               {status === "exceeded" && (
@@ -570,16 +602,21 @@ function getFilteredExpenses({
 }
 
 /**
- * The summary card's filtered block: what is filtered (payment methods
- * by colour and name, the search), how many expenses and their total.
+ * The summary card's filtered figure: what is filtered (payment
+ * methods by colour and name, the search), its total and count. `half`
+ * is the left half of the split unlimited block; `line` is one slim row
+ * above a capped envelope's chart. Both slide in, so turning a filter on
+ * visibly changes the card rather than adding to it.
  */
 async function FilteredSummary({
   currency,
   methodOptions,
+  layout,
   ...query
 }: FilteredExpensesQuery & {
   currency: CurrencyCode;
   methodOptions: MethodOption[];
+  layout: "half" | "line";
 }) {
   const t = await getTranslations("envelopes.detail");
   const tMethods = await getTranslations("paymentMethods.filter");
@@ -589,37 +626,50 @@ async function FilteredSummary({
   const methods = methodOptions.filter((option) =>
     selected.includes(option.id),
   );
+  const amount = formatCurrency(meta.totalAmount, CURRENCY_MAP[currency]);
+  const count = t("filteredCount", { count: meta.total });
+
+  const labels = (
+    <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
+      {methods.map((method) => (
+        <span key={method.id} className="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden
+            className={
+              method.color
+                ? "h-2 w-2 shrink-0 rounded-full"
+                : "h-2 w-2 shrink-0 rounded-full border border-dashed border-muted-foreground"
+            }
+            style={method.color ? { background: method.color } : undefined}
+          />
+          {method.name ?? tMethods("none")}
+        </span>
+      ))}
+      {query.search && <span>{tBanner("search", { term: query.search })}</span>}
+    </span>
+  );
+
+  if (layout === "line") {
+    return (
+      <div className="flex animate-in items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm duration-300 fade-in slide-in-from-top-1">
+        <div className="min-w-0">
+          <p className="text-xs text-muted-foreground">{t("filtered")}</p>
+          {labels}
+        </div>
+        <div className="shrink-0 text-right">
+          <p className="font-mono font-bold tabular-nums">{amount}</p>
+          <p className="text-xs text-muted-foreground">{count}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
-      <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-        {t("filtered")}
-      </p>
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-        {methods.map((method) => (
-          <span key={method.id} className="inline-flex items-center gap-1.5">
-            <span
-              aria-hidden
-              className={
-                method.color
-                  ? "h-2 w-2 shrink-0 rounded-full"
-                  : "h-2 w-2 shrink-0 rounded-full border border-dashed border-muted-foreground"
-              }
-              style={method.color ? { background: method.color } : undefined}
-            />
-            {method.name ?? tMethods("none")}
-          </span>
-        ))}
-        {query.search && (
-          <span>{tBanner("search", { term: query.search })}</span>
-        )}
-      </div>
-      <p className="mt-2 font-mono text-2xl font-bold tabular-nums">
-        {formatCurrency(meta.totalAmount, CURRENCY_MAP[currency])}
-      </p>
-      <p className="text-sm text-muted-foreground">
-        {t("filteredCount", { count: meta.total })}
-      </p>
+    <div className="flex animate-in flex-col justify-center gap-0.5 border-r border-primary/30 bg-primary/10 px-4 py-5 text-sm duration-300 fade-in slide-in-from-left-4">
+      <p className="text-xs text-muted-foreground">{t("filtered")}</p>
+      {labels}
+      <p className="mt-1 font-mono text-lg font-bold tabular-nums">{amount}</p>
+      <p className="text-xs text-muted-foreground">{count}</p>
     </div>
   );
 }
