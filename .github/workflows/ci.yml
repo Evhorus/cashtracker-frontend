@@ -66,18 +66,18 @@ jobs:
           NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL: /dashboard
 
   # The signed-out browser suite. A separate job from `verify` on
-  # purpose: `verify` is the required check and must stay runnable by a
-  # fork, and this one cannot be - it needs Clerk keys, which a fork's PR
-  # is never given. Hence the `if` below rather than a step inside
-  # verify, which would turn every fork PR red.
+  # purpose: `verify` must stay runnable by a fork, and this one cannot
+  # be - it needs Clerk keys, which a fork's PR is never given. Hence the
+  # `if` below rather than a step inside verify, which would turn every
+  # fork PR red. Both jobs are required checks on main; a job skipped by
+  # its `if` counts as passed, so the exclusions below block nothing.
   #
   # Dependabot is excluded for the same reason and it is not obvious: a
   # workflow Dependabot triggers gets a read-only GITHUB_TOKEN and can
   # read no repository secret, so this job saw two empty Clerk keys and
-  # failed every dependency PR until the exclusion was added. `verify` is
-  # the required check, so auto-merge was never actually blocked - but a
-  # red check on every weekly bump is how people learn to ignore red
-  # checks.
+  # failed every dependency PR until the exclusion was added. A red check
+  # on every weekly bump is how people learn to ignore red checks. The
+  # cost: Dependabot bumps merge without this suite having run.
   #
   # Only the signed-out project. The signed-in one needs a backend and a
   # seeded database on top of these keys, which is real infrastructure
