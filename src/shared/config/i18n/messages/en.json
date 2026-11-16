@@ -46,6 +46,7 @@
     "notOnlySpaces": "It can't be only spaces",
     "amountRequired": "The amount is required",
     "amountEmpty": "The amount can't be empty",
+    "amountMustBePositive": "The amount must be greater than 0",
     "dateRequired": "The date is required",
     "descriptionTooLong": "That description is too long",
     "colorRequired": "Pick a colour",

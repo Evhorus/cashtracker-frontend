@@ -1,7 +1,11 @@
 import { z } from "zod";
 import type { CurrencyCode } from "@/shared/utils/format-currency";
 import { PaginationMetaSchema } from "@/shared/utils/pagination";
-import { MAX_AMOUNT, type ValidationTranslator } from "@/shared/lib/validation";
+import {
+  MAX_AMOUNT,
+  isPositiveAmount,
+  type ValidationTranslator,
+} from "@/shared/lib/validation";
 
 export const ExpenseAPIResponseSchema = z.object({
   id: z.string(),
@@ -57,6 +61,7 @@ export const buildExpenseSchema = (
     amount: z
       .string({ message: t("amountRequired") })
       .min(1, { message: t("amountEmpty") })
+      .refine(isPositiveAmount, { message: t("amountMustBePositive") })
       // Without this the number reaches the API and overflows a
       // decimal(12, 2), which comes back as a 500 and renders as
       // "Internal server error".

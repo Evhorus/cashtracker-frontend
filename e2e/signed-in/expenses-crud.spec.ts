@@ -164,3 +164,61 @@ test("an impossible amount is refused by the form", async ({ page }) => {
   await expect(page.getByText(/internal server error/i)).toHaveCount(0);
   await expect(page.getByText(/gasto creado/i)).toHaveCount(0);
 });
+
+/**
+ * Clicking the day that is already selected - the natural way to
+ * "confirm" today's date - must keep it.
+ *
+ * react-day-picker's single mode deselects on that click unless told the
+ * selection is required. The form then held no date while the trigger
+ * kept showing today's (react-hook-form falls back to the default value
+ * for display), so saving failed with "La fecha es obligatoria" on a
+ * form that visibly had a date.
+ */
+test("confirming the preselected date keeps it", async ({ page }) => {
+  await openEnvelope(page);
+
+  await page.getByRole("button", { name: /agregar gasto/i }).click();
+  const form = page.getByRole("dialog");
+  await form.getByLabel(/nombre del gasto/i).fill(uniqueName("date"));
+  await form.getByLabel(/^monto/i).fill("1000");
+
+  const dateButton = form.locator("#expense-date");
+  const today = await dateButton.innerText();
+  await dateButton.click();
+  await page.locator('[role="grid"] [aria-selected="true"] button').click();
+  await expect(dateButton).toHaveText(today);
+
+  await form
+    .getByRole("button", { name: /guardar|crear/i })
+    .last()
+    .click();
+
+  await expect(page.getByText(/gasto creado/i)).toBeVisible();
+  await expect(form.getByText(/la fecha es obligatoria/i)).toHaveCount(0);
+});
+
+/** M3 of the 2026-11-16 audit: "0" passed the schema (it is one
+ * character long) and only the API refused it. */
+test("a zero amount is refused by the form", async ({ page }) => {
+  await openEnvelope(page);
+
+  await page.getByRole("button", { name: /agregar gasto/i }).click();
+  const form = page.getByRole("dialog");
+  await form.getByLabel(/nombre del gasto/i).fill(uniqueName("zero"));
+  await form.getByLabel(/^monto/i).fill("0");
+  await form
+    .getByRole("button", { name: /guardar|crear/i })
+    .last()
+    .click();
+
+  // Refused by the form itself, on the field - not by the API. The
+  // backend rejects 0 too, with a similar message in a toast, so the
+  // text alone could not tell the two apart; aria-invalid can.
+  await expect(form.getByLabel(/^monto/i)).toHaveAttribute(
+    "aria-invalid",
+    "true",
+  );
+  await expect(form.getByText(/debe ser mayor a 0/i)).toBeVisible();
+  await expect(page.getByText(/gasto creado/i)).toHaveCount(0);
+});
