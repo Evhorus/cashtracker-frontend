@@ -254,8 +254,28 @@ export default async function EnvelopePage({
                   On its own the big unfiltered figure passed for the
                   filtered one. */}
               {status === "unlimited" ? (
-                hasActiveFilter ? (
-                  <div className="grid grid-cols-2 overflow-hidden rounded-lg bg-secondary/40">
+                // The envelope's own figure stays put on the left in both
+                // states; a filter only adds its figure on the right, so
+                // nothing already on screen moves or changes size.
+                <div
+                  className={cn(
+                    "grid min-h-36 overflow-hidden rounded-lg bg-secondary/40",
+                    hasActiveFilter ? "grid-cols-2" : "grid-cols-1",
+                  )}
+                >
+                  <div className="flex flex-col justify-center gap-0.5 px-4 py-5">
+                    <p className="text-xs text-muted-foreground">
+                      {tEnvelope("detail.spent")}
+                    </p>
+                    <p className="font-mono text-lg font-bold tabular-nums">
+                      {formatCurrency(+envelope.spent, currencyConfig)}
+                    </p>
+                    <p className="flex items-center gap-1 text-xs whitespace-nowrap text-muted-foreground">
+                      <InfinityIcon className="h-3.5 w-3.5 shrink-0" />
+                      {tEnvelope("detail.noLimitShort")}
+                    </p>
+                  </div>
+                  {hasActiveFilter && (
                     <Suspense key={filterKey} fallback={<div />}>
                       <FilteredSummary
                         layout="half"
@@ -271,30 +291,8 @@ export default async function EnvelopePage({
                         methodOptions={methodOptions}
                       />
                     </Suspense>
-                    <div className="flex flex-col justify-center gap-0.5 px-4 py-5 text-right">
-                      <p className="text-xs text-muted-foreground">
-                        {tEnvelope("detail.wholeEnvelope")}
-                      </p>
-                      <p className="text-lg font-bold">
-                        {formatCurrency(+envelope.spent, currencyConfig)}
-                      </p>
-                      <p className="flex items-center justify-end gap-1 text-xs whitespace-nowrap text-muted-foreground">
-                        <InfinityIcon className="h-3.5 w-3.5 shrink-0" />
-                        {tEnvelope("detail.noLimitShort")}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-1.5 rounded-lg bg-secondary/40 px-4 py-6 text-center">
-                    <InfinityIcon className="h-7 w-7 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      {tEnvelope("detail.noSpendingLimit")}
-                    </p>
-                    <p className="text-2xl font-bold">
-                      {formatCurrency(+envelope.spent, currencyConfig)}
-                    </p>
-                  </div>
-                )
+                  )}
+                </div>
               ) : (
                 <>
                   {hasActiveFilter && (
@@ -665,7 +663,7 @@ async function FilteredSummary({
   }
 
   return (
-    <div className="flex animate-in flex-col justify-center gap-0.5 border-r border-primary/30 bg-primary/10 px-4 py-5 text-sm duration-300 fade-in slide-in-from-left-4">
+    <div className="flex animate-in flex-col justify-center gap-0.5 border-l border-primary/30 bg-primary/10 px-4 py-5 text-sm duration-300 fade-in slide-in-from-right-4">
       <p className="text-xs text-muted-foreground">{t("filtered")}</p>
       {labels}
       <p className="mt-1 font-mono text-lg font-bold tabular-nums">{amount}</p>
