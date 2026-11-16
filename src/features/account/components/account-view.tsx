@@ -10,6 +10,7 @@ import {
   Loader2,
   Trash2,
   UserRound,
+  CreditCard,
 } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
@@ -32,6 +33,7 @@ import { PasswordSection } from "./password-section";
 import { SessionsSection } from "./sessions-section";
 import { ConnectedAccountsSection } from "./connected-accounts-section";
 import { DeleteAccountSection } from "./delete-account-section";
+import { PaymentMethodsSection } from "@/features/payment-methods/components/payment-methods-section";
 import { ReverificationProvider } from "./reverification-provider";
 
 // `value` doubles as the ?section= URL param and the message key
@@ -41,6 +43,7 @@ const SECTIONS = [
   { value: "password", icon: KeyRound },
   { value: "sessions", icon: Laptop },
   { value: "connected", icon: Link2 },
+  { value: "paymentMethods", icon: CreditCard },
   { value: "danger", icon: Trash2 },
 ] as const;
 
@@ -188,6 +191,9 @@ export function AccountView() {
           </TabsContent>
           <TabsContent value="connected">
             <ConnectedAccountsSection />
+          </TabsContent>
+          <TabsContent value="paymentMethods">
+            <PaymentMethodsSection />
           </TabsContent>
           <TabsContent value="danger">
             <DeleteAccountSection user={user} />

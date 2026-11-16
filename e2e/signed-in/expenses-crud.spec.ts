@@ -69,6 +69,9 @@ test("an expense can be added to an envelope", async ({ page }) => {
   await page.getByRole("button", { name: /agregar gasto/i }).click();
   const form = page.getByRole("dialog");
   await form.getByLabel(/nombre del gasto/i).fill(EXPENSE);
+  // click() first: PriceInput swaps its text on focus, and a bare fill()
+  // can lose its selection under load (see money-path.spec.ts).
+  await form.getByLabel(/^monto/i).click();
   await form.getByLabel(/^monto/i).fill(AMOUNT);
   await form
     .getByRole("button", { name: /guardar|crear/i })
@@ -97,6 +100,9 @@ test("editing its amount moves the envelope's total back down", async ({
   // a populated one appends rather than replaces - 25.000 plus "10000"
   // became 250.000.010.000, which the backend answered with a 500.
   await form.getByLabel(/^monto/i).clear();
+  // click() first: PriceInput swaps its text on focus, and a bare fill()
+  // can lose its selection under load (see money-path.spec.ts).
+  await form.getByLabel(/^monto/i).click();
   await form.getByLabel(/^monto/i).fill(REDUCED);
   await form
     .getByRole("button", { name: /guardar|actualizar/i })
@@ -153,6 +159,9 @@ test("an impossible amount is refused by the form", async ({ page }) => {
   await page.getByRole("button", { name: /agregar gasto/i }).click();
   const form = page.getByRole("dialog");
   await form.getByLabel(/nombre del gasto/i).fill(uniqueName("huge"));
+  // click() first: PriceInput swaps its text on focus, and a bare fill()
+  // can lose its selection under load (see money-path.spec.ts).
+  await form.getByLabel(/^monto/i).click();
   await form.getByLabel(/^monto/i).fill("999999999999999");
   await form
     .getByRole("button", { name: /guardar|crear/i })
@@ -181,6 +190,9 @@ test("confirming the preselected date keeps it", async ({ page }) => {
   await page.getByRole("button", { name: /agregar gasto/i }).click();
   const form = page.getByRole("dialog");
   await form.getByLabel(/nombre del gasto/i).fill(uniqueName("date"));
+  // click() first: PriceInput swaps its text on focus, and a bare fill()
+  // can lose its selection under load (see money-path.spec.ts).
+  await form.getByLabel(/^monto/i).click();
   await form.getByLabel(/^monto/i).fill("1000");
 
   const dateButton = form.locator("#expense-date");
@@ -206,6 +218,9 @@ test("a zero amount is refused by the form", async ({ page }) => {
   await page.getByRole("button", { name: /agregar gasto/i }).click();
   const form = page.getByRole("dialog");
   await form.getByLabel(/nombre del gasto/i).fill(uniqueName("zero"));
+  // click() first: PriceInput swaps its text on focus, and a bare fill()
+  // can lose its selection under load (see money-path.spec.ts).
+  await form.getByLabel(/^monto/i).click();
   await form.getByLabel(/^monto/i).fill("0");
   await form
     .getByRole("button", { name: /guardar|crear/i })

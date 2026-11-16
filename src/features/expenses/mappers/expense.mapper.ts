@@ -26,6 +26,8 @@ export const ExpenseMapper = {
     currency: data.currency,
     date: formatCalendarDateForApi(data.date),
     description: data.description,
+    // null clears it on an edit; the backend checks ownership.
+    paymentMethodId: data.paymentMethodId || null,
   }),
 
   /**
@@ -43,6 +45,7 @@ export const ExpenseMapper = {
       amount: apiExpense.amount,
       date: parseCalendarDate(apiExpense.date),
       description: apiExpense.description ?? undefined,
+      paymentMethod: apiExpense.paymentMethod ?? null,
       createdAt: parseDateInput(apiExpense.createdAt),
       updatedAt: parseDateInput(apiExpense.updatedAt),
     };
@@ -61,10 +64,14 @@ export const ExpenseMapper = {
    */
   toFormValues: (
     expense: Expense,
-  ): Pick<ExpenseFormValues, "name" | "amount" | "description" | "date"> => ({
+  ): Pick<
+    ExpenseFormValues,
+    "name" | "amount" | "description" | "date" | "paymentMethodId"
+  > => ({
     name: expense.name,
     amount: expense.amount,
     description: expense.description ?? "",
     date: toFormCalendarDate(expense.date),
+    paymentMethodId: expense.paymentMethod?.id ?? "",
   }),
 };

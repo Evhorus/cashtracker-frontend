@@ -30,6 +30,7 @@ const form = (over: Partial<ExpenseFormValues> = {}) => ({
   currency: "COP" as const,
   date: new Date(2026, 8, 22),
   description: "",
+  paymentMethodId: "",
   ...over,
 });
 

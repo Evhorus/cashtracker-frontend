@@ -8,6 +8,7 @@
       "password": "Contraseña",
       "sessions": "Sesiones",
       "connected": "Cuentas conectadas",
+      "paymentMethods": "Medios de pago",
       "danger": "Eliminar cuenta"
     },
     "profile": {

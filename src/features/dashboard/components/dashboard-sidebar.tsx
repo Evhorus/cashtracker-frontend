@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
-import { DASHBOARD_NAV_ITEMS } from "@/features/dashboard/constants/nav-items";
+import { MAIN_NAV_ITEMS } from "@/features/dashboard/constants/nav-items";
 import { Logo } from "@/shared/components/common/logo";
 import {
   Avatar,
@@ -37,7 +37,7 @@ export function DashboardSidebar() {
       </div>
 
       <nav className="mt-8 flex flex-col gap-1">
-        {DASHBOARD_NAV_ITEMS.map((item) => {
+        {MAIN_NAV_ITEMS.map((item) => {
           const isActive =
             item.href === "/dashboard"
               ? pathname === item.href

@@ -1,5 +1,6 @@
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
+import { useId } from "react";
 
 import { Input } from "@/shared/components/ui/input";
 import { Field, FieldError, FieldLabel } from "@/shared/components/ui/field";
@@ -43,6 +44,13 @@ export function FormInput<TFieldValues extends FieldValues>({
   serverError,
   ...inputProps
 }: FormInputProps<TFieldValues>) {
+  // A generated id, not the field name: two forms open at once (the
+  // payment method form on top of the expense form, both with a "name"
+  // field) produced duplicate ids, and the top label pointed at the
+  // field underneath. A caller's own `id` still wins.
+  const generatedId = useId();
+  const id = inputProps.id ?? generatedId;
+
   return (
     <Controller
       control={control}
@@ -51,12 +59,12 @@ export function FormInput<TFieldValues extends FieldValues>({
         const message = fieldState.error?.message ?? serverError;
         return (
           <Field className={fieldClassName}>
-            <FieldLabel htmlFor={name}>{label}</FieldLabel>
+            <FieldLabel htmlFor={id}>{label}</FieldLabel>
             <Input
-              id={name}
               {...field}
               aria-invalid={fieldState.invalid || !!serverError}
               {...inputProps}
+              id={id}
             />
             {message && <FieldError>{message}</FieldError>}
           </Field>

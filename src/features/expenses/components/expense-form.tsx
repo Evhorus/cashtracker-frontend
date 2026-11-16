@@ -31,6 +31,7 @@ import {
   type CurrencyCode,
 } from "@/shared/utils/format-currency";
 import { Calendar } from "@/shared/components/ui/calendar";
+import { PaymentMethodPicker } from "@/features/payment-methods/components/payment-method-picker";
 import {
   Popover,
   PopoverContent,
@@ -62,6 +63,7 @@ export const ExpenseForm = ({
   const isDesktop = useIsDesktop();
   const locale = useLocale();
   const tCommon = useTranslations("common");
+  const tPaymentMethods = useTranslations("paymentMethods.picker");
   // No useMemo: the React Compiler (reactCompiler: true in
   // next.config.ts) memoizes this on `currency` the same way.
   const expenseSchema = buildExpenseSchema(currency, tValidation);
@@ -75,6 +77,7 @@ export const ExpenseForm = ({
       currency,
       description: "",
       date: getToday(),
+      paymentMethodId: "",
       ...defaultValues,
     },
   });
@@ -184,6 +187,23 @@ export const ExpenseForm = ({
               />
             </div>
           </FieldGroup>
+
+          <Controller
+            control={control}
+            name="paymentMethodId"
+            render={({ field }) => (
+              <Field>
+                <FieldLabel id="payment-method-label">
+                  {tPaymentMethods("label")}
+                </FieldLabel>
+                <PaymentMethodPicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isLoading}
+                />
+              </Field>
+            )}
+          />
 
           <Controller
             control={control}
