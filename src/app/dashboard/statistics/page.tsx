@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Link from "next/link";
-import { ReceiptText } from "lucide-react";
 import { auth } from "@clerk/nextjs/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Breadcrumb } from "@/features/dashboard/components/breadcrumb";
@@ -75,7 +73,6 @@ export default async function StatisticsPage({
   await auth.protect();
   const locale = await getLocale();
   const t = await getTranslations("statistics");
-  const tReport = await getTranslations("expensesReport");
   const {
     year: yearParam,
     currency: currencyParam,
@@ -137,15 +134,6 @@ export default async function StatisticsPage({
             {t("title")}
           </Heading>
           <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
-          {/* The mobile bottom bar has no room for Expenses (see
-              MOBILE_NAV_ITEMS), so on a phone this is its way in. */}
-          <Link
-            href="/dashboard/expenses"
-            className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary md:hidden"
-          >
-            <ReceiptText className="h-4 w-4" />
-            {tReport("statisticsLink")}
-          </Link>
         </div>
 
         <div className="flex items-center gap-4">

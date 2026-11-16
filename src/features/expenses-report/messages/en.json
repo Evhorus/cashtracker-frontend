@@ -2,7 +2,6 @@
   "expensesReport": {
     "title": "Expenses",
     "subtitle": "All your expenses, across every envelope, by payment method",
-    "statisticsLink": "See expenses by payment method",
     "filters": {
       "methods": "Payment methods",
       "allMethods": "All",

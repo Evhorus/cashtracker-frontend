@@ -2,7 +2,6 @@
   "expensesReport": {
     "title": "Gastos",
     "subtitle": "Todos tus gastos, de todos los sobres, por medio de pago",
-    "statisticsLink": "Ver gastos por medio de pago",
     "filters": {
       "methods": "Medios de pago",
       "allMethods": "Todos",
