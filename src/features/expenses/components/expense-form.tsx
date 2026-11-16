@@ -63,7 +63,6 @@ export const ExpenseForm = ({
   const isDesktop = useIsDesktop();
   const locale = useLocale();
   const tCommon = useTranslations("common");
-  const tPaymentMethods = useTranslations("paymentMethods.picker");
   // No useMemo: the React Compiler (reactCompiler: true in
   // next.config.ts) memoizes this on `currency` the same way.
   const expenseSchema = buildExpenseSchema(currency, tValidation);
@@ -193,9 +192,6 @@ export const ExpenseForm = ({
             name="paymentMethodId"
             render={({ field }) => (
               <Field>
-                <FieldLabel id="payment-method-label">
-                  {tPaymentMethods("label")}
-                </FieldLabel>
                 <PaymentMethodPicker
                   value={field.value}
                   onChange={field.onChange}

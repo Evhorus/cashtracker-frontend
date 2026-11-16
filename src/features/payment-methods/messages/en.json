@@ -23,8 +23,7 @@
       "description": "Expenses that already use it update automatically"
     },
     "picker": {
-      "label": "Payment method (optional)",
-      "none": "No payment method",
+      "label": "Add a payment method",
       "new": "New"
     },
     "section": {
