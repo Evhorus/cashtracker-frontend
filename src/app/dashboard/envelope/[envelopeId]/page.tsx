@@ -402,9 +402,22 @@ async function ExpensesResults({
     limit,
   });
 
-  const selected = parseMethodFilter(methods).selected;
-  const limitParam =
-    limit === EXPENSES_DEFAULT_PAGE_SIZE ? "" : `?limit=${limit}`;
+  const banner = filterBanner
+    ? await buildFilterBanner({
+        envelopeId,
+        methodOptions: filterBanner.methodOptions,
+        params: {
+          startDate,
+          endDate,
+          search,
+          methods,
+          sort: order.sort === "DESC" ? undefined : order.sort,
+          sortBy: order.sortBy === "date" ? undefined : order.sortBy,
+          limit:
+            limit === EXPENSES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
+        },
+      })
+    : null;
 
   return (
     <>
@@ -414,11 +427,8 @@ async function ExpensesResults({
           total={filterBanner.envelopeExpenseCount}
           totalAmount={expensesResult.meta.totalAmount}
           currency={currency}
-          methods={filterBanner.methodOptions.filter((option) =>
-            selected.includes(option.id),
-          )}
-          search={search}
-          clearHref={`/dashboard/envelope/${envelopeId}${limitParam}`}
+          chips={banner?.chips ?? []}
+          clearHref={banner?.clearHref ?? `/dashboard/envelope/${envelopeId}`}
         />
       )}
       <ExpensesList expenses={expensesResult.data} currency={currency} />
@@ -441,4 +451,69 @@ async function ExpensesResults({
       />
     </>
   );
+}
+
+type ExpensesListParams = Record<
+  "startDate" | "endDate" | "search" | "methods" | "sort" | "sortBy" | "limit",
+  string | undefined
+>;
+
+/**
+ * The banner's removable chips (one per selected payment method, one
+ * for the search) and the "clear all" link. Each link is this same page
+ * with that one filter dropped; order and page size are view
+ * preferences, not filters, so they survive both.
+ */
+async function buildFilterBanner({
+  envelopeId,
+  methodOptions,
+  params,
+}: {
+  envelopeId: string;
+  methodOptions: MethodOption[];
+  params: ExpensesListParams;
+}) {
+  const t = await getTranslations("expenses.filteredBanner");
+  const tMethods = await getTranslations("paymentMethods.filter");
+
+  const href = (changes: Partial<ExpensesListParams>) => {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries({ ...params, ...changes })) {
+      if (value) query.set(key, value);
+    }
+    const qs = query.toString();
+    return `/dashboard/envelope/${envelopeId}${qs ? `?${qs}` : ""}`;
+  };
+
+  const selected = parseMethodFilter(params.methods).selected;
+  const methodChips = methodOptions
+    .filter((option) => selected.includes(option.id))
+    .map((option) => ({
+      key: option.id,
+      label: option.name ?? tMethods("none"),
+      color: option.color,
+      removeHref: href({
+        methods:
+          selected.filter((id) => id !== option.id).join(",") || undefined,
+      }),
+    }));
+  const searchChip = params.search
+    ? [
+        {
+          key: "search",
+          label: t("search", { term: params.search }),
+          removeHref: href({ search: undefined }),
+        },
+      ]
+    : [];
+
+  return {
+    chips: [...methodChips, ...searchChip],
+    clearHref: href({
+      methods: undefined,
+      search: undefined,
+      startDate: undefined,
+      endDate: undefined,
+    }),
+  };
 }

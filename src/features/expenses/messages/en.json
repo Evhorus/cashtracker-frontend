@@ -74,7 +74,8 @@
       "showing": "Showing {shown} of {total} expenses",
       "search": "Search: “{term}”",
       "total": "Total of these expenses",
-      "clear": "Clear filters"
+      "clear": "Clear filters",
+      "remove": "Remove the filter {filter}"
     },
     "orders": {
       "newest": "Newest first",
