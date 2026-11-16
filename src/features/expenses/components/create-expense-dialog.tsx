@@ -21,14 +21,18 @@ interface CreateExpenseDialogProps {
    * (envelope/[envelopeId]/page.tsx) passes these; without them the
    * subtitle falls back to the generic copy it always had. */
   envelopeName?: string;
+  /** "24 ago – 22 sep 2026" - see EnvelopeHelpers.formatPeriod. */
+  envelopePeriod?: string;
   envelopeCategory?: EnvelopeCategory | null;
 }
 
 function ExpenseDialogSubtitle({
   envelopeName,
+  envelopePeriod,
   envelopeCategory,
 }: {
   envelopeName: string;
+  envelopePeriod?: string;
   /** The envelope's category as the API reports it - no longer a label
    * this component has to resolve against the category list itself. */
   envelopeCategory?: EnvelopeCategory | null;
@@ -55,6 +59,9 @@ function ExpenseDialogSubtitle({
         {t.rich("forEnvelope", {
           name: () => <b className="font-semibold">{envelopeName}</b>,
         })}
+        {envelopePeriod && (
+          <span className="text-muted-foreground"> · {envelopePeriod}</span>
+        )}
       </span>
     </span>
   );
@@ -64,6 +71,7 @@ export const CreateExpenseDialog = ({
   envelopeId,
   currency,
   envelopeName,
+  envelopePeriod,
   envelopeCategory,
 }: CreateExpenseDialogProps) => {
   const t = useTranslations("expenses");
@@ -88,6 +96,7 @@ export const CreateExpenseDialog = ({
         envelopeName ? (
           <ExpenseDialogSubtitle
             envelopeName={envelopeName}
+            envelopePeriod={envelopePeriod}
             envelopeCategory={envelopeCategory}
           />
         ) : (

@@ -208,6 +208,7 @@ export default async function EnvelopePage({
               envelopeId={envelope.id}
               currency={envelope.currency}
               envelopeName={envelope.name}
+              envelopePeriod={EnvelopeHelpers.formatPeriod(envelope, locale)}
               envelopeCategory={envelope.category}
             />
           </div>

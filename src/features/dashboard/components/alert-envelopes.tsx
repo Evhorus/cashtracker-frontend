@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Heading } from "@/shared/components/common/typography";
 import { CategoryIcon } from "@/features/categories/components/category-badge";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
@@ -27,6 +27,7 @@ export async function AlertEnvelopes({
 }: AlertEnvelopesProps) {
   const t = await getTranslations("dashboard");
   const tEnv = await getTranslations("envelopes");
+  const locale = await getLocale();
 
   return (
     <div
@@ -64,7 +65,13 @@ export async function AlertEnvelopes({
               />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="truncate font-medium">{envelope.name}</span>
+                  <span className="min-w-0 truncate">
+                    <span className="font-medium">{envelope.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {" · "}
+                      {EnvelopeHelpers.formatPeriod(envelope, locale)}
+                    </span>
+                  </span>
                   <span
                     className={cn(
                       "ml-2 shrink-0 font-mono text-xs font-semibold",

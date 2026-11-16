@@ -89,6 +89,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
             >
               {envelope.name}
             </Link>
+            <span className="text-sm text-muted-foreground">
+              · {EnvelopeHelpers.formatPeriod(envelope, locale)}
+            </span>
           </>
         }
         actions={

@@ -122,6 +122,10 @@ export const DashboardEnvelopeBreakdownRowSchema = z.object({
   envelopeName: z.string(),
   spent: z.number(),
   expenseCount: z.number(),
+  // Span of those expenses ("YYYY-MM-DD"): envelopes can share a name.
+  // Optional for a backend from before it was reported.
+  firstExpenseDate: z.string().optional(),
+  lastExpenseDate: z.string().optional(),
 });
 
 export const DashboardEnvelopeBreakdownAPIResponseSchema = z.array(

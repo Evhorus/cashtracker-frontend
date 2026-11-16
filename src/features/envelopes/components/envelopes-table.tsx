@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Infinity as InfinityIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Envelope } from "@/features/envelopes/types";
 import { EnvelopeHelpers } from "@/features/envelopes/lib/envelope-helpers";
 import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
@@ -37,6 +37,7 @@ interface EnvelopesTableProps {
 // for the same treatment.
 export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
   const t = useTranslations("envelopes.table");
+  const locale = useLocale();
 
   return (
     <div className="hidden overflow-hidden rounded-2xl border border-border/60 bg-card/30 md:block">
@@ -84,8 +85,16 @@ export function EnvelopesTable({ envelopes }: EnvelopesTableProps) {
                       category={envelope.category}
                       className="h-9 w-9 rounded-lg"
                     />
-                    <span className="truncate font-medium hover:text-primary">
-                      {envelope.name}
+                    {/* The period under the name: envelopes can share a
+                        name ("Gastos tarjetas de crédito" every month),
+                        and the dates are what tells them apart. */}
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium hover:text-primary">
+                        {envelope.name}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {EnvelopeHelpers.formatPeriod(envelope, locale)}
+                      </span>
                     </span>
                   </Link>
                 </TableCell>
