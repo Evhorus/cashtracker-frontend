@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import {
+  formatCalendarDateRange,
+  parseCalendarDate,
+} from "@/shared/utils/date-helpers";
 import {
   CURRENCY_MAP,
   formatCurrency,
@@ -19,6 +23,7 @@ interface EnvelopeBreakdownProps {
 // links each row to its envelope and has no icon/colour to resolve.
 export function EnvelopeBreakdown({ rows, currency }: EnvelopeBreakdownProps) {
   const t = useTranslations("statistics");
+  const locale = useLocale();
   const config = CURRENCY_MAP[currency];
   const total = rows.reduce((sum, row) => sum + row.spent, 0);
 
@@ -33,12 +38,24 @@ export function EnvelopeBreakdown({ rows, currency }: EnvelopeBreakdownProps) {
         return (
           <div key={row.envelopeId}>
             <div className="flex items-center justify-between text-sm">
-              <Link
-                href={`/dashboard/envelope/${row.envelopeId}`}
-                className="font-medium hover:underline"
-              >
-                {row.envelopeName}
-              </Link>
+              <span className="min-w-0">
+                <Link
+                  href={`/dashboard/envelope/${row.envelopeId}`}
+                  className="font-medium hover:underline"
+                >
+                  {row.envelopeName}
+                </Link>
+                {row.firstExpenseDate && row.lastExpenseDate && (
+                  <span className="text-xs text-muted-foreground">
+                    {" · "}
+                    {formatCalendarDateRange(
+                      parseCalendarDate(row.firstExpenseDate),
+                      parseCalendarDate(row.lastExpenseDate),
+                      locale,
+                    )}
+                  </span>
+                )}
+              </span>
               <span className="flex items-baseline gap-1.5 font-mono">
                 <span className="text-sm font-semibold">
                   {formatCurrency(row.spent, config)}

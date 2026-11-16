@@ -7,7 +7,6 @@ import {
 } from "@/shared/components/ui/card";
 import { Progress } from "@/shared/components/ui/progress";
 import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
-import { formatMonthYear } from "@/shared/utils/date-helpers";
 import { ArrowRight, Infinity as InfinityIcon } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import {
@@ -91,13 +90,14 @@ export const EnvelopeCard = ({ envelope }: EnvelopeCardProps) => {
             <CardTitle className="text-sm leading-none font-bold tracking-tight transition-colors duration-200 group-hover:text-primary">
               <span className="block truncate">{envelope.name}</span>
             </CardTitle>
-            {/* Always shows the creation month/year, not just when a
-                category is set - envelope names are free text and
-                commonly reused across years (e.g. a recurring
-                "August rent" every year), so without this there'd be no way to
-                tell which year's card is which in the list. */}
+            {/* The period its expenses actually span ("9 oct – 8 nov
+                2026"), falling back to the creation month while it has
+                none. Names are free text and reused across years, so
+                this is what tells two "Agosto" envelopes apart - and the
+                creation date alone misleads for an envelope created
+                after the fact. */}
             <Text className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
-              <span>{formatMonthYear(envelope.createdAt, locale)}</span>
+              <span>{EnvelopeHelpers.formatPeriod(envelope, locale)}</span>
               {envelope.category && (
                 <>
                   <span aria-hidden="true">·</span>

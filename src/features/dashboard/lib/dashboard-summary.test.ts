@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Envelope } from "@/features/envelopes/types";
-import type { DashboardSummary } from "../schemas/dashboard.schema";
-import { getAlertEnvelopes, getMonthOverMonthDelta } from "./dashboard-summary";
+import { getAlertEnvelopes } from "./dashboard-summary";
 
 function envelope(
   id: string,
@@ -21,68 +20,11 @@ function envelope(
     status,
     category: null,
     expenses: [],
+    expenseDateRange: null,
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),
   };
 }
-
-const month = (
-  month: string,
-  available: number,
-): DashboardSummary["chart"][number] => ({
-  month,
-  spent: 0,
-  available,
-});
-
-describe("getMonthOverMonthDelta", () => {
-  it("is null with fewer than two months", () => {
-    expect(getMonthOverMonthDelta([])).toBeNull();
-    expect(getMonthOverMonthDelta([month("2026-08", 100)])).toBeNull();
-  });
-
-  it("computes the change between the last two months", () => {
-    const delta = getMonthOverMonthDelta([
-      month("2026-06", 50),
-      month("2026-07", 100),
-      month("2026-08", 150),
-    ]);
-
-    expect(delta).toBe(50);
-  });
-
-  it("reports a decrease as negative", () => {
-    expect(
-      getMonthOverMonthDelta([month("2026-07", 200), month("2026-08", 150)]),
-    ).toBe(-25);
-  });
-
-  it("is null when the earlier month was exactly zero", () => {
-    // Any change from zero is an infinite percentage - the UI renders
-    // nothing rather than a fabricated figure.
-    expect(
-      getMonthOverMonthDelta([month("2026-07", 0), month("2026-08", 500)]),
-    ).toBeNull();
-  });
-
-  it("uses the magnitude of the earlier month, so a negative baseline still reads correctly", () => {
-    // Going from -100 available to -50 is an improvement, so the delta
-    // must be positive. Dividing by the signed value would flip it.
-    expect(
-      getMonthOverMonthDelta([month("2026-07", -100), month("2026-08", -50)]),
-    ).toBe(50);
-  });
-
-  it("ignores months before the last two", () => {
-    const delta = getMonthOverMonthDelta([
-      month("2026-01", 99999),
-      month("2026-07", 100),
-      month("2026-08", 110),
-    ]);
-
-    expect(delta).toBeCloseTo(10);
-  });
-});
 
 describe("getAlertEnvelopes", () => {
   it("keeps only warning and exceeded envelopes", () => {

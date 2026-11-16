@@ -1,5 +1,7 @@
 import accountEn from "@/features/account/messages/en.json";
 import accountEs from "@/features/account/messages/es.json";
+import paymentMethodsEn from "@/features/payment-methods/messages/en.json";
+import paymentMethodsEs from "@/features/payment-methods/messages/es.json";
 import authEn from "@/features/auth/messages/en.json";
 import authEs from "@/features/auth/messages/es.json";
 import categoriesEn from "@/features/categories/messages/en.json";
@@ -54,6 +56,7 @@ export const MESSAGE_SOURCES = {
     expensesEs,
     categoriesEs,
     accountEs,
+    paymentMethodsEs,
   ],
   en: [
     sharedEn,
@@ -65,6 +68,7 @@ export const MESSAGE_SOURCES = {
     expensesEn,
     categoriesEn,
     accountEn,
+    paymentMethodsEn,
   ],
 } as const satisfies Record<SupportedLocale, readonly object[]>;
 
@@ -85,6 +89,7 @@ export const MESSAGES = {
     ...expensesEs,
     ...categoriesEs,
     ...accountEs,
+    ...paymentMethodsEs,
   },
   en: {
     ...sharedEn,
@@ -96,6 +101,7 @@ export const MESSAGES = {
     ...expensesEn,
     ...categoriesEn,
     ...accountEn,
+    ...paymentMethodsEn,
   },
 } as const;
 

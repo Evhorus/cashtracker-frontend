@@ -51,7 +51,10 @@
     "descriptionTooLong": "La descripción es muy larga",
     "colorRequired": "Elige un color",
     "iconRequired": "Elige un ícono",
-    "amountTooLarge": "El monto supera el máximo permitido"
+    "amountTooLarge": "El monto supera el máximo permitido",
+    "paymentMethodNameRequired": "El nombre es obligatorio",
+    "paymentMethodNameTooLong": "Máximo 50 caracteres",
+    "cutDayRange": "El día de corte debe estar entre 1 y 31"
   },
   "nav": {
     "summary": "Resumen",

@@ -7,64 +7,72 @@ import { ChevronRight } from "lucide-react";
 
 import { DASHBOARD_NAV_ITEMS } from "@/features/dashboard/constants/nav-items";
 
+export interface BreadcrumbLink {
+  href: string;
+  label: string;
+}
+
 /**
- * The trail to the current page, sitting opposite its title (see
- * PageHeader) - the shape TailAdmin and most dashboard kits use.
+ * The trail to a page nested below a nav destination - an envelope, an
+ * expense - sitting opposite its title (see PageHeader).
  *
- * Derived from the pathname rather than passed in page by page: the
- * ancestors are all nav destinations, whose labels already live in
- * DASHBOARD_NAV_ITEMS, so asking each page to restate them would be a
- * second copy that can drift. The leaf is the page's own `title`, which
- * PageHeader already has - and which is the only part this cannot know,
- * since it can be an envelope's name.
+ * Nav destinations themselves (Sobres, Categorías, Estadísticas...) get
+ * none: the menu already says where you are, so "Resumen › Sobres" told
+ * nothing. The trail starts at the section for the same reason.
+ *
+ * The section comes from the pathname, its label from
+ * DASHBOARD_NAV_ITEMS. What lies between it and the leaf (the envelope
+ * an expense belongs to) is data only the page has, so it comes in as
+ * `parents`.
  */
 interface BreadcrumbProps {
   /** The current page, rendered as plain text - you are already here. */
   current: string;
+  /** Links between the section and the current page. */
+  parents?: BreadcrumbLink[];
   className?: string;
 }
 
-const SUMMARY_HREF = "/dashboard";
-
-export function Breadcrumb({ current, className }: BreadcrumbProps) {
+export function Breadcrumb({
+  current,
+  parents = [],
+  className,
+}: BreadcrumbProps) {
   const t = useTranslations("nav");
   const pathname = usePathname();
 
-  // The summary page IS the root, so it has no trail of its own.
-  if (pathname === SUMMARY_HREF) return null;
+  const isNavDestination = DASHBOARD_NAV_ITEMS.some(
+    (item) => item.href === pathname,
+  );
+  if (isNavDestination) return null;
 
   const section = DASHBOARD_NAV_ITEMS.find(
-    (item) => item.href !== SUMMARY_HREF && pathname.startsWith(item.href),
+    (item) => item.href !== "/dashboard" && pathname.startsWith(item.href),
   );
+  // The envelope detail route lives outside the /dashboard/envelopes
+  // nav entry, so its section needs saying explicitly.
+  const sectionLink: BreadcrumbLink | null = section
+    ? { href: section.href, label: t(section.key) }
+    : pathname.startsWith("/dashboard/envelope")
+      ? { href: "/dashboard/envelopes", label: t("envelopes") }
+      : null;
 
-  const ancestors = [{ href: SUMMARY_HREF, label: t("summary") }];
-
-  if (section) {
-    // A nav destination itself is the leaf, not its own ancestor.
-    if (pathname !== section.href) {
-      ancestors.push({ href: section.href, label: t(section.key) });
-    }
-  } else if (pathname.startsWith("/dashboard/envelope")) {
-    // The envelope detail route lives outside the /dashboard/envelopes
-    // nav entry, so its parent needs saying explicitly.
-    ancestors.push({ href: "/dashboard/envelopes", label: t("envelopes") });
-  }
+  const ancestors = [...(sectionLink ? [sectionLink] : []), ...parents];
 
   return (
-    // Hidden below md: at 390px this row already carries the back arrow,
-    // the title and the create action, and the back arrow is the same
-    // affordance a breadcrumb would provide.
+    // Hidden below md by its callers: at 390px the header row already
+    // carries the back arrow, which is the same affordance.
     <nav aria-label={t("breadcrumb")} className={className}>
       <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
         {ancestors.map((ancestor) => (
-          <li key={ancestor.href} className="flex items-center gap-1.5">
+          <li key={ancestor.href} className="flex min-w-0 items-center gap-1.5">
             <Link
               href={ancestor.href}
-              className="transition-colors hover:text-foreground"
+              className="truncate transition-colors hover:text-foreground"
             >
               {ancestor.label}
             </Link>
-            <ChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
+            <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
           </li>
         ))}
         {/* aria-current, and not a link: this is where the reader is. */}

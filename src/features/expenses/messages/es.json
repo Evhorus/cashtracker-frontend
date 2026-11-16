@@ -7,11 +7,6 @@
     "searchPlaceholder": "Buscar por nombre...",
     "searchAria": "Buscar gastos por nombre",
     "perPage": "Gastos por página",
-    "filteredCount": "{count, plural, one {# gasto encontrado} other {# gastos encontrados}}",
-    "filteredTotalLabel": "Total filtrado",
-    "sortAria": "Ordenar gastos por fecha",
-    "newestFirst": "Más recientes primero",
-    "oldestFirst": "Más antiguos primero",
     "table": {
       "expense": "Gasto",
       "date": "Fecha",
@@ -64,11 +59,29 @@
       "firstRunBody": "Registra el primero con «Agregar Gasto» y verás aquí en qué se va el dinero de este sobre."
     },
     "pageSizeAll": "Todo",
-    "perPageValue": "{size} / pág.",
     "toast": {
       "created": "Gasto creado correctamente.",
       "updated": "Gasto actualizado correctamente.",
       "deleted": "Gasto eliminado correctamente."
+    },
+    "filters": "Filtros",
+    "sortLabel": "Orden",
+    "clearFilters": "Quitar filtros",
+    "filtersActive": "{count, plural, one {# activo} other {# activos}}",
+    "perPageValue": "{size} / pág.",
+    "filteredBanner": {
+      "label": "Filtro aplicado",
+      "showing": "Mostrando {shown} de {total} gastos",
+      "search": "Búsqueda: «{term}»",
+      "total": "Total de estos gastos",
+      "clear": "Quitar filtros",
+      "remove": "Quitar el filtro {filter}"
+    },
+    "orders": {
+      "newest": "Más recientes primero",
+      "oldest": "Más antiguos primero",
+      "highest": "Mayor monto primero",
+      "lowest": "Menor monto primero"
     }
   }
 }

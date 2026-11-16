@@ -14,10 +14,7 @@ import { CreateEnvelopeDialog } from "@/features/envelopes/components/create-env
 import { RecentActivity } from "@/features/dashboard/components/recent-activity";
 import { AlertEnvelopes } from "@/features/dashboard/components/alert-envelopes";
 import { SummaryTile } from "@/features/dashboard/components/summary-tile";
-import {
-  getAlertEnvelopes,
-  getMonthOverMonthDelta,
-} from "@/features/dashboard/lib/dashboard-summary";
+import { getAlertEnvelopes } from "@/features/dashboard/lib/dashboard-summary";
 import { formatDate } from "@/shared/utils/date-helpers";
 import { type CurrencyCode } from "@/shared/utils/format-currency";
 import { cn } from "@/shared/lib/utils";
@@ -118,9 +115,6 @@ async function DashboardSummarySection() {
     currency: total.currency as CurrencyCode,
   }));
 
-  // Real month-over-month change, never a placeholder - and only ever
-  // shown against the one currency the chart is scoped to.
-  const deltaPercent = getMonthOverMonthDelta(summary.chart);
   // Already only alerting envelopes; this just orders them worst-first.
   const alertEnvelopes = getAlertEnvelopes(envelopesResult.data);
   // From the filtered query's own count, not the length of the page we
@@ -155,9 +149,7 @@ async function DashboardSummarySection() {
       totalSpent={total.totalSpent}
       totalSpentCapped={total.totalSpentCapped}
       totalAvailable={total.totalAvailable}
-      deltaPercent={
-        total.currency === summary.chartCurrency ? deltaPercent : null
-      }
+      totalExceeded={total.totalExceeded}
       className="w-full md:w-[calc(50%-0.5rem)]"
     />
   ));

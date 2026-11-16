@@ -10,6 +10,7 @@ import {
   hasMultipleYears,
   parseCalendarDate,
   toFormCalendarDate,
+  formatCalendarDateRange,
 } from "./date-helpers";
 
 // These tests run under TZ=America/Bogota (UTC-5) - see vitest.config.ts
@@ -190,5 +191,27 @@ describe("locale", () => {
       "hace alrededor de 2 horas",
     );
     expect(formatRelativeTime(twoHoursAgo, "en")).toBe("about 2 hours ago");
+  });
+});
+
+describe("formatCalendarDateRange", () => {
+  const day = (value: string) => parseCalendarDate(value);
+
+  it("is a single date when it starts and ends the same day", () => {
+    expect(
+      formatCalendarDateRange(day("2026-10-09"), day("2026-10-09"), "es"),
+    ).toBe("9 oct 2026");
+  });
+
+  it("says the year once within a year", () => {
+    expect(
+      formatCalendarDateRange(day("2026-10-09"), day("2026-11-08"), "es"),
+    ).toBe("9 oct – 8 nov 2026");
+  });
+
+  it("says both years across a year boundary", () => {
+    expect(
+      formatCalendarDateRange(day("2025-12-09"), day("2026-01-08"), "es"),
+    ).toBe("9 dic 2025 – 8 ene 2026");
   });
 });

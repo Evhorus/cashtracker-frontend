@@ -1,3 +1,8 @@
+import type { SupportedLocale } from "@/shared/config/i18n/config";
+import {
+  formatCalendarDateRange,
+  formatMonthYear,
+} from "@/shared/utils/date-helpers";
 import type { Envelope } from "../types";
 
 /**
@@ -68,6 +73,20 @@ export type EnvelopeStatusTab = (typeof ENVELOPE_STATUS_TAB_VALUES)[number];
 // Same constant expenses uses (see EXPENSES_MAX_PAGE_SIZE) - it's a
 // property of the endpoint, not of what's being listed.
 export const ENVELOPES_MAX_PAGE_SIZE = 100;
+
+/**
+ * List orders, by the period an envelope covers (its latest expense, or
+ * its creation date while it has none) - the date its card shows. The
+ * backend does the ordering; "recent" is its default.
+ */
+export const ENVELOPE_SORT_VALUES = ["recent", "oldest"] as const;
+export type EnvelopeSort = (typeof ENVELOPE_SORT_VALUES)[number];
+
+export function parseEnvelopeSort(
+  value: string | null | undefined,
+): EnvelopeSort {
+  return value === "oldest" ? "oldest" : "recent";
+}
 
 export const ENVELOPES_DEFAULT_PAGE_SIZE = 10;
 
@@ -191,4 +210,20 @@ export const EnvelopeHelpers = {
         return "bg-primary/10 text-primary";
     }
   },
+
+  /**
+   * The period an envelope covers, for its card and header: the span of
+   * its expenses' dates, or its creation month while it has none.
+   */
+  formatPeriod: (
+    envelope: Pick<Envelope, "expenseDateRange" | "createdAt">,
+    locale: SupportedLocale,
+  ): string =>
+    envelope.expenseDateRange
+      ? formatCalendarDateRange(
+          envelope.expenseDateRange.first,
+          envelope.expenseDateRange.last,
+          locale,
+        )
+      : formatMonthYear(envelope.createdAt, locale),
 };

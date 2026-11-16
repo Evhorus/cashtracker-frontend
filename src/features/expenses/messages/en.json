@@ -7,11 +7,6 @@
     "searchPlaceholder": "Search by name...",
     "searchAria": "Search expenses by name",
     "perPage": "Expenses per page",
-    "filteredCount": "{count, plural, one {# expense found} other {# expenses found}}",
-    "filteredTotalLabel": "Filtered total",
-    "sortAria": "Sort expenses by date",
-    "newestFirst": "Newest first",
-    "oldestFirst": "Oldest first",
     "table": {
       "expense": "Expense",
       "date": "Date",
@@ -64,11 +59,29 @@
       "firstRunBody": "Add the first one with \"Add Expense\" and you'll see where this envelope's money goes."
     },
     "pageSizeAll": "All",
-    "perPageValue": "{size} / page",
     "toast": {
       "created": "Expense created.",
       "updated": "Expense updated.",
       "deleted": "Expense deleted."
+    },
+    "filters": "Filters",
+    "sortLabel": "Order",
+    "clearFilters": "Clear filters",
+    "filtersActive": "{count, plural, one {# active} other {# active}}",
+    "perPageValue": "{size} / page",
+    "filteredBanner": {
+      "label": "Active filter",
+      "showing": "Showing {shown} of {total} expenses",
+      "search": "Search: “{term}”",
+      "total": "Total of these expenses",
+      "clear": "Clear filters",
+      "remove": "Remove the filter {filter}"
+    },
+    "orders": {
+      "newest": "Newest first",
+      "oldest": "Oldest first",
+      "highest": "Highest amount first",
+      "lowest": "Lowest amount first"
     }
   }
 }

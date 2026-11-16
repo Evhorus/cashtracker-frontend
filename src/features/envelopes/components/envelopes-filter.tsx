@@ -9,8 +9,11 @@ import { useDebouncedSearchParam } from "@/shared/hooks/use-debounced-search-par
 import { ListFilterBar } from "@/shared/components/common/list-filter-bar";
 import { FilterSelect } from "@/shared/components/common/filter-select";
 import {
+  ENVELOPE_SORT_VALUES,
   ENVELOPE_STATUS_TAB_VALUES,
   ENVELOPES_DEFAULT_PAGE_SIZE,
+  parseEnvelopeSort,
+  type EnvelopeSort,
   ENVELOPES_MAX_PAGE_SIZE,
   ENVELOPES_PAGE_SIZE_OPTIONS,
   type EnvelopeStatusTab,
@@ -160,6 +163,43 @@ export const EnvelopesPageSizeFilter = () => {
   );
 };
 
+export const EnvelopesSortFilter = () => {
+  const t = useTranslations("envelopes");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
+  const sort = parseEnvelopeSort(searchParams.get("sort"));
+
+  const handleSortChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value === "recent") {
+      params.delete("sort");
+    } else {
+      params.set("sort", value);
+    }
+    // Back to the first page: page N of a new order is arbitrary.
+    params.delete("page");
+    startTransition(() => {
+      const query = params.toString();
+      router.replace(`${pathname}${query ? `?${query}` : ""}`);
+    });
+  };
+
+  return (
+    <FilterSelect
+      label={t("sortLabel")}
+      value={sort}
+      onValueChange={handleSortChange}
+      className="w-full sm:w-auto"
+      options={ENVELOPE_SORT_VALUES.map((value: EnvelopeSort) => ({
+        value,
+        label: t(`sorts.${value}`),
+      }))}
+    />
+  );
+};
+
 // Search full-width above the status tabs on mobile; the two sharing
 // one row on desktop, right above the table they filter - see
 // ListFilterBar for why this is a shared shell, not bespoke markup.
@@ -173,8 +213,13 @@ export const EnvelopesFilter = ({
     <ListFilterBar
       actions={actions}
       filters={
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <EnvelopesStatusFilter />
+        // On a phone: status on its own row, order and page size side
+        // by side beneath it, rather than three full-width rows.
+        <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center">
+          <div className="col-span-2 sm:contents">
+            <EnvelopesStatusFilter />
+          </div>
+          <EnvelopesSortFilter />
           <EnvelopesPageSizeFilter />
         </div>
       }
