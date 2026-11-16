@@ -6,7 +6,7 @@ export default function ExpenseLoadingSkeleton() {
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-10">
       {/* Header Skeleton */}
-      <PageHeaderSkeleton actions="back-edit-delete" />
+      <PageHeaderSkeleton actions="edit-delete" withBreadcrumb />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main Info Column (2/3 width) */}

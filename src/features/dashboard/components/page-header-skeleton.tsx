@@ -13,80 +13,65 @@ interface PageHeaderSkeletonProps {
    * "single": one action, same on both breakpoints.
    * "icon-pair": two small icon buttons on desktop (edit/delete),
    * collapsing to one icon button on mobile (an actions-menu trigger).
-   * "back-edit-delete": the envelope and expense detail pages - a Volver
-   * button plus labeled Editar/Eliminar pills on desktop, collapsing to
-   * one icon button on mobile (an actions-menu trigger).
-   *
-   * On desktop these sit on their own row beneath the title, matching
-   * PageHeader - the title row there holds only the title and the
-   * breadcrumb.
+   * "edit-delete": the envelope and expense detail pages - labelled
+   * Editar/Eliminar on desktop, one icon button on mobile.
    */
-  actions?: "none" | "single" | "icon-pair" | "back-edit-delete";
-  /** False where the real page renders no breadcrumb - only the summary
-   * page, which is the root of the trail. */
+  actions?: "none" | "single" | "icon-pair" | "edit-delete";
+  /** Only pages below a nav section (an envelope, an expense) show a
+   * breadcrumb - see Breadcrumb. */
   withBreadcrumb?: boolean;
 }
 
 /**
- * Mirrors PageHeader's actual layout: a title row (back button and
- * title on the left, breadcrumb on the right) and, on desktop, a second
- * row of actions beneath it. Mobile's single action stays on the title
- * row, as it does in the real thing.
+ * Mirrors PageHeader: the title on the left and, on desktop, the
+ * breadcrumb above the actions on the right, in one band. Mobile's
+ * single action stays beside the title, as in the real thing.
  */
 export const PageHeaderSkeleton = ({
   withBackButton = true,
   withDescription = true,
   actions = "single",
-  withBreadcrumb = true,
+  withBreadcrumb = false,
 }: PageHeaderSkeletonProps) => {
   const hasMobileAction = actions !== "none";
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          {/* md:hidden - matches PageHeader itself: desktop has the
-              persistent sidebar nav, so the real back button never
-              renders there either. Desktop's own back button lives in
-              the actions row below, for "back-edit-delete" pages. */}
-          {withBackButton && (
-            <Skeleton className="h-10 w-10 shrink-0 rounded-full md:hidden" />
-          )}
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        {/* md:hidden - the real back button is mobile-only too. */}
+        {withBackButton && (
+          <Skeleton className="h-10 w-10 shrink-0 rounded-full md:hidden" />
+        )}
 
-          <div className="space-y-1.5">
-            <Skeleton className="h-8 w-48 md:w-64" />
-            {withDescription && <Skeleton className="h-4 w-32" />}
-          </div>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-4">
-          {withBreadcrumb && <Skeleton className="hidden h-4 w-48 md:block" />}
-          {hasMobileAction && (
-            <Skeleton className="h-9 w-9 rounded-md md:hidden" />
-          )}
+        <div className="space-y-1.5">
+          <Skeleton className="h-8 w-48 md:w-64" />
+          {withDescription && <Skeleton className="h-4 w-32" />}
         </div>
       </div>
 
-      {actions === "single" && (
-        <div className="hidden justify-end md:flex">
-          <Skeleton className="h-10 w-36" />
-        </div>
-      )}
+      <div className="flex shrink-0 items-center gap-4 md:flex-col md:items-end md:gap-3">
+        {withBreadcrumb && <Skeleton className="hidden h-4 w-48 md:block" />}
 
-      {actions === "icon-pair" && (
-        <div className="hidden items-center justify-end gap-1 md:flex">
-          <Skeleton className="h-9 w-9 rounded-md" />
-          <Skeleton className="h-9 w-9 rounded-md" />
-        </div>
-      )}
+        {actions === "single" && (
+          <Skeleton className="hidden h-10 w-36 md:block" />
+        )}
+        {actions === "icon-pair" && (
+          <div className="hidden items-center gap-1 md:flex">
+            <Skeleton className="h-9 w-9 rounded-md" />
+            <Skeleton className="h-9 w-9 rounded-md" />
+          </div>
+        )}
+        {actions === "edit-delete" && (
+          <div className="hidden items-center gap-2 md:flex">
+            <Skeleton className="h-9 w-20 rounded-md" />
+            <Skeleton className="h-9 w-24 rounded-md" />
+          </div>
+        )}
 
-      {actions === "back-edit-delete" && (
-        <div className="hidden items-center justify-end gap-2 md:flex">
-          <Skeleton className="h-9 w-24 rounded-md" />
-          <Skeleton className="h-9 w-20 rounded-md" />
-          <Skeleton className="h-9 w-24 rounded-md" />
-        </div>
-      )}
+        {hasMobileAction && (
+          <Skeleton className="h-9 w-9 rounded-md md:hidden" />
+        )}
+      </div>
     </div>
   );
 };

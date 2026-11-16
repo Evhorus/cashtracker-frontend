@@ -3,6 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/shared/components/ui/button";
 import {
   Breadcrumb,
@@ -35,6 +36,7 @@ export const PageHeader = ({
   icon,
   breadcrumbParents,
 }: PageHeaderProps) => {
+  const t = useTranslations("common");
   return (
     <div className="space-y-4">
       {/* items-start, not items-center: a title long enough to wrap (see
@@ -67,10 +69,9 @@ export const PageHeader = ({
             // such persistent nav next to the content, just the bottom tab
             // bar (Resumen/Sobres/Estadísticas/Cuenta, no "back" of its
             // own), so it's the one place this button actually earns its
-            // spot. (Desktop's own "back" need - a nested detail view the
-            // sidebar has no direct link to - is met differently: see
-            // BackButton, placed in this header's `actions` instead.)
-            <Link href={backUrl} className="md:hidden">
+            // spot. (Desktop's way back from a nested detail view is the
+            // breadcrumb's section link.)
+            <Link href={backUrl} aria-label={t("back")} className="md:hidden">
               {/* Same rounded/translucent-card/subtle-border treatment as
                 the nav-pill groups elsewhere (custom-header.tsx's
                 Dashboard/Sobres pills, account-view.tsx's settings
@@ -117,39 +118,33 @@ export const PageHeader = ({
           </div>
         </div>
 
+        {/* One band for the whole header: on desktop the trail and the
+            actions stack opposite the title, rather than the actions
+            taking a row of their own underneath and leaving the space
+            beside the title empty. No "Volver" here on desktop - the
+            breadcrumb's section link is the way back. */}
         <div
           className={cn(
-            "flex shrink-0 items-center gap-4",
+            "flex shrink-0 items-center gap-4 md:flex-col md:items-end md:gap-3",
             icon && "max-md:ml-auto",
           )}
         >
-          {/* Opposite the title, and the only thing there - the shape
-              dashboard kits use. Desktop only: at 390px this row already
-              carries the back arrow, the title and the create action,
-              and that back arrow is the same affordance a breadcrumb
-              would offer. */}
           <Breadcrumb
             current={title}
             parents={breadcrumbParents}
             className="hidden md:block"
           />
 
-          {/* Mobile's actions stay on this row: there is no breadcrumb
-              to share it with, and an icon-only button fits beside the
-              title where a labelled row would not. */}
+          {actions && (
+            <div className="hidden items-center gap-2 md:flex">{actions}</div>
+          )}
+
+          {/* Mobile's actions stay beside the title: there is no
+              breadcrumb to share the row with, and an icon-only button
+              fits where a labelled row would not. */}
           {mobileActions && <div className="md:hidden">{mobileActions}</div>}
         </div>
       </div>
-
-      {/* Desktop's actions get their own row beneath, so the title row
-          holds only the title and the trail. Crowding them in beside the
-          breadcrumb is what this replaced - on the envelope detail page
-          that row carried a 3-level trail and three labelled buttons. */}
-      {actions && (
-        <div className="hidden items-center justify-end gap-2 md:flex">
-          {actions}
-        </div>
-      )}
     </div>
   );
 };

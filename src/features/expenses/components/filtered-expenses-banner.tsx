@@ -2,11 +2,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
-import {
-  CURRENCY_MAP,
-  formatCurrency,
-  type CurrencyCode,
-} from "@/shared/utils/format-currency";
 
 interface FilterChip {
   key: string;
@@ -20,25 +15,20 @@ interface FilterChip {
 interface FilteredExpensesBannerProps {
   shown: number;
   total: number;
-  totalAmount: number;
-  currency: CurrencyCode;
   chips: FilterChip[];
   /** The same page without any filter. */
   clearHref: string;
 }
 
 /**
- * Says, right above the list, what the list is showing: which filters
- * (each removable on its own), how many of the envelope's expenses that
- * leaves, and what they add up to. Replaces a "Σ N gastos encontrados"
- * row at the foot of the summary card - away from the list, behind a
- * symbol not everyone reads, and silent about which filter it was.
+ * Says, right above the list, what is filtered - each filter a chip
+ * that removes it - and how many of the envelope's expenses that
+ * leaves. The filtered total lives in the summary card beside it, so it
+ * is not repeated here.
  */
 export function FilteredExpensesBanner({
   shown,
   total,
-  totalAmount,
-  currency,
   chips,
   clearHref,
 }: FilteredExpensesBannerProps) {
@@ -47,56 +37,53 @@ export function FilteredExpensesBanner({
   return (
     <section
       aria-label={t("label")}
-      className="mb-4 rounded-2xl border border-primary/30 bg-primary/5 p-4"
+      className="mb-4 rounded-2xl border border-primary/30 bg-primary/5 px-3 py-2 sm:px-4 sm:py-3"
     >
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-medium">{t("showing", { shown, total })}</p>
+      {/* The count and the clear-all on one line, the chips beneath
+          with the full width. On phones the clear is icon-only and the
+          chips scroll sideways on one line - wrapping them took three
+          rows for three payment methods. */}
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <p className="shrink-0 text-xs font-medium sm:text-sm">
+          {t("showing", { shown, total })}
+        </p>
         <Button
           variant="outline"
           size="sm"
-          className="shrink-0"
+          className="shrink-0 max-sm:size-7 max-sm:p-0"
           nativeButton={false}
+          aria-label={t("clear")}
           render={<Link href={clearHref} />}
         >
           <X />
-          {t("clear")}
+          <span className="hidden sm:inline">{t("clear")}</span>
         </Button>
       </div>
-
-      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <ul className="flex flex-wrap gap-1.5">
-          {chips.map((chip) => (
-            <li key={chip.key}>
-              <Link
-                href={chip.removeHref}
-                aria-label={t("remove", { filter: chip.label })}
-                className="group inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/60 py-1 pr-1.5 pl-2.5 text-sm transition-colors hover:border-destructive/50"
-              >
-                {chip.color !== undefined && (
-                  <span
-                    aria-hidden
-                    className={
-                      chip.color
-                        ? "h-2 w-2 shrink-0 rounded-full"
-                        : "h-2 w-2 shrink-0 rounded-full border border-dashed border-muted-foreground"
-                    }
-                    style={chip.color ? { background: chip.color } : undefined}
-                  />
-                )}
-                {chip.label}
-                <X className="h-3.5 w-3.5 text-muted-foreground group-hover:text-destructive" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        <div className="sm:text-right">
-          <p className="text-xs text-muted-foreground">{t("total")}</p>
-          <p className="font-mono text-xl font-bold tabular-nums">
-            {formatCurrency(totalAmount, CURRENCY_MAP[currency])}
-          </p>
-        </div>
-      </div>
+      <ul className="-mx-3 mt-1.5 flex [scrollbar-width:none] gap-1.5 overflow-x-auto px-3 pb-0.5 sm:mx-0 sm:mt-2 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+        {chips.map((chip) => (
+          <li key={chip.key} className="shrink-0">
+            <Link
+              href={chip.removeHref}
+              aria-label={t("remove", { filter: chip.label })}
+              className="group inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/60 py-0.5 pr-1 pl-2 text-xs whitespace-nowrap transition-colors hover:border-destructive/50 sm:py-1 sm:pr-1.5 sm:pl-2.5 sm:text-sm"
+            >
+              {chip.color !== undefined && (
+                <span
+                  aria-hidden
+                  className={
+                    chip.color
+                      ? "h-2 w-2 shrink-0 rounded-full"
+                      : "h-2 w-2 shrink-0 rounded-full border border-dashed border-muted-foreground"
+                  }
+                  style={chip.color ? { background: chip.color } : undefined}
+                />
+              )}
+              {chip.label}
+              <X className="h-3.5 w-3.5 text-muted-foreground group-hover:text-destructive" />
+            </Link>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

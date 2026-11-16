@@ -73,7 +73,6 @@
       "label": "Filtro aplicado",
       "showing": "Mostrando {shown} de {total} gastos",
       "search": "Búsqueda: «{term}»",
-      "total": "Total de estos gastos",
       "clear": "Quitar filtros",
       "remove": "Quitar el filtro {filter}"
     },
