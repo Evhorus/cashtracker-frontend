@@ -34,6 +34,7 @@
       "name": "Nombre del sobre",
       "namePlaceholder": "Ej: Gastos del hogar",
       "currency": "Moneda",
+      "currencyLocked": "La moneda no se puede cambiar porque el sobre ya tiene gastos.",
       "hasLimit": "Este sobre tiene un límite de gasto",
       "amount": "Monto",
       "category": "Categoría (opcional)"

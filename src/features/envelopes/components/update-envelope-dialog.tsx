@@ -83,6 +83,10 @@ export const UpdateEnvelopeDialog = ({
           categoryId: envelope.category?.id ?? "",
         }}
         isLoading={isPending}
+        // spent is the exact sum of the envelope's expenses, so it is a
+        // reliable "has expenses" signal even where the list endpoint
+        // doesn't send the expenses themselves.
+        isCurrencyLocked={Number(envelope.spent) > 0}
         onSubmit={handleUpdate}
         onCloseDialog={() => setOpen(false)}
       />
