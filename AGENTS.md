@@ -41,9 +41,11 @@ must stay runnable by a fork and this job cannot be: a fork's PR is never given 
 It is skipped for forks by an `if` on the head repository — **and for Dependabot, for the
 same reason and less obviously**: a workflow Dependabot triggers gets a read-only
 `GITHUB_TOKEN` and can read no repository secret, so without the exclusion every weekly
-dependency PR goes red on a job that cannot possibly pass. `verify` remains the only
-required check — adding `e2e` to branch protection would block every fork PR on a check
-that deliberately never runs.
+dependency PR goes red on a job that cannot possibly pass. Both `verify` and `e2e` are
+required checks on `main`, so production never receives code whose browser suite failed
+or is still running. The exclusion does not block anything: GitHub reports a job skipped
+by its `if` as successful for a required check, so fork and Dependabot PRs still merge on
+`verify` alone — which means dependency bumps reach production without the e2e suite.
 
 **The folder a spec lives in is what decides which project runs it**, and both
 projects match by glob for that reason. `signed-out/` matched an explicit list of
@@ -141,29 +143,30 @@ silently skips labels it cannot find.
 
 ## Branch protection
 
-`main` is protected, and **direct pushes to it are rejected — including for admins**
-(`enforce_admins`). Every change goes through a pull request:
+`main` is protected by the **"protect main" repository ruleset** (not classic branch
+protection), with no bypass actors, so **direct pushes to it are rejected — including for
+admins**. Every change goes through a pull request:
 
 ```
 git checkout -b type/short-name     # work, commit (hooks run)
 git push -u origin type/short-name
 gh pr create --fill                 # CI runs
-gh pr merge --squash --delete-branch # merges once `verify` is green
+gh pr merge --squash --delete-branch # merges once `verify` and `e2e` are green
 ```
 
-The required check is named **`verify`** — that is `jobs.verify` in `ci.yml`, not the
-workflow's `name: CI`. Renaming that job breaks the rule silently: GitHub waits forever
-for a check that never arrives and every PR blocks. If you rename it, update the
-protection rule in the same change.
+The required checks are named **`verify`** and **`e2e`** — that is `jobs.verify` and
+`jobs.e2e` in `ci.yml`, not the workflow's `name: CI`. Renaming either job breaks the rule
+silently: GitHub waits forever for a check that never arrives and every PR blocks. If you
+rename one, update the ruleset in the same change.
 
-Other settings and why: `strict` (the branch must be up to date with `main` before
-merging, so the check ran against what actually lands), `required_linear_history` (squash
-or rebase, no merge commits), `required_conversation_resolution`, and no force-push or
+Other settings and why: strict status checks (the branch must be up to date with `main`
+before merging, so the checks ran against what actually lands), squash as the only allowed
+merge method (linear history), required conversation resolution, and no force-push or
 deletion of `main`. Approvals are set to **0** on purpose — GitHub does not let you
 approve your own PR, so requiring one would leave a solo maintainer unable to merge
 anything. The PR is the gate; the approval is not.
 
-Read it back with `gh api repos/Evhorus/cashtracker-frontend/branches/main/protection`.
+Read it back with `gh api repos/Evhorus/cashtracker-frontend/rules/branches/main`.
 
 No `lint-staged`, deliberately: the whole set runs in under ten seconds on this repo,
 which is cheaper than maintaining the machinery to run it on only the staged files.
