@@ -259,15 +259,15 @@ export default async function EnvelopePage({
                 // nothing already on screen moves or changes size.
                 <div
                   className={cn(
-                    "grid min-h-36 overflow-hidden rounded-lg bg-secondary/40",
+                    "grid min-h-24 overflow-hidden rounded-lg bg-secondary/40 md:min-h-36",
                     hasActiveFilter ? "grid-cols-2" : "grid-cols-1",
                   )}
                 >
-                  <div className="flex flex-col justify-center gap-0.5 px-4 py-5">
+                  <div className="flex flex-col justify-center gap-0.5 px-3 py-3 md:px-4 md:py-5">
                     <p className="text-xs text-muted-foreground">
-                      {tEnvelope("detail.spent")}
+                      {tEnvelope("detail.spentTotal")}
                     </p>
-                    <p className="font-mono text-lg font-bold tabular-nums">
+                    <p className="font-mono text-base font-bold tabular-nums md:text-lg">
                       {formatCurrency(+envelope.spent, currencyConfig)}
                     </p>
                     <p className="flex items-center gap-1 text-xs whitespace-nowrap text-muted-foreground">
@@ -663,10 +663,12 @@ async function FilteredSummary({
   }
 
   return (
-    <div className="flex animate-in flex-col justify-center gap-0.5 border-l border-primary/30 bg-primary/10 px-4 py-5 text-sm duration-300 fade-in slide-in-from-right-4">
+    <div className="flex animate-in flex-col justify-center gap-0.5 border-l border-primary/30 bg-primary/10 px-3 py-3 text-sm duration-300 fade-in slide-in-from-right-4 md:px-4 md:py-5">
       <p className="text-xs text-muted-foreground">{t("filtered")}</p>
       {labels}
-      <p className="mt-1 font-mono text-lg font-bold tabular-nums">{amount}</p>
+      <p className="mt-0.5 font-mono text-base font-bold tabular-nums md:mt-1 md:text-lg">
+        {amount}
+      </p>
       <p className="text-xs text-muted-foreground">{count}</p>
     </div>
   );
