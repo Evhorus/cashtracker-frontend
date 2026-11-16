@@ -65,6 +65,49 @@ describe("fromApi", () => {
   });
 });
 
+describe("payment method", () => {
+  const formValues = {
+    name: "Mercado",
+    amount: "1000",
+    currency: "COP" as const,
+    date: new Date(2026, 8, 22),
+    description: "",
+  };
+
+  it("sends the chosen id, and null for none so an edit can clear it", () => {
+    expect(
+      ExpenseMapper.toApiRequest({ ...formValues, paymentMethodId: "pm-1" })
+        .paymentMethodId,
+    ).toBe("pm-1");
+    expect(
+      ExpenseMapper.toApiRequest({ ...formValues, paymentMethodId: "" })
+        .paymentMethodId,
+    ).toBeNull();
+  });
+
+  it("reads it from the API and back into the form", () => {
+    const method = {
+      id: "pm-1",
+      name: "Davivienda",
+      color: "oklch(0.7 0.13 30)",
+    };
+    const expense = ExpenseMapper.fromApi({
+      ...apiExpense,
+      paymentMethod: method,
+    });
+
+    expect(expense.paymentMethod).toEqual(method);
+    expect(ExpenseMapper.toFormValues(expense).paymentMethodId).toBe("pm-1");
+  });
+
+  it("treats a response without the field as no payment method", () => {
+    const expense = ExpenseMapper.fromApi(apiExpense);
+
+    expect(expense.paymentMethod).toBeNull();
+    expect(ExpenseMapper.toFormValues(expense).paymentMethodId).toBe("");
+  });
+});
+
 describe("toApiRequest", () => {
   it("sends the date as a plain yyyy-MM-dd built from local components", () => {
     const request = ExpenseMapper.toApiRequest({
@@ -74,6 +117,7 @@ describe("toApiRequest", () => {
       // What the form holds: a browser-local-anchored date.
       date: new Date(2026, 8, 22),
       description: "",
+      paymentMethodId: "",
     });
 
     expect(request.date).toBe("2026-09-22");

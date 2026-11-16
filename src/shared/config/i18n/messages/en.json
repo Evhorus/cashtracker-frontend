@@ -51,7 +51,10 @@
     "descriptionTooLong": "That description is too long",
     "colorRequired": "Pick a colour",
     "iconRequired": "Pick an icon",
-    "amountTooLarge": "The amount exceeds the maximum allowed"
+    "amountTooLarge": "The amount exceeds the maximum allowed",
+    "paymentMethodNameRequired": "The name is required",
+    "paymentMethodNameTooLong": "50 characters at most",
+    "cutDayRange": "The cut-off day must be between 1 and 31"
   },
   "nav": {
     "summary": "Overview",

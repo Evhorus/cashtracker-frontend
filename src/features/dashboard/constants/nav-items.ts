@@ -18,10 +18,12 @@ export const DASHBOARD_NAV_ITEMS = [
 ] as const;
 
 /**
- * The mobile bottom bar has room for four, and account is already one
- * tap away from the avatar menu in the header - so it's the one that
- * gives up its slot.
+ * What the sidebar and the mobile bottom bar list. Account is left out
+ * of both: it is already one tap away from the avatar (the user card at
+ * the foot of the sidebar, the avatar menu in the mobile header), so a
+ * second link to it was redundant. DASHBOARD_NAV_ITEMS keeps it for the
+ * breadcrumb's page names.
  */
-export const MOBILE_NAV_ITEMS = DASHBOARD_NAV_ITEMS.filter(
+export const MAIN_NAV_ITEMS = DASHBOARD_NAV_ITEMS.filter(
   (item) => item.key !== "account",
 );
