@@ -23,8 +23,7 @@
       "description": "Los gastos que ya lo usan se actualizan solos"
     },
     "picker": {
-      "label": "Medio de pago (opcional)",
-      "none": "Sin medio de pago",
+      "label": "Agregar medio de pago",
       "new": "Nuevo"
     },
     "section": {

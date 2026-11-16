@@ -99,9 +99,10 @@ test("an expense is tagged with it and keeps it on edit", async ({ page }) => {
   const form = page.getByRole("dialog");
   await form.getByLabel(/nombre del gasto/i).fill(EXPENSE);
   await form.getByLabel(/^monto/i).fill("25000");
-  await expect(
-    form.getByRole("radio", { name: /sin medio de pago/i }),
-  ).toHaveAttribute("aria-checked", "true");
+  const toggle = form.getByRole("switch", { name: /medio de pago/i });
+  await expect(toggle).not.toBeChecked();
+  await expect(form.getByRole("radio")).toHaveCount(0);
+  await toggle.click();
   await form.getByRole("radio", { name: nameRe(METHOD) }).click();
   await form
     .getByRole("button", { name: /guardar|crear/i })
@@ -125,6 +126,7 @@ test("one created from the expense form does not submit the expense", async ({
   await openEnvelope(page);
   await page.getByRole("button", { name: /agregar gasto/i }).click();
   await page.getByLabel(/nombre del gasto/i).fill(`${EXPENSE}-draft`);
+  await page.getByRole("switch", { name: /medio de pago/i }).click();
   await page.getByRole("button", { name: /^nuevo$/i }).click();
 
   const methodForm = page.getByRole("dialog", {
