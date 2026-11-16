@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { Breadcrumb } from "@/features/dashboard/components/breadcrumb";
 import { Heading } from "@/shared/components/common/typography";
+import { cn } from "@/shared/lib/utils";
 
 interface PageHeaderProps {
   title: string;
@@ -34,8 +35,24 @@ export const PageHeader = ({
           button against the whole multi-line block, leaving it floating
           next to the middle line instead of lined up with the first
           one. */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex min-w-0 flex-1 items-start gap-3">
+      {/* With an icon (the envelope and expense detail pages), phones
+          give the title a row of its own: beside the back button, the
+          icon and the actions it had ~130px at 320px wide, and a long
+          envelope name wrapped over eight lines. `contents` lets the
+          inner group's children join this row, so the title can be
+          ordered last and take the full width. */}
+      <div
+        className={cn(
+          "flex items-start justify-between gap-4",
+          icon && "max-md:flex-wrap max-md:justify-start max-md:gap-3",
+        )}
+      >
+        <div
+          className={cn(
+            "flex min-w-0 flex-1 items-start gap-3",
+            icon && "max-md:contents",
+          )}
+        >
           {backUrl && (
             // md:hidden - desktop already has the persistent sidebar nav
             // (dashboard-sidebar.tsx) to get anywhere else in the app, so a
@@ -76,19 +93,29 @@ export const PageHeader = ({
             in and needs to read in full, not hide behind an ellipsis -
             same criterion as sessions-section.tsx and
             envelope-card.tsx's meta line. */}
-          <div className="min-w-0 flex-1">
+          <div
+            className={cn(
+              "min-w-0 flex-1",
+              icon && "max-md:order-last max-md:basis-full",
+            )}
+          >
             <Heading as="h1" size="lg">
               {title}
             </Heading>
             {description && (
-              <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-2 text-muted-foreground">
                 {description}
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-4">
+        <div
+          className={cn(
+            "flex shrink-0 items-center gap-4",
+            icon && "max-md:ml-auto",
+          )}
+        >
           {/* Opposite the title, and the only thing there - the shape
               dashboard kits use. Desktop only: at 390px this row already
               carries the back arrow, the title and the create action,

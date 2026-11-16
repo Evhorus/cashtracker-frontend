@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { XIcon } from "lucide-react";
-import { useMediaQuery } from "@/shared/hooks/use-media-query";
+import { useIsDesktop } from "@/shared/hooks/use-media-query";
 import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,
@@ -36,6 +36,34 @@ interface ResponsiveFormSheetProps {
   children: React.ReactNode;
 }
 
+/** Roughly how long a phone's on-screen keyboard takes to slide in. */
+const KEYBOARD_OPEN_DELAY_MS = 300;
+
+/**
+ * Scrolls the field being typed into back into view once the keyboard
+ * is up. The drawer is anchored to the bottom of the screen, so on a
+ * short phone (iPhone SE) the keyboard can cover the very field that
+ * opened it; browsers do not always scroll inside this container on
+ * their own. Text-entry elements only - a button or switch opens no
+ * keyboard.
+ */
+function keepFocusedFieldVisible(event: React.FocusEvent<HTMLDivElement>) {
+  const field = event.target;
+  if (!(
+    field instanceof HTMLInputElement ||
+    field instanceof HTMLTextAreaElement ||
+    field instanceof HTMLSelectElement
+  )) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    if (document.activeElement === field) {
+      field.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, KEYBOARD_OPEN_DELAY_MS);
+}
+
 // Dialog on desktop, Drawer (bottom sheet) on mobile - same
 // isDesktop/useMediaQuery split delete-expense-alert-dialog.tsx already
 // uses, pulled out here since it's now shared by four create/edit forms
@@ -53,7 +81,7 @@ export function ResponsiveFormSheet({
   children,
 }: ResponsiveFormSheetProps) {
   const t = useTranslations("common");
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useIsDesktop();
 
   if (isDesktop) {
     return (
@@ -93,6 +121,7 @@ export function ResponsiveFormSheet({
         <div
           className="flex-1 overflow-y-auto px-4 pb-4"
           data-base-ui-swipe-ignore
+          onFocus={keepFocusedFieldVisible}
         >
           {children}
         </div>
