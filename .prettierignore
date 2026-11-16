@@ -9,3 +9,6 @@ pnpm-lock.yaml
 e2e/.auth
 test-results
 playwright-report
+
+# Agent-local settings, gitignored globally - not project code
+.claude/settings.local.json
