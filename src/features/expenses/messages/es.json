@@ -7,8 +7,6 @@
     "searchPlaceholder": "Buscar por nombre...",
     "searchAria": "Buscar gastos por nombre",
     "perPage": "Gastos por página",
-    "newestFirst": "Más recientes primero",
-    "oldestFirst": "Más antiguos primero",
     "table": {
       "expense": "Gasto",
       "date": "Fecha",
@@ -77,6 +75,12 @@
       "search": "Búsqueda: «{term}»",
       "total": "Total de estos gastos",
       "clear": "Quitar filtros"
+    },
+    "orders": {
+      "newest": "Más recientes primero",
+      "oldest": "Más antiguos primero",
+      "highest": "Mayor monto primero",
+      "lowest": "Menor monto primero"
     }
   }
 }

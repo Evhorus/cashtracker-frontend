@@ -9,6 +9,10 @@ import { UpdateEnvelopeDialog } from "@/features/envelopes/components/update-env
 import { CreateExpenseDialog } from "@/features/expenses/components/create-expense-dialog";
 import { ExpensesFilter } from "@/features/expenses/components/expenses-filter";
 import {
+  expenseOrderParams,
+  parseExpenseOrder,
+} from "@/features/expenses/lib/expense-order";
+import {
   methodOptionsFor,
   parseMethodFilter,
   type MethodOption,
@@ -86,6 +90,7 @@ interface EnvelopePageProps {
     endDate?: string;
     search?: string;
     sort?: string;
+    sortBy?: string;
     /** Payment method filter, `a,b,none` - see method-filter.ts. */
     methods?: string;
     page?: string;
@@ -107,13 +112,13 @@ export default async function EnvelopePage({
     endDate,
     search,
     sort,
+    sortBy,
     methods,
     page: pageParam,
     limit: limitParam,
   } = await searchParams;
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
-  const sortOrder =
-    sort === "DESC" ? "DESC" : sort === "ASC" ? "ASC" : undefined;
+  const order = expenseOrderParams(parseExpenseOrder(sort, sortBy));
   // 10 / 20 / all (100, the backend's own hard cap) - see
   // ExpensesFilter's page-size Select and expense-helpers.ts. Anything
   // else in the URL (hand-edited, stale) falls back to the default
@@ -140,7 +145,7 @@ export default async function EnvelopePage({
   const methodOptions = methodOptionsFor(envelope.expenses);
   // Shared by both Suspense boundaries below so they remount and
   // re-stream together on every filter change.
-  const filterKey = `${page}-${limit}-${search ?? ""}-${sort ?? ""}-${startDate ?? ""}-${endDate ?? ""}-${methods ?? ""}`;
+  const filterKey = `${page}-${limit}-${search ?? ""}-${order.sortBy}-${order.sort}-${startDate ?? ""}-${endDate ?? ""}-${methods ?? ""}`;
 
   return (
     <div className="space-y-8">
@@ -222,8 +227,7 @@ export default async function EnvelopePage({
               endDate={endDate}
               search={search}
               methods={methods}
-              sort={sortOrder}
-              sortParam={sort}
+              order={order}
               page={page}
               limit={limit}
               filterBanner={
@@ -356,9 +360,7 @@ interface ExpensesResultsProps {
   endDate?: string;
   search?: string;
   methods?: string;
-  sort?: "ASC" | "DESC";
-  /** The raw ?sort= value, carried through pagination links unchanged. */
-  sortParam?: string;
+  order: { sort: "ASC" | "DESC"; sortBy: "date" | "amount" };
   page: number;
   limit: number;
   /** Set while a filter is active: what the banner above the list
@@ -381,8 +383,7 @@ async function ExpensesResults({
   endDate,
   search,
   methods,
-  sort,
-  sortParam,
+  order,
   page,
   limit,
   filterBanner,
@@ -394,7 +395,8 @@ async function ExpensesResults({
     search,
     paymentMethodIds,
     includeUnassigned,
-    sort,
+    sort: order.sort,
+    sortBy: order.sortBy,
     page,
     limit,
   });
@@ -430,7 +432,8 @@ async function ExpensesResults({
           endDate,
           search,
           methods,
-          sort: sortParam,
+          sort: order.sort === "DESC" ? undefined : order.sort,
+          sortBy: order.sortBy === "date" ? undefined : order.sortBy,
           limit:
             limit === EXPENSES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
         }}

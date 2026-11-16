@@ -74,6 +74,20 @@ export type EnvelopeStatusTab = (typeof ENVELOPE_STATUS_TAB_VALUES)[number];
 // property of the endpoint, not of what's being listed.
 export const ENVELOPES_MAX_PAGE_SIZE = 100;
 
+/**
+ * List orders, by the period an envelope covers (its latest expense, or
+ * its creation date while it has none) - the date its card shows. The
+ * backend does the ordering; "recent" is its default.
+ */
+export const ENVELOPE_SORT_VALUES = ["recent", "oldest"] as const;
+export type EnvelopeSort = (typeof ENVELOPE_SORT_VALUES)[number];
+
+export function parseEnvelopeSort(
+  value: string | null | undefined,
+): EnvelopeSort {
+  return value === "oldest" ? "oldest" : "recent";
+}
+
 export const ENVELOPES_DEFAULT_PAGE_SIZE = 10;
 
 /**

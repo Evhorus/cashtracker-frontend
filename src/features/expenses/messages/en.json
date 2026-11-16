@@ -7,8 +7,6 @@
     "searchPlaceholder": "Search by name...",
     "searchAria": "Search expenses by name",
     "perPage": "Expenses per page",
-    "newestFirst": "Newest first",
-    "oldestFirst": "Oldest first",
     "table": {
       "expense": "Expense",
       "date": "Date",
@@ -77,6 +75,12 @@
       "search": "Search: “{term}”",
       "total": "Total of these expenses",
       "clear": "Clear filters"
+    },
+    "orders": {
+      "newest": "Newest first",
+      "oldest": "Oldest first",
+      "highest": "Highest amount first",
+      "lowest": "Lowest amount first"
     }
   }
 }

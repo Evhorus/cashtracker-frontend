@@ -37,6 +37,12 @@ import {
   EXPENSES_DEFAULT_PAGE_SIZE,
   EXPENSES_PAGE_SIZE_OPTIONS,
 } from "../lib/expense-helpers";
+import {
+  EXPENSE_ORDERS,
+  parseExpenseOrder,
+  writeExpenseOrder,
+  type ExpenseOrder,
+} from "../lib/expense-order";
 
 interface ExpensesFilterProps {
   /** Payment methods used in this envelope - see methodOptionsFor.
@@ -45,11 +51,9 @@ interface ExpensesFilterProps {
   methodOptions: MethodOption[];
 }
 
-type Sort = "ASC" | "DESC";
-
 interface FilterState {
   methods: string[];
-  sort: Sort;
+  order: ExpenseOrder;
   pageSize: number;
 }
 
@@ -58,8 +62,10 @@ function readState(searchParams: URLSearchParams): FilterState {
   return {
     methods: parseMethodFilter(searchParams.get("methods") ?? undefined)
       .selected,
-    // Most recent first by default - the backend's own default.
-    sort: searchParams.get("sort") === "ASC" ? "ASC" : "DESC",
+    order: parseExpenseOrder(
+      searchParams.get("sort"),
+      searchParams.get("sortBy"),
+    ),
     pageSize: EXPENSES_PAGE_SIZE_OPTIONS.some((option) => option === limit)
       ? limit
       : EXPENSES_DEFAULT_PAGE_SIZE,
@@ -71,7 +77,7 @@ function writeState(params: URLSearchParams, state: FilterState) {
   const set = (key: string, value: string, isDefault: boolean) =>
     isDefault ? params.delete(key) : params.set(key, value);
   set("methods", state.methods.join(","), state.methods.length === 0);
-  set("sort", state.sort, state.sort === "DESC");
+  writeExpenseOrder(params, state.order);
   set(
     "limit",
     String(state.pageSize),
@@ -122,7 +128,7 @@ export const ExpensesFilter = ({ methodOptions }: ExpensesFilterProps) => {
   };
 
   const activeCount =
-    (state.methods.length > 0 ? 1 : 0) + (state.sort === "ASC" ? 1 : 0);
+    (state.methods.length > 0 ? 1 : 0) + (state.order !== "newest" ? 1 : 0);
 
   // The largest option means "everything" rather than a literal count,
   // so it reads as a word; the other two are just their number.
@@ -214,15 +220,16 @@ export const ExpensesFilter = ({ methodOptions }: ExpensesFilterProps) => {
           <DropdownMenuGroup>
             <DropdownMenuLabel>{t("sortLabel")}</DropdownMenuLabel>
             <DropdownMenuRadioGroup
-              value={state.sort}
-              onValueChange={(value) => update({ sort: value as Sort })}
+              value={state.order}
+              onValueChange={(value) =>
+                update({ order: value as ExpenseOrder })
+              }
             >
-              <DropdownMenuRadioItem value="DESC">
-                {t("newestFirst")}
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="ASC">
-                {t("oldestFirst")}
-              </DropdownMenuRadioItem>
+              {EXPENSE_ORDERS.map((order) => (
+                <DropdownMenuRadioItem key={order} value={order}>
+                  {t(`orders.${order}`)}
+                </DropdownMenuRadioItem>
+              ))}
             </DropdownMenuRadioGroup>
           </DropdownMenuGroup>
 
@@ -230,7 +237,7 @@ export const ExpensesFilter = ({ methodOptions }: ExpensesFilterProps) => {
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => update({ methods: [], sort: "DESC" })}
+                onClick={() => update({ methods: [], order: "newest" })}
               >
                 {t("clearFilters")}
               </DropdownMenuItem>
