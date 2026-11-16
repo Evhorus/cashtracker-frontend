@@ -34,6 +34,7 @@
       "name": "Envelope name",
       "namePlaceholder": "e.g. Household expenses",
       "currency": "Currency",
+      "currencyLocked": "The currency can't be changed because this envelope already has expenses.",
       "hasLimit": "This envelope has a spending limit",
       "amount": "Amount",
       "category": "Category (optional)"
