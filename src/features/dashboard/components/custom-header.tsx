@@ -35,7 +35,9 @@ export const CustomHeader = () => {
         </div>
 
         {/* Pushes the toggles right whatever is on the left. */}
-        <div className="ml-auto flex items-center gap-4">
+        {/* gap-2 on phones: at 320px the logo and three 36px buttons with
+            gap-4 left "CashTracker" touching the language toggle. */}
+        <div className="ml-auto flex items-center gap-2 sm:gap-4">
           <LocaleToggle />
           <ModeToggle />
           {/* Sidebar owns the account menu on desktop. */}

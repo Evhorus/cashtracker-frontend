@@ -1,4 +1,5 @@
 "use client";
+import { useIsDesktop } from "@/shared/hooks/use-media-query";
 import { useTranslations, useLocale } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -58,6 +59,7 @@ export const ExpenseForm = ({
 }: ExpenseFormProps) => {
   const tValidation = useTranslations("validation");
   const t = useTranslations("expenses.form");
+  const isDesktop = useIsDesktop();
   const locale = useLocale();
   const tCommon = useTranslations("common");
   // No useMemo: the React Compiler (reactCompiler: true in
@@ -90,7 +92,9 @@ export const ExpenseForm = ({
               label={t("name")}
               placeholder={t("namePlaceholder")}
               autoComplete="off"
-              autoFocus
+              // Desktop only: on a phone it opens the keyboard the moment the
+              // drawer appears, covering the form before anything is touched.
+              autoFocus={isDesktop}
               disabled={isLoading}
             />
 

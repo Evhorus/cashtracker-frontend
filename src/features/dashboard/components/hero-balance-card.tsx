@@ -100,9 +100,16 @@ export function HeroBalanceCard({
 
       {totalAssigned > 0 && (
         <>
+          {/* Red once over budget, like the figure above it: a full
+              green bar under a negative balance read as "all good". */}
           <Progress
             value={percentage}
-            className="mt-4 h-1.5 rounded-full [&_[data-slot=progress-indicator]]:bg-primary"
+            className={cn(
+              "mt-4 h-1.5 rounded-full",
+              totalAvailable < 0
+                ? "[&_[data-slot=progress-indicator]]:bg-destructive"
+                : "[&_[data-slot=progress-indicator]]:bg-primary",
+            )}
           />
           <div className="mt-2.5 flex items-center justify-between text-xs text-muted-foreground">
             <span>

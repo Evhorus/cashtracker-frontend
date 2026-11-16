@@ -61,7 +61,7 @@ export const CreateCategoryDialog = ({
       trigger={
         trigger ??
         (!isControlled ? (
-          <Button variant="default" size="lg">
+          <Button variant="default" size="lg" aria-label={t("new")}>
             <Plus className="h-5 w-5" />
             <span className="hidden md:inline">{t("new")}</span>
           </Button>

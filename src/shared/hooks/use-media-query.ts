@@ -27,3 +27,14 @@ export function useMediaQuery(query: string) {
 
   return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
+
+/**
+ * The breakpoint where forms switch from a bottom drawer to a centered
+ * dialog (ResponsiveFormSheet) - one definition instead of the same
+ * string in every component that branches on it.
+ */
+export const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
+
+export function useIsDesktop() {
+  return useMediaQuery(DESKTOP_MEDIA_QUERY);
+}

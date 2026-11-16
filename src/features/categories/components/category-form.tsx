@@ -1,4 +1,5 @@
 "use client";
+import { useIsDesktop } from "@/shared/hooks/use-media-query";
 import { useTranslations } from "next-intl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -41,6 +42,7 @@ export const CategoryForm = ({
   onCloseDialog,
 }: CategoryFormProps) => {
   const t = useTranslations("categories.form");
+  const isDesktop = useIsDesktop();
   const tCommon = useTranslations("common");
   const tValidation = useTranslations("validation");
   const { icons, colors } = useCategoryOptions();
@@ -65,7 +67,9 @@ export const CategoryForm = ({
               label={t("name")}
               placeholder={t("namePlaceholder")}
               autoComplete="off"
-              autoFocus
+              // Desktop only: on a phone it opens the keyboard the moment the
+              // drawer appears, covering the form before anything is touched.
+              autoFocus={isDesktop}
               disabled={isLoading}
             />
 
