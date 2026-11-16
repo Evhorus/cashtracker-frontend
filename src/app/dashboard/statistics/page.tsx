@@ -109,7 +109,6 @@ export default async function StatisticsPage({
   const chartData = summary.chart.map((entry) => ({
     label: formatMonthKey(entry.month, locale, spansMultipleYears),
     spent: entry.spent,
-    available: entry.available,
   }));
 
   const totals = summary.totals.map((total) => ({

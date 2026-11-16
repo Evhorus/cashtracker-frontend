@@ -1,5 +1,4 @@
 import { useTranslations } from "next-intl";
-import { ArrowDown, ArrowUp } from "lucide-react";
 import { Progress } from "@/shared/components/ui/progress";
 import {
   CURRENCY_MAP,
@@ -14,17 +13,17 @@ interface HeroBalanceCardProps {
   /** Every envelope in this currency, capped or not - never used for
    * the Gastado figure or the progress bar below (see totalSpentCapped). */
   totalSpent: number;
-  /** Spend within capped envelopes only - what totalAvailable is
-   * actually derived from, so this (not totalSpent) is what "Gastado"
-   * and the progress bar need to stay consistent with Disponible. */
+  /** Spend within capped envelopes only - what "Gastado" and the
+   * progress bar compare against totalAssigned. */
   totalSpentCapped: number;
+  /** What is left in envelopes still under their limit - never negative.
+   * The envelopes' state today, not filtered by any month: the same
+   * number whether someone keeps one envelope per month or one per
+   * purpose for good. */
   totalAvailable: number;
-  /** Real month-over-month change in "disponible", derived from the last
-   * two entries of the dashboard summary's monthly chart - only ever
-   * passed for the one currency that chart is scoped to (see
-   * dashboard/page.tsx). Never fabricated for the others; omitted there
-   * instead of showing a made-up number. */
-  deltaPercent?: number | null;
+  /** How far envelopes over their limit went past it, shown on its own
+   * line rather than netted against totalAvailable. */
+  totalExceeded: number;
   /** Lets the parent grid span this card across both columns when it's
    * the odd one out in its row - see dashboard/page.tsx. */
   className?: string;
@@ -40,7 +39,7 @@ export function HeroBalanceCard({
   totalSpent,
   totalSpentCapped,
   totalAvailable,
-  deltaPercent,
+  totalExceeded,
   className,
 }: HeroBalanceCardProps) {
   const t = useTranslations("dashboard");
@@ -55,6 +54,7 @@ export function HeroBalanceCard({
   // making them inconsistent with Disponible (see totalSpentCapped's
   // doc comment). Surfaced as its own line instead of hidden.
   const unlimitedSpent = totalSpent - totalSpentCapped;
+  const isOverBudget = totalSpentCapped > totalAssigned;
 
   return (
     <div
@@ -63,50 +63,36 @@ export function HeroBalanceCard({
         className,
       )}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-          {/* Always shown, even with a single currency in play - money
-              amounts read as ambiguous without it (is this pesos or
-              dollars?), and a user with one currency today may add a
-              second one later without this label suddenly appearing. */}
-          {t("availableThisMonth")} · {currency}
-        </span>
-        {deltaPercent != null && (
-          <span
-            className={cn(
-              "flex items-center gap-1 font-mono text-xs font-semibold",
-              deltaPercent >= 0 ? "text-primary" : "text-destructive",
-            )}
-          >
-            {deltaPercent >= 0 ? (
-              <ArrowUp className="h-3 w-3" />
-            ) : (
-              <ArrowDown className="h-3 w-3" />
-            )}
-            {Math.abs(deltaPercent).toFixed(0)}
-            {t("percentVsPrevMonth")}
-          </span>
-        )}
-      </div>
+      <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+        {/* Always shown, even with a single currency in play - money
+            amounts read as ambiguous without it (is this pesos or
+            dollars?). Not "este mes": this is the envelopes' state, and
+            envelopes are not necessarily monthly. */}
+        {t("available")} · {currency}
+      </span>
 
-      <p
-        className={cn(
-          "mt-1.5 font-serif text-4xl font-semibold tracking-tight tabular-nums",
-          totalAvailable < 0 ? "text-destructive" : "text-foreground",
-        )}
-      >
+      <p className="mt-1.5 font-serif text-4xl font-semibold tracking-tight text-foreground tabular-nums">
         {formatCurrency(totalAvailable, config)}
       </p>
 
+      {totalExceeded > 0 && (
+        <p className="mt-1 text-sm text-destructive">
+          <b className="font-mono font-semibold">
+            {formatCurrency(totalExceeded, config)}
+          </b>{" "}
+          {t("exceededInEnvelopes")}
+        </p>
+      )}
+
       {totalAssigned > 0 && (
         <>
-          {/* Red once over budget, like the figure above it: a full
-              green bar under a negative balance read as "all good". */}
+          {/* Red once the capped envelopes together are over budget: a
+              full green bar there read as "all good". */}
           <Progress
             value={percentage}
             className={cn(
               "mt-4 h-1.5 rounded-full",
-              totalAvailable < 0
+              isOverBudget
                 ? "[&_[data-slot=progress-indicator]]:bg-destructive"
                 : "[&_[data-slot=progress-indicator]]:bg-primary",
             )}

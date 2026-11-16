@@ -9,9 +9,9 @@
     "emptyEyebrow": "Primer paso",
     "emptyTitle": "Crea tu primer sobre",
     "emptyBody": "Un sobre por categoría — mercado, transporte, ocio — con el límite que decidas. CashTracker te avisa antes de que te excedas.",
-    "availableThisMonth": "Disponible este mes",
+    "available": "Disponible",
+    "exceededInEnvelopes": "excedido en sobres pasados del límite",
     "spent": "Gastado",
-    "percentVsPrevMonth": "% vs mes anterior",
     "percentOfBudget": "% del presupuesto",
     "totalEnvelopes": "Total de sobres"
   },

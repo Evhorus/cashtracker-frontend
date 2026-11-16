@@ -11,8 +11,6 @@ import { Bar, BarChart, XAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/shared/components/ui/chart";
@@ -21,7 +19,6 @@ import { type CurrencyCode } from "@/shared/utils/format-currency";
 type MonthlySpendingChartData = {
   label: string;
   spent: number;
-  available: number;
 };
 
 interface MonthlySpendingChartProps {
@@ -38,21 +35,12 @@ interface MonthlySpendingChartProps {
   hasOtherCurrencies: boolean;
 }
 
-// Grouped by month (not by envelope) - envelopes in this app are always
-// "one account for one month" (e.g. "Marzo Rappi"), so a per-envelope
-// chart mixed accounts and months with no meaningful order. Per-month
-// is both meaningful on its own and naturally sorts chronologically -
-// the backend already returns entries oldest-to-newest.
-//
-// Two side-by-side bars per month (not stacked) - spent and available
-// don't sum to a meaningful third quantity, so stacking them into one bar
-// implied a relationship ("this is the budget") that isn't actually true
-// once an envelope is exceeded (available goes negative, which a stack
-// can't render at all). Grouped bars compare the two directly instead.
-// The spent bar reuses the app's own primary accent (the color spent amounts
-// already render in everywhere else - envelope cards, the detail page);
-// The available bar is muted-foreground, a status-style "this is the backdrop,
-// not a second category" pairing rather than a second competing hue.
+// Spending per calendar month of each expense's own date - the one view
+// that reads right however envelopes are organised (one per month, or one
+// long-lived envelope per purpose). The backend returns months oldest
+// first. One series: without envelope periods a month has no meaningful
+// remaining-budget figure to set beside it. The bar uses the primary
+// accent spent amounts render in everywhere else.
 export const MonthlySpendingChart = ({
   chartData,
   totalEnvelopes,
@@ -65,15 +53,9 @@ export const MonthlySpendingChart = ({
   // case below, there's no card worth showing a placeholder in either.
   if (totalEnvelopes === 0) return null;
 
-  // A single bar can't show a trend - it's the same spent/available
-  // split the stat cards above already spell out in text, just redrawn
-  // as a ~320px-tall chart. That's not "no info", it's negative value
-  // (a lot of scroll for nothing new), so the bar chart itself only
-  // renders once there's an actual month-over-month comparison to show.
-  // Every envelope created the same day (a fresh account, a bulk
-  // import, or simply the first envelope ever) hits this exact case,
-  // since the backend buckets by envelope creation month - the card
-  // still renders, with an explanation instead of silently vanishing.
+  // A single bar can't show a trend, so the chart only renders once there
+  // are expenses in at least two different months; the card still
+  // renders with an explanation instead of silently vanishing.
   const hasTrend = chartData.length >= 2;
 
   // Data keys are English identifiers, not display words - they're
@@ -84,10 +66,6 @@ export const MonthlySpendingChart = ({
     spent: {
       label: t("spent"),
       color: "var(--color-primary)",
-    },
-    available: {
-      label: t("available"),
-      color: "var(--color-muted-foreground)",
     },
   } satisfies ChartConfig;
 
@@ -131,7 +109,7 @@ export const MonthlySpendingChart = ({
                 already treats a touch as a hover for this).
 
                 No CartesianGrid - a busy row of horizontal gridlines behind
-                two-bars-per-month reads as chart-template chrome, not this
+                one bar per month reads as chart-template chrome, not this
                 app's own visual language elsewhere (thin hairline borders,
                 nothing else). The axis line itself (recessive, --border) is
                 the only baseline the bars need.
@@ -143,17 +121,9 @@ export const MonthlySpendingChart = ({
                 tickFormatter={(value: string) => value.slice(0, 3)}
               />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <ChartLegend content={<ChartLegendContent />} />
               <Bar
                 dataKey="spent"
                 fill="var(--color-spent)"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={28}
-              />
-              <Bar
-                dataKey="available"
-                fill="var(--color-available)"
-                fillOpacity={0.6}
                 radius={[4, 4, 0, 0]}
                 maxBarSize={28}
               />
