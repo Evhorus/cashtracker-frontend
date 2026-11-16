@@ -174,4 +174,46 @@ describe("fromApi", () => {
       "Mercado y despensa del mes",
     );
   });
+
+  it("takes the expense date range the list endpoint reports", () => {
+    const envelope = EnvelopeMapper.fromApi({
+      ...apiEnvelope,
+      firstExpenseDate: "2026-10-09",
+      lastExpenseDate: "2026-11-08",
+    });
+
+    expect(envelope.expenseDateRange).toEqual({
+      first: new Date(Date.UTC(2026, 9, 9)),
+      last: new Date(Date.UTC(2026, 10, 8)),
+    });
+  });
+
+  it("derives it from the embedded expenses on the detail endpoint", () => {
+    const expense = (id: string, date: string) => ({
+      id,
+      name: "gasto",
+      amount: "10",
+      currency: "COP",
+      date,
+      createdAt: "2026-11-16T00:00:00.000Z",
+      updatedAt: "2026-11-16T00:00:00.000Z",
+    });
+    const envelope = EnvelopeMapper.fromApi({
+      ...apiEnvelope,
+      expenses: [
+        expense("a", "2026-11-08"),
+        expense("b", "2026-10-09"),
+        expense("c", "2026-10-30"),
+      ],
+    });
+
+    expect(envelope.expenseDateRange).toEqual({
+      first: new Date(Date.UTC(2026, 9, 9)),
+      last: new Date(Date.UTC(2026, 10, 8)),
+    });
+  });
+
+  it("has no range without expenses", () => {
+    expect(EnvelopeMapper.fromApi(apiEnvelope).expenseDateRange).toBeNull();
+  });
 });

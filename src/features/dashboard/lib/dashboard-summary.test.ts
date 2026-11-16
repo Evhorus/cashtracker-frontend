@@ -20,6 +20,7 @@ function envelope(
     status,
     category: null,
     expenses: [],
+    expenseDateRange: null,
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),
   };

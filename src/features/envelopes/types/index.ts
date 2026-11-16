@@ -43,6 +43,10 @@ export interface Envelope {
   category: EnvelopeCategory | null;
   description?: string;
   expenses: Expense[];
+  /** The span of its expenses' dates (UTC-anchored calendar dates), or
+   * null without expenses: the period the envelope really covers, which
+   * neither its free-text name nor its creation date can say. */
+  expenseDateRange: { first: Date; last: Date } | null;
   createdAt: Date;
   updatedAt: Date;
 }

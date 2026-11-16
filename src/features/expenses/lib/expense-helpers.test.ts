@@ -26,6 +26,7 @@ function envelope(amount: string | null): Envelope {
     status: amount === null ? "unlimited" : "normal",
     category: null,
     expenses: [],
+    expenseDateRange: null,
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),
   };

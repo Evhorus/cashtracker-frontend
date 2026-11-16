@@ -229,3 +229,20 @@ export function formatMonthKey(
     { locale: DATE_FNS_LOCALES[locale] },
   );
 }
+
+/**
+ * A span of calendar dates as compactly as it stays unambiguous: "9 oct
+ * 2026" for one day, "9 oct – 8 nov 2026" within a year, "9 dic 2025 –
+ * 8 ene 2026" across years. Reads UTC-anchored calendar dates, like
+ * formatCalendarDateShort.
+ */
+export function formatCalendarDateRange(
+  first: Date,
+  last: Date,
+  locale: SupportedLocale,
+): string {
+  const lastLabel = formatCalendarDateShort(last, locale, true);
+  if (first.getTime() === last.getTime()) return lastLabel;
+  const sameYear = first.getUTCFullYear() === last.getUTCFullYear();
+  return `${formatCalendarDateShort(first, locale, !sameYear)} – ${lastLabel}`;
+}

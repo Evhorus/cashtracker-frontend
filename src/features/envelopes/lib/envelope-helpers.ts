@@ -1,3 +1,8 @@
+import type { SupportedLocale } from "@/shared/config/i18n/config";
+import {
+  formatCalendarDateRange,
+  formatMonthYear,
+} from "@/shared/utils/date-helpers";
 import type { Envelope } from "../types";
 
 /**
@@ -191,4 +196,20 @@ export const EnvelopeHelpers = {
         return "bg-primary/10 text-primary";
     }
   },
+
+  /**
+   * The period an envelope covers, for its card and header: the span of
+   * its expenses' dates, or its creation month while it has none.
+   */
+  formatPeriod: (
+    envelope: Pick<Envelope, "expenseDateRange" | "createdAt">,
+    locale: SupportedLocale,
+  ): string =>
+    envelope.expenseDateRange
+      ? formatCalendarDateRange(
+          envelope.expenseDateRange.first,
+          envelope.expenseDateRange.last,
+          locale,
+        )
+      : formatMonthYear(envelope.createdAt, locale),
 };

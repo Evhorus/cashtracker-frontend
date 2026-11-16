@@ -35,6 +35,9 @@ export const EnvelopeAPIResponseSchema = z.object({
     })
     .nullable(),
   description: z.string().nullable().optional(),
+  // Earliest/latest expense date ("YYYY-MM-DD"), list endpoint only.
+  firstExpenseDate: z.string().nullable().optional(),
+  lastExpenseDate: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
   // Only present on the single-envelope detail endpoint

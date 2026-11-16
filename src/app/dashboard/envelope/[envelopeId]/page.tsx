@@ -33,7 +33,6 @@ import {
   formatCurrency,
   type CurrencyCode,
 } from "@/shared/utils/format-currency";
-import { formatMonthYear } from "@/shared/utils/date-helpers";
 import { cn } from "@/shared/lib/utils";
 
 import {
@@ -156,12 +155,10 @@ export default async function EnvelopePage({
           />
         }
         description={
-          // Always shows the creation month/year, not just when a
-          // category is set - same reasoning as the envelope card: names
-          // are free text and commonly reused across years, so this is
-          // the one place that disambiguates which year's envelope this is.
+          // The period its expenses span - see EnvelopeHelpers.formatPeriod
+          // and the envelope card.
           <p className="flex items-center gap-1.5 truncate text-sm text-muted-foreground">
-            {formatMonthYear(envelope.createdAt, locale)}
+            {EnvelopeHelpers.formatPeriod(envelope, locale)}
             {envelope.category && (
               <>
                 <span aria-hidden="true">·</span>

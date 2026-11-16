@@ -4,6 +4,30 @@ import { EnvelopeApi } from "../schemas/envelope.schema";
 import { ExpenseMapper } from "@/features/expenses/mappers/expense.mapper";
 import type { CurrencyCode } from "@/shared/utils/format-currency";
 import { capitalize } from "@/shared/lib/utils";
+import { parseCalendarDate } from "@/shared/utils/date-helpers";
+import type { Expense } from "@/features/expenses/types";
+
+/**
+ * The list endpoint reports the range; the detail endpoint embeds the
+ * expenses instead, so there it is derived from them.
+ */
+function expenseDateRange(
+  apiEnvelope: EnvelopeApi,
+  expenses: Expense[],
+): Envelope["expenseDateRange"] {
+  if (apiEnvelope.firstExpenseDate && apiEnvelope.lastExpenseDate) {
+    return {
+      first: parseCalendarDate(apiEnvelope.firstExpenseDate),
+      last: parseCalendarDate(apiEnvelope.lastExpenseDate),
+    };
+  }
+  if (expenses.length === 0) return null;
+  const times = expenses.map((expense) => expense.date.getTime());
+  return {
+    first: new Date(Math.min(...times)),
+    last: new Date(Math.max(...times)),
+  };
+}
 
 export const EnvelopeMapper = {
   /**
@@ -24,6 +48,9 @@ export const EnvelopeMapper = {
    * Transforms raw API response into the domain model (Envelope)
    */
   fromApi: (apiEnvelope: EnvelopeApi): Envelope => {
+    // Absent on the paginated list endpoint - only the detail endpoint
+    // embeds expenses.
+    const expenses = apiEnvelope.expenses?.map(ExpenseMapper.fromApi) ?? [];
     return {
       id: apiEnvelope.id,
       // The backend stores this lowercase now (its own matching/
@@ -42,9 +69,8 @@ export const EnvelopeMapper = {
       description: apiEnvelope.description ?? undefined,
       createdAt: new Date(apiEnvelope.createdAt),
       updatedAt: new Date(apiEnvelope.updatedAt),
-      // Absent on the paginated list endpoint - only the detail endpoint
-      // embeds expenses.
-      expenses: apiEnvelope.expenses?.map(ExpenseMapper.fromApi) ?? [],
+      expenses,
+      expenseDateRange: expenseDateRange(apiEnvelope, expenses),
     };
   },
 };
