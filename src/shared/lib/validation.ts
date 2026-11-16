@@ -29,3 +29,13 @@ export type ValidationTranslator = ReturnType<
  * expenses.
  */
 export const MAX_AMOUNT = 9_999_999_999.99;
+
+/**
+ * Whether a form amount (the plain decimal string PriceInput emits) is a
+ * real, positive number. "0" passes a non-empty check, so without this
+ * the form let a zero amount through and only the API refused it.
+ */
+export const isPositiveAmount = (value: string): boolean => {
+  const amount = Number(value);
+  return Number.isFinite(amount) && amount > 0;
+};

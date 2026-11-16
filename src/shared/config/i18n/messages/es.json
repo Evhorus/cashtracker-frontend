@@ -46,6 +46,7 @@
     "notOnlySpaces": "No puede ser solo espacios",
     "amountRequired": "El monto es obligatorio",
     "amountEmpty": "El monto no puede estar vacío",
+    "amountMustBePositive": "El monto debe ser mayor a 0",
     "dateRequired": "La fecha es obligatoria",
     "descriptionTooLong": "La descripción es muy larga",
     "colorRequired": "Elige un color",

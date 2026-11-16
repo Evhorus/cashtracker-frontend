@@ -153,8 +153,15 @@ export const ExpenseForm = ({
                         }
                       />
                       <PopoverContent className="w-auto p-0" align="start">
+                        {/* `required`: in single mode react-day-picker
+                            deselects when the selected day is clicked
+                            again - the natural way to confirm it. The form
+                            then held no date while this trigger kept
+                            showing the default one, and saving failed with
+                            "La fecha es obligatoria". */}
                         <Calendar
                           mode="single"
+                          required
                           selected={field.value}
                           defaultMonth={field.value}
                           onSelect={(date) => {
