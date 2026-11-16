@@ -1,4 +1,5 @@
 "use client";
+import { useIsDesktop } from "@/shared/hooks/use-media-query";
 
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
@@ -40,6 +41,7 @@ export function CategoryPicker({
   "aria-invalid": ariaInvalid,
 }: CategoryPickerProps) {
   const t = useTranslations("categories");
+  const isDesktop = useIsDesktop();
   const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -110,8 +112,10 @@ export function CategoryPicker({
       />
       <PopoverContent align="start" className="w-72 gap-0 p-0">
         <div className="p-2">
+          {/* Desktop only, like the forms: on a phone it opens the keyboard
+              over the very list this popover is for. */}
           <Input
-            autoFocus
+            autoFocus={isDesktop}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}

@@ -39,18 +39,23 @@ function ExpenseDialogSubtitle({
     ? { ...envelopeCategory, Icon: resolveIcon(envelopeCategory.icon) }
     : null;
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex items-start gap-1.5">
       {def && (
         <span
-          className="flex h-4 w-4 shrink-0 items-center justify-center rounded-md"
+          className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-md"
           style={{ background: withAlpha(def.color, 0.18), color: def.color }}
         >
           <def.Icon className="h-2.5 w-2.5" />
         </span>
       )}
-      {t.rich("forEnvelope", {
-        name: () => <b className="font-semibold">{envelopeName}</b>,
-      })}
+      {/* One inline span: t.rich returns several nodes, and as direct
+          flex children each became its own column - "Para el sobre"
+          squeezed into a narrow stack beside a long envelope name. */}
+      <span className="min-w-0">
+        {t.rich("forEnvelope", {
+          name: () => <b className="font-semibold">{envelopeName}</b>,
+        })}
+      </span>
     </span>
   );
 }
@@ -91,7 +96,9 @@ export const CreateExpenseDialog = ({
       }
       dialogClassName="sm:max-w-125"
       trigger={
-        <Button variant="default" size="lg">
+        // aria-label: below sm the text is display:none, which leaves
+        // an icon-only button with no accessible name.
+        <Button variant="default" size="lg" aria-label={t("add")}>
           <Plus />
           <span className="hidden sm:inline-block">{t("add")}</span>
         </Button>

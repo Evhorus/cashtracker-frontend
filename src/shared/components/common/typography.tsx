@@ -29,7 +29,7 @@ const headingVariants = cva("", {
       // Estadísticas' title, which have their own layout PageHeader
       // doesn't fit (no backUrl/actions, a two-line "date + Hola, X"
       // block).
-      lg: "text-2xl font-bold tracking-tight break-words md:text-3xl",
+      lg: "text-2xl font-bold tracking-tight break-words hyphens-auto md:text-3xl",
       // An empty state's own heading ("Sin resultados para X", "Aún no
       // hay gastos"). Lighter than `md` on purpose - it sits inside a
       // card that's already the only thing on screen, so it doesn't need

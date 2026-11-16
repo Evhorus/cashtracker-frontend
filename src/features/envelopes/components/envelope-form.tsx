@@ -1,4 +1,5 @@
 "use client";
+import { useIsDesktop } from "@/shared/hooks/use-media-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
@@ -46,6 +47,7 @@ export const EnvelopeForm = ({
 }: EnvelopeFormProps) => {
   const tValidation = useTranslations("validation");
   const t = useTranslations("envelopes.form");
+  const isDesktop = useIsDesktop();
   const tCommon = useTranslations("common");
   const { handleSubmit, control } = useForm<EnvelopeFormValues>({
     resolver: zodResolver(buildEnvelopeFormSchema(tValidation)),
@@ -80,7 +82,9 @@ export const EnvelopeForm = ({
               label={t("name")}
               placeholder={t("namePlaceholder")}
               autoComplete="off"
-              autoFocus
+              // Desktop only: on a phone it opens the keyboard the moment the
+              // drawer appears, covering the form before anything is touched.
+              autoFocus={isDesktop}
               disabled={isLoading}
             />
 

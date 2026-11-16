@@ -27,7 +27,7 @@ import { CardActionButton } from "@/shared/components/common/card-action-button"
 import { cn } from "@/shared/lib/utils";
 import { Loader2, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useMediaQuery } from "@/shared/hooks/use-media-query";
+import { useIsDesktop } from "@/shared/hooks/use-media-query";
 import { useActionDialog } from "@/shared/hooks/useActionDialog";
 
 interface DeleteExpenseAlertDialogProps {
@@ -59,7 +59,7 @@ export const DeleteExpenseAlertDialog = ({
   const t = useTranslations("expenses");
   const tCommon = useTranslations("common");
   const [internalOpen, setInternalOpen] = useState(false);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useIsDesktop();
   const { dispatch, isPending } = useActionDialog(
     deleteExpenseAction,
     {
