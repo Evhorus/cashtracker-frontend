@@ -42,6 +42,10 @@
       "created": "Medio de pago creado",
       "updated": "Medio de pago actualizado",
       "deleted": "Medio de pago eliminado"
+    },
+    "filter": {
+      "label": "Medio de pago",
+      "none": "Sin medio de pago"
     }
   }
 }

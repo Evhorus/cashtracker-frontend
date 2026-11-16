@@ -8,6 +8,12 @@ import { DeleteEnvelopeAlertDialog } from "@/features/envelopes/components/delet
 import { UpdateEnvelopeDialog } from "@/features/envelopes/components/update-envelope-dialog";
 import { CreateExpenseDialog } from "@/features/expenses/components/create-expense-dialog";
 import { ExpensesFilter } from "@/features/expenses/components/expenses-filter";
+import {
+  methodOptionsFor,
+  parseMethodFilter,
+  type MethodOption,
+} from "@/features/payment-methods/lib/method-filter";
+import { FilteredExpensesBanner } from "@/features/expenses/components/filtered-expenses-banner";
 import { ExpensesList } from "@/features/expenses/components/expenses-list";
 import { ExpensesListSkeleton } from "@/features/expenses/components/expenses-list-skeleton";
 import { EnvelopeActionsMenu } from "@/features/envelopes/components/envelope-actions-menu";
@@ -33,7 +39,6 @@ import { cn } from "@/shared/lib/utils";
 import {
   DollarSign,
   Infinity as InfinityIcon,
-  Sigma,
   TriangleAlert,
 } from "lucide-react";
 import {
@@ -82,6 +87,8 @@ interface EnvelopePageProps {
     endDate?: string;
     search?: string;
     sort?: string;
+    /** Payment method filter, `a,b,none` - see method-filter.ts. */
+    methods?: string;
     page?: string;
     limit?: string;
   }>;
@@ -101,6 +108,7 @@ export default async function EnvelopePage({
     endDate,
     search,
     sort,
+    methods,
     page: pageParam,
     limit: limitParam,
   } = await searchParams;
@@ -129,10 +137,11 @@ export default async function EnvelopePage({
   const status = envelope.status;
   const currencyConfig = CURRENCY_MAP[envelope.currency];
   const spentColorClass = EnvelopeHelpers.getStatusTextColorClass(status);
-  const hasActiveFilter = Boolean(search || startDate || endDate);
+  const hasActiveFilter = Boolean(search || startDate || endDate || methods);
+  const methodOptions = methodOptionsFor(envelope.expenses);
   // Shared by both Suspense boundaries below so they remount and
   // re-stream together on every filter change.
-  const filterKey = `${page}-${limit}-${search ?? ""}-${sort ?? ""}-${startDate ?? ""}-${endDate ?? ""}`;
+  const filterKey = `${page}-${limit}-${search ?? ""}-${sort ?? ""}-${startDate ?? ""}-${endDate ?? ""}-${methods ?? ""}`;
 
   return (
     <div className="space-y-8">
@@ -204,7 +213,7 @@ export default async function EnvelopePage({
           {/* Outside the boundary on purpose: ExpensesFilter is pure
               client UI reading the URL, so it stays interactive (and
               visible) while the list behind it reloads. */}
-          <ExpensesFilter />
+          <ExpensesFilter methodOptions={methodOptions} />
           {/* key remounts the boundary on every filter change, so the
               fallback re-appears instead of the old list sitting there
               looking unchanged - same pattern as the envelopes list. */}
@@ -215,10 +224,19 @@ export default async function EnvelopePage({
               startDate={startDate}
               endDate={endDate}
               search={search}
+              methods={methods}
               sort={sortOrder}
               sortParam={sort}
               page={page}
               limit={limit}
+              filterBanner={
+                hasActiveFilter
+                  ? {
+                      envelopeExpenseCount: envelope.expenses.length,
+                      methodOptions,
+                    }
+                  : undefined
+              }
             />
           </Suspense>
         </div>
@@ -325,27 +343,6 @@ export default async function EnvelopePage({
                     {envelope.expenses.length}
                   </dd>
                 </div>
-
-                {/* Own Suspense, only mounted with an active filter -
-                    streams independently of the envelope fetch above so
-                    the rest of this card still paints instantly, and
-                    reuses ExpensesResults' exact getExpenses(...) call
-                    (identical params) so Next's fetch memoization
-                    collapses them into one request instead of two. */}
-                {hasActiveFilter && (
-                  <Suspense key={filterKey} fallback={null}>
-                    <FilteredExpensesSummary
-                      envelopeId={envelopeId}
-                      currency={envelope.currency}
-                      startDate={startDate}
-                      endDate={endDate}
-                      search={search}
-                      sort={sortOrder}
-                      page={page}
-                      limit={limit}
-                    />
-                  </Suspense>
-                )}
               </dl>
             </CardContent>
           </Card>
@@ -361,11 +358,18 @@ interface ExpensesResultsProps {
   startDate?: string;
   endDate?: string;
   search?: string;
+  methods?: string;
   sort?: "ASC" | "DESC";
   /** The raw ?sort= value, carried through pagination links unchanged. */
   sortParam?: string;
   page: number;
   limit: number;
+  /** Set while a filter is active: what the banner above the list
+   * needs beyond this component's own fetch. */
+  filterBanner?: {
+    envelopeExpenseCount: number;
+    methodOptions: MethodOption[];
+  };
 }
 
 /**
@@ -379,22 +383,44 @@ async function ExpensesResults({
   startDate,
   endDate,
   search,
+  methods,
   sort,
   sortParam,
   page,
   limit,
+  filterBanner,
 }: ExpensesResultsProps) {
+  const { paymentMethodIds, includeUnassigned } = parseMethodFilter(methods);
   const expensesResult = await getExpenses(envelopeId, {
     startDate,
     endDate,
     search,
+    paymentMethodIds,
+    includeUnassigned,
     sort,
     page,
     limit,
   });
 
+  const selected = parseMethodFilter(methods).selected;
+  const limitParam =
+    limit === EXPENSES_DEFAULT_PAGE_SIZE ? "" : `?limit=${limit}`;
+
   return (
     <>
+      {filterBanner && (
+        <FilteredExpensesBanner
+          shown={expensesResult.meta.total}
+          total={filterBanner.envelopeExpenseCount}
+          totalAmount={expensesResult.meta.totalAmount}
+          currency={currency}
+          methods={filterBanner.methodOptions.filter((option) =>
+            selected.includes(option.id),
+          )}
+          search={search}
+          clearHref={`/dashboard/envelope/${envelopeId}${limitParam}`}
+        />
+      )}
       <ExpensesList expenses={expensesResult.data} currency={currency} />
       <PaginationControls
         page={expensesResult.meta.page}
@@ -406,78 +432,12 @@ async function ExpensesResults({
           startDate,
           endDate,
           search,
+          methods,
           sort: sortParam,
           limit:
             limit === EXPENSES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
         }}
       />
     </>
-  );
-}
-
-interface FilteredExpensesSummaryProps {
-  envelopeId: string;
-  currency: CurrencyCode;
-  startDate?: string;
-  endDate?: string;
-  search?: string;
-  sort?: "ASC" | "DESC";
-  page: number;
-  limit: number;
-}
-
-/**
- * Extra row in the Resumen sidebar, only mounted with an active
- * search/date filter (see the `hasActiveFilter` check at the call
- * site) - the count/total this shows only means something as a
- * *filtered* result. The card's other rows (Disponible/Gastado/Límite)
- * never follow the filter: they're the envelope's real numbers against
- * its real limit, and narrowing them to match a search would silently
- * misstate how much budget is actually left.
- *
- * Takes the exact same params ExpensesResults passes to getExpenses -
- * Next dedupes identical `fetch` calls within one request, so this
- * doesn't cost a second round trip, it just reads the same response's
- * meta.totalAmount from a second call site.
- */
-async function FilteredExpensesSummary({
-  envelopeId,
-  currency,
-  startDate,
-  endDate,
-  search,
-  sort,
-  page,
-  limit,
-}: FilteredExpensesSummaryProps) {
-  const t = await getTranslations("expenses");
-  const { meta } = await getExpenses(envelopeId, {
-    startDate,
-    endDate,
-    search,
-    sort,
-    page,
-    limit,
-  });
-
-  // A filter with zero matches has nothing to sum - and ExpensesList
-  // is already showing its own "no results" empty state for it.
-  if (meta.total === 0) return null;
-
-  return (
-    <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-      <dt className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Sigma className="h-4 w-4 shrink-0" />
-        {t("filteredCount", { count: meta.total })}
-      </dt>
-      <dd className="text-right">
-        <span className="block text-xs text-muted-foreground">
-          {t("filteredTotalLabel")}
-        </span>
-        <span className="text-base font-bold">
-          {formatCurrency(meta.totalAmount, CURRENCY_MAP[currency])}
-        </span>
-      </dd>
-    </div>
   );
 }

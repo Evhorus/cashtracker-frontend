@@ -1,7 +1,8 @@
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { Expense } from "@/features/expenses/types";
-import { formatCalendarDate } from "@/shared/utils/date-helpers";
+import { formatCalendarDateShort } from "@/shared/utils/date-helpers";
+import { PaymentMethodBadge } from "@/features/payment-methods/components/payment-method-badge";
 import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
 import type { CurrencyCode } from "@/shared/utils/format-currency";
 import {
@@ -72,14 +73,26 @@ export function ExpensesTable({
                       {expense.name.trim().charAt(0).toUpperCase() || "?"}
                     </span>
                   </div>
-                  <span className="truncate font-medium hover:text-primary">
-                    {expense.name}
+                  <span className="min-w-0">
+                    <span className="block truncate font-medium hover:text-primary">
+                      {expense.name}
+                    </span>
+                    {/* Under the name, and only when there is one: a
+                        column of its own was mostly dashes for anyone
+                        who does not use payment methods. */}
+                    {expense.paymentMethod && (
+                      <PaymentMethodBadge
+                        method={expense.paymentMethod}
+                        className="text-xs text-muted-foreground"
+                      />
+                    )}
                   </span>
                 </Link>
               </TableCell>
-              <TableCell className="px-5 py-3.5 text-muted-foreground">
-                {formatCalendarDate(expense.date, locale)}
+              <TableCell className="px-5 py-3.5 whitespace-nowrap text-muted-foreground">
+                {formatCalendarDateShort(expense.date, locale, true)}
               </TableCell>
+
               <TableCell className="px-5 py-3.5 text-right font-mono font-semibold text-primary">
                 {formatCurrency(+expense.amount, currencyConfig)}
               </TableCell>

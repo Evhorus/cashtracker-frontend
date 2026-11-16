@@ -18,6 +18,8 @@ test.describe.configure({ mode: "serial" });
 const ENVELOPE = uniqueName("pm-env");
 const METHOD = uniqueName("pm-card");
 const EXPENSE = uniqueName("pm-exp");
+/** An expense with no payment method, beside the tagged one. */
+const UNTAGGED = uniqueName("pm-untagged");
 
 async function openAccountSection(page: Page) {
   await page.goto("/dashboard/account?section=paymentMethods");
@@ -155,6 +157,52 @@ test("one created from the expense form does not submit the expense", async ({
   await expect(page.getByText(/medio de pago eliminado/i)).toBeVisible();
 });
 
+test("the envelope's expenses filter by payment method", async ({ page }) => {
+  await openEnvelope(page);
+  // A second expense, without a method: the filter only offers methods
+  // that tell this envelope's expenses apart.
+  await page.getByRole("button", { name: /agregar gasto/i }).click();
+  const form = page.getByRole("dialog");
+  await form.getByLabel(/nombre del gasto/i).fill(UNTAGGED);
+  await form.getByLabel(/^monto/i).click();
+  await form.getByLabel(/^monto/i).fill("5000");
+  await form
+    .getByRole("button", { name: /guardar|crear/i })
+    .last()
+    .click();
+  await expect(page.getByText(/gasto creado/i)).toBeVisible();
+
+  const tagged = page.getByRole("row", { name: nameRe(EXPENSE) });
+  const withoutMethod = page.getByRole("row", { name: nameRe(UNTAGGED) });
+  const filters = page.getByRole("button", { name: /^filtros/i });
+
+  // Only expenses without a method.
+  await filters.click();
+  await page
+    .getByRole("menuitemcheckbox", { name: /sin medio de pago/i })
+    .click();
+  await page.keyboard.press("Escape");
+  await expect(page).toHaveURL(/methods=none/);
+  await expect(withoutMethod).toBeVisible();
+  await expect(tagged).toHaveCount(0);
+  await expect(filters).toHaveAccessibleName(/1 activo/i);
+
+  // Only its card.
+  await filters.click();
+  await page
+    .getByRole("menuitemcheckbox", { name: /sin medio de pago/i })
+    .click();
+  await page.getByRole("menuitemcheckbox", { name: nameRe(METHOD) }).click();
+  await page.keyboard.press("Escape");
+  await expect(tagged).toBeVisible();
+  await expect(withoutMethod).toHaveCount(0);
+
+  // No card the envelope does not use is offered.
+  await filters.click();
+  await expect(page.getByRole("menuitemcheckbox")).toHaveCount(2);
+  await page.keyboard.press("Escape");
+});
+
 test("deleting it keeps the expense", async ({ page }) => {
   await openAccountSection(page);
   await page
@@ -168,5 +216,6 @@ test("deleting it keeps the expense", async ({ page }) => {
 
   await openEnvelope(page);
   await expect(page.getByRole("row", { name: nameRe(EXPENSE) })).toBeVisible();
-  await expect(page.getByText(/25[.,]0\s*% del límite/i)).toBeVisible();
+  // 25.000 + the 5.000 untagged one, of 100.000.
+  await expect(page.getByText(/30[.,]0\s*% del límite/i)).toBeVisible();
 });

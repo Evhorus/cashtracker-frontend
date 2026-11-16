@@ -21,6 +21,8 @@ export interface GetExpensesParams extends PaginationParams {
   search?: string;
   categoryId?: string;
   sort?: "ASC" | "DESC";
+  paymentMethodIds?: string[];
+  includeUnassigned?: boolean;
 }
 
 export interface ExpensesResponse {
@@ -39,6 +41,10 @@ export const ExpensesService = {
     if (params?.search) query.set("search", params.search);
     if (params?.categoryId) query.set("categoryId", params.categoryId);
     if (params?.sort) query.set("sort", params.sort);
+    if (params?.paymentMethodIds?.length) {
+      query.set("paymentMethodIds", params.paymentMethodIds.join(","));
+    }
+    if (params?.includeUnassigned) query.set("includeUnassigned", "true");
     if (params) appendPaginationParams(query, params);
     const qs = query.toString();
 

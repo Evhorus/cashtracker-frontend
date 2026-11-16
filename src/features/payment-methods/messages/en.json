@@ -42,6 +42,10 @@
       "created": "Payment method created",
       "updated": "Payment method updated",
       "deleted": "Payment method deleted"
+    },
+    "filter": {
+      "label": "Payment method",
+      "none": "No payment method"
     }
   }
 }
