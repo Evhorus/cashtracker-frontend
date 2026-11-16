@@ -89,6 +89,11 @@
       "created": "Envelope created.",
       "updated": "Envelope updated.",
       "deleted": "Envelope deleted."
+    },
+    "sortLabel": "Order",
+    "sorts": {
+      "recent": "Newest",
+      "oldest": "Oldest"
     }
   }
 }

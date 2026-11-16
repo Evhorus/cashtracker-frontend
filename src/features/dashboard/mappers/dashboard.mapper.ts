@@ -6,7 +6,6 @@ import type {
 import type { DashboardRecentExpense } from "../types";
 import type { CurrencyCode } from "@/shared/utils/format-currency";
 import { parseCalendarDate } from "@/shared/utils/date-helpers";
-import { capitalize } from "@/shared/lib/utils";
 
 export const DashboardMapper = {
   /**
@@ -22,12 +21,12 @@ export const DashboardMapper = {
     apiExpense: DashboardRecentExpenseApi,
   ): DashboardRecentExpense => ({
     id: apiExpense.id,
-    name: capitalize(apiExpense.name),
+    name: apiExpense.name,
     amount: apiExpense.amount,
     currency: apiExpense.currency as CurrencyCode,
     date: parseCalendarDate(apiExpense.date),
     envelopeId: apiExpense.envelopeId,
-    envelopeName: capitalize(apiExpense.envelopeName),
+    envelopeName: apiExpense.envelopeName,
   }),
 
   /** Same reasoning, for the "Ver por sobre" statistics breakdown. */
@@ -35,7 +34,7 @@ export const DashboardMapper = {
     row: DashboardEnvelopeBreakdownRow,
   ): DashboardEnvelopeBreakdownRow => ({
     ...row,
-    envelopeName: capitalize(row.envelopeName),
+    envelopeName: row.envelopeName,
   }),
 
   /** Same reasoning, for the "Ver por nombre" statistics breakdown. */
@@ -43,6 +42,6 @@ export const DashboardMapper = {
     row: DashboardNameBreakdownRow,
   ): DashboardNameBreakdownRow => ({
     ...row,
-    name: capitalize(row.name),
+    name: row.name,
   }),
 };

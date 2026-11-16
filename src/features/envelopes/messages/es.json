@@ -89,6 +89,11 @@
       "created": "Sobre creado correctamente.",
       "updated": "Sobre actualizado correctamente.",
       "deleted": "Sobre eliminado correctamente."
+    },
+    "sortLabel": "Orden",
+    "sorts": {
+      "recent": "Recientes",
+      "oldest": "Antiguos"
     }
   }
 }

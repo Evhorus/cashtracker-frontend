@@ -57,11 +57,53 @@ describe("fromApi", () => {
     expect(ExpenseMapper.fromApi(apiExpense).amount).toBe("192500.00");
   });
 
-  it("capitalizes just the first letter of the name the backend stores lowercase", () => {
-    // Sentence case, not per-word title case.
+  it("shows the name exactly as stored", () => {
     expect(
-      ExpenseMapper.fromApi({ ...apiExpense, name: "gasolina terpel" }).name,
-    ).toBe("Gasolina terpel");
+      ExpenseMapper.fromApi({ ...apiExpense, name: "gasolina Terpel" }).name,
+    ).toBe("gasolina Terpel");
+  });
+});
+
+describe("payment method", () => {
+  const formValues = {
+    name: "Mercado",
+    amount: "1000",
+    currency: "COP" as const,
+    date: new Date(2026, 8, 22),
+    description: "",
+  };
+
+  it("sends the chosen id, and null for none so an edit can clear it", () => {
+    expect(
+      ExpenseMapper.toApiRequest({ ...formValues, paymentMethodId: "pm-1" })
+        .paymentMethodId,
+    ).toBe("pm-1");
+    expect(
+      ExpenseMapper.toApiRequest({ ...formValues, paymentMethodId: "" })
+        .paymentMethodId,
+    ).toBeNull();
+  });
+
+  it("reads it from the API and back into the form", () => {
+    const method = {
+      id: "pm-1",
+      name: "Davivienda",
+      color: "oklch(0.7 0.13 30)",
+    };
+    const expense = ExpenseMapper.fromApi({
+      ...apiExpense,
+      paymentMethod: method,
+    });
+
+    expect(expense.paymentMethod).toEqual(method);
+    expect(ExpenseMapper.toFormValues(expense).paymentMethodId).toBe("pm-1");
+  });
+
+  it("treats a response without the field as no payment method", () => {
+    const expense = ExpenseMapper.fromApi(apiExpense);
+
+    expect(expense.paymentMethod).toBeNull();
+    expect(ExpenseMapper.toFormValues(expense).paymentMethodId).toBe("");
   });
 });
 
@@ -74,6 +116,7 @@ describe("toApiRequest", () => {
       // What the form holds: a browser-local-anchored date.
       date: new Date(2026, 8, 22),
       description: "",
+      paymentMethodId: "",
     });
 
     expect(request.date).toBe("2026-09-22");

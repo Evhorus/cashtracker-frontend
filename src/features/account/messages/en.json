@@ -8,6 +8,7 @@
       "password": "Password",
       "sessions": "Sessions",
       "connected": "Connected accounts",
+      "paymentMethods": "Payment methods",
       "danger": "Delete account"
     },
     "profile": {

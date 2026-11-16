@@ -1,0 +1,51 @@
+{
+  "paymentMethods": {
+    "types": {
+      "credit_card": "Credit card",
+      "debit_card": "Debit card",
+      "cash": "Cash",
+      "transfer": "Transfer"
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "E.g. Davivienda",
+      "type": "Type",
+      "cutDay": "Statement cut-off day (optional)",
+      "cutDayHint": "With a cut-off day you can filter by statement period as well as by calendar month.",
+      "color": "Color"
+    },
+    "createDialog": {
+      "title": "New payment method",
+      "description": "To mark what you paid each expense with"
+    },
+    "updateDialog": {
+      "title": "Edit payment method",
+      "description": "Expenses that already use it update automatically"
+    },
+    "picker": {
+      "label": "Add a payment method",
+      "new": "New"
+    },
+    "section": {
+      "title": "Payment methods",
+      "description": "Cards, cash or transfers you pay your expenses with. They are optional: an expense can have none.",
+      "empty": "You have no payment methods yet.",
+      "add": "Add payment method",
+      "cutDayLabel": "Closes on day {day}",
+      "edit": "Edit {name}",
+      "delete": "Delete {name}",
+      "deleteTitle": "Delete \"{name}\"?",
+      "deleteDescription": "Your expenses are not deleted: the ones using it are left without a payment method.",
+      "deleteConfirm": "Delete"
+    },
+    "toast": {
+      "created": "Payment method created",
+      "updated": "Payment method updated",
+      "deleted": "Payment method deleted"
+    },
+    "filter": {
+      "label": "Payment method",
+      "none": "No payment method"
+    }
+  }
+}

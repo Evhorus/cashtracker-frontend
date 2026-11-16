@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { cn } from "@/shared/lib/utils";
-import { MOBILE_NAV_ITEMS } from "@/features/dashboard/constants/nav-items";
+import { MAIN_NAV_ITEMS } from "@/features/dashboard/constants/nav-items";
 
 export const MobileNav = () => {
   const t = useTranslations("nav");
@@ -15,7 +15,7 @@ export const MobileNav = () => {
       className="fixed inset-x-4 z-50 flex h-16 items-stretch rounded-2xl border border-border/60 bg-background/90 shadow-lg backdrop-blur md:hidden"
       style={{ bottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
     >
-      {MOBILE_NAV_ITEMS.map((item) => {
+      {MAIN_NAV_ITEMS.map((item) => {
         const isActive =
           item.href === "/dashboard"
             ? pathname === item.href

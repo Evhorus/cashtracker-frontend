@@ -1,0 +1,51 @@
+{
+  "paymentMethods": {
+    "types": {
+      "credit_card": "Tarjeta de crédito",
+      "debit_card": "Tarjeta débito",
+      "cash": "Efectivo",
+      "transfer": "Transferencia"
+    },
+    "form": {
+      "name": "Nombre",
+      "namePlaceholder": "Ej: Davivienda",
+      "type": "Tipo",
+      "cutDay": "Día de corte (opcional)",
+      "cutDayHint": "Con el día de corte podrás filtrar por periodo del extracto, además del mes calendario.",
+      "color": "Color"
+    },
+    "createDialog": {
+      "title": "Nuevo medio de pago",
+      "description": "Para marcar con qué pagaste cada gasto"
+    },
+    "updateDialog": {
+      "title": "Editar medio de pago",
+      "description": "Los gastos que ya lo usan se actualizan solos"
+    },
+    "picker": {
+      "label": "Agregar medio de pago",
+      "new": "Nuevo"
+    },
+    "section": {
+      "title": "Medios de pago",
+      "description": "Tarjetas, efectivo o transferencias con los que pagas tus gastos. Son opcionales: un gasto puede no tener ninguno.",
+      "empty": "Aún no tienes medios de pago.",
+      "add": "Agregar medio de pago",
+      "cutDayLabel": "Corte el día {day}",
+      "edit": "Editar {name}",
+      "delete": "Eliminar {name}",
+      "deleteTitle": "¿Eliminar \"{name}\"?",
+      "deleteDescription": "Tus gastos no se borran: los que lo usaban quedan sin medio de pago.",
+      "deleteConfirm": "Eliminar"
+    },
+    "toast": {
+      "created": "Medio de pago creado",
+      "updated": "Medio de pago actualizado",
+      "deleted": "Medio de pago eliminado"
+    },
+    "filter": {
+      "label": "Medio de pago",
+      "none": "Sin medio de pago"
+    }
+  }
+}

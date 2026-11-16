@@ -40,6 +40,7 @@ function envelope(
     status,
     category: null,
     expenses: [],
+    expenseDateRange: null,
     createdAt: new Date("2026-08-01T00:00:00Z"),
     updatedAt: new Date("2026-08-01T00:00:00Z"),
   };
@@ -129,5 +130,30 @@ describe("status presentation helpers", () => {
         }
       }
     }
+  });
+});
+
+describe("EnvelopeHelpers.formatPeriod", () => {
+  const createdAt = new Date("2026-11-16T15:00:00.000Z");
+
+  it("is the span of its expenses", () => {
+    expect(
+      EnvelopeHelpers.formatPeriod(
+        {
+          createdAt,
+          expenseDateRange: {
+            first: new Date(Date.UTC(2026, 9, 9)),
+            last: new Date(Date.UTC(2026, 10, 8)),
+          },
+        },
+        "es",
+      ),
+    ).toBe("9 oct – 8 nov 2026");
+  });
+
+  it("falls back to the creation month without expenses", () => {
+    expect(
+      EnvelopeHelpers.formatPeriod({ createdAt, expenseDateRange: null }, "es"),
+    ).toBe("nov 2026");
   });
 });

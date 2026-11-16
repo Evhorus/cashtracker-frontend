@@ -9,9 +9,9 @@
     "emptyEyebrow": "First step",
     "emptyTitle": "Create your first envelope",
     "emptyBody": "One envelope per category — groceries, transport, leisure — with the limit you choose. CashTracker warns you before you go over.",
-    "availableThisMonth": "Available this month",
+    "available": "Available",
+    "exceededInEnvelopes": "over the limit in exceeded envelopes",
     "spent": "Spent",
-    "percentVsPrevMonth": "% vs last month",
     "percentOfBudget": "% of budget",
     "totalEnvelopes": "Total envelopes"
   },

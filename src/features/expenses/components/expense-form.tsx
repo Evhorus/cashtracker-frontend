@@ -31,6 +31,7 @@ import {
   type CurrencyCode,
 } from "@/shared/utils/format-currency";
 import { Calendar } from "@/shared/components/ui/calendar";
+import { PaymentMethodPicker } from "@/features/payment-methods/components/payment-method-picker";
 import {
   Popover,
   PopoverContent,
@@ -75,6 +76,7 @@ export const ExpenseForm = ({
       currency,
       description: "",
       date: getToday(),
+      paymentMethodId: "",
       ...defaultValues,
     },
   });
@@ -184,6 +186,20 @@ export const ExpenseForm = ({
               />
             </div>
           </FieldGroup>
+
+          <Controller
+            control={control}
+            name="paymentMethodId"
+            render={({ field }) => (
+              <Field>
+                <PaymentMethodPicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isLoading}
+                />
+              </Field>
+            )}
+          />
 
           <Controller
             control={control}

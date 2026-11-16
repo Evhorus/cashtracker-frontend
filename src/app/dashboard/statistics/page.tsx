@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Breadcrumb } from "@/features/dashboard/components/breadcrumb";
 import { formatMonthKey, hasMultipleYears } from "@/shared/utils/date-helpers";
 import { getDashboardSummary } from "@/features/dashboard/data/get-dashboard-summary";
 import { getCategoryBreakdown } from "@/features/dashboard/data/get-category-breakdown";
@@ -109,7 +108,6 @@ export default async function StatisticsPage({
   const chartData = summary.chart.map((entry) => ({
     label: formatMonthKey(entry.month, locale, spansMultipleYears),
     spent: entry.spent,
-    available: entry.available,
   }));
 
   const totals = summary.totals.map((total) => ({
@@ -138,12 +136,6 @@ export default async function StatisticsPage({
         </div>
 
         <div className="flex items-center gap-4">
-          {/* This page has its own header row rather than PageHeader (no
-              backUrl, and a subtitle plus filters PageHeader doesn't
-              fit), so it needs the breadcrumb wired explicitly to match
-              the other pages. */}
-          <Breadcrumb current={t("title")} className="hidden md:block" />
-
           {(summary.availableYears.length > 0 || hasMultipleCurrencies) && (
             <div className="flex flex-wrap items-center gap-2">
               <DateRangeFilter

@@ -12,6 +12,8 @@ import { Text } from "@/shared/components/common/typography";
 import { EnvelopesResultsSkeleton } from "@/features/envelopes/components/envelopes-list-skeleton";
 import {
   ENVELOPE_STATUS_TAB_VALUES,
+  parseEnvelopeSort,
+  type EnvelopeSort,
   ENVELOPES_DEFAULT_PAGE_SIZE,
   ENVELOPES_PAGE_SIZE_OPTIONS,
   type EnvelopeStatusTab,
@@ -34,6 +36,7 @@ interface EnvelopesPageProps {
     page?: string;
     search?: string;
     status?: string;
+    sort?: string;
     limit?: string;
   }>;
 }
@@ -47,8 +50,10 @@ export default async function EnvelopesPage({
     page: pageParam,
     search,
     status: statusParam,
+    sort: sortParam,
     limit: limitParam,
   } = await searchParams;
+  const sort = parseEnvelopeSort(sortParam);
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1;
   const status: EnvelopeStatusTab = ENVELOPE_STATUS_TAB_VALUES.some(
     (filter) => filter === statusParam,
@@ -92,7 +97,7 @@ export default async function EnvelopesPage({
           the visible "yes, that click registered" feedback the tabs
           alone can't give while the new list is still loading. */}
       <Suspense
-        key={`${page}-${search ?? ""}-${status}-${limit}`}
+        key={`${page}-${search ?? ""}-${status}-${sort}-${limit}`}
         fallback={
           <div className="space-y-6">
             <EnvelopesResultsSkeleton />
@@ -103,6 +108,7 @@ export default async function EnvelopesPage({
           page={page}
           search={search}
           status={status}
+          sort={sort}
           limit={limit}
         />
       </Suspense>
@@ -114,6 +120,7 @@ interface EnvelopesResultsProps {
   page: number;
   search?: string;
   status: EnvelopeStatusTab;
+  sort: EnvelopeSort;
   limit: number;
 }
 
@@ -121,6 +128,7 @@ async function EnvelopesResults({
   page,
   search,
   status,
+  sort,
   limit,
 }: EnvelopesResultsProps) {
   const t = await getTranslations("envelopes");
@@ -135,6 +143,7 @@ async function EnvelopesResults({
     limit,
     search,
     status,
+    sort,
   });
 
   // meta.total is already scoped to `search`/`status` - a live count of
@@ -165,6 +174,7 @@ async function EnvelopesResults({
         searchParams={{
           search,
           status: status === "all" ? undefined : status,
+          sort: sort === "recent" ? undefined : sort,
           limit:
             limit === ENVELOPES_DEFAULT_PAGE_SIZE ? undefined : String(limit),
         }}

@@ -19,6 +19,7 @@ import {
 
 import { CURRENCY_MAP, formatCurrency } from "@/shared/utils/format-currency";
 import { formatDate, formatCalendarDate } from "@/shared/utils/date-helpers";
+import { PaymentMethodBadge } from "@/features/payment-methods/components/payment-method-badge";
 import {
   Calendar,
   FileText,
@@ -79,6 +80,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
       <PageHeader
         title={t("detail.title")}
         backUrl={`/dashboard/envelope/${envelopeId}`}
+        breadcrumbParents={[
+          { href: `/dashboard/envelope/${envelopeId}`, label: envelope.name },
+        ]}
         description={
           <>
             <span className="text-sm">{t("detail.inEnvelope")}</span>
@@ -88,6 +92,9 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
             >
               {envelope.name}
             </Link>
+            <span className="text-sm text-muted-foreground">
+              · {EnvelopeHelpers.formatPeriod(envelope, locale)}
+            </span>
           </>
         }
         actions={
@@ -146,11 +153,19 @@ export default async function ExpensePage({ params }: ExpensePageProps) {
                     <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
                       {expense.name}
                     </h2>
-                    <div className="flex w-fit items-center gap-2 rounded-full bg-background/50 px-2.5 py-1 text-muted-foreground">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span className="text-xs font-medium sm:text-sm">
-                        {formatCalendarDate(expense.date, locale)}
-                      </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex w-fit items-center gap-2 rounded-full bg-background/50 px-2.5 py-1 text-muted-foreground">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span className="text-xs font-medium sm:text-sm">
+                          {formatCalendarDate(expense.date, locale)}
+                        </span>
+                      </div>
+                      {expense.paymentMethod && (
+                        <PaymentMethodBadge
+                          method={expense.paymentMethod}
+                          variant="pill"
+                        />
+                      )}
                     </div>
                   </div>
                 </div>

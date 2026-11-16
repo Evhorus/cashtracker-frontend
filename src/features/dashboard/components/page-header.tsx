@@ -4,7 +4,10 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { Button } from "@/shared/components/ui/button";
-import { Breadcrumb } from "@/features/dashboard/components/breadcrumb";
+import {
+  Breadcrumb,
+  type BreadcrumbLink,
+} from "@/features/dashboard/components/breadcrumb";
 import { Heading } from "@/shared/components/common/typography";
 import { cn } from "@/shared/lib/utils";
 
@@ -18,6 +21,9 @@ interface PageHeaderProps {
    * category icon on envelope/[envelopeId]/page.tsx. Most callers don't
    * pass this. */
   icon?: ReactNode;
+  /** Breadcrumb links between the section and this page - see
+   * Breadcrumb. */
+  breadcrumbParents?: BreadcrumbLink[];
 }
 
 export const PageHeader = ({
@@ -27,6 +33,7 @@ export const PageHeader = ({
   actions,
   mobileActions,
   icon,
+  breadcrumbParents,
 }: PageHeaderProps) => {
   return (
     <div className="space-y-4">
@@ -121,7 +128,11 @@ export const PageHeader = ({
               carries the back arrow, the title and the create action,
               and that back arrow is the same affordance a breadcrumb
               would offer. */}
-          <Breadcrumb current={title} className="hidden md:block" />
+          <Breadcrumb
+            current={title}
+            parents={breadcrumbParents}
+            className="hidden md:block"
+          />
 
           {/* Mobile's actions stay on this row: there is no breadcrumb
               to share it with, and an icon-only button fits beside the
